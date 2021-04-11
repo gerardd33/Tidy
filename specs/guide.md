@@ -109,8 +109,8 @@ mutable class Student {
     
     values: {
         id: Int
-        firstName: Int
-        lastName: Int
+        firstName: String
+        lastName: String
         birthDate: Date
         gender: Gender
     }
@@ -155,8 +155,8 @@ mutable class Student {
     
     values: {
         id: Int
-        firstName: Int
-        lastName: Int
+        firstName: String
+        lastName: String
         birthDate: Date
         gender: Gender
     }
@@ -207,8 +207,8 @@ mutable class Student {
     
     values: {
         id: Int
-        firstName: Int
-        lastName: Int
+        firstName: String
+        lastName: String
         birthDate: Date
         gender: Gender
     }
