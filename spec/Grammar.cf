@@ -8,19 +8,21 @@ Program. Program ::= [ClassDecl] ;
 
 separator nonempty ClassDecl "" ;
 
-ClassDeclConcrete. ClassDecl ::= ClassType "class" Ident ClassBody ;
-ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" Ident ClassBody ;
+ClassName. ClassName ::= Ident ;
+-- TODO starts with upper case
+
+ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassName ClassBody ;
+ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassName ClassBody ;
 
 
 ClassBodyEmpty. ClassBody ::= ;
 ClassBodyFilled. ClassBody ::= "{" ValuesDecl VariablesDecl FunctionsDecl ActionsDecl "}" ;
 
-
 -- CLASS TYPES --------------------------------
 
 ClassTypeMutable. ClassType ::= "mutable" ;
 ClassTypeImmutable. ClassType ::= "immutable" ;
-ClassTypeSingleton. ClassType ::= "singleton" ;
+ClassTypeinSgleton. ClassType ::= "singleton" ;
 
 
 -- CLASS SECTION DECLARATIONS -----------------
@@ -40,12 +42,23 @@ ActionsPresent. ActionsDecl ::= "actions:" ActionsBody ;
 
 -- VALUES SECTION -----------------------------
 
+ValueName. ValueName ::= Ident ;
+-- TODO starts with lower case
+
 ValuesBodyEmpty. ValuesBody ::= ;
+ValuesBodyFilledOneLine. ValuesBody ::= [AttributeDecl] ;
+ValuesBodyFilledMultiLine. ValuesBody ::= "{" [AttributeDecl] "}" ;
+
+separator AttributeDecl "," ; 
+UninitialisedAttribute. AttributeDecl ::= ValueName ":" ClassName ;
+InitialisedAttribute. AttributeDecl ::= ValueName ":" ClassName "=" Exp ;
 
 
 -- VARIABLES SECTION --------------------------
 
 VariablesBodyEmpty. VariablesBody ::= ;
+VariablesBodyFilledOneLine. VariablesBody ::= [AttributeDecl] ;
+VariablesBodyFilledMultiLine. VariablesBody ::= "{" [AttributeDecl] "}" ;
 
 
 -- FUNCTIONS SECTION --------------------------
@@ -60,6 +73,10 @@ ActionsBodyEmpty. ActionsBody ::= ;
 
 
 
+
+
+-- TODO currently a mock
+Exp. Exp ::= Integer;
 
 
 

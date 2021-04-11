@@ -95,9 +95,9 @@ If you don't:
 
 ```
 values: {
-    id: Int
-    firstName: String
-    lastName: String
+    id: Int,
+    firstName: String,
+    lastName: String,
     age: Int
 }
 ```
@@ -108,16 +108,16 @@ So here's our class:
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
 }
@@ -154,16 +154,16 @@ Now let's see what Tidy's functions look like:
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
     
@@ -191,7 +191,7 @@ or of course:
 someValueForDummyStudent: () -> Student = {
     ValueGenerator.value(student)
 } with values: {
-    studentName: String = NameGenerator.name
+    studentName: String = NameGenerator.name,
     student: Student = Student(studentName, 23)
 }
 ```
@@ -206,16 +206,16 @@ Actions behave more or less like methods in Scala. They can be composed of sever
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
     
@@ -309,9 +309,9 @@ Let's look at one last piece of code:
 mutable class PhoneMessageReceiver extends MessageReceiver {
     
     values: {
-        MESSAGE_RECEIVED: String = "You got a new message!"
-        MESSAGE_INVALID: String = "Invalid message"
-        MAX_MESSAGE_LENGTH: Int = 100
+        MESSAGE_RECEIVED: String = "You got a new message!",
+        MESSAGE_INVALID: String = "Invalid message",
+        MAX_MESSAGE_LENGTH: Int = 100,
         
         notificationChannels: List[NotificationChannel]
     }
