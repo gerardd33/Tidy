@@ -1,6 +1,6 @@
 # Quick start guide
 
-The best place to start talking about Tidy is at the top, with classes. Everything in Tidy is an object, i.e. an instance of a class and everything lies somewhere inside some object. There are four types of classes: *immutable*, *mutable* and *singleton* classes. Let's go over each one of them.
+The best place to start talking about Tidy is at the top, with classes. Everything in Tidy is an object, i.e. an instance of a class, and everything lies somewhere inside some object. There are three types of classes: *immutable*, *mutable* and *singleton* classes. Let's go over each one of them.
 
 ## Mutable classes
 
@@ -29,7 +29,7 @@ As you can see, there are four possible types of class members:
 
 - Actions: methods that can have side effects.
 
-Mutable classes are a tool to store state and work with side effects without a need for, for example, monads, but you should use them carefully. The idea is to build the core of your program using clear, transparent flows with immutable classes and *functions* and use mutable classes only on the edges of your flows (e.g. as places for storage, interactions or entry points), reasonably decoupled from that core and from other mutable components. When in doubt, make your class immutable, you can easily change it to mutable later if you decide this is the place where you need mutable state or side effects.
+Mutable classes are a tool to store state and work with side effects without a need for, for example, monads, but you should use them carefully. The idea is to build the core of your program using clear, transparent flows with immutable classes and functions and use mutable classes only on the edges of your flows (e.g. as places for storage, interactions or entry points), reasonably decoupled from that core and from other mutable components. When in doubt, make your class immutable, you can easily change it to mutable later if you decide this is the place where you need mutable state or side effects.
 
 ## Immutable classes
 
@@ -44,14 +44,21 @@ immutable class ClassName {
 }
 ```
 
-It's the one for a mutable class but without *variables* and *actions*. Immutable class is essentially Tidy's equivalent of Scala's *case classes* or Java 15's *records*. As mentioned above, you should prefer this kind of objects in your code.
+It's the same one as for a mutable class but without *variables* and *actions*. Immutable class is essentially Tidy's equivalent of Scala *case classes* or Java 15 *records*. As mentioned above, you should prefer this kind of objects in your code.
 
-One more important use case of immutable classes is in pattern matching. This, by the way, makes it possible to do without *enums*:
+One more important use case of immutable classes is in pattern matching. This, by the way, makes it possible to do without constructs for *enums*:
 
 ```
 abstract immutable class Gender
 immutable class Male extends Gender
 immutable class Female extends Gender
+
+greetProperly: (gender: Gender) -> String = {
+    match gender {
+        Male -> "Hello Sir!"
+        Female -> "Hello Madam!"
+    }
+}
 ```
 
 ## Singleton classes
@@ -67,9 +74,7 @@ singleton class ClassName {
 }
 ```
 
-It's the same as for an immutable class. The only major difference between the two is that singleton classes cannot be instantiated and you access their members using the name of the class, not the name of the instance. They're the equivalent of static classes in other languages or of *singleton objects* in Scala. 
-
-They can be used as utility classes or in a similar way to Scala's *companion objects*, so it's generally a good place to put all of your static methods.
+It's the same as for an immutable class. The only major difference between the two is that singleton classes cannot be instantiated and you access their members using the name of the class, not the name of the instance. They're the equivalent of static classes in other languages or of *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all of your static methods.
 
 ## Abstract classes
 
@@ -78,9 +83,9 @@ Each of the above class types can be marked as *abstract*. This is the equivalen
 
 ## Attributes
 
-Let's build a sample mutable class. We'll start by adding some fields. First, note that for member lists, as well as for all other constructs (for example the body of *if*), there are two possible syntax variants:
+Let's build a sample mutable class. We'll start by adding some fields. First, note that for member lists, as well as for all other constructs (for example an *if* or a method body), there are two possible syntax variants:
 
-If you manage to squeeze it in one line:
+If you manage to squeeze it into one line:
 
 ```
 values: firstName: String, lastName: String
@@ -163,7 +168,7 @@ mutable class Student {
     }
     
     functions: {
-        fullName: () -> String = firstName ++ " " ++ lastName
+        fullName: () -> String = this.firstName ++ " " ++ this.lastName
         
         authorize: (enteredPassword: String) -> Bool = {
             PasswordUtils.hash(enteredPassword) == this.passwordHash
@@ -191,10 +196,11 @@ someValueForDummyStudent: () -> Student = {
 }
 ```
 
+Also, keep in mind that the *this* keyword is required, not optional as in e.g. Java. Code constistency, clarity, avoiding shadowing etc. are big enough reasons for this, but there are even better ones – we'll talk about them later.
 
 ## Actions
 
-Actions behave more or less like methods in Scala. They can be composed of several expressions (usually lines, but also *if* statements etc.). Each line/expression is evaluated separately and the evaluation result of the last line/expression is the return value of the method. The lines can either be an action call or a local value definition. Let's add some actions to our example:
+Actions behave more or less like methods in Scala. They can be composed of several expressions (usually lines, but also *if* statements etc.). Each expression is evaluated separately and the evaluation result of the last expression/line is the return value of the method. The expression can be an *if*, *foreach* etc., an action call or a local value definition. Let's add some actions to our example:
 
 ```
 mutable class Student {
@@ -214,7 +220,7 @@ mutable class Student {
     }
     
     functions: {
-        fullName: () -> String = firstName ++ " " ++ lastName
+        fullName: () -> String = this.firstName ++ " " ++ this.lastName
         
         authorize: (enteredPassword: String) -> Bool = {
             PasswordUtils.hash(enteredPassword) == this.passwordHash
@@ -223,15 +229,15 @@ mutable class Student {
     
     actions: {
         changePassword: (newPassword: String) -> Void = {
-            Logger#log("Changing password for user" ++ this)
+            Logger#log("Changing password for user " ++ this)
             this#passwordHash(hashedPassword)
         } with values: hashedPassword: String = PasswordUtils.hash(newPassword)
     
         addClass: (newClass: UniversityClass) -> Void = {
-        if (not this.classes.contains(newClass)) {
-            this#classes(classes.add(newClass))
+            if (not this.classes.contains(newClass)) {
+                this#classes(this.classes.add(newClass))
+            }
         }
-    }
     }
 }
 ```
@@ -242,7 +248,7 @@ Both of these actions return *Void* but you could of course do something like th
 
 addClassAndCountTotal: (newClass: UniversityClass) -> Int = {
     if (not this.classes.contains(newClass)) {
-        this#classes(classes.add(newClass))
+        this#classes(this.classes.add(newClass))
     }
     value totalClasses: Int = this.classes.size
     totalClasses
@@ -264,7 +270,7 @@ book.chapters // read "book get chapters"
 
 Greetings.greet("Peter") // read "Greetings get greet Peter"
 
-list.count(5) // returns the number of occurences of *5* // read "list get count 5"
+list.count(5) // returns the number of occurences of *5*, read "list get count 5"
 
 ```
 
@@ -283,67 +289,117 @@ mail#send(message) // read "mail do send message"
 
 ```
 
-There are several very neat things about this system. There is no need to name your methods like *getFullName*, you can use shorter names and have your code just as readable because it's clear that *.* is getting some value (without changing or doing anything) and *#* is doing/changing something.
+There are several very neat things about this system. There is no need to name your methods like *getFullName*, you can use shorter names and have your code just as readable because it's clear that *.* is a more-or-less pure *function*, getting some value (without changing or doing anything) and *#* is *an action*, doing/changing something.
 
 This is especially significant when we notice that we can use this to define getters and setters. Automatically generated ones work like this (assume we have an object *student* of type *Student* with a variable field *age*):
 
-- Getter: ``value age: Int = student.age``, read "student get age"
-- Setter: ``student#age(23)``, read "student do age 23"
+- Getter: ``value age: Int = student.age // read "student get age"``
+- Setter: ``student#age(23) // assigns 23 to student.age, read "student do age 23"``
 
-One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, also).
+One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, *this* is obligatory etc., so everything comes together perfectly).
 
-This also gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same thing and being used interchagebly and inconsistently.
+This also gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchagebly and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
 
-
-## Inheritance 
-
-The syntax for inheritance is as follows:
-
-```
-immutable class Animal {
-    ...
-}
-
-immutable class Dog extends Animal {
-    ...
-}
-
-```
-
-There is a *super* keyword equivalent to Java's *super* keyword.
-
-
-## Pattern matching
-
-The syntax of pattern matching is as follows:
-
-```
-singleton class StudentCommons {
-
-  values: {
-    MisterPrefix: String = "Pan "
-    MrsPrefix: String = "Pani "
-  }
-
-  functions: {
-    honorificTitle: (student: Student) -> String = {
-        match student {
-            Male -> MisterPrefix ++ student.fullName
-            Female -> MrsPrefix ++ student.fullName
-        }
-    }
-    
-    hashPassword: (password: String) -> String = HashingUtils.hashPassword(password)
-  }
-}
-```
 
 ## Other features
 
-- Logical operators: unary *not*, binary *and*, *or*, *xor*. 
+Let's look at one last piece of code:
 
-## Style notes
+```
+mutable class PhoneMessageReceiver extends MessageReceiver {
+    
+    values: {
+        MESSAGE_RECEIVED: String = "You got a new message!"
+        MESSAGE_INVALID: String = "Invalid message"
+        MAX_MESSAGE_LENGTH: Int = 100
+        
+        notificationChannels: List[NotificationChannel]
+    }
+    
+    variables: {
+        messages: List[Message] = List()
+    }
+    
+    functions: {
+        private parseMessage: (message: Message) -> String = {
+            if (this.validateMessage(message)) {
+                match message {
+                    case Email -> "One new email"
+                    case Sms -> "One new SMS"
+                    case Notification -> "One new notification"
+                }
+            } else {
+                this.MESSAGE_INVALID
+            }
+        }
+        
+        private validateMessage: (message: Message) -> Bool = {
+            not message.empty and message.length <= this.MAX_MESSAGE_LENGTH
+        }
+    }
+    
+    actions: {
+        override receive: (message: Message) -> Bool = {    
+            System#printLine(this.MESSAGE_RECEIVED)
+            
+            value response: String = this.parseMessage(message)
+            System#printLine(response)
+            
+            if (response != this.MESSAGE_INVALID) {
+                super#receive(message)
+                this#messages(this.messages.add(message))
+                
+                for (channel in this.notificationChannels) {
+                    channel#notify(response)
+                }
+                
+                True
+            } else {
+                False
+            }
+        }
+    }
+}
 
-**TODO fill**
+```
 
+We can see some more new features here:
+
+- Pattern matching syntax.
+
+- Inheritance syntax.
+
+- Method overriding syntax.
+
+- There is a *super* keyword equivalent to Java *super* keyword.
+
+- Logical operators: unary *not*, binary *and*, *or*, *xor*.
+
+- *Foreach* loop. There is also a *while* loop with standard syntax: ``while (condition) { }``. Note that these loops are imperative constructs and can only be used inside actions, not inside functions.
+
+
+Other interesting features include:
+
+- Higher-order functions and lambdas, for example: ``list.map((x) -> 2 * x)``
+
+## Style
+
+- Tidy has a pretty strict static style checking. In most languages, you can get away with writing ``if(x){``, ``if (x){``, ``x= 3`` etc. This usually has no major benefits and easily leads to very ugly inconsistent code. That's why Tidy intentionally enforces one particular style in basic language constructs (the one most conventional in languages with C-style syntax, especially Java and Scala). It still leaves you a lot of flexibility when it comes to style but doesn't allow it in places where it doesn't have much sense. So whitespaces are not semantically significant but you will get syntax errors if you don't respect them.
+
+- Case conventions are also important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
+
+- Naming conventions are similar to those in Scala, that is, try to use reasonably descriptive Java-style names, but in places where the code is mostly functional, it's okay to use less verbose, even one-letter identifiers, for example: ``add: (x: Int, y: Int) -> Int = x + y``.
+
+- Curly braces should be at the end of the same line as the preceding expression (Java-style). Two alternative syntax styles (one-liner without curly braces and multi-line with curly braces) were described above and are important to keep in mind. If you need to wrap expressions across two or more lines in places where curly braces are not used (e.g. in a method body), remember to leave the operator at the end of the line, especially in actions, otherwise it might cause confusion in the action body evaluation, for example:
+
+```
+// GOOD
+    value someText: String = "a" ++ "veeeeery" ++ 
+        "long" ++ "text" ++ "indeed"
+
+// BAD
+    value someText: String = "a" ++ "veeeeery"
+        ++ "long" ++ "text" ++ "indeed"
+
+```
 
