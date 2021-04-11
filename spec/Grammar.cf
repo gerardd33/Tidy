@@ -13,6 +13,7 @@ ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" Ident ClassBody ;
 
 
 ClassBodyEmpty. ClassBody ::= ;
+ClassBodyFilled. ClassBody ::= "{" ValuesDecl VariablesDecl FunctionsDecl ActionsDecl "}" ;
 
 
 -- CLASS TYPES --------------------------------
@@ -20,4 +21,52 @@ ClassBodyEmpty. ClassBody ::= ;
 ClassTypeMutable. ClassType ::= "mutable" ;
 ClassTypeImmutable. ClassType ::= "immutable" ;
 ClassTypeSingleton. ClassType ::= "singleton" ;
+
+
+-- CLASS SECTION DECLARATIONS -----------------
+
+ValuesAbsent. ValuesDecl ::= ;
+ValuesPresent. ValuesDecl ::= "values:" ValuesBody ;
+
+VariablesAbsent. VariablesDecl ::= ;
+VariablesPresent. VariablesDecl ::= "variables:" VariablesBody ;
+
+FunctionsAbsent. FunctionsDecl ::= ;
+FunctionsPresent. FunctionsDecl ::= "functions:" FunctionsBody ;
+
+ActionsAbsent. ActionsDecl ::= ;
+ActionsPresent. ActionsDecl ::= "actions:" ActionsBody ;
+
+
+-- VALUES SECTION -----------------------------
+
+ValuesBodyEmpty. ValuesBody ::= ;
+
+
+-- VARIABLES SECTION --------------------------
+
+VariablesBodyEmpty. VariablesBody ::= ;
+
+
+-- FUNCTIONS SECTION --------------------------
+
+FunctionsBodyEmpty. FunctionsBody ::= ;
+
+
+-- ACTIONS SECTION ----------------------------
+
+ActionsBodyEmpty. ActionsBody ::= ;
+
+
+
+
+
+
+
+
+
+-- COMMENTS -----------------------------------
+
+comment "//" ;
+comment "/*" "*/" ;
 
