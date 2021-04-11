@@ -298,7 +298,7 @@ This is especially significant when we notice that we can use this to define get
 
 One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, *this* is obligatory etc., so everything comes together perfectly).
 
-This also gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchagebly and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
+This also gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchangeably and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
 
 
 ## Other features
@@ -373,7 +373,7 @@ We can see some more new features here:
 
 - There is a *super* keyword equivalent to Java *super* keyword.
 
-- Logical operators: unary *not*, binary *and*, *or*, *xor*.
+- Logical operators: unary *not*, binary *and*, *or*. Logical literals are *True* and *False*.
 
 - *Foreach* loop. There is also a *while* loop with standard syntax: ``while (condition) { }``. Note that these loops are imperative constructs and can only be used inside actions, not inside functions.
 

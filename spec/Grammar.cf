@@ -1,0 +1,23 @@
+-- PROGRAMS -----------------------------------
+
+entrypoints Program ;
+Program. Program ::= [ClassDecl] ;
+
+
+-- CLASS DECLARATIONS -------------------------
+
+separator nonempty ClassDecl "" ;
+
+ClassDeclConcrete. ClassDecl ::= ClassType "class" Ident ClassBody ;
+ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" Ident ClassBody ;
+
+
+ClassBodyEmpty. ClassBody ::= ;
+
+
+-- CLASS TYPES --------------------------------
+
+ClassTypeMutable. ClassType ::= "mutable" ;
+ClassTypeImmutable. ClassType ::= "immutable" ;
+ClassTypeSingleton. ClassType ::= "singleton" ;
+
