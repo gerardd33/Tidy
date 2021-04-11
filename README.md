@@ -25,4 +25,43 @@ That last point is the main difference between Tidy and other languages that sti
 - **TODO Add instructions to run it etc.**
 
 - If you just want a snippet of what Tidy looks like, here's one:
-    **TODO SNIPPET**
+
+```
+mutable class Student {
+    
+    values: {
+        id: Int
+        firstName: String
+        lastName: String
+        birthDate: Date
+        gender: Gender
+    }
+    
+    variables: {
+        login: String
+        private passwordHash: String
+        classes: List[UniversityClass] = List()
+    }
+    
+    functions: {
+        fullName: () -> String = this.firstName ++ " " ++ this.lastName
+        
+        authorize: (enteredPassword: String) -> Bool = {
+            PasswordUtils.hash(enteredPassword) == this.passwordHash
+        }
+    }
+    
+    actions: {
+        changePassword: (newPassword: String) -> Void = {
+            Logger#log("Changing password for user " ++ this)
+            this#passwordHash(hashedPassword)
+        } with values: hashedPassword: String = PasswordUtils.hash(newPassword)
+    
+        addClass: (newClass: UniversityClass) -> Void = {
+            if (not this.classes.contains(newClass)) {
+                this#classes(this.classes.add(newClass))
+            }
+        }
+    }
+}
+```
