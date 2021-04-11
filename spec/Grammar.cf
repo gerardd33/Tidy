@@ -43,22 +43,22 @@ ActionsPresent. ActionsDecl ::= "actions:" ActionsBody ;
 -- VALUES SECTION -----------------------------
 
 ValueName. ValueName ::= Ident ;
--- TODO starts with lower case
+-- TODO if starts with lower case then normal value, else a constant 
 
 ValuesBodyEmpty. ValuesBody ::= ;
-ValuesBodyFilledOneLine. ValuesBody ::= [AttributeDecl] ;
-ValuesBodyFilledMultiLine. ValuesBody ::= "{" [AttributeDecl] "}" ;
+ValuesBodyFilledOneLine. ValuesBody ::= [ValueDecl] ;
+ValuesBodyFilledMultiLine. ValuesBody ::= "{" [ValueDecl] "}" ;
 
-separator AttributeDecl "," ; 
-UninitialisedAttribute. AttributeDecl ::= ValueName ":" ClassName ;
-InitialisedAttribute. AttributeDecl ::= ValueName ":" ClassName "=" Exp ;
+separator ValueDecl "," ; 
+UninitialisedAttribute. ValueDecl ::= ValueName ":" ClassName ;
+InitialisedAttribute. ValueDecl ::= ValueName ":" ClassName "=" Exp ;
 
 
 -- VARIABLES SECTION --------------------------
 
 VariablesBodyEmpty. VariablesBody ::= ;
-VariablesBodyFilledOneLine. VariablesBody ::= [AttributeDecl] ;
-VariablesBodyFilledMultiLine. VariablesBody ::= "{" [AttributeDecl] "}" ;
+VariablesBodyFilledOneLine. VariablesBody ::= [ValueDecl] ;
+VariablesBodyFilledMultiLine. VariablesBody ::= "{" [ValueDecl] "}" ;
 
 
 -- FUNCTIONS SECTION --------------------------
