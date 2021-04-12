@@ -42,16 +42,16 @@ And here's a bigger one:
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
     
@@ -66,8 +66,9 @@ mutable class Student {
     actions: {
         changePassword: (newPassword: String) -> Void = {
             Logger#log("Changing password for user " ++ this)
+            value hashedPassword: String = PasswordUtils.hash(newPassword)
             this#passwordHash(hashedPassword)
-        } with values: hashedPassword: String = PasswordUtils.hash(newPassword)
+        }
     
         addClass: (newClass: UniversityClass) -> Void = {
             if (not this.classes.contains(newClass)) {

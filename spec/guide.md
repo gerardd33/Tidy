@@ -232,8 +232,9 @@ mutable class Student {
     actions: {
         changePassword: (newPassword: String) -> Void = {
             Logger#log("Changing password for user " ++ this)
+            value hashedPassword: String = PasswordUtils.hash(newPassword)
             this#passwordHash(hashedPassword)
-        } with values: hashedPassword: String = PasswordUtils.hash(newPassword)
+        }
     
         addClass: (newClass: UniversityClass) -> Void = {
             if (not this.classes.contains(newClass)) {
@@ -311,9 +312,9 @@ Let's look at one last piece of code:
 mutable class PhoneMessageReceiver extends MessageReceiver {
     
     values: {
-        MESSAGE_RECEIVED: String = "You got a new message!",
-        MESSAGE_INVALID: String = "Invalid message",
-        MAX_MESSAGE_LENGTH: Int = 100,
+        messageReceived: String = "You got a new message!",
+        messageInvalid: String = "Invalid message",
+        maxMessageLength: Int = 100,
         
         notificationChannels: List[NotificationChannel]
     }
@@ -331,27 +332,27 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
                     case Notification -> "One new notification"
                 }
             } else {
-                this.MESSAGE_INVALID
+                this.messageInvalid
             }
         }
         
         private validateMessage: (message: Message) -> Bool = {
-            not message.empty and message.length <= this.MAX_MESSAGE_LENGTH
+            not message.empty and message.length <= this.maxMessageLength
         }
     }
     
     actions: {
         override receive: (message: Message) -> Bool = {    
-            System#printLine(this.MESSAGE_RECEIVED)
+            System#printLine(this.messageReceived)
             
             value response: String = this.parseMessage(message)
             System#printLine(response)
             
-            if (response != this.MESSAGE_INVALID) {
+            if (response != this.messageInvalid) {
                 super#receive(message)
                 this#messages(this.messages.add(message))
                 
-                for (channel in this.notificationChannels) {
+                for (channel: NotificationChannel in this.notificationChannels) {
                     channel#notify(response)
                 }
                 
@@ -395,7 +396,7 @@ Other useful features include:
 
 - In imperative expressions (imperative *if*, *while*, *foreach*) curly brackets are obligatory.
 
-- Case conventions are very important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
+- Case conventions are very important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*. Because getters with the field's name are automatically generated, fields with constants also need to be in *lowerCamelCase*.
 
 - Naming conventions are similar to those in Scala, that is, try to use reasonably descriptive Java-style names, but in places where the code is mostly functional, it's okay to use less verbose, even one-letter identifiers, for example: ``add: (x: Int, y: Int) -> Int = x + y``.
 
