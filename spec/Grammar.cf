@@ -122,9 +122,9 @@ EDivide. Exp3 ::= Exp3 "/" Exp4 ;
 EAdd. Exp2 ::= Exp2 "+" Exp3 ;
 ESubtract. Exp2 ::= Exp2 "-" Exp3 ;
 
-EComparisonOp. Exp1 ::= Exp1 RelationalOperator Exp2 ;
+ERelationalOperator. Exp1 ::= Exp1 RelationalOperator Exp2 ;
 
-EBooleanOp. Exp ::= Exp1 BooleanOperator Exp ;
+EBooleanOperator. Exp ::= Exp1 BooleanOperator Exp ;
 
 
 -- LITERALS ----------------------------------
@@ -133,7 +133,7 @@ LInt. Literal ::= Integer ;
 LBool. Literal ::= Boolean ;
 LChar. Literal ::= Char ;
 LString. Literal ::= String ;
-LVoid. Literal ::= "()" ;
+LVoid. Literal ::= "Pass" ;
 
 BTrue. Boolean ::= "True" ;
 BFalse. Boolean ::= "False" ;

@@ -375,14 +375,17 @@ We can see some more new features here:
 
 - There is a *super* keyword equivalent to Java *super* keyword.
 
-- Logical operators: unary *not*, binary *and*, *or*. Logical literals are *True* and *False*.
+- Logical operators: unary *not*, binary *and*, *or* along with literals *True* and *False*.
 
 - *Foreach* loop. There is also a *while* loop with standard syntax: ``while (condition) { }``. Note that these loops are imperative constructs and can only be used inside actions, not inside functions.
 
 
-Other interesting features include:
+Other useful features include:
 
-- Higher-order functions and lambdas, for example: ``list.map((x) -> 2 * x)``
+- Higher-order functions and lambdas, for example: ``list.map((x) -> 2 * x)``.
+
+- *Pass* literal of type *Void* (*NOP*). Can be used when you need or want to explicitly return something in an action with return type *Void*.
+
 
 ## Style
 
