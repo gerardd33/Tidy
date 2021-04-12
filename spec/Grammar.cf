@@ -8,57 +8,59 @@ Program. Program ::= [ClassDecl] ;
 
 separator nonempty ClassDecl "" ;
 
-ClassName. ClassName ::= Ident ;
+ClassIdent. ClassIdent ::= Ident ;
 -- TODO starts with upper case
 
-ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassName ClassBody ;
-ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassName ClassBody ;
+ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent ClassBody ;
+ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassIdent ClassBody ;
 
 
 ClassBodyEmpty. ClassBody ::= ;
-ClassBodyFilled. ClassBody ::= "{" ValuesDecl VariablesDecl FunctionsDecl ActionsDecl "}" ;
+ClassBodyFilled. ClassBody ::= "{" ValuesSection VariablesSection FunctionsSection ActionsSection "}" ;
 
--- CLASS TYPES --------------------------------
+-- CLASS MODIFIERS ----------------------------
 
-ClassTypeMutable. ClassType ::= "mutable" ;
-ClassTypeImmutable. ClassType ::= "immutable" ;
-ClassTypeinSgleton. ClassType ::= "singleton" ;
+MMutable. ClassType ::= "mutable" ;
+MImmutable. ClassType ::= "immutable" ;
+MSingleton. ClassType ::= "singleton" ;
 
 
 -- CLASS SECTION DECLARATIONS -----------------
 
-ValuesAbsent. ValuesDecl ::= ;
-ValuesPresent. ValuesDecl ::= "values:" ValuesBody ;
+ValuesAbsent. ValuesSection ::= ;
+ValuesPresent. ValuesSection ::= "values:" ValuesBody ;
 
-VariablesAbsent. VariablesDecl ::= ;
-VariablesPresent. VariablesDecl ::= "variables:" VariablesBody ;
+VariablesAbsent. VariablesSection ::= ;
+VariablesPresent. VariablesSection ::= "variables:" VariablesBody ;
 
-FunctionsAbsent. FunctionsDecl ::= ;
-FunctionsPresent. FunctionsDecl ::= "functions:" FunctionsBody ;
+FunctionsAbsent. FunctionsSection ::= ;
+FunctionsPresent. FunctionsSection ::= "functions:" FunctionsBody ;
 
-ActionsAbsent. ActionsDecl ::= ;
-ActionsPresent. ActionsDecl ::= "actions:" ActionsBody ;
+ActionsAbsent. ActionsSection ::= ;
+ActionsPresent. ActionsSection ::= "actions:" ActionsBody ;
 
 
 -- VALUES SECTION -----------------------------
 
-ValueName. ValueName ::= Ident ;
+ValueIdent. ValueIdent ::= Ident ;
 -- TODO if starts with lower case then normal value, else a constant 
+ValueType. ValueType ::= ClassIdent ;
+-- TODO doesn't work with generic types
 
 ValuesBodyEmpty. ValuesBody ::= ;
-ValuesBodyFilledOneLine. ValuesBody ::= [ValueDecl] ;
-ValuesBodyFilledMultiLine. ValuesBody ::= "{" [ValueDecl] "}" ;
+ValuesBodyOneLine. ValuesBody ::= [ValueDecl] ;
+ValuesBodyMultiLine. ValuesBody ::= "{" [ValueDecl] "}" ;
 
 separator ValueDecl "," ; 
-UninitialisedAttribute. ValueDecl ::= ValueName ":" ClassName ;
-InitialisedAttribute. ValueDecl ::= ValueName ":" ClassName "=" Exp ;
+UninitialisedAttribute. ValueDecl ::= ValueIdent ":" ValueType ;
+InitialisedAttribute. ValueDecl ::= ValueIdent ":" ValueType "=" Exp ;
 
 
 -- VARIABLES SECTION --------------------------
 
 VariablesBodyEmpty. VariablesBody ::= ;
-VariablesBodyFilledOneLine. VariablesBody ::= [ValueDecl] ;
-VariablesBodyFilledMultiLine. VariablesBody ::= "{" [ValueDecl] "}" ;
+VariablesBodyOneLine. VariablesBody ::= [ValueDecl] ;
+VariablesBodyMultiLine. VariablesBody ::= "{" [ValueDecl] "}" ;
 
 
 -- FUNCTIONS SECTION --------------------------
