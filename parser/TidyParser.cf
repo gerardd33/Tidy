@@ -64,7 +64,8 @@ VIdent. ValueIdent ::= LowerCaseIdent ;
 
 ValueTypeClass. ValueType ::=  ClassIdent ;
 ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
-ValueTypeFunction. ValueType ::= FunctionType ;
+ValueTypeFunction. ValueType ::= "get" MethodType ;
+ValueTypeAction. ValueType ::= "do" MethodType ;
 
 separator ValueDecl "," ;
 PublicValueDecl. ValueDecl ::= ValueDeclProper ;
@@ -86,12 +87,12 @@ FSBodyEmpty. FSBody ::= ;
 FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
 
 FIdent. FunctionIdent ::= LowerCaseIdent ;
-FType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
+FType. MethodType ::= "(" [ValueDecl] ")" "->" ValueType;
 
 separator FunctionDecl "" ;
-OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" FunctionType "=" FunctionBody ;
-PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" FunctionType "=" FunctionBody ;
-PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" FunctionType "=" FunctionBody ;
+OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" MethodType "=" FunctionBody ;
+PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" MethodType "=" FunctionBody ;
+PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" MethodType "=" FunctionBody ;
 
 FunctionBodyOneLine. FunctionBody ::= Expr ;
 FunctionBodyMultiLine. FunctionBody ::= "{" Expr "}" WithValues ;
@@ -106,9 +107,9 @@ ASBodyEmpty. ASBody ::= ;
 ASBodyFilled. ASBody ::= "{" [ActionDecl] "}" ;
 
 separator ActionDecl "" ; 
-OverrideActionDecl. ActionDecl ::= "override" FunctionIdent ":" FunctionType "=" ActionBody ;
-PublicActionDecl. ActionDecl ::= FunctionIdent ":" FunctionType "=" ActionBody ;
-PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" FunctionType "=" ActionBody ;
+OverrideActionDecl. ActionDecl ::= "override" FunctionIdent ":" MethodType "=" ActionBody ;
+PublicActionDecl. ActionDecl ::= FunctionIdent ":" MethodType "=" ActionBody ;
+PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" MethodType "=" ActionBody ;
 
 ActionBodyOneLine. ActionBody ::= Expr ;
 ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
@@ -120,10 +121,12 @@ separator Expr "" ;
 coercions Expr 5 ;
 
 ELiteral. Expr5 ::= Literal ;
-EValue. Expr5 ::= ValueIdent ;
+ELocalValue. Expr5 ::= ValueIdent ;
 ELocalValueDecl. Expr5 ::= LocalValueDecl ;
-ELambda. Expr5 ::= Lambda ;
-EFunctionCall. Expr5 ::= FunctionCall ;
+ELambdaFunction. Expr5 ::= LambdaFunction ;
+ELambdaAction. Expr5 ::= LambdaAction ;
+ELocalFunctionCall. Expr5 ::= "local" "." FunctionCall ;
+ELocalActionCall. Expr5 ::= "local" "#" FunctionCall ;
 ECtorCall. Expr5 ::= ConstructorCall ;
 EGetExpr. Expr5 ::= GetExpr ;
 EDoExpr. Expr5 ::= DoExpr ;
@@ -165,8 +168,11 @@ LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
 
 -- LAMBDAS -----------------------------------
 
-LambdaOneLine. Lambda ::= "(" [ValueDecl] ")" "->" Expr ;
-LambdaMultiLine. Lambda ::= "(" [ValueDecl] ")" "->" "{" Expr "}" ;
+LambdaFunctionOneLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" Expr ;
+LambdaFunctionMultiLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" "{" Expr "}" ;
+
+LambdaActionOneLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" Expr ;
+LambdaActionMultiLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" "{" Expr "}" ;
 
 
 -- FUNCTION CALLS ----------------------------
