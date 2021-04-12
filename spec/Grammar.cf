@@ -62,8 +62,9 @@ ValSBodyMultiLine. ValSBody ::= "{" [ValueDecl] "}" ;
 
 VIdent. ValueIdent ::= LowerCaseIdent ;
 
-ValueTypeClass. ValueType ::=  ClassIdent;
+ValueTypeClass. ValueType ::=  ClassIdent ;
 ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
+ValueTypeFunction. ValueType ::= FunctionType ;
 
 separator ValueDecl "," ;
 PublicValueDecl. ValueDecl ::= ValueDeclProper ;
@@ -121,6 +122,8 @@ coercions Expr 5 ;
 ELiteral. Expr5 ::= Literal ;
 EValue. Expr5 ::= ValueIdent ;
 ELocalValueDecl. Expr5 ::= LocalValueDecl ;
+ELambda. Expr5 ::= Lambda ;
+EFunctionCall. Expr5 ::= FunctionCall ;
 ECtorCall. Expr5 ::= ConstructorCall ;
 EGetExpr. Expr5 ::= GetExpr ;
 EDoExpr. Expr5 ::= DoExpr ;
@@ -158,6 +161,12 @@ VPass. Void ::= "Pass" ;
 -- LOCAL VALUE DECLARATIONS ------------------
 
 LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
+
+
+-- LAMBDAS -----------------------------------
+
+LambdaOneLine. Lambda ::= "(" [ValueDecl] ")" "->" Expr ;
+LambdaMultiLine. Lambda ::= "(" [ValueDecl] ")" "->" "{" Expr "}" ;
 
 
 -- FUNCTION CALLS ----------------------------

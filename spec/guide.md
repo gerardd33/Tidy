@@ -385,14 +385,14 @@ We can see some more new features here:
 
 Other useful features include:
 
-- Higher-order functions and lambdas, for example: ``list.map((x) -> 2 * x)``.
+- Higher-order functions and lambdas, for example: ``list.map((x: Int) -> 2 * x)``.
 
 - *Pass* literal of type *Void* (*NOP*). Can be used when you need or want to explicitly return something in an action with return type *Void*.
 
 
 ## Style
 
-- Tidy is pretty serious about style conventions. It doesn't force you to keep most of them through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular you should treat whitespaces seriously. The style used in the snippets above is highly encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions and don't put multiple expressions separate expressions (e.g. in action bodies) on one line.
+- Tidy is pretty serious about style conventions. It doesn't force you to keep most of them through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular, you should treat whitespaces seriously. The style used in the snippets above is highly encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions and don't put multiple expressions separate expressions (e.g. in action bodies) on one line.
 
 - In imperative expressions (imperative *if*, *while*, *foreach*) curly brackets are obligatory.
 
