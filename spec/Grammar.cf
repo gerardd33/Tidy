@@ -18,11 +18,15 @@ comment "/*" "*/" ;
 
 -- CLASS DECLARATIONS -------------------------
 
+separator ClassIdent "," ;
 ClassIdent. ClassIdent ::= UpperCaseIdent ;
 
 separator nonempty ClassDecl "" ;
-ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent ClassBody ;
-ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassIdent ClassBody ;
+ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent Inheritance ClassBody ;
+ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassIdent Inheritance ClassBody ;
+
+SuperclassAbsent. Inheritance ::= ;
+SuperclassPresent. Inheritance ::= "extends" ClassIdent ;
 
 
 ClassBodyEmpty. ClassBody ::= ;
@@ -60,10 +64,7 @@ ValSBodyMultiLine. ValSBody ::= "{" [ValueDecl] "}" ;
 ValueIdent. ValueIdent ::= LowerCaseIdent ;
 
 ValueTypeClass. ValueType ::=  ClassIdent;
-ValueTypeGeneric. ValueType ::= ClassIdent "[" [GenericParameter] "]" ;
-
-separator GenericParameter "," ;
-GenericParameter. GenericParameter ::= ClassIdent ; 
+ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
 
 separator ValueDecl "," ;
 PublicValueDecl. ValueDecl ::= ValueDeclProper ;
@@ -88,7 +89,8 @@ FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
 FunctionIdent. FunctionIdent ::= LowerCaseIdent ;
 FunctionType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
 
-separator FunctionDecl "" ; 
+separator FunctionDecl "" ;
+OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" FunctionType "=" FunctionBody ;
 PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" FunctionType "=" FunctionBody ;
 PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" FunctionType "=" FunctionBody ;
 
@@ -105,6 +107,7 @@ ASBodyEmpty. ASBody ::= ;
 ASBodyFilled. ASBody ::= "{" [ActionDecl] "}" ;
 
 separator ActionDecl "" ; 
+OverrideActionDecl. ActionDecl ::= "override" FunctionIdent ":" FunctionType "=" ActionBody ;
 PublicActionDecl. ActionDecl ::= FunctionIdent ":" FunctionType "=" ActionBody ;
 PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" FunctionType "=" ActionBody ;
 
@@ -191,7 +194,7 @@ DoExprChain. DoExpr ::= GetExpr "#" FunctionCall ;
 -- IMPERATIVE CONTROL FLOW -------------------
 
 IWhile. ImperativeControlFlow ::= "while" "(" Expr ")" "{" [Expr] "}" ;
-IForeach. ImperativeControlFlow ::= "for" "(" ValueDecl "in" ValueIdent ")" "{" [Expr] "}" ;
+IForeach. ImperativeControlFlow ::= "for" "(" ValueDecl "in" Expr ")" "{" [Expr] "}" ;
 IIf. ImperativeControlFlow ::= "if" "(" Expr ")" "{" [Expr] "}" OptionalElseBranch ;
 
 ElsePresent. OptionalElseBranch ::= "else" "{" [Expr] "}" ;
