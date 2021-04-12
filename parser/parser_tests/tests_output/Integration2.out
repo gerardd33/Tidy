@@ -1,0 +1,20 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "ClassAdder")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent (ASBodyFilled [PublicActionDecl (FIdent (LowerCaseIdent "addClassAndCountTotal")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "newClass")) (ValueTypeClass (CIdent (UpperCaseIdent "UniversityClass"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (ActionBodyMultiLine [EImperativeControlFlow (IIf (EUnaryNot (EGetExpr (GetExprChain (GetExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "classes")))) (FunctionCallWithArgs (FIdent (LowerCaseIdent "contains")) [FunctionArg (ELocalValue (VIdent (LowerCaseIdent "newClass")))])))) [EDoExpr (DoExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallWithArgs (FIdent (LowerCaseIdent "classes")) [FunctionArg (EGetExpr (GetExprChain (GetExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "classes")))) (FunctionCallWithArgs (FIdent (LowerCaseIdent "add")) [FunctionArg (ELocalValue (VIdent (LowerCaseIdent "newClass")))])))]))] ElseAbsent),ELocalValueDecl (LocalVDecl (PublicValueDecl (InitialisedValue (VIdent (LowerCaseIdent "totalClasses")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))) (EGetExpr (GetExprChain (GetExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "classes")))) (FunctionCallNoArgs (FIdent (LowerCaseIdent "size")))))))),ELocalValue (VIdent (LowerCaseIdent "totalClasses"))])])))]
+
+[Linearized tree]
+
+singleton class ClassAdder {
+  actions: {
+    addClassAndCountTotal : (newClass : UniversityClass) -> Int = {
+      if (not this . classes . contains (newClass)) {
+        this # classes (this . classes . add (newClass))
+      }
+      value totalClasses : Int = this . classes . size totalClasses
+    }
+    }
+  }
+

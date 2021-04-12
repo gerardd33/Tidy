@@ -1,0 +1,17 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Wrapper")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "getOrDefault")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "x")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (FunctionBodyMultiLine (EFunctionalControlFlow (FIfThenElse (ERelationalOperator (ELocalValue (VIdent (LowerCaseIdent "x"))) RGreater (ELiteral (LInt 3))) (ThenOneLine (ELocalValue (VIdent (LowerCaseIdent "x")))) (ElseOneLine (ELiteral (LInt 3))))) WithValuesAbsent)])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Wrapper {
+  functions: {
+    getOrDefault : (x : Int) -> Int = {
+      if (x > 3) then x else 3
+    }
+    }
+  }
+

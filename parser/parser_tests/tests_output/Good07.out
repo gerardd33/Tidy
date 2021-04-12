@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Random")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "randomValue")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "seed")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (FunctionBodyOneLine (ELiteral (LInt 3)))])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Random {
+  functions: {
+    randomValue : (seed : Int) -> Int = 3
+  }
+  }
+

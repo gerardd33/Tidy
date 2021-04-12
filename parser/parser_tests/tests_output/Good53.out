@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Expressions")) SuperclassAbsent (ClassBodyFilled ValuesAbsent (VariablesPresent (VarSBodyMultiLine [PublicValueDecl (InitialisedValue (VIdent (LowerCaseIdent "expressionField")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))) (EAdd (EAdd (EAdd (ELiteral (LInt 3)) (EMultiply (ELiteral (LInt 8)) (ELiteral (LInt 3)))) (EGetExpr (GetExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "randomValue")))))) (EGetExpr (GetExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallWithArgs (FIdent (LowerCaseIdent "foo")) [FunctionArg (ELiteral (LInt 5))])))))])) FunctionsAbsent ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Expressions {
+  variables: {
+    expressionField : Int = 3 + 8 * 3 + this . randomValue + this . foo (5)
+  }
+  }
+

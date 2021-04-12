@@ -1,0 +1,13 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MMutable (CIdent (UpperCaseIdent "Student")) SuperclassAbsent (ClassBodyFilled (ValuesPresent (ValSBodyOneLine [])) (VariablesPresent (VarSBodyOneLine [])) (FunctionsPresent FSBodyEmpty) (ActionsPresent ASBodyEmpty))]
+
+[Linearized tree]
+
+mutable class Student {
+  values: variables: functions: actions:
+}
+

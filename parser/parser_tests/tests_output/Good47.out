@@ -1,0 +1,17 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "FunctionHandler")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "handleFunction")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "f")) (ValueTypeGeneric (CIdent (UpperCaseIdent "BiFunction")) [CIdent (UpperCaseIdent "Int"),CIdent (UpperCaseIdent "Int")]))] (ValueTypeGeneric (CIdent (UpperCaseIdent "BiFunction")) [CIdent (UpperCaseIdent "Int"),CIdent (UpperCaseIdent "Int")])) (FunctionBodyMultiLine (ELocalValue (VIdent (LowerCaseIdent "f"))) WithValuesAbsent)])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class FunctionHandler {
+  functions: {
+    handleFunction : (f : BiFunction [Int, Int]) -> BiFunction [Int, Int] = {
+      f
+    }
+    }
+  }
+

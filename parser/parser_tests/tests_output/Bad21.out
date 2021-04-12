@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_LowerCaseIdent "badClassName"),PT (Pn 29 1 30) (TS "{" 53),PT (Pn 41 3 5) (TS "functions:" 34),PT (Pn 52 3 16) (TS "{" 53),PT (Pn 62 4 9) (T_LowerCaseIdent "goodMethodName"),PT (Pn 76 4 23) (TS ":" 13),PT (Pn 78 4 25) (TS "(" 3),PT (Pn 79 4 26) (TS ")" 4),PT (Pn 81 4 28) (TS "->" 10),PT (Pn 84 4 31) (T_UpperCaseIdent "Int"),PT (Pn 88 4 35) (TS "=" 16),PT (Pn 90 4 37) (TI "2"),PT (Pn 92 4 39) (TS "*" 5),PT (Pn 94 4 41) (TI "3"),PT (Pn 96 4 43) (TS "+" 6),PT (Pn 98 4 45) (TI "4"),PT (Pn 100 4 47) (TS "*" 5),PT (Pn 102 4 49) (TI "5"),PT (Pn 108 5 5) (TS "}" 54),PT (Pn 110 6 1) (TS "}" 54)]
+syntax error at line 1, column 17 before `badClassName'

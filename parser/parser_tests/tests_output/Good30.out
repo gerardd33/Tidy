@@ -1,0 +1,17 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Getter")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "checkSomeImmediateAttribute")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "person")) (ValueTypeClass (CIdent (UpperCaseIdent "Person"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Bool")))) (FunctionBodyMultiLine (ERelationalOperator (EGetExpr (GetExprInstance (VIdent (LowerCaseIdent "person")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "name"))))) RNotEqual (ELiteral (LString "Ralph"))) WithValuesAbsent)])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Getter {
+  functions: {
+    checkSomeImmediateAttribute : (person : Person) -> Bool = {
+      person . name != "Ralph"
+    }
+    }
+  }
+

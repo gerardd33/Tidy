@@ -1,0 +1,10 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MImmutable (CIdent (UpperCaseIdent "Student")) SuperclassAbsent ClassBodyEmpty,ClassDeclAbstract MMutable (CIdent (UpperCaseIdent "Person")) SuperclassAbsent ClassBodyEmpty,ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "StudentUtils")) SuperclassAbsent ClassBodyEmpty,ClassDeclAbstract MSingleton (CIdent (UpperCaseIdent "AbstractUtils")) SuperclassAbsent ClassBodyEmpty]
+
+[Linearized tree]
+
+immutable class Student abstract mutable class Person singleton class StudentUtils abstract singleton class AbstractUtils

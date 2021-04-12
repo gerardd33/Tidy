@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Characters")) SuperclassAbsent (ClassBodyFilled ValuesAbsent (VariablesPresent (VarSBodyMultiLine [PublicValueDecl (InitialisedValue (VIdent (LowerCaseIdent "character")) (ValueTypeClass (CIdent (UpperCaseIdent "Char"))) (ELiteral (LChar 'y')))])) FunctionsAbsent ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Characters {
+  variables: {
+    character : Char = 'y'
+  }
+  }
+

@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Voids")) SuperclassAbsent (ClassBodyFilled ValuesAbsent (VariablesPresent (VarSBodyMultiLine [PublicValueDecl (InitialisedValue (VIdent (LowerCaseIdent "strangeField")) (ValueTypeClass (CIdent (UpperCaseIdent "Void"))) (ELiteral (LVoid VPass)))])) FunctionsAbsent ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Voids {
+  variables: {
+    strangeField : Void = Pass
+  }
+  }
+

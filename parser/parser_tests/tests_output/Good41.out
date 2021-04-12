@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "RandomGenerator")) SuperclassAbsent (ClassBodyFilled (ValuesPresent (ValSBodyOneLine [PublicValueDecl (InitialisedValue (VIdent (LowerCaseIdent "randomInt")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))) (ELiteral (LInt 338894)))])) VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "generate")) (FType [] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (FunctionBodyOneLine (EGetExpr (GetExprStatic (CIdent (UpperCaseIdent "ExternalRandomUtils")) (FunctionCallWithArgs (FIdent (LowerCaseIdent "getRandomInt")) [])))),PrivateFunctionDecl (FIdent (LowerCaseIdent "getRandomInt")) (FType [] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (FunctionBodyOneLine (EGetExpr (GetExprInstance (VIdent (LowerCaseIdent "this")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "randomInt"))))))])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class RandomGenerator {
+  values: randomInt : Int = 338894 functions: {
+    generate : () -> Int = ExternalRandomUtils . getRandomInt () private getRandomInt : () -> Int = this . randomInt
+  }
+  }
+

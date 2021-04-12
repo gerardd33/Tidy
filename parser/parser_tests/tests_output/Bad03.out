@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "mutable" 41),PT (Pn 8 1 9) (TS "class" 29),PT (Pn 14 1 15) (T_UpperCaseIdent "Student"),PT (Pn 22 1 23) (TS "{" 53),PT (Pn 29 2 5) (TS "values:" 49),PT (Pn 37 2 13) (TS "{" 53),PT (Pn 47 3 9) (T_LowerCaseIdent "age"),PT (Pn 50 3 12) (TS ":" 13),PT (Pn 52 3 14) (T_UpperCaseIdent "Int"),PT (Pn 56 3 18) (TS "=" 16),PT (Pn 58 3 20) (TI "3"),PT (Pn 59 3 21) (TS "," 8),PT (Pn 69 4 9) (T_LowerCaseIdent "firstName"),PT (Pn 78 4 18) (TS ":" 13),PT (Pn 80 4 20) (T_UpperCaseIdent "String"),PT (Pn 95 5 9) (T_LowerCaseIdent "lastName"),PT (Pn 103 5 17) (TS ":" 13),PT (Pn 105 5 19) (T_UpperCaseIdent "String"),PT (Pn 116 6 5) (TS "}" 54),PT (Pn 127 8 5) (TS "variables:" 50),PT (Pn 138 8 16) (T_LowerCaseIdent "numberOfClasses"),PT (Pn 153 8 31) (TS ":" 13),PT (Pn 155 8 33) (T_UpperCaseIdent "Int"),PT (Pn 158 8 36) (TS "," 8),PT (Pn 160 8 38) (T_LowerCaseIdent "year"),PT (Pn 164 8 42) (TS ":" 13),PT (Pn 166 8 44) (T_UpperCaseIdent "Int"),PT (Pn 170 9 1) (TS "}" 54)]
+syntax error at line 5, column 9 before `lastName'

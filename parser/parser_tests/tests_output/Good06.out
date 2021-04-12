@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MMutable (CIdent (UpperCaseIdent "Student")) SuperclassAbsent (ClassBodyFilled (ValuesPresent (ValSBodyMultiLine [PublicValueDecl (InitialisedValue (VIdent (LowerCaseIdent "age")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))) (ELiteral (LInt 3))),PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "firstName")) (ValueTypeClass (CIdent (UpperCaseIdent "String")))),PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "lastName")) (ValueTypeClass (CIdent (UpperCaseIdent "String"))))])) VariablesAbsent FunctionsAbsent ActionsAbsent)]
+
+[Linearized tree]
+
+mutable class Student {
+  values: {
+    age : Int = 3, firstName : String, lastName : String
+  }
+  }
+

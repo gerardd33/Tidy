@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "RandomGenerator"),PT (Pn 32 1 33) (TS "{" 53),PT (Pn 44 3 5) (TS "values:" 49),PT (Pn 52 3 13) (T_UpperCaseIdent "RANDOM_INT"),PT (Pn 62 3 23) (TS ":" 13),PT (Pn 64 3 25) (T_UpperCaseIdent "Int"),PT (Pn 68 3 29) (TS "=" 16),PT (Pn 70 3 31) (TI "338894"),PT (Pn 86 5 5) (TS "functions:" 34),PT (Pn 97 5 16) (TS "{" 53),PT (Pn 107 6 9) (T_LowerCaseIdent "generate"),PT (Pn 115 6 17) (TS ":" 13),PT (Pn 117 6 19) (TS "(" 3),PT (Pn 118 6 20) (TS ")" 4),PT (Pn 120 6 22) (TS "->" 10),PT (Pn 123 6 25) (T_UpperCaseIdent "Int"),PT (Pn 127 6 29) (TS "=" 16),PT (Pn 129 6 31) (T_LowerCaseIdent "getRandomInt"),PT (Pn 141 6 43) (TS "(" 3),PT (Pn 142 6 44) (TS ")" 4),PT (Pn 157 8 9) (TS "private" 45),PT (Pn 165 8 17) (T_LowerCaseIdent "getRandomInt"),PT (Pn 177 8 29) (TS ":" 13),PT (Pn 179 8 31) (TS "(" 3),PT (Pn 180 8 32) (TS ")" 4),PT (Pn 182 8 34) (TS "->" 10),PT (Pn 185 8 37) (T_UpperCaseIdent "Int"),PT (Pn 189 8 41) (TS "=" 16),PT (Pn 191 8 43) (T_LowerCaseIdent "this"),PT (Pn 195 8 47) (TS "." 11),PT (Pn 196 8 48) (T_UpperCaseIdent "RANDOM_INT"),PT (Pn 211 9 5) (TS "}" 54),PT (Pn 213 10 1) (TS "}" 54)]
+syntax error at line 3, column 13 before `RANDOM_INT'

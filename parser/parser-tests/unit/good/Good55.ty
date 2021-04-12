@@ -1,8 +1,0 @@
-singleton class Expressions extends Something { 
-    
-    variables: {
-        twice: SomeType = (x: Int) -> {
-            if (x > 3) then x > 3 else x < 8
-        }
-    }
-}

@@ -1,0 +1,15 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Math")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "twentySix")) (FType [] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (FunctionBodyOneLine (EAdd (EMultiply (ELiteral (LInt 2)) (ELiteral (LInt 3))) (EMultiply (ELiteral (LInt 4)) (ELiteral (LInt 5)))))])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class Math {
+  functions: {
+    twentySix : () -> Int = 2 * 3 + 4 * 5
+  }
+  }
+

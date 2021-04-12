@@ -1,0 +1,19 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "StructureClearer")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent (ASBodyFilled [PublicActionDecl (FIdent (LowerCaseIdent "clear")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "structure")) (ValueTypeClass (CIdent (UpperCaseIdent "DataStructure"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Void")))) (ActionBodyMultiLine [EImperativeControlFlow (IWhile (EUnaryNot (EGetExpr (GetExprInstance (VIdent (LowerCaseIdent "structure")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "empty")))))) [EDoExpr (DoExprInstance (VIdent (LowerCaseIdent "structure")) (FunctionCallNoArgs (FIdent (LowerCaseIdent "remove"))))])])])))]
+
+[Linearized tree]
+
+singleton class StructureClearer {
+  actions: {
+    clear : (structure : DataStructure) -> Void = {
+      while (not structure . empty) {
+        structure # remove
+      }
+      }
+    }
+  }
+

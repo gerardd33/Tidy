@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Characters"),PT (Pn 27 1 28) (TS "{" 53),PT (Pn 39 3 5) (TS "variables:" 50),PT (Pn 50 3 16) (TS "{" 53),PT (Pn 60 4 9) (T_LowerCaseIdent "character"),PT (Pn 69 4 18) (TS ":" 13),PT (Pn 71 4 20) (T_UpperCaseIdent "Char"),PT (Pn 76 4 25) (TS "=" 16),Err (Pn 80 4 29)]
+syntax error at line 4, column 29 due to lexer error

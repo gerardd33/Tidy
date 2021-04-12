@@ -1,0 +1,17 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Random")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent (ASBodyFilled [PublicActionDecl (FIdent (LowerCaseIdent "randomValue")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "seed")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Int")))) (ActionBodyMultiLine [ELiteral (LInt 313),ELiteral (LInt 73222),ELiteral (LInt 388),ELiteral (LInt 33329)])])))]
+
+[Linearized tree]
+
+singleton class Random {
+  actions: {
+    randomValue : (seed : Int) -> Int = {
+      313 73222 388 33329
+    }
+    }
+  }
+

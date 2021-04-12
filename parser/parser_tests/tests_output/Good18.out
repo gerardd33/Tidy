@@ -1,0 +1,19 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "Loop")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent (ASBodyFilled [PublicActionDecl (FIdent (LowerCaseIdent "loop")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "x")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Void")))) (ActionBodyMultiLine [EImperativeControlFlow (IWhile (ERelationalOperator (EUnaryNot (ELocalValue (VIdent (LowerCaseIdent "x")))) RGreater (ELiteral (LInt 10000))) [ELiteral (LVoid VPass)])])])))]
+
+[Linearized tree]
+
+singleton class Loop {
+  actions: {
+    loop : (x : Int) -> Void = {
+      while (not x > 10000) {
+        Pass
+      }
+      }
+    }
+  }
+

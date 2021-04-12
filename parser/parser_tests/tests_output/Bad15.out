@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "mutable" 41),PT (Pn 8 1 9) (TS "class" 29),PT (Pn 14 1 15) (T_UpperCaseIdent "Student"),PT (Pn 22 1 23) (TS "{" 53),PT (Pn 34 3 5) (TS "values:" 49),PT (Pn 42 3 13) (TS "{" 53),PT (Pn 52 4 9) (T_LowerCaseIdent "age"),PT (Pn 55 4 12) (TS ":" 13),PT (Pn 57 4 14) (T_UpperCaseIdent "Int"),PT (Pn 61 4 18) (TS "=" 16),PT (Pn 63 4 20) (TI "3"),PT (Pn 64 4 21) (TS "," 8),PT (Pn 74 5 9) (T_LowerCaseIdent "firstName"),PT (Pn 83 5 18) (TS "," 8),PT (Pn 93 6 9) (T_LowerCaseIdent "lastName"),PT (Pn 101 6 17) (TS ":" 13),PT (Pn 103 6 19) (T_UpperCaseIdent "String"),PT (Pn 114 7 5) (TS "}" 54),PT (Pn 116 8 1) (TS "}" 54)]
+syntax error at line 5, column 18 before `,'

@@ -1,0 +1,17 @@
+
+Parse Successful!
+
+[Abstract Syntax]
+
+ProgramEntrypoint [ClassDeclConcrete MSingleton (CIdent (UpperCaseIdent "SomePredicate")) SuperclassAbsent (ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent (FSBodyFilled [PublicFunctionDecl (FIdent (LowerCaseIdent "predicate")) (FType [PublicValueDecl (UninitialisedValue (VIdent (LowerCaseIdent "x")) (ValueTypeClass (CIdent (UpperCaseIdent "Int"))))] (ValueTypeClass (CIdent (UpperCaseIdent "Bool")))) (FunctionBodyMultiLine (ERelationalOperator (ELocalValue (VIdent (LowerCaseIdent "x"))) RGreater (ELiteral (LInt 3))) WithValuesAbsent)])) ActionsAbsent)]
+
+[Linearized tree]
+
+singleton class SomePredicate {
+  functions: {
+    predicate : (x : Int) -> Bool = {
+      x > 3
+    }
+    }
+  }
+

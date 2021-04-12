@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Random"),PT (Pn 23 1 24) (TS "{" 53),PT (Pn 35 3 5) (TS "functions:" 34),PT (Pn 46 3 16) (TS "{" 53),PT (Pn 56 4 9) (T_LowerCaseIdent "randomValue"),PT (Pn 67 4 20) (TS ":" 13),PT (Pn 69 4 22) (TS "(" 3),PT (Pn 70 4 23) (T_LowerCaseIdent "seed"),PT (Pn 74 4 27) (TS ":" 13),PT (Pn 76 4 29) (T_UpperCaseIdent "Int"),PT (Pn 79 4 32) (TS ")" 4),PT (Pn 81 4 34) (TS "->" 10),PT (Pn 84 4 37) (TS "=" 16),PT (Pn 86 4 39) (TI "3"),PT (Pn 92 5 5) (TS "}" 54),PT (Pn 94 6 1) (TS "}" 54)]
+syntax error at line 4, column 37 before `='

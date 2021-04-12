@@ -1,0 +1,6 @@
+
+Parse              Failed...
+
+Tokens:
+[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Expressions"),PT (Pn 28 1 29) (TS "extends" 32),PT (Pn 36 1 37) (T_UpperCaseIdent "Something"),PT (Pn 46 1 47) (TS "{" 53),PT (Pn 58 3 5) (TS "variables:" 50),PT (Pn 69 3 16) (TS "{" 53),PT (Pn 79 4 9) (T_LowerCaseIdent "twice"),PT (Pn 84 4 14) (TS ":" 13),PT (Pn 86 4 16) (T_UpperCaseIdent "SomeType"),PT (Pn 95 4 25) (TS "=" 16),PT (Pn 97 4 27) (TS "(" 3),PT (Pn 98 4 28) (T_LowerCaseIdent "x"),PT (Pn 99 4 29) (TS ":" 13),PT (Pn 101 4 31) (T_UpperCaseIdent "Int"),PT (Pn 104 4 34) (TS ")" 4),PT (Pn 106 4 36) (TS "->" 10),PT (Pn 114 5 5) (TS "}" 54),PT (Pn 116 6 1) (TS "}" 54)]
+syntax error at line 4, column 29 before `:'
