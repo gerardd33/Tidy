@@ -1,0 +1,6 @@
+singleton class Random { 
+    
+    actions: {
+        randomValue: (seed: Int) -> Int = 313
+    }
+}

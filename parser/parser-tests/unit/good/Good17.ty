@@ -1,0 +1,8 @@
+singleton class Math { 
+    
+    functions: {
+        isAnyTrue: () -> Bool = {
+            3 > 5 or (not 7 != 7 and False)
+        }
+    }
+}

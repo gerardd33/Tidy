@@ -1,0 +1,6 @@
+singleton class Main {
+
+    actions: {
+        helloWorld: () -> Void = System#printLine("Hello world!")
+    }
+}

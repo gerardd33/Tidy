@@ -1,0 +1,9 @@
+singleton class Loop { 
+    
+    actions: {
+        loop: (list: SomeListType) -> Int = {
+            for (element: Int in list) element
+            2
+        }
+    }
+}

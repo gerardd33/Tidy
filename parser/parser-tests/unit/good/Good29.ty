@@ -1,0 +1,11 @@
+singleton class Classifier { 
+    
+    functions: {
+        classify: (person: Person) -> String = {
+            match person {
+                case Male -> "A man"
+                case Female -> "A woman"
+            }
+        }
+    }
+}

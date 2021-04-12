@@ -1,0 +1,9 @@
+singleton class Classifier { 
+    
+    functions: {
+        classify: (person: Person) -> String = {
+            match person {
+            }
+        }
+    }
+}

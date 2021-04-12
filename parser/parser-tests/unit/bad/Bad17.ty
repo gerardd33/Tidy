@@ -1,0 +1,6 @@
+singleton class Random { 
+    
+    functions: {
+        randomValue: (seed: Int, anotherSeed: String, ) -> Int = 3
+    }
+}

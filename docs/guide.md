@@ -71,10 +71,12 @@ singleton class ClassName {
     values:
     
     functions:
+    
+    actions:
 }
 ```
 
-It's the same as for an immutable class. The only major difference between the two is that singleton classes cannot be instantiated and you access their members using the name of the class, not the name of the instance. They're the equivalent of static classes in other languages or of *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all of your static methods.
+It's the same as for an immutable class but it can also have actions. The other major difference between the two is that singleton classes cannot be instantiated and you access their members using the name of the class, not the name of the instance. They're the equivalent of static classes in other languages or of *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all of your static methods.
 
 ## Abstract classes
 
@@ -95,9 +97,9 @@ If you don't:
 
 ```
 values: {
-    id: Int
-    firstName: String
-    lastName: String
+    id: Int,
+    firstName: String,
+    lastName: String,
     age: Int
 }
 ```
@@ -108,16 +110,16 @@ So here's our class:
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
 }
@@ -154,16 +156,16 @@ Now let's see what Tidy's functions look like:
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
     
@@ -191,7 +193,7 @@ or of course:
 someValueForDummyStudent: () -> Student = {
     ValueGenerator.value(student)
 } with values: {
-    studentName: String = NameGenerator.name
+    studentName: String = NameGenerator.name,
     student: Student = Student(studentName, 23)
 }
 ```
@@ -206,16 +208,16 @@ Actions behave more or less like methods in Scala. They can be composed of sever
 mutable class Student {
     
     values: {
-        id: Int
-        firstName: String
-        lastName: String
-        birthDate: Date
+        id: Int,
+        firstName: String,
+        lastName: String,
+        birthDate: Date,
         gender: Gender
     }
     
     variables: {
-        login: String
-        private passwordHash: String
+        login: String,
+        private passwordHash: String,
         classes: List[UniversityClass] = List()
     }
     
@@ -230,8 +232,9 @@ mutable class Student {
     actions: {
         changePassword: (newPassword: String) -> Void = {
             Logger#log("Changing password for user " ++ this)
+            value hashedPassword: String = PasswordUtils.hash(newPassword)
             this#passwordHash(hashedPassword)
-        } with values: hashedPassword: String = PasswordUtils.hash(newPassword)
+        }
     
         addClass: (newClass: UniversityClass) -> Void = {
             if (not this.classes.contains(newClass)) {
@@ -296,9 +299,9 @@ This is especially significant when we notice that we can use this to define get
 - Getter: ``value age: Int = student.age // read "student get age"``
 - Setter: ``student#age(23) // assigns 23 to student.age, read "student do age 23"``
 
-One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, *this* is obligatory etc., so everything comes together perfectly).
+One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, *this* is obligatory etc., so everything comes together perfectly). This also means that parameters and local values can't shadow attributes as well as that we can call functions with no arguments without parentheses and not worry about conflicts.
 
-This also gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchagebly and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
+It gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchangeably and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
 
 
 ## Other features
@@ -309,9 +312,9 @@ Let's look at one last piece of code:
 mutable class PhoneMessageReceiver extends MessageReceiver {
     
     values: {
-        MESSAGE_RECEIVED: String = "You got a new message!"
-        MESSAGE_INVALID: String = "Invalid message"
-        MAX_MESSAGE_LENGTH: Int = 100
+        messageReceived: String = "You got a new message!",
+        messageInvalid: String = "Invalid message",
+        maxMessageLength: Int = 100,
         
         notificationChannels: List[NotificationChannel]
     }
@@ -322,34 +325,34 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
     
     functions: {
         private parseMessage: (message: Message) -> String = {
-            if (this.validateMessage(message)) {
+            if (this.validateMessage(message)) then {
                 match message {
                     case Email -> "One new email"
                     case Sms -> "One new SMS"
                     case Notification -> "One new notification"
                 }
             } else {
-                this.MESSAGE_INVALID
+                this.messageInvalid
             }
         }
         
         private validateMessage: (message: Message) -> Bool = {
-            not message.empty and message.length <= this.MAX_MESSAGE_LENGTH
+            not message.empty and message.length <= this.maxMessageLength
         }
     }
     
     actions: {
         override receive: (message: Message) -> Bool = {    
-            System#printLine(this.MESSAGE_RECEIVED)
+            System#printLine(this.messageReceived)
             
             value response: String = this.parseMessage(message)
             System#printLine(response)
             
-            if (response != this.MESSAGE_INVALID) {
+            if (response != this.messageInvalid) {
                 super#receive(message)
                 this#messages(this.messages.add(message))
                 
-                for (channel in this.notificationChannels) {
+                for (channel: NotificationChannel in this.notificationChannels) {
                     channel#notify(response)
                 }
                 
@@ -373,20 +376,27 @@ We can see some more new features here:
 
 - There is a *super* keyword equivalent to Java *super* keyword.
 
-- Logical operators: unary *not*, binary *and*, *or*, *xor*.
+- Logical operators: unary *not*, binary *and*, *or* along with literals *True* and *False*.
 
 - *Foreach* loop. There is also a *while* loop with standard syntax: ``while (condition) { }``. Note that these loops are imperative constructs and can only be used inside actions, not inside functions.
 
+- *If* statements. Note the very important distinction between the imperative *if* (it can have an optional else branch) and the functional *if-then-else*. The former is like an *if* in C and returns a *Void*, the latter is like Java ternary operator and returns the value from either *then* or *else* branch.
 
-Other interesting features include:
 
-- Higher-order functions and lambdas, for example: ``list.map((x) -> 2 * x)``
+Other useful features include:
+
+- Higher-order functions and lambdas, for example: ``list.map((x: Int) -> 2 * x)``.
+
+- *Pass*: literal of type *Void* (*NOP*). Can be used when you need to explicitly return something in an action or expression that expects to return *Void*.
+
 
 ## Style
 
-- Tidy has a pretty strict static style checking. In most languages, you can get away with writing ``if(x){``, ``if (x){``, ``x= 3`` etc. This usually has no major benefits and easily leads to very ugly inconsistent code. That's why Tidy intentionally enforces one particular style in basic language constructs (the one most conventional in languages with C-style syntax, especially Java and Scala). It still leaves you a lot of flexibility when it comes to style but doesn't allow it in places where it doesn't have much sense. So whitespaces are not semantically significant but you will get syntax errors if you don't respect them.
+- Tidy is pretty serious about style. It doesn't force you to keep most of the conventions through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular, you should treat whitespaces seriously. The style used in the snippets above is encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions and don't put multiple expressions separate expressions (e.g. in action bodies) on one line.
 
-- Case conventions are also important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
+- In imperative expressions (imperative *if*, *while*, *foreach*) curly brackets are obligatory.
+
+- Case conventions are very important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*. Because getters with the field's name are automatically generated, fields with constants also need to be in *lowerCamelCase*.
 
 - Naming conventions are similar to those in Scala, that is, try to use reasonably descriptive Java-style names, but in places where the code is mostly functional, it's okay to use less verbose, even one-letter identifiers, for example: ``add: (x: Int, y: Int) -> Int = x + y``.
 
