@@ -4,6 +4,12 @@ entrypoints Program ;
 Program. Program ::= [ClassDecl] ;
 
 
+-- COMMENTS -----------------------------------
+
+comment "//" ;
+comment "/*" "*/" ;
+
+
 -- CLASS DECLARATIONS -------------------------
 
 ClassIdent. ClassIdent ::= Ident ;
@@ -99,16 +105,41 @@ ActionBodyOneLine. ActionBody ::= Exp ;
 ActionBodyMultiLine. ActionBody ::= "{" [Exp] "}" ;
 
 
+-- EXPRESSIONS -------------------------------
 
--- TODO currently a mock
 separator Exp "" ;
-Exp. Exp ::= Integer;
+coercions Exp 6 ;
+
+ELiteral. Exp6 ::= Literal ;
+-- EImperative. Exp6 ::= Imperative ;
+
+EMultiply. Exp5 ::= Exp5 "*" Exp6 ;
+EDivide. Exp5 ::= Exp5 "/" Exp6 ;
+
+EAdd. Exp4 ::= Exp4 "+" Exp5 ;
+ESubtract. Exp4 ::= Exp4 "-" Exp5 ;
+
+EComparisonOp. Exp3 ::= Exp3 ComparisonOperator Exp4 ;
+ENot. Exp2 ::= "not" Exp3 ;
+EBooleanOp. Exp1 ::= Exp1 BooleanOperator Exp2 ;
 
 
+-- LITERALS ----------------------------------
+
+LInt. Literal ::= Integer ;
+LBool. Literal ::= Boolean ;
+LChar. Literal ::= Char ;
+LString. Literal ::= String ;
+LVoid. Literal ::= "()" ;
+
+BTrue. Boolean ::= "True" ;
+BFalse. Boolean ::= "False" ;
 
 
+-- IMPERATIVE INSTRUCTIONS -------------------
 
--- COMMENTS -----------------------------------
+-- TODO add
 
-comment "//" ;
-comment "/*" "*/" ;
+-- COMPARISON OPERATORS ----------------------
+
+-- BOOLEAN OPERATORS -------------------------
