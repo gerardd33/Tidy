@@ -298,9 +298,9 @@ This is especially significant when we notice that we can use this to define get
 - Getter: ``value age: Int = student.age // read "student get age"``
 - Setter: ``student#age(23) // assigns 23 to student.age, read "student do age 23"``
 
-One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, *this* is obligatory etc., so everything comes together perfectly).
+One of its greatest benefits is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment can happen as a call to a setter method of some field on some object (all parameters and local variables are constant, like in Haskell, *this* is obligatory etc., so everything comes together perfectly). This also means that parameters and local values can't shadow attributes as well as that we can call functions with no arguments without parentheses and not worry about conflicts.
 
-This also gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchangeably and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
+It gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same things and being used interchangeably and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax.
 
 
 ## Other features

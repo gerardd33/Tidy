@@ -144,18 +144,27 @@ BFalse. Boolean ::= "False" ;
 VPass. Void ::= "Pass" ;
 
 
+-- FUNCTION CALLS ----------------------------
+
+FunctionCallNoArgs. FunctionCall ::= FunctionIdent ;
+FunctionCallWithArgs. FunctionCall ::= FunctionIdent "(" [FunctionArgument] ")" ;
+
+separator FunctionArgument "," ;
+FunctionArgument. FunctionArgument ::= Expr ;
+
+
 -- GET EXPRESSIONS ---------------------------
 
-GetExprInstance. GetExpr ::= ValueIdent "." FunctionIdent ;
-GetExprStatic. GetExpr ::= ClassIdent "." FunctionIdent ;
-GetExprChain. GetExpr ::= GetExpr "." FunctionIdent ;
+GetExprInstance. GetExpr ::= ValueIdent "." FunctionCall ;
+GetExprStatic. GetExpr ::= ClassIdent "." FunctionCall ;
+GetExprChain. GetExpr ::= GetExpr "." FunctionCall ;
 
 
 -- DO EXPRESSIONS ----------------------------
 
-DoExprInstance. DoExpr ::= ValueIdent "#" FunctionIdent ;
-DoExprStatic. DoExpr ::= ClassIdent "#" FunctionIdent ;
-DoExprChain. DoExpr ::= GetExpr "#" FunctionIdent ;
+DoExprInstance. DoExpr ::= ValueIdent "#" FunctionCall ;
+DoExprStatic. DoExpr ::= ClassIdent "#" FunctionCall ;
+DoExprChain. DoExpr ::= GetExpr "#" FunctionCall ;
 
 
 -- IMPERATIVE CONTROL FLOW -------------------
