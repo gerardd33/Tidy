@@ -161,6 +161,13 @@ ThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
 ElseOneLine. ElseBranch ::= "else" Expr ;
 ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
 
+FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
+
+separator MatchCase "" ;
+MatchCase. MatchCase ::= "case" Pattern "->" Expr ;
+
+TypePattern. Pattern ::= ValueType ; 
+
 
 -- RELATIONAL OPERATORS ----------------------
 
