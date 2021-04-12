@@ -27,6 +27,18 @@ That last point is the main difference between Tidy and other languages that sti
 - If you just want a snippet of what Tidy looks like, here's one:
 
 ```
+singleton class Main {
+
+    actions: {
+        helloWorld: () -> Void = System#printLine("Hello world!")
+    }
+}
+
+```
+
+And here's a bigger one:
+
+```
 mutable class Student {
     
     values: {
