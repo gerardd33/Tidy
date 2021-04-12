@@ -1,3 +1,9 @@
+-- GLOBAL -------------------------------------
+
+token UpperCaseIdent (upper (letter | digit | '_')*) ;
+token LowerCaseIdent (lower (letter | digit | '_')*) ;
+
+
 -- PROGRAMS -----------------------------------
 
 entrypoints Program ;
@@ -12,8 +18,7 @@ comment "/*" "*/" ;
 
 -- CLASS DECLARATIONS -------------------------
 
-ClassIdent. ClassIdent ::= Ident ;
--- TODO starts with upper case
+ClassIdent. ClassIdent ::= UpperCaseIdent ;
 
 separator nonempty ClassDecl "" ;
 ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent ClassBody ;
@@ -53,7 +58,8 @@ ValSBodyOneLine. ValSBody ::= [ValueDecl] ;
 ValSBodyMultiLine. ValSBody ::= "{" [ValueDecl] "}" ;
 
 ValueIdent. ValueIdent ::= Ident ;
--- TODO if starts with lower case then normal value, else a constant 
+-- If it starts with a lower-case letter then it's a normal value, 
+-- otherwise it's a constant.
 ValueType. ValueType ::= ClassIdent ;
 -- TODO doesn't work with generic types, doesn't work with function types
 
@@ -74,8 +80,7 @@ VarSBodyMultiLine. VarSBody ::= "{" [ValueDecl] "}" ;
 FSBodyEmpty. FSBody ::= ;
 FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
 
-FunctionIdent. FunctionIdent ::= Ident ;
--- TODO must start with lower case
+FunctionIdent. FunctionIdent ::= LowerCaseIdent ;
 FunctionType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
 -- TODO merge FunctionType and valueType, extract types to a different set of rules in general, after it's working
 -- TODO should be handled better, with connection to function objects to be pure OOP
@@ -112,6 +117,7 @@ coercions Expr 5 ;
 
 ELiteral. Expr5 ::= Literal ;
 EValue. Expr5 ::= ValueIdent ;
+ECtorCall. Expr5 ::= ConstructorCall ;
 EGetExpr. Expr5 ::= GetExpr ;
 EDoExpr. Expr5 ::= DoExpr ;
 EImperativeControlFlow. Expr5 ::= ImperativeControlFlow ;
@@ -153,7 +159,13 @@ separator FunctionArgument "," ;
 FunctionArgument. FunctionArgument ::= Expr ;
 
 
--- GET EXPRESSIONS ---------------------------
+-- CONSTRUCTOR CALLS --------------------------
+
+CtorCallNoArgs. ConstructorCall ::= ClassIdent ;
+CtorCallWithArgs. ConstructorCall ::= ClassIdent "(" [FunctionArgument] ")" ;
+
+
+-- GET EXPRESSIONS ----------------------------
 
 GetExprInstance. GetExpr ::= ValueIdent "." FunctionCall ;
 GetExprStatic. GetExpr ::= ClassIdent "." FunctionCall ;
