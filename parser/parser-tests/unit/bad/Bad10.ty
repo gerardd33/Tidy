@@ -1,0 +1,10 @@
+singleton class RandomGenerator { 
+    
+    functions: {
+        generate: () -> Int = {
+            nextInt()
+        }
+        
+        nextInt: () -> Int = 37732
+    }
+}

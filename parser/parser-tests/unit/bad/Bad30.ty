@@ -1,0 +1,8 @@
+singleton class Getter { 
+    
+    functions: {
+        checkSomeObscureValue: (person: Person) -> Bool = {
+            SomeUtils.tools.special.count !== 3
+        }
+    }
+}

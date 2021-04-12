@@ -1,0 +1,6 @@
+singleton class Expressions extends Something { 
+    
+    variables: {
+        twice: SomeType = (x: Int) -> 
+    }
+}

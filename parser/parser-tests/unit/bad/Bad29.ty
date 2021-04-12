@@ -1,0 +1,8 @@
+singleton class Getter { 
+    
+    functions: {
+        checkSomeImmediateAttribute: (person: Person) -> Bool = {
+            person.BadName.name != "Ralph"
+        }
+    }
+}

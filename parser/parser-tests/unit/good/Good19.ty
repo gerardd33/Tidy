@@ -1,0 +1,8 @@
+singleton class Loop { 
+    
+    actions: {
+        loop: (x: Int) -> Void = {
+            while (not x > 10000) Pass
+        }
+    }
+}

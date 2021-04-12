@@ -1,0 +1,8 @@
+singleton class StudentFactory { 
+    
+    functions: {
+        getStudent: () -> Student = {
+            student("Mark", 19)
+        }
+    }
+}

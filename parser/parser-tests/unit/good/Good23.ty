@@ -1,0 +1,12 @@
+singleton class Wrapper { 
+    
+    functions: {
+        getOrDefault: (x: Int) -> Int = {
+            if (True) then {
+                3
+            } else {
+                0
+            }
+        }
+    }
+}

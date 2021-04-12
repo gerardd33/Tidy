@@ -1,0 +1,12 @@
+singleton class Worker { 
+    
+    actions: {
+        doIfBig: (x: Int) -> Int = {
+            if (x > 3) {
+                dosomething
+            } else { 
+                Pass
+            }
+        }
+    }
+}

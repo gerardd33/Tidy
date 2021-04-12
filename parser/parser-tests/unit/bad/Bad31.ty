@@ -1,0 +1,6 @@
+singleton class StructureClearer { 
+    
+    actions: {
+        clear: (structure: DataStructure) -> Void = 
+    }
+}

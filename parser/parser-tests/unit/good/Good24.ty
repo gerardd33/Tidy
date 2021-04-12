@@ -1,0 +1,8 @@
+singleton class Wrapper { 
+    
+    functions: {
+        getOrDefault: (x: Int) -> Int = {
+            if (x > 3) then x else 3
+        }
+    }
+}

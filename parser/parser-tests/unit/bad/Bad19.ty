@@ -1,0 +1,8 @@
+singleton class Random { 
+    
+    functions: {
+        randomValue: (seed: Int) -> Int = {
+            313
+        } with values: x, y: Int = 16
+    }
+}

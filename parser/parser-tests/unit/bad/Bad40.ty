@@ -1,0 +1,12 @@
+singleton class Expressions extends Something { 
+    
+    variables: {
+        expressionField: Int = 3 + 8 * 3 + this.randomValue + this.foo(5)
+    }
+    
+    override private functions: {
+        someFunction: (x: Int) -> Int = {
+            x + if (x > 3) then x else 2 * x + if (x < 5) then this.foo(4) else this.y
+        }
+    }
+}

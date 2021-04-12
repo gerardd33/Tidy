@@ -1,0 +1,14 @@
+mutable class Student {
+    
+    values: // Testing comments
+    
+    ///* 
+    functions:
+    //*/
+    
+    variables: /* Here there should be some variables
+    
+    There are no functions */
+    
+    actions: // But there are // some actions
+}

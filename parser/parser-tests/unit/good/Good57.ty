@@ -1,0 +1,12 @@
+singleton class Expressions extends Something { 
+    
+    variables: {
+        twice: (x: Int) -> Int = (x: Int) -> {
+            if (x > 3) then {
+                5
+            } else {
+                8
+            }
+        }
+    }
+}
