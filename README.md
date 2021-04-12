@@ -18,11 +18,15 @@ That last point is the main difference between Tidy and other languages that sti
 
 ## Learn more
 
-- To read more about Tidy, see the quick-start guide **TODO LINK** (specs/guide.md).
+- To read more about Tidy, see the [quick-start guide](https://github.com/gerardd33/Tidy/blob/main/docs/guide.md) (docs/guide.md).
 
-- To see the language's implementation (in Haskell), see the files in the interpreter package **TODO LINK** (interpreter).
+- To see the language's implementation (in Haskell), see the files in the *parser* and *interpreter* packages.
 
-- **TODO Add instructions to run it etc.**
+- LBNF grammar of the language is available in the [parser/Tidy.cf file](https://github.com/gerardd33/Tidy/blob/main/parser/Tidy.cf). 
+
+- You can play with the parser to get to know the syntax in [parser/parser_tests](https://github.com/gerardd33/Tidy/tree/main/parser/parser_tests). There you can run a suite of automatic tests with *run_all_tests.sh* or input your own example into *Test.ty* and run *build_and_run_single_test.sh*.
+
+- **TODO Further instructions to run it etc.**
 
 - If you just want a snippet of what Tidy looks like, here's one:
 
