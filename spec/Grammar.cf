@@ -65,6 +65,26 @@ VarSBodyMultiLine. VarSBody ::= "{" [ValueDecl] "}" ;
 
 -- FUNCTIONS SECTION --------------------------
 
+FSBodyEmpty. FSBody ::= ;
+FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
+
+FunctionIdent. FunctionIdent ::= Ident ;
+-- TODO must start with lower case
+FunctionType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
+-- TODO merge FunctionType and valueType, extract types to a different set of rules in general, after it's working
+-- TODO should be handled better, with connection to function objects to be pure OOP
+-- TODO doesn't work with generic types, doesn't work with function parameters/return types
+
+separator FunctionDecl "" ; 
+PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" FunctionType "=" FunctionBody ;
+PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" FunctionType "=" FunctionBody ;
+
+FunctionBodyOneLine. FunctionBody ::= Exp ;
+FunctionBodyMultiLine. FunctionBody ::= "{" Exp "}" WithValues ;
+
+WithValuesAbsent. WithValues ::= ;
+WithValuesPresent. WithValues ::= "with" ValuesSection ;
+
 
 -- ACTIONS SECTION ----------------------------
 
@@ -86,4 +106,3 @@ Exp. Exp ::= Integer;
 
 comment "//" ;
 comment "/*" "*/" ;
-
