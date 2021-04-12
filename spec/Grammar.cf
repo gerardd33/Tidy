@@ -57,15 +57,19 @@ ValSBodyEmpty. ValSBody ::= ;
 ValSBodyOneLine. ValSBody ::= [ValueDecl] ;
 ValSBodyMultiLine. ValSBody ::= "{" [ValueDecl] "}" ;
 
-ValueIdent. ValueIdent ::= Ident ;
--- If it starts with a lower-case letter then it's a normal value, 
--- otherwise it's a constant.
-ValueType. ValueType ::= ClassIdent ;
--- TODO doesn't work with generic types, doesn't work with function types
+ValueIdent. ValueIdent ::= LowerCaseIdent ;
+ConstantIdent. ConstantIdent ::= UpperCaseIdent ;
+
+ValueTypeClass. ValueType ::=  ClassIdent;
+ValueTypeGeneric. ValueType ::= ClassIdent "[" [GenericParameter] "]" ;
+
+separator GenericParameter "," ;
+GenericParameter. GenericParameter ::= ClassIdent ; 
 
 separator ValueDecl "," ;
 UninitialisedValue. ValueDecl ::= ValueIdent ":" ValueType ;
 InitialisedValue. ValueDecl ::= ValueIdent ":" ValueType "=" Expr ;
+ConstantValue. ValueDecl ::= ConstantIdent ":" ValueType "=" Expr ;
 
 
 -- VARIABLES SECTION --------------------------
@@ -203,7 +207,7 @@ FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
 separator MatchCase "" ;
 MatchCase. MatchCase ::= "case" Pattern "->" Expr ;
 
-TypePattern. Pattern ::= ValueType ; 
+TypePattern. Pattern ::= ClassIdent ; 
 
 
 -- RELATIONAL OPERATORS ----------------------
