@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "StudentFactory"),PT (Pn 31 1 32) (TS "{" 53),PT (Pn 43 3 5) (TS "functions:" 34),PT (Pn 54 3 16) (TS "{" 53),PT (Pn 64 4 9) (T_LowerCaseIdent "getStudent"),PT (Pn 74 4 19) (TS ":" 13),PT (Pn 76 4 21) (TS "(" 3),PT (Pn 77 4 22) (TS ")" 4),PT (Pn 79 4 24) (TS "->" 10),PT (Pn 82 4 27) (T_UpperCaseIdent "Student"),PT (Pn 90 4 35) (TS "=" 16),PT (Pn 92 4 37) (TS "{" 53),PT (Pn 106 5 13) (T_UpperCaseIdent "Student"),PT (Pn 113 5 20) (TS "(" 3),PT (Pn 114 5 21) (T_UpperCaseIdent "Random"),PT (Pn 120 5 27) (TS "." 11),PT (Pn 121 5 28) (T_UpperCaseIdent "GetString"),PT (Pn 130 5 37) (TS "," 8),PT (Pn 132 5 39) (T_UpperCaseIdent "Random"),PT (Pn 138 5 45) (TS "." 11),PT (Pn 139 5 46) (T_LowerCaseIdent "getInt"),PT (Pn 145 5 52) (TS ")" 4),PT (Pn 155 6 9) (TS "}" 54),PT (Pn 161 7 5) (TS "}" 54),PT (Pn 163 8 1) (TS "}" 54)]
-syntax error at line 5, column 28 before `GetString'

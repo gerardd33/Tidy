@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Worker"),PT (Pn 23 1 24) (TS "{" 53),PT (Pn 35 3 5) (TS "actions:" 26),PT (Pn 44 3 14) (TS "{" 53),PT (Pn 54 4 9) (T_LowerCaseIdent "doIfBig"),PT (Pn 61 4 16) (TS ":" 13),PT (Pn 63 4 18) (TS "(" 3),PT (Pn 64 4 19) (T_LowerCaseIdent "x"),PT (Pn 65 4 20) (TS ":" 13),PT (Pn 67 4 22) (T_UpperCaseIdent "Int"),PT (Pn 70 4 25) (TS ")" 4),PT (Pn 72 4 27) (TS "->" 10),PT (Pn 75 4 30) (T_UpperCaseIdent "Int"),PT (Pn 79 4 34) (TS "=" 16),PT (Pn 81 4 36) (TS "{" 53),PT (Pn 95 5 13) (TS "if" 36),PT (Pn 98 5 16) (TS "(" 3),PT (Pn 99 5 17) (T_LowerCaseIdent "x"),PT (Pn 101 5 19) (TS ">" 18),PT (Pn 103 5 21) (TI "3"),PT (Pn 104 5 22) (TS ")" 4),PT (Pn 106 5 24) (TS "{" 53),PT (Pn 124 6 17) (T_LowerCaseIdent "dosomething"),PT (Pn 148 7 13) (TS "}" 54),PT (Pn 150 7 15) (TS "else" 31),PT (Pn 155 7 20) (TS "Pass" 21),PT (Pn 168 8 9) (TS "}" 54),PT (Pn 174 9 5) (TS "}" 54),PT (Pn 176 10 1) (TS "}" 54)]
-syntax error at line 7, column 20 before `Pass'

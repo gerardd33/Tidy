@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Getter"),PT (Pn 23 1 24) (TS "{" 53),PT (Pn 35 3 5) (TS "functions:" 34),PT (Pn 46 3 16) (TS "{" 53),PT (Pn 56 4 9) (T_LowerCaseIdent "checkSomeObscureValue"),PT (Pn 77 4 30) (TS ":" 13),PT (Pn 79 4 32) (TS "(" 3),PT (Pn 80 4 33) (T_LowerCaseIdent "person"),PT (Pn 86 4 39) (TS ":" 13),PT (Pn 88 4 41) (T_UpperCaseIdent "Person"),PT (Pn 94 4 47) (TS ")" 4),PT (Pn 96 4 49) (TS "->" 10),PT (Pn 99 4 52) (T_UpperCaseIdent "Bool"),PT (Pn 104 4 57) (TS "=" 16),PT (Pn 106 4 59) (TS "{" 53),PT (Pn 120 5 13) (T_UpperCaseIdent "SomeUtils"),PT (Pn 129 5 22) (TS "." 11),PT (Pn 130 5 23) (T_LowerCaseIdent "tools"),PT (Pn 135 5 28) (TS "." 11),PT (Pn 136 5 29) (T_LowerCaseIdent "special"),PT (Pn 143 5 36) (TS "." 11),PT (Pn 144 5 37) (T_LowerCaseIdent "count"),PT (Pn 150 5 43) (TS "!=" 1),PT (Pn 152 5 45) (TS "=" 16),PT (Pn 154 5 47) (TI "3"),PT (Pn 164 6 9) (TS "}" 54),PT (Pn 170 7 5) (TS "}" 54),PT (Pn 172 8 1) (TS "}" 54)]
-syntax error at line 5, column 45 before `='

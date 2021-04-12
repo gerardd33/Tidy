@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "mutable" 41),PT (Pn 8 1 9) (TS "class" 29),PT (Pn 14 1 15) (T_UpperCaseIdent "Student"),PT (Pn 22 1 23) (TS "{" 53),PT (Pn 33 3 5) (TS "values:" 49),PT (Pn 50 5 5) (TS "actions:" 26),PT (Pn 68 7 5) (TS "variables:" 50),PT (Pn 88 9 5) (TS "functions:" 34),PT (Pn 99 10 1) (TS "}" 54)]
-syntax error at line 7, column 5 before `variables:'

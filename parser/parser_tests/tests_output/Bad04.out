@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Loop"),PT (Pn 21 1 22) (TS "{" 53),PT (Pn 33 3 5) (TS "actions:" 26),PT (Pn 42 3 14) (TS "{" 53),PT (Pn 52 4 9) (T_LowerCaseIdent "loop"),PT (Pn 56 4 13) (TS ":" 13),PT (Pn 58 4 15) (TS "(" 3),PT (Pn 59 4 16) (T_LowerCaseIdent "x"),PT (Pn 60 4 17) (TS ":" 13),PT (Pn 62 4 19) (T_UpperCaseIdent "Int"),PT (Pn 65 4 22) (TS ")" 4),PT (Pn 67 4 24) (TS "->" 10),PT (Pn 70 4 27) (T_UpperCaseIdent "Int"),PT (Pn 74 4 31) (TS "=" 16),PT (Pn 76 4 33) (TS "{" 53),PT (Pn 90 5 13) (TS "while" 51),PT (Pn 96 5 19) (TS "(" 3),PT (Pn 97 5 20) (TS "not" 42),PT (Pn 101 5 24) (T_LowerCaseIdent "x"),PT (Pn 103 5 26) (TS ">" 18),PT (Pn 105 5 28) (TI "10000"),PT (Pn 110 5 33) (TS ")" 4),PT (Pn 112 5 35) (TS "Pass" 21),PT (Pn 129 6 13) (TS "while" 51),PT (Pn 135 6 19) (TS "(" 3),PT (Pn 136 6 20) (T_LowerCaseIdent "x"),PT (Pn 138 6 22) (TS "<" 14),PT (Pn 140 6 24) (TI "1000"),PT (Pn 144 6 28) (TS ")" 4),PT (Pn 146 6 30) (T_LowerCaseIdent "x"),PT (Pn 160 7 13) (T_LowerCaseIdent "x"),PT (Pn 170 8 9) (TS "}" 54),PT (Pn 176 9 5) (TS "}" 54),PT (Pn 178 10 1) (TS "}" 54)]
-syntax error at line 5, column 35 before `Pass'

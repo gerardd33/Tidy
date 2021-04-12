@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "class" 29),PT (Pn 6 1 7) (T_UpperCaseIdent "Person"),PT (Pn 13 1 14) (TS "{" 53),PT (Pn 20 3 1) (TS "}" 54)]
-syntax error at line 1, column 1 before `class'

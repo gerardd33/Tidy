@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Math"),PT (Pn 21 1 22) (TS "{" 53),PT (Pn 33 3 5) (TS "functions:" 34),PT (Pn 44 3 16) (TS "{" 53),PT (Pn 54 4 9) (T_LowerCaseIdent "isAnyTrue"),PT (Pn 63 4 18) (TS ":" 13),PT (Pn 65 4 20) (TS "(" 3),PT (Pn 66 4 21) (TS ")" 4),PT (Pn 68 4 23) (TS "->" 10),PT (Pn 71 4 26) (T_UpperCaseIdent "Bool"),PT (Pn 76 4 31) (TS "=" 16),PT (Pn 78 4 33) (TS "{" 53),PT (Pn 92 5 13) (TI "3"),PT (Pn 94 5 15) (TS ">" 18),PT (Pn 96 5 17) (TS ">" 18),PT (Pn 98 5 19) (TI "5"),PT (Pn 100 5 21) (TS "or" 43),PT (Pn 103 5 24) (TS "(" 3),PT (Pn 104 5 25) (TS "not" 42),PT (Pn 108 5 29) (TI "7"),PT (Pn 110 5 31) (TS "!=" 1),PT (Pn 113 5 34) (TI "7"),PT (Pn 115 5 36) (TS "and" 27),PT (Pn 119 5 40) (TS "False" 20),PT (Pn 124 5 45) (TS ")" 4),PT (Pn 134 6 9) (TS "}" 54),PT (Pn 140 7 5) (TS "}" 54),PT (Pn 142 8 1) (TS "}" 54)]
-syntax error at line 5, column 17 before `>'

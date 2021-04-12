@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Math"),PT (Pn 21 1 22) (TS "{" 53),PT (Pn 33 3 5) (TS "functions:" 34),PT (Pn 44 3 16) (TS "{" 53),PT (Pn 54 4 9) (T_UpperCaseIdent "BadMethodName"),PT (Pn 67 4 22) (TS ":" 13),PT (Pn 69 4 24) (TS "(" 3),PT (Pn 70 4 25) (TS ")" 4),PT (Pn 72 4 27) (TS "->" 10),PT (Pn 75 4 30) (T_UpperCaseIdent "Int"),PT (Pn 79 4 34) (TS "=" 16),PT (Pn 81 4 36) (TI "2"),PT (Pn 83 4 38) (TS "*" 5),PT (Pn 85 4 40) (TI "3"),PT (Pn 87 4 42) (TS "+" 6),PT (Pn 89 4 44) (TI "4"),PT (Pn 91 4 46) (TS "*" 5),PT (Pn 93 4 48) (TI "5"),PT (Pn 99 5 5) (TS "}" 54),PT (Pn 101 6 1) (TS "}" 54)]
-syntax error at line 4, column 9 before `BadMethodName'

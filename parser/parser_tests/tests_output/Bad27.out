@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Classifier"),PT (Pn 27 1 28) (TS "{" 53),PT (Pn 39 3 5) (TS "functions:" 34),PT (Pn 50 3 16) (TS "{" 53),PT (Pn 60 4 9) (T_LowerCaseIdent "classify"),PT (Pn 68 4 17) (TS ":" 13),PT (Pn 70 4 19) (TS "(" 3),PT (Pn 71 4 20) (T_LowerCaseIdent "person"),PT (Pn 77 4 26) (TS ":" 13),PT (Pn 79 4 28) (T_UpperCaseIdent "Person"),PT (Pn 85 4 34) (TS ")" 4),PT (Pn 87 4 36) (TS "->" 10),PT (Pn 90 4 39) (T_UpperCaseIdent "String"),PT (Pn 97 4 46) (TS "=" 16),PT (Pn 99 4 48) (TS "{" 53),PT (Pn 113 5 13) (TS "match" 40),PT (Pn 119 5 19) (T_LowerCaseIdent "person"),PT (Pn 126 5 26) (TS "{" 53),PT (Pn 144 6 17) (TS "case" 28),PT (Pn 149 6 22) (T_UpperCaseIdent "Male"),PT (Pn 170 7 17) (TS "case" 28),PT (Pn 175 7 22) (T_UpperCaseIdent "Female"),PT (Pn 194 8 13) (TS "}" 54),PT (Pn 204 9 9) (TS "}" 54),PT (Pn 210 10 5) (TS "}" 54),PT (Pn 212 11 1) (TS "}" 54)]
-syntax error at line 7, column 17 before `case'

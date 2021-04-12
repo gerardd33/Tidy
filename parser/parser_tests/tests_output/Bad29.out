@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "Getter"),PT (Pn 23 1 24) (TS "{" 53),PT (Pn 35 3 5) (TS "functions:" 34),PT (Pn 46 3 16) (TS "{" 53),PT (Pn 56 4 9) (T_LowerCaseIdent "checkSomeImmediateAttribute"),PT (Pn 83 4 36) (TS ":" 13),PT (Pn 85 4 38) (TS "(" 3),PT (Pn 86 4 39) (T_LowerCaseIdent "person"),PT (Pn 92 4 45) (TS ":" 13),PT (Pn 94 4 47) (T_UpperCaseIdent "Person"),PT (Pn 100 4 53) (TS ")" 4),PT (Pn 102 4 55) (TS "->" 10),PT (Pn 105 4 58) (T_UpperCaseIdent "Bool"),PT (Pn 110 4 63) (TS "=" 16),PT (Pn 112 4 65) (TS "{" 53),PT (Pn 126 5 13) (T_LowerCaseIdent "person"),PT (Pn 132 5 19) (TS "." 11),PT (Pn 133 5 20) (T_UpperCaseIdent "BadName"),PT (Pn 140 5 27) (TS "." 11),PT (Pn 141 5 28) (T_LowerCaseIdent "name"),PT (Pn 146 5 33) (TS "!=" 1),PT (Pn 149 5 36) (TL "Ralph"),PT (Pn 165 6 9) (TS "}" 54),PT (Pn 171 7 5) (TS "}" 54),PT (Pn 173 8 1) (TS "}" 54)]
-syntax error at line 5, column 20 before `BadName'

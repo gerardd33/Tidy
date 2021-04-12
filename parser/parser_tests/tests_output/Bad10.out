@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "RandomGenerator"),PT (Pn 32 1 33) (TS "{" 53),PT (Pn 44 3 5) (TS "functions:" 34),PT (Pn 55 3 16) (TS "{" 53),PT (Pn 65 4 9) (T_LowerCaseIdent "generate"),PT (Pn 73 4 17) (TS ":" 13),PT (Pn 75 4 19) (TS "(" 3),PT (Pn 76 4 20) (TS ")" 4),PT (Pn 78 4 22) (TS "->" 10),PT (Pn 81 4 25) (T_UpperCaseIdent "Int"),PT (Pn 85 4 29) (TS "=" 16),PT (Pn 87 4 31) (TS "{" 53),PT (Pn 101 5 13) (T_LowerCaseIdent "nextInt"),PT (Pn 108 5 20) (TS "(" 3),PT (Pn 109 5 21) (TS ")" 4),PT (Pn 119 6 9) (TS "}" 54),PT (Pn 138 8 9) (T_LowerCaseIdent "nextInt"),PT (Pn 145 8 16) (TS ":" 13),PT (Pn 147 8 18) (TS "(" 3),PT (Pn 148 8 19) (TS ")" 4),PT (Pn 150 8 21) (TS "->" 10),PT (Pn 153 8 24) (T_UpperCaseIdent "Int"),PT (Pn 157 8 28) (TS "=" 16),PT (Pn 159 8 30) (TI "37732"),PT (Pn 169 9 5) (TS "}" 54),PT (Pn 171 10 1) (TS "}" 54)]
-syntax error at line 5, column 20 before `('

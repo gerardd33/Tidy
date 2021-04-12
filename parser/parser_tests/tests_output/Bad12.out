@@ -1,6 +1,0 @@
-
-Parse              Failed...
-
-Tokens:
-[PT (Pn 0 1 1) (TS "singleton" 46),PT (Pn 10 1 11) (TS "class" 29),PT (Pn 16 1 17) (T_UpperCaseIdent "StudentFactory"),PT (Pn 31 1 32) (TS "{" 53),PT (Pn 43 3 5) (TS "functions:" 34),PT (Pn 54 3 16) (TS "{" 53),PT (Pn 64 4 9) (T_LowerCaseIdent "getStudent"),PT (Pn 74 4 19) (TS ":" 13),PT (Pn 76 4 21) (TS "(" 3),PT (Pn 77 4 22) (TS ")" 4),PT (Pn 79 4 24) (TS "->" 10),PT (Pn 82 4 27) (T_UpperCaseIdent "Student"),PT (Pn 90 4 35) (TS "=" 16),PT (Pn 92 4 37) (TS "{" 53),PT (Pn 106 5 13) (T_LowerCaseIdent "student"),PT (Pn 113 5 20) (TS "(" 3),PT (Pn 114 5 21) (TL "Mark"),PT (Pn 120 5 27) (TS "," 8),PT (Pn 122 5 29) (TI "19"),PT (Pn 124 5 31) (TS ")" 4),PT (Pn 134 6 9) (TS "}" 54),PT (Pn 140 7 5) (TS "}" 54),PT (Pn 142 8 1) (TS "}" 54)]
-syntax error at line 5, column 20 before `('
