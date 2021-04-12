@@ -112,7 +112,8 @@ coercions Expr 5 ;
 
 ELiteral. Expr5 ::= Literal ;
 EValue. Expr5 ::= ValueIdent ;
-EImperative. Expr5 ::= Imperative ;
+EImperativeControlFlow. Expr5 ::= ImperativeControlFlow ;
+EFunctionalControlFlow. Expr5 ::= FunctionalControlFlow ;
 
 EUnaryNot. Expr4 ::= "not" Expr5 ;
 EUnaryMinus. Expr4 ::= "-" Expr5 ;
@@ -141,10 +142,24 @@ BFalse. Boolean ::= "False" ;
 VPass. Void ::= "Pass" ;
 
 
--- IMPERATIVE INSTRUCTIONS -------------------
+-- IMPERATIVE CONTROL FLOW -------------------
 
-IWhile. Imperative ::= "while" "(" Expr ")" "{" [Expr] "}" ;
-IForeach. Imperative ::= "for" "(" ValueDecl "in" ValueIdent ")" "{" [Expr] "}" ;
+IWhile. ImperativeControlFlow ::= "while" "(" Expr ")" "{" [Expr] "}" ;
+IForeach. ImperativeControlFlow ::= "for" "(" ValueDecl "in" ValueIdent ")" "{" [Expr] "}" ;
+IIf. ImperativeControlFlow ::= "if" "(" Expr ")" "{" [Expr] "}" OptionalElseBranch ;
+
+ElsePresent. OptionalElseBranch ::= "else" "{" [Expr] "}" ;
+ElseAbsent. OptionalElseBranch ::= ;
+
+
+-- FUNCTIONAL CONTROL FLOW -------------------
+
+FIfThenElse. FunctionalControlFlow ::= "if" "(" Expr ")" ThenBranch ElseBranch ;
+
+ThenOneLine. ThenBranch ::= "then" Expr ;
+ThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
+ElseOneLine. ElseBranch ::= "else" Expr ;
+ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
 
 
 -- RELATIONAL OPERATORS ----------------------
