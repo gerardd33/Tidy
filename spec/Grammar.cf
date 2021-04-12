@@ -59,7 +59,7 @@ ValueType. ValueType ::= ClassIdent ;
 
 separator ValueDecl "," ;
 UninitialisedValue. ValueDecl ::= ValueIdent ":" ValueType ;
-InitialisedValue. ValueDecl ::= ValueIdent ":" ValueType "=" Exp ;
+InitialisedValue. ValueDecl ::= ValueIdent ":" ValueType "=" Expr ;
 
 
 -- VARIABLES SECTION --------------------------
@@ -85,8 +85,8 @@ separator FunctionDecl "" ;
 PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" FunctionType "=" FunctionBody ;
 PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" FunctionType "=" FunctionBody ;
 
-FunctionBodyOneLine. FunctionBody ::= Exp ;
-FunctionBodyMultiLine. FunctionBody ::= "{" Exp "}" WithValues ;
+FunctionBodyOneLine. FunctionBody ::= Expr ;
+FunctionBodyMultiLine. FunctionBody ::= "{" Expr "}" WithValues ;
 
 WithValuesAbsent. WithValues ::= ;
 WithValuesPresent. WithValues ::= "with" ValuesSection ;
@@ -101,30 +101,31 @@ separator ActionDecl "" ;
 PublicActionDecl. ActionDecl ::= FunctionIdent ":" FunctionType "=" ActionBody ;
 PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" FunctionType "=" ActionBody ;
 
-ActionBodyOneLine. ActionBody ::= Exp ;
-ActionBodyMultiLine. ActionBody ::= "{" [Exp] "}" ;
+ActionBodyOneLine. ActionBody ::= Expr ;
+ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
 
 
 -- EXPRESSIONS -------------------------------
 
-separator Exp "" ;
-coercions Exp 5 ;
+separator Expr "" ;
+coercions Expr 5 ;
 
-ELiteral. Exp5 ::= Literal ;
--- EImperative. Exp5 ::= Imperative ;
+ELiteral. Expr5 ::= Literal ;
+EValue. Expr5 ::= ValueIdent ;
+EImperative. Expr5 ::= Imperative ;
 
-EUnaryNot. Exp4 ::= "not" Exp5 ;
-EUnaryMinus. Exp4 ::= "-" Exp5 ;
+EUnaryNot. Expr4 ::= "not" Expr5 ;
+EUnaryMinus. Expr4 ::= "-" Expr5 ;
 
-EMultiply. Exp3 ::= Exp3 "*" Exp4 ;
-EDivide. Exp3 ::= Exp3 "/" Exp4 ;
+EMultiply. Expr3 ::= Expr3 "*" Expr4 ;
+EDivide. Expr3 ::= Expr3 "/" Expr4 ;
 
-EAdd. Exp2 ::= Exp2 "+" Exp3 ;
-ESubtract. Exp2 ::= Exp2 "-" Exp3 ;
+EAdd. Expr2 ::= Expr2 "+" Expr3 ;
+ESubtract. Expr2 ::= Expr2 "-" Expr3 ;
 
-ERelationalOperator. Exp1 ::= Exp1 RelationalOperator Exp2 ;
+ERelationalOperator. Expr1 ::= Expr1 RelationalOperator Expr2 ;
 
-EBooleanOperator. Exp ::= Exp1 BooleanOperator Exp ;
+EBooleanOperator. Expr ::= Expr1 BooleanOperator Expr ;
 
 
 -- LITERALS ----------------------------------
@@ -133,24 +134,27 @@ LInt. Literal ::= Integer ;
 LBool. Literal ::= Boolean ;
 LChar. Literal ::= Char ;
 LString. Literal ::= String ;
-LVoid. Literal ::= "Pass" ;
+LVoid. Literal ::= Void ;
 
 BTrue. Boolean ::= "True" ;
 BFalse. Boolean ::= "False" ;
+VPass. Void ::= "Pass" ;
 
 
 -- IMPERATIVE INSTRUCTIONS -------------------
 
--- TODO add
+IWhile. Imperative ::= "while" "(" Expr ")" "{" [Expr] "}" ;
+IForeach. Imperative ::= "for" "(" ValueDecl "in" ValueIdent ")" "{" [Expr] "}" ;
+
 
 -- RELATIONAL OPERATORS ----------------------
 
-CLess. RelationalOperator ::= "<" ;
-CLessEqual. RelationalOperator ::= "<=" ;
-CGreater. RelationalOperator ::= ">" ;
-CGreaterEqual. RelationalOperator ::= ">=" ;
-CEqual. RelationalOperator ::= "==" ;
-CNotEqual. RelationalOperator ::= "!=" ;
+RLess. RelationalOperator ::= "<" ;
+RLessEqual. RelationalOperator ::= "<=" ;
+RGreater. RelationalOperator ::= ">" ;
+RGreaterEqual. RelationalOperator ::= ">=" ;
+REqual. RelationalOperator ::= "==" ;
+RNotEqual. RelationalOperator ::= "!=" ;
 
 
 -- BOOLEAN OPERATORS -------------------------

@@ -324,7 +324,7 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
     
     functions: {
         private parseMessage: (message: Message) -> String = {
-            if (this.validateMessage(message)) {
+            if (this.validateMessage(message)) then {
                 match message {
                     case Email -> "One new email"
                     case Sms -> "One new SMS"
@@ -379,6 +379,8 @@ We can see some more new features here:
 
 - *Foreach* loop. There is also a *while* loop with standard syntax: ``while (condition) { }``. Note that these loops are imperative constructs and can only be used inside actions, not inside functions.
 
+- *If* statements. Note the very important distinction between the imperative *if* (it can have an optional else branch) and the functional *if-then-else*. The former is like an *if* in C and returns a *Void*, the latter is like Java ternary operator and returns the value from either *then* or *else* branch.
+
 
 Other useful features include:
 
@@ -390,6 +392,8 @@ Other useful features include:
 ## Style
 
 - Tidy is pretty serious about style conventions. It doesn't force you to keep most of them through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular you should treat whitespaces seriously. The style used in the snippets above is highly encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions and don't put multiple expressions separate expressions (e.g. in action bodies) on one line.
+
+- In imperative expressions (imperative *if*, *while*, *foreach*) curly brackets are obligatory.
 
 - Case conventions are very important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
 
