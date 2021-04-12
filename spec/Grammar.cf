@@ -86,9 +86,6 @@ FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
 
 FunctionIdent. FunctionIdent ::= LowerCaseIdent ;
 FunctionType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
--- TODO merge FunctionType and valueType, extract types to a different set of rules in general, after it's working
--- TODO should be handled better, with connection to function objects to be pure OOP
--- TODO doesn't work with generic types, doesn't work with function parameters/return types
 
 separator FunctionDecl "" ; 
 PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" FunctionType "=" FunctionBody ;
@@ -135,6 +132,7 @@ EDivide. Expr3 ::= Expr3 "/" Expr4 ;
 
 EAdd. Expr2 ::= Expr2 "+" Expr3 ;
 ESubtract. Expr2 ::= Expr2 "-" Expr3 ;
+EConcatenate. Expr2 ::= Expr2 "++" Expr3 ;
 
 ERelationalOperator. Expr1 ::= Expr1 RelationalOperator Expr2 ;
 
