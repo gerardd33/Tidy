@@ -112,6 +112,8 @@ coercions Expr 5 ;
 
 ELiteral. Expr5 ::= Literal ;
 EValue. Expr5 ::= ValueIdent ;
+EGetExpr. Expr5 ::= GetExpr ;
+EDoExpr. Expr5 ::= DoExpr ;
 EImperativeControlFlow. Expr5 ::= ImperativeControlFlow ;
 EFunctionalControlFlow. Expr5 ::= FunctionalControlFlow ;
 
@@ -140,6 +142,20 @@ LVoid. Literal ::= Void ;
 BTrue. Boolean ::= "True" ;
 BFalse. Boolean ::= "False" ;
 VPass. Void ::= "Pass" ;
+
+
+-- GET EXPRESSIONS ---------------------------
+
+GetExprInstance. GetExpr ::= ValueIdent "." FunctionIdent ;
+GetExprStatic. GetExpr ::= ClassIdent "." FunctionIdent ;
+GetExprChain. GetExpr ::= GetExpr "." FunctionIdent ;
+
+
+-- DO EXPRESSIONS ----------------------------
+
+DoExprInstance. DoExpr ::= ValueIdent "#" FunctionIdent ;
+DoExprStatic. DoExpr ::= ClassIdent "#" FunctionIdent ;
+DoExprChain. DoExpr ::= GetExpr "#" FunctionIdent ;
 
 
 -- IMPERATIVE CONTROL FLOW -------------------
