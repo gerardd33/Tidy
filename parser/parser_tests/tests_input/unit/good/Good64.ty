@@ -1,0 +1,22 @@
+singleton class FunctionsAndActions { 
+    
+    functions: {
+        someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> get (x: Int) -> Int = {
+            if (local.g(5)) then {
+                get (x: Int) -> 3
+            } else {
+                get (x: Int) -> 5 * x
+            }
+        }
+    }
+    
+    actions: {
+        someAction: (f: do (x: Int, y: Int) -> Void, g: get (x: Int) -> Bool) ->  get (x: Int) -> Int = {
+            if (local.g(5)) {
+                System#printLine("this case")
+                System#something
+                get (x: Int) -> 5 * x
+            }
+        }
+    }
+}
