@@ -384,9 +384,9 @@ Other interesting features include:
 
 ## Style
 
-- Tidy has a pretty strict static style checking. In most languages, you can get away with writing ``if(x){``, ``if (x){``, ``x= 3`` etc. This usually has no major benefits and easily leads to very ugly inconsistent code. That's why Tidy intentionally enforces one particular style in basic language constructs (the one most conventional in languages with C-style syntax, especially Java and Scala). It still leaves you a lot of flexibility when it comes to style but doesn't allow it in places where it doesn't have much sense. So whitespaces are not semantically significant but you will get syntax errors if you don't respect them.
+- Tidy is pretty serious about style conventions. It doesn't force you to keep most of them through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular you should treat whitespaces seriously. In particular you should treat whitespaces seriously. The style used in above snippets is encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions.
 
-- Case conventions are also important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
+- Case conventions are very important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
 
 - Naming conventions are similar to those in Scala, that is, try to use reasonably descriptive Java-style names, but in places where the code is mostly functional, it's okay to use less verbose, even one-letter identifiers, for example: ``add: (x: Int, y: Int) -> Int = x + y``.
 
