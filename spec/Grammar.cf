@@ -89,13 +89,19 @@ WithValuesPresent. WithValues ::= "with" ValuesSection ;
 -- ACTIONS SECTION ----------------------------
 
 ASBodyEmpty. ASBody ::= ;
+ASBodyFilled. ASBody ::= "{" [ActionDecl] "}" ;
 
+separator ActionDecl "" ; 
+PublicActionDecl. ActionDecl ::= FunctionIdent ":" FunctionType "=" ActionBody ;
+PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" FunctionType "=" ActionBody ;
 
-
+ActionBodyOneLine. ActionBody ::= Exp ;
+ActionBodyMultiLine. ActionBody ::= "{" [Exp] "}" ;
 
 
 
 -- TODO currently a mock
+separator Exp "" ;
 Exp. Exp ::= Integer;
 
 

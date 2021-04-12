@@ -71,10 +71,12 @@ singleton class ClassName {
     values:
     
     functions:
+    
+    actions:
 }
 ```
 
-It's the same as for an immutable class. The only major difference between the two is that singleton classes cannot be instantiated and you access their members using the name of the class, not the name of the instance. They're the equivalent of static classes in other languages or of *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all of your static methods.
+It's the same as for an immutable class but it can also have actions. The other major difference between the two is that singleton classes cannot be instantiated and you access their members using the name of the class, not the name of the instance. They're the equivalent of static classes in other languages or of *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all of your static methods.
 
 ## Abstract classes
 
@@ -384,7 +386,7 @@ Other interesting features include:
 
 ## Style
 
-- Tidy is pretty serious about style conventions. It doesn't force you to keep most of them through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular you should treat whitespaces seriously. In particular you should treat whitespaces seriously. The style used in above snippets is encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions.
+- Tidy is pretty serious about style conventions. It doesn't force you to keep most of them through syntax errors but it doesn't guarantee sensible interpretation of weird syntactic corner cases. In particular you should treat whitespaces seriously. The style used in the snippets above is highly encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. Also, use curly brackets in multi-line expressions and don't put multiple expressions separate expressions (e.g. in action bodies) on one line.
 
 - Case conventions are very important. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*, method, parameter and local variable names in *lowerCamelCase*, except for constants that should be in *SCREAMING_SNAKE_CASE*.
 
