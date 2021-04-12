@@ -22,7 +22,7 @@ That last point is the main difference between Tidy and other languages that sti
 
 - To see the language's implementation (in Haskell), see the files in the *parser* and *interpreter* packages.
 
-- LBNF grammar of the language is available in the [parser/Tidy.cf file](https://github.com/gerardd33/Tidy/blob/main/parser/Tidy.cf). 
+- LBNF grammar of the language is available in the [parser/TidyParser.cf file](https://github.com/gerardd33/Tidy/blob/main/parser/TidyParser.cf). 
 
 - You can play with the parser to get to know the syntax in [parser/parser_tests](https://github.com/gerardd33/Tidy/tree/main/parser/parser_tests). There you can run a suite of automatic tests with *run_all_tests.sh* or input your own example into *Test.ty* and run *build_and_run_single_test.sh*.
 
