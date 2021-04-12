@@ -7,7 +7,7 @@ token LowerCaseIdent (lower (letter | digit | '_')*) ;
 -- PROGRAMS -----------------------------------
 
 entrypoints Program ;
-Program. Program ::= [ClassDecl] ;
+ProgramEntrypoint. Program ::= [ClassDecl] ;
 
 
 -- COMMENTS -----------------------------------
@@ -19,7 +19,7 @@ comment "/*" "*/" ;
 -- CLASS DECLARATIONS -------------------------
 
 separator ClassIdent "," ;
-ClassIdent. ClassIdent ::= UpperCaseIdent ;
+CIdent. ClassIdent ::= UpperCaseIdent ;
 
 separator nonempty ClassDecl "" ;
 ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent Inheritance ClassBody ;
@@ -60,7 +60,7 @@ ActionsPresent. ActionsSection ::= "actions:" ASBody ;
 ValSBodyOneLine. ValSBody ::= [ValueDecl] ;
 ValSBodyMultiLine. ValSBody ::= "{" [ValueDecl] "}" ;
 
-ValueIdent. ValueIdent ::= LowerCaseIdent ;
+VIdent. ValueIdent ::= LowerCaseIdent ;
 
 ValueTypeClass. ValueType ::=  ClassIdent;
 ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
@@ -84,8 +84,8 @@ VarSBodyMultiLine. VarSBody ::= "{" [ValueDecl] "}" ;
 FSBodyEmpty. FSBody ::= ;
 FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
 
-FunctionIdent. FunctionIdent ::= LowerCaseIdent ;
-FunctionType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
+FIdent. FunctionIdent ::= LowerCaseIdent ;
+FType. FunctionType ::= "(" [ValueDecl] ")" "->" ValueType;
 
 separator FunctionDecl "" ;
 OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" FunctionType "=" FunctionBody ;
@@ -157,7 +157,7 @@ VPass. Void ::= "Pass" ;
 
 -- LOCAL VALUE DECLARATIONS ------------------
 
-LocalValueDecl. LocalValueDecl ::= "value" ValueDecl ;
+LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
 
 
 -- FUNCTION CALLS ----------------------------
@@ -166,7 +166,7 @@ FunctionCallNoArgs. FunctionCall ::= FunctionIdent ;
 FunctionCallWithArgs. FunctionCall ::= FunctionIdent "(" [FunctionArgument] ")" ;
 
 separator FunctionArgument "," ;
-FunctionArgument. FunctionArgument ::= Expr ;
+FunctionArg. FunctionArgument ::= Expr ;
 
 
 -- CONSTRUCTOR CALLS --------------------------
@@ -211,7 +211,7 @@ ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
 FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
 
 separator MatchCase "" ;
-MatchCase. MatchCase ::= "case" Pattern "->" Expr ;
+Case. MatchCase ::= "case" Pattern "->" Expr ;
 
 TypePattern. Pattern ::= ClassIdent ; 
 
