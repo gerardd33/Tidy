@@ -279,7 +279,7 @@ LambdaFunction : 'get' '(' ListValueDecl ')' '->' Expr { TidyParser.Abs.LambdaFu
 
 LambdaAction :: { TidyParser.Abs.LambdaAction }
 LambdaAction : 'do' '(' ListValueDecl ')' '->' Expr { TidyParser.Abs.LambdaActionOneLine $3 $6 }
-             | 'do' '(' ListValueDecl ')' '->' '{' Expr '}' { TidyParser.Abs.LambdaActionMultiLine $3 $7 }
+             | 'do' '(' ListValueDecl ')' '->' '{' ListExpr '}' { TidyParser.Abs.LambdaActionMultiLine $3 $7 }
 
 FunctionCall :: { TidyParser.Abs.FunctionCall }
 FunctionCall : FunctionIdent { TidyParser.Abs.FunctionCallNoArgs $1 }

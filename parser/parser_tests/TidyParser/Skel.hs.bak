@@ -18,7 +18,7 @@ transLowerCaseIdent x = case x of
   TidyParser.Abs.LowerCaseIdent string -> failure x
 transProgram :: TidyParser.Abs.Program -> Result
 transProgram x = case x of
-  TidyParser.Abs.ProgramEntrypoint classdecls -> failure x
+  TidyParser.Abs.ProgramEntrypoint valuedecls -> failure x
 transClassIdent :: TidyParser.Abs.ClassIdent -> Result
 transClassIdent x = case x of
   TidyParser.Abs.CIdent uppercaseident -> failure x

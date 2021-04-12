@@ -172,7 +172,7 @@ LambdaFunctionOneLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" Expr ;
 LambdaFunctionMultiLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" "{" Expr "}" ;
 
 LambdaActionOneLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" Expr ;
-LambdaActionMultiLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" "{" Expr "}" ;
+LambdaActionMultiLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" "{" [Expr] "}" ;
 
 
 -- FUNCTION CALLS ----------------------------

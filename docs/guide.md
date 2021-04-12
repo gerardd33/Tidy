@@ -361,6 +361,18 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
                 False
             }
         }
+        
+        // a bit more artificial example to show how some more advanced features work
+        override transformMessages: (messageTransformer: do (complete: Bool) -> Void) -> Void = {
+            value handleMessage: do (message: Message) -> Void = do (message: Message) -> {
+                System#printLine("Transforming message " ++ message)
+                message#transform(local#messageTransformer(False))
+            }
+            
+            for (message: Message in this.messages) {
+                local#handleMessage(message)
+            }
+        }
     }
 }
 
@@ -382,10 +394,9 @@ We can see some more new features here:
 
 - *If* statements. Note the very important distinction between the imperative *if* (it can have an optional else branch) and the functional *if-then-else*. The former is like an *if* in C and returns a *Void*, the latter is like Java ternary operator and returns the value from either *then* or *else* branch.
 
+- Higher-order functions and lambdas. The syntax for function types and a lambda expressions is the same. Note that because of Tidy's strict division between *functions* and *actions*, you always need to explicitly declare whether or not your function can have side effects. As in the paragraph on *get* and *do* expressions, *get* is for *functions* and *do* is for *actions*. If you declare your function parameter or lambda with *get*, it will be run like this: ``local.fun(x)``, if with *do* – like this: ``local#fun(x)``.
 
-Other useful features include:
-
-- Higher-order functions and lambdas, for example: ``list.map((x: Int) -> 2 * x)``.
+- Note that because in Tidy every function invokation is an invokation of some method on some object, the syntax doesn't even allow calls like ``fun(x)``. If you have a function as your attribute this is simple: you just call ``objectName.fun(x)``. But what if you have a function ``fun`` as your parameter or in a local value? In this case, you should use the special keyword ``local`` which is analogous to ``this`` – it references the scope of the method (that is, values local to the method and parameters).
 
 - *Pass*: literal of type *Void* (*NOP*). Can be used when you need to explicitly return something in an action or expression that expects to return *Void*.
 

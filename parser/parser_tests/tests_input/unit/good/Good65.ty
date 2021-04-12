@@ -1,23 +1,25 @@
 singleton class FunctionsAndActions { 
     
+    values: {
+        twice: get (x: Int, y: Int) -> Int = get (x: Int, y: Int) -> 2 * x
+    }
+    
     functions: {
-        someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> do (x: Int) -> Int = {
+        someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> get (x: Int) -> Int = {
             if (local.g(5)) then {
-                do (x: Int) -> 3
+                get (x: Int) -> this.twice(3, this.twice(4, 8))
             } else {
-                do (x: Int) -> 5 * x
+                get (x: Int) -> this.twice(3, 3 + 9 * 4)
             }
         }
     }
     
     actions: {
-        someAction: (f: do (x: Int, y: Int) -> Void, g: get (x: Int) -> Bool) ->  do (x: Int) -> Int = {
+        someAction: (f: do (x: Int, y: Int) -> Void, g: get (x: Int) -> Bool) ->  get (x: Int) -> Int = {
             if (local.g(5)) {
                 System#printLine("this case")
                 System#something
-                do (x: Int) -> 5 * x
-            } else {
-                do (x: Int) -> 7 * x
+                get (x: Int) -> this.twice(7, 3)
             }
         }
     }

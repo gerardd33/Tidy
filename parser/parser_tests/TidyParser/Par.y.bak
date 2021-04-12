@@ -93,7 +93,7 @@ LowerCaseIdent :: { TidyParser.Abs.LowerCaseIdent}
 LowerCaseIdent  : L_LowerCaseIdent { TidyParser.Abs.LowerCaseIdent $1 }
 
 Program :: { TidyParser.Abs.Program }
-Program : ListClassDecl { TidyParser.Abs.ProgramEntrypoint $1 }
+Program : ListValueDecl { TidyParser.Abs.ProgramEntrypoint $1 }
 
 ListClassIdent :: { [TidyParser.Abs.ClassIdent] }
 ListClassIdent : {- empty -} { [] }

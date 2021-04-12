@@ -313,7 +313,7 @@ instance Print TidyParser.Abs.LambdaFunction where
 instance Print TidyParser.Abs.LambdaAction where
   prt i e = case e of
     TidyParser.Abs.LambdaActionOneLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "do"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), prt 0 expr])
-    TidyParser.Abs.LambdaActionMultiLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "do"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), doc (showString "{"), prt 0 expr, doc (showString "}")])
+    TidyParser.Abs.LambdaActionMultiLine valuedecls exprs -> prPrec i 0 (concatD [doc (showString "do"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), doc (showString "{"), prt 0 exprs, doc (showString "}")])
 
 instance Print TidyParser.Abs.FunctionCall where
   prt i e = case e of

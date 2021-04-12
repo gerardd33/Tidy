@@ -163,7 +163,7 @@ transLambdaFunction x = case x of
 transLambdaAction :: TidyParser.Abs.LambdaAction -> Result
 transLambdaAction x = case x of
   TidyParser.Abs.LambdaActionOneLine valuedecls expr -> failure x
-  TidyParser.Abs.LambdaActionMultiLine valuedecls expr -> failure x
+  TidyParser.Abs.LambdaActionMultiLine valuedecls exprs -> failure x
 transFunctionCall :: TidyParser.Abs.FunctionCall -> Result
 transFunctionCall x = case x of
   TidyParser.Abs.FunctionCallNoArgs functionident -> failure x

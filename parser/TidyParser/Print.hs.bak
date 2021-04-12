@@ -105,7 +105,7 @@ instance Print TidyParser.Abs.LowerCaseIdent where
 
 instance Print TidyParser.Abs.Program where
   prt i e = case e of
-    TidyParser.Abs.ProgramEntrypoint classdecls -> prPrec i 0 (concatD [prt 0 classdecls])
+    TidyParser.Abs.ProgramEntrypoint valuedecls -> prPrec i 0 (concatD [prt 0 valuedecls])
 
 instance Print [TidyParser.Abs.ClassIdent] where
   prt = prtList

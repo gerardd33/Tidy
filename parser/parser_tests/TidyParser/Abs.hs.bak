@@ -15,7 +15,7 @@ newtype UpperCaseIdent = UpperCaseIdent String
 newtype LowerCaseIdent = LowerCaseIdent String
   deriving (C.Eq, C.Ord, C.Show, C.Read, Data.String.IsString)
 
-data Program = ProgramEntrypoint [ClassDecl]
+data Program = ProgramEntrypoint [ValueDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ClassIdent = CIdent UpperCaseIdent

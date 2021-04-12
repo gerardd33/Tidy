@@ -161,7 +161,7 @@ data LambdaFunction
 
 data LambdaAction
     = LambdaActionOneLine [ValueDecl] Expr
-    | LambdaActionMultiLine [ValueDecl] Expr
+    | LambdaActionMultiLine [ValueDecl] [Expr]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionCall
