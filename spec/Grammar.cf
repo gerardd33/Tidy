@@ -108,20 +108,23 @@ ActionBodyMultiLine. ActionBody ::= "{" [Exp] "}" ;
 -- EXPRESSIONS -------------------------------
 
 separator Exp "" ;
-coercions Exp 6 ;
+coercions Exp 5 ;
 
-ELiteral. Exp6 ::= Literal ;
--- EImperative. Exp6 ::= Imperative ;
+ELiteral. Exp5 ::= Literal ;
+-- EImperative. Exp5 ::= Imperative ;
 
-EMultiply. Exp5 ::= Exp5 "*" Exp6 ;
-EDivide. Exp5 ::= Exp5 "/" Exp6 ;
+EUnaryNot. Exp4 ::= "not" Exp5 ;
+EUnaryMinus. Exp4 ::= "-" Exp5 ;
 
-EAdd. Exp4 ::= Exp4 "+" Exp5 ;
-ESubtract. Exp4 ::= Exp4 "-" Exp5 ;
+EMultiply. Exp3 ::= Exp3 "*" Exp4 ;
+EDivide. Exp3 ::= Exp3 "/" Exp4 ;
 
-EComparisonOp. Exp3 ::= Exp3 ComparisonOperator Exp4 ;
-ENot. Exp2 ::= "not" Exp3 ;
-EBooleanOp. Exp1 ::= Exp1 BooleanOperator Exp2 ;
+EAdd. Exp2 ::= Exp2 "+" Exp3 ;
+ESubtract. Exp2 ::= Exp2 "-" Exp3 ;
+
+EComparisonOp. Exp1 ::= Exp1 RelationalOperator Exp2 ;
+
+EBooleanOp. Exp ::= Exp1 BooleanOperator Exp ;
 
 
 -- LITERALS ----------------------------------
@@ -140,6 +143,17 @@ BFalse. Boolean ::= "False" ;
 
 -- TODO add
 
--- COMPARISON OPERATORS ----------------------
+-- RELATIONAL OPERATORS ----------------------
+
+CLess. RelationalOperator ::= "<" ;
+CLessEqual. RelationalOperator ::= "<=" ;
+CGreater. RelationalOperator ::= ">" ;
+CGreaterEqual. RelationalOperator ::= ">=" ;
+CEqual. RelationalOperator ::= "==" ;
+CNotEqual. RelationalOperator ::= "!=" ;
+
 
 -- BOOLEAN OPERATORS -------------------------
+
+BAnd. BooleanOperator ::= "and" ;
+BOr. BooleanOperator ::= "or" ;
