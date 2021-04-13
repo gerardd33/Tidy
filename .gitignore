@@ -23,5 +23,6 @@ cabal.project.local~
 .ghc.environment.*
 
 *.out
+*.bak
 Test
 Par.info

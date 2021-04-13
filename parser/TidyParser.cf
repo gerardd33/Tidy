@@ -57,8 +57,7 @@ ActionsPresent. ActionsSection ::= "actions:" ASBody ;
 
 -- VALUES SECTION -----------------------------
 
-ValSBodyOneLine. ValSBody ::= [ValueDecl] ;
-ValSBodyMultiLine. ValSBody ::= "{" [ValueDecl] "}" ;
+ValSBody. ValSBody ::= "{" [ValueDecl] "}" ;
 
 VIdent. ValueIdent ::= LowerCaseIdent ;
 
@@ -67,7 +66,7 @@ ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
 ValueTypeFunction. ValueType ::= "get" MethodType ;
 ValueTypeAction. ValueType ::= "do" MethodType ;
 
-separator ValueDecl "," ;
+terminator ValueDecl ";" ;
 PublicValueDecl. ValueDecl ::= ValueDeclProper ;
 PrivateValueDecl. ValueDecl ::= "private" ValueDeclProper ;
 
@@ -77,8 +76,7 @@ InitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType "=" Expr ;
 
 -- VARIABLES SECTION --------------------------
 
-VarSBodyOneLine. VarSBody ::= [ValueDecl] ;
-VarSBodyMultiLine. VarSBody ::= "{" [ValueDecl] "}" ;
+VarSBody. VarSBody ::= "{" [ValueDecl] "}" ;
 
 
 -- FUNCTIONS SECTION --------------------------
@@ -118,23 +116,28 @@ ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
 -- EXPRESSIONS -------------------------------
 
 separator Expr "" ;
-coercions Expr 5 ;
+coercions Expr 7 ;
 
-ELiteral. Expr5 ::= Literal ;
-ELocalValue. Expr5 ::= ValueIdent ;
-ELocalValueDecl. Expr5 ::= LocalValueDecl ;
+ELiteral. Expr7 ::= Literal ;
+ELocalValue. Expr7 ::= ValueIdent ;
+
+EUnaryNot. Expr6 ::= "not" Expr7 ;
+EUnaryMinus. Expr6 ::= "-" Expr7 ;
+
 ELambdaFunction. Expr5 ::= LambdaFunction ;
 ELambdaAction. Expr5 ::= LambdaAction ;
-ELocalFunctionCall. Expr5 ::= "local" "." FunctionCall ;
-ELocalActionCall. Expr5 ::= "local" "#" FunctionCall ;
+
+ELocalFunctionCall. Expr5 ::= "local" FunctionCall ;
+ELocalActionCall. Expr5 ::= "local" ActionCall ;
 ECtorCall. Expr5 ::= ConstructorCall ;
+
 EGetExpr. Expr5 ::= GetExpr ;
 EDoExpr. Expr5 ::= DoExpr ;
+
 EImperativeControlFlow. Expr5 ::= ImperativeControlFlow ;
 EFunctionalControlFlow. Expr5 ::= FunctionalControlFlow ;
 
-EUnaryNot. Expr4 ::= "not" Expr5 ;
-EUnaryMinus. Expr4 ::= "-" Expr5 ;
+ELocalValueDecl. Expr5 ::= LocalValueDecl ;
 
 EMultiply. Expr3 ::= Expr3 "*" Expr4 ;
 EDivide. Expr3 ::= Expr3 "/" Expr4 ;
@@ -163,22 +166,25 @@ VPass. Void ::= "Pass" ;
 
 -- LOCAL VALUE DECLARATIONS ------------------
 
-LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
+LocalVDecl. LocalValueDecl ::= "value" ValueDecl ";" ;
 
 
 -- LAMBDAS -----------------------------------
 
-LambdaFunctionOneLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" Expr ;
+LambdaFunctionOneLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" Expr ";" ;
 LambdaFunctionMultiLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" "{" Expr "}" ;
 
-LambdaActionOneLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" Expr ;
+LambdaActionOneLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" Expr ";" ;
 LambdaActionMultiLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" "{" [Expr] "}" ;
 
 
 -- FUNCTION CALLS ----------------------------
 
-FunctionCallNoArgs. FunctionCall ::= FunctionIdent ;
-FunctionCallWithArgs. FunctionCall ::= FunctionIdent "(" [FunctionArgument] ")" ;
+FunctionCallNoArgs. FunctionCall ::= "." FunctionIdent ;
+FunctionCallWithArgs. FunctionCall ::= "." FunctionIdent "(" [FunctionArgument] ")" ;
+
+ActionCallNoArgs. ActionCall ::= "#" FunctionIdent ;
+ActionCallWithArgs. ActionCall ::= "#" FunctionIdent "(" [FunctionArgument] ")" ;
 
 separator FunctionArgument "," ;
 FunctionArg. FunctionArgument ::= Expr ;
@@ -192,16 +198,16 @@ CtorCallWithArgs. ConstructorCall ::= ClassIdent "(" [FunctionArgument] ")" ;
 
 -- GET EXPRESSIONS ----------------------------
 
-GetExprInstance. GetExpr ::= ValueIdent "." FunctionCall ;
-GetExprStatic. GetExpr ::= ClassIdent "." FunctionCall ;
-GetExprChain. GetExpr ::= GetExpr "." FunctionCall ;
+GetExprInstance. GetExpr ::= ValueIdent FunctionCall ;
+GetExprStatic. GetExpr ::= ClassIdent FunctionCall ;
+GetExprChain. GetExpr ::= GetExpr FunctionCall ;
 
 
 -- DO EXPRESSIONS ----------------------------
 
-DoExprInstance. DoExpr ::= ValueIdent "#" FunctionCall ;
-DoExprStatic. DoExpr ::= ClassIdent "#" FunctionCall ;
-DoExprChain. DoExpr ::= GetExpr "#" FunctionCall ;
+DoExprInstance. DoExpr ::= ValueIdent ActionCall ;
+DoExprStatic. DoExpr ::= ClassIdent ActionCall ;
+DoExprChain. DoExpr ::= GetExpr ActionCall ;
 
 
 -- IMPERATIVE CONTROL FLOW -------------------
@@ -218,9 +224,9 @@ ElseAbsent. OptionalElseBranch ::= ;
 
 FIfThenElse. FunctionalControlFlow ::= "if" "(" Expr ")" ThenBranch ElseBranch ;
 
-ThenOneLine. ThenBranch ::= "then" Expr ;
+ThenOneLine. ThenBranch ::= "then" Expr ";" ;
 ThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
-ElseOneLine. ElseBranch ::= "else" Expr ;
+ElseOneLine. ElseBranch ::= "else" Expr ";" ;
 ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
 
 FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;

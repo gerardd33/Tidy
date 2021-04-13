@@ -15,7 +15,7 @@ newtype UpperCaseIdent = UpperCaseIdent String
 newtype LowerCaseIdent = LowerCaseIdent String
   deriving (C.Eq, C.Ord, C.Show, C.Read, Data.String.IsString)
 
-data Program = ProgramEntrypoint [ValueDecl]
+data Program = ProgramEntrypoint [ClassDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ClassIdent = CIdent UpperCaseIdent
@@ -49,8 +49,7 @@ data FunctionsSection = FunctionsAbsent | FunctionsPresent FSBody
 data ActionsSection = ActionsAbsent | ActionsPresent ASBody
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValSBody
-    = ValSBodyOneLine [ValueDecl] | ValSBodyMultiLine [ValueDecl]
+data ValSBody = ValSBody [ValueDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ValueIdent = VIdent LowerCaseIdent
@@ -73,8 +72,7 @@ data ValueDeclProper
     | InitialisedValue ValueIdent ValueType Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data VarSBody
-    = VarSBodyOneLine [ValueDecl] | VarSBodyMultiLine [ValueDecl]
+data VarSBody = VarSBody [ValueDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FSBody = FSBodyEmpty | FSBodyFilled [FunctionDecl]
@@ -116,18 +114,17 @@ data ActionBody
 data Expr
     = ELiteral Literal
     | ELocalValue ValueIdent
-    | ELocalValueDecl LocalValueDecl
+    | EUnaryNot Expr
+    | EUnaryMinus Expr
     | ELambdaFunction LambdaFunction
     | ELambdaAction LambdaAction
     | ELocalFunctionCall FunctionCall
-    | ELocalActionCall FunctionCall
+    | ELocalActionCall ActionCall
     | ECtorCall ConstructorCall
     | EGetExpr GetExpr
     | EDoExpr DoExpr
     | EImperativeControlFlow ImperativeControlFlow
-    | EFunctionalControlFlow FunctionalControlFlow
-    | EUnaryNot Expr
-    | EUnaryMinus Expr
+    | ELocalValueDecl LocalValueDecl
     | EMultiply Expr Expr
     | EDivide Expr Expr
     | EAdd Expr Expr
@@ -169,6 +166,11 @@ data FunctionCall
     | FunctionCallWithArgs FunctionIdent [FunctionArgument]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
+data ActionCall
+    = ActionCallNoArgs FunctionIdent
+    | ActionCallWithArgs FunctionIdent [FunctionArgument]
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
 data FunctionArgument = FunctionArg Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
@@ -184,9 +186,9 @@ data GetExpr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data DoExpr
-    = DoExprInstance ValueIdent FunctionCall
-    | DoExprStatic ClassIdent FunctionCall
-    | DoExprChain GetExpr FunctionCall
+    = DoExprInstance ValueIdent ActionCall
+    | DoExprStatic ClassIdent ActionCall
+    | DoExprChain GetExpr ActionCall
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ImperativeControlFlow

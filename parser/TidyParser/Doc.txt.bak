@@ -49,11 +49,11 @@ The reserved words used in TidyParser are the following:
 The symbols used in TidyParser are the following:
   | , | { | } | values:
   | variables: | functions: | actions: | [
-  | ] | : | = | (
-  | ) | -> | . | #
-  | - | * | / | +
-  | ++ | < | <= | >
-  | >= | == | != |
+  | ] | ; | : | =
+  | ( | ) | -> | -
+  | * | / | + | ++
+  | . | # | < | <=
+  | > | >= | == | !=
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -64,7 +64,7 @@ The symbols -> (production),  **|**  (union)
 and **eps** (empty rule) belong to the BNF notation.
 All other symbols are terminals.
 
-  | //Program// | -> | //[ValueDecl]//
+  | //Program// | -> | //[ClassDecl]//
   | //[ClassIdent]// | -> | **eps**
   |  |  **|**  | //ClassIdent//
   |  |  **|**  | //ClassIdent// ``,`` //[ClassIdent]//
@@ -88,22 +88,19 @@ All other symbols are terminals.
   |  |  **|**  | ``functions:`` //FSBody//
   | //ActionsSection// | -> | **eps**
   |  |  **|**  | ``actions:`` //ASBody//
-  | //ValSBody// | -> | //[ValueDecl]//
-  |  |  **|**  | ``{`` //[ValueDecl]// ``}``
+  | //ValSBody// | -> | ``{`` //[ValueDecl]// ``}``
   | //ValueIdent// | -> | //LowerCaseIdent//
   | //ValueType// | -> | //ClassIdent//
   |  |  **|**  | //ClassIdent// ``[`` //[ClassIdent]// ``]``
   |  |  **|**  | ``get`` //MethodType//
   |  |  **|**  | ``do`` //MethodType//
   | //[ValueDecl]// | -> | **eps**
-  |  |  **|**  | //ValueDecl//
-  |  |  **|**  | //ValueDecl// ``,`` //[ValueDecl]//
+  |  |  **|**  | //ValueDecl// ``;`` //[ValueDecl]//
   | //ValueDecl// | -> | //ValueDeclProper//
   |  |  **|**  | ``private`` //ValueDeclProper//
   | //ValueDeclProper// | -> | //ValueIdent// ``:`` //ValueType//
   |  |  **|**  | //ValueIdent// ``:`` //ValueType// ``=`` //Expr//
-  | //VarSBody// | -> | //[ValueDecl]//
-  |  |  **|**  | ``{`` //[ValueDecl]// ``}``
+  | //VarSBody// | -> | ``{`` //[ValueDecl]// ``}``
   | //FSBody// | -> | **eps**
   |  |  **|**  | ``{`` //[FunctionDecl]// ``}``
   | //FunctionIdent// | -> | //LowerCaseIdent//
@@ -140,21 +137,23 @@ All other symbols are terminals.
   |  |  **|**  | //Expr3// ``*`` //Expr4//
   |  |  **|**  | //Expr3// ``/`` //Expr4//
   | //Expr4// | -> | //Expr5//
-  |  |  **|**  | ``not`` //Expr5//
-  |  |  **|**  | ``-`` //Expr5//
-  | //Expr5// | -> | ``(`` //Expr// ``)``
-  |  |  **|**  | //Literal//
-  |  |  **|**  | //ValueIdent//
-  |  |  **|**  | //LocalValueDecl//
+  | //Expr5// | -> | //Expr6//
   |  |  **|**  | //LambdaFunction//
   |  |  **|**  | //LambdaAction//
-  |  |  **|**  | ``local`` ``.`` //FunctionCall//
-  |  |  **|**  | ``local`` ``#`` //FunctionCall//
+  |  |  **|**  | ``local`` //FunctionCall//
+  |  |  **|**  | ``local`` //ActionCall//
   |  |  **|**  | //ConstructorCall//
   |  |  **|**  | //GetExpr//
   |  |  **|**  | //DoExpr//
   |  |  **|**  | //ImperativeControlFlow//
   |  |  **|**  | //FunctionalControlFlow//
+  |  |  **|**  | //LocalValueDecl//
+  | //Expr6// | -> | //Expr7//
+  |  |  **|**  | ``not`` //Expr7//
+  |  |  **|**  | ``-`` //Expr7//
+  | //Expr7// | -> | ``(`` //Expr// ``)``
+  |  |  **|**  | //Literal//
+  |  |  **|**  | //ValueIdent//
   | //Literal// | -> | //Integer//
   |  |  **|**  | //Boolean//
   |  |  **|**  | //Char//
@@ -163,25 +162,27 @@ All other symbols are terminals.
   | //Boolean// | -> | ``True``
   |  |  **|**  | ``False``
   | //Void// | -> | ``Pass``
-  | //LocalValueDecl// | -> | ``value`` //ValueDecl//
-  | //LambdaFunction// | -> | ``get`` ``(`` //[ValueDecl]// ``)`` ``->`` //Expr//
+  | //LocalValueDecl// | -> | ``value`` //ValueDecl// ``;``
+  | //LambdaFunction// | -> | ``get`` ``(`` //[ValueDecl]// ``)`` ``->`` //Expr// ``;``
   |  |  **|**  | ``get`` ``(`` //[ValueDecl]// ``)`` ``->`` ``{`` //Expr// ``}``
-  | //LambdaAction// | -> | ``do`` ``(`` //[ValueDecl]// ``)`` ``->`` //Expr//
+  | //LambdaAction// | -> | ``do`` ``(`` //[ValueDecl]// ``)`` ``->`` //Expr// ``;``
   |  |  **|**  | ``do`` ``(`` //[ValueDecl]// ``)`` ``->`` ``{`` //[Expr]// ``}``
-  | //FunctionCall// | -> | //FunctionIdent//
-  |  |  **|**  | //FunctionIdent// ``(`` //[FunctionArgument]// ``)``
+  | //FunctionCall// | -> | ``.`` //FunctionIdent//
+  |  |  **|**  | ``.`` //FunctionIdent// ``(`` //[FunctionArgument]// ``)``
+  | //ActionCall// | -> | ``#`` //FunctionIdent//
+  |  |  **|**  | ``#`` //FunctionIdent// ``(`` //[FunctionArgument]// ``)``
   | //[FunctionArgument]// | -> | **eps**
   |  |  **|**  | //FunctionArgument//
   |  |  **|**  | //FunctionArgument// ``,`` //[FunctionArgument]//
   | //FunctionArgument// | -> | //Expr//
   | //ConstructorCall// | -> | //ClassIdent//
   |  |  **|**  | //ClassIdent// ``(`` //[FunctionArgument]// ``)``
-  | //GetExpr// | -> | //ValueIdent// ``.`` //FunctionCall//
-  |  |  **|**  | //ClassIdent// ``.`` //FunctionCall//
-  |  |  **|**  | //GetExpr// ``.`` //FunctionCall//
-  | //DoExpr// | -> | //ValueIdent// ``#`` //FunctionCall//
-  |  |  **|**  | //ClassIdent// ``#`` //FunctionCall//
-  |  |  **|**  | //GetExpr// ``#`` //FunctionCall//
+  | //GetExpr// | -> | //ValueIdent// //FunctionCall//
+  |  |  **|**  | //ClassIdent// //FunctionCall//
+  |  |  **|**  | //GetExpr// //FunctionCall//
+  | //DoExpr// | -> | //ValueIdent// //ActionCall//
+  |  |  **|**  | //ClassIdent// //ActionCall//
+  |  |  **|**  | //GetExpr// //ActionCall//
   | //ImperativeControlFlow// | -> | ``while`` ``(`` //Expr// ``)`` ``{`` //[Expr]// ``}``
   |  |  **|**  | ``for`` ``(`` //ValueDecl// ``in`` //Expr// ``)`` ``{`` //[Expr]// ``}``
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` ``{`` //[Expr]// ``}`` //OptionalElseBranch//

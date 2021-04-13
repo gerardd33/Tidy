@@ -105,7 +105,7 @@ instance Print TidyParser.Abs.LowerCaseIdent where
 
 instance Print TidyParser.Abs.Program where
   prt i e = case e of
-    TidyParser.Abs.ProgramEntrypoint valuedecls -> prPrec i 0 (concatD [prt 0 valuedecls])
+    TidyParser.Abs.ProgramEntrypoint classdecls -> prPrec i 0 (concatD [prt 0 classdecls])
 
 instance Print [TidyParser.Abs.ClassIdent] where
   prt = prtList
@@ -165,8 +165,7 @@ instance Print TidyParser.Abs.ActionsSection where
 
 instance Print TidyParser.Abs.ValSBody where
   prt i e = case e of
-    TidyParser.Abs.ValSBodyOneLine valuedecls -> prPrec i 0 (concatD [prt 0 valuedecls])
-    TidyParser.Abs.ValSBodyMultiLine valuedecls -> prPrec i 0 (concatD [doc (showString "{"), prt 0 valuedecls, doc (showString "}")])
+    TidyParser.Abs.ValSBody valuedecls -> prPrec i 0 (concatD [doc (showString "{"), prt 0 valuedecls, doc (showString "}")])
 
 instance Print TidyParser.Abs.ValueIdent where
   prt i e = case e of
@@ -187,8 +186,7 @@ instance Print TidyParser.Abs.ValueDecl where
     TidyParser.Abs.PublicValueDecl valuedeclproper -> prPrec i 0 (concatD [prt 0 valuedeclproper])
     TidyParser.Abs.PrivateValueDecl valuedeclproper -> prPrec i 0 (concatD [doc (showString "private"), prt 0 valuedeclproper])
   prtList _ [] = concatD []
-  prtList _ [x] = concatD [prt 0 x]
-  prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
+  prtList _ (x:xs) = concatD [prt 0 x, doc (showString ";"), prt 0 xs]
 
 instance Print TidyParser.Abs.ValueDeclProper where
   prt i e = case e of
@@ -197,8 +195,7 @@ instance Print TidyParser.Abs.ValueDeclProper where
 
 instance Print TidyParser.Abs.VarSBody where
   prt i e = case e of
-    TidyParser.Abs.VarSBodyOneLine valuedecls -> prPrec i 0 (concatD [prt 0 valuedecls])
-    TidyParser.Abs.VarSBodyMultiLine valuedecls -> prPrec i 0 (concatD [doc (showString "{"), prt 0 valuedecls, doc (showString "}")])
+    TidyParser.Abs.VarSBody valuedecls -> prPrec i 0 (concatD [doc (showString "{"), prt 0 valuedecls, doc (showString "}")])
 
 instance Print TidyParser.Abs.FSBody where
   prt i e = case e of
@@ -260,20 +257,20 @@ instance Print [TidyParser.Abs.Expr] where
 
 instance Print TidyParser.Abs.Expr where
   prt i e = case e of
-    TidyParser.Abs.ELiteral literal -> prPrec i 5 (concatD [prt 0 literal])
-    TidyParser.Abs.ELocalValue valueident -> prPrec i 5 (concatD [prt 0 valueident])
-    TidyParser.Abs.ELocalValueDecl localvaluedecl -> prPrec i 5 (concatD [prt 0 localvaluedecl])
+    TidyParser.Abs.ELiteral literal -> prPrec i 7 (concatD [prt 0 literal])
+    TidyParser.Abs.ELocalValue valueident -> prPrec i 7 (concatD [prt 0 valueident])
+    TidyParser.Abs.EUnaryNot expr -> prPrec i 6 (concatD [doc (showString "not"), prt 7 expr])
+    TidyParser.Abs.EUnaryMinus expr -> prPrec i 6 (concatD [doc (showString "-"), prt 7 expr])
     TidyParser.Abs.ELambdaFunction lambdafunction -> prPrec i 5 (concatD [prt 0 lambdafunction])
     TidyParser.Abs.ELambdaAction lambdaaction -> prPrec i 5 (concatD [prt 0 lambdaaction])
-    TidyParser.Abs.ELocalFunctionCall functioncall -> prPrec i 5 (concatD [doc (showString "local"), doc (showString "."), prt 0 functioncall])
-    TidyParser.Abs.ELocalActionCall functioncall -> prPrec i 5 (concatD [doc (showString "local"), doc (showString "#"), prt 0 functioncall])
+    TidyParser.Abs.ELocalFunctionCall functioncall -> prPrec i 5 (concatD [doc (showString "local"), prt 0 functioncall])
+    TidyParser.Abs.ELocalActionCall actioncall -> prPrec i 5 (concatD [doc (showString "local"), prt 0 actioncall])
     TidyParser.Abs.ECtorCall constructorcall -> prPrec i 5 (concatD [prt 0 constructorcall])
     TidyParser.Abs.EGetExpr getexpr -> prPrec i 5 (concatD [prt 0 getexpr])
     TidyParser.Abs.EDoExpr doexpr -> prPrec i 5 (concatD [prt 0 doexpr])
     TidyParser.Abs.EImperativeControlFlow imperativecontrolflow -> prPrec i 5 (concatD [prt 0 imperativecontrolflow])
     TidyParser.Abs.EFunctionalControlFlow functionalcontrolflow -> prPrec i 5 (concatD [prt 0 functionalcontrolflow])
-    TidyParser.Abs.EUnaryNot expr -> prPrec i 4 (concatD [doc (showString "not"), prt 5 expr])
-    TidyParser.Abs.EUnaryMinus expr -> prPrec i 4 (concatD [doc (showString "-"), prt 5 expr])
+    TidyParser.Abs.ELocalValueDecl localvaluedecl -> prPrec i 5 (concatD [prt 0 localvaluedecl])
     TidyParser.Abs.EMultiply expr1 expr2 -> prPrec i 3 (concatD [prt 3 expr1, doc (showString "*"), prt 4 expr2])
     TidyParser.Abs.EDivide expr1 expr2 -> prPrec i 3 (concatD [prt 3 expr1, doc (showString "/"), prt 4 expr2])
     TidyParser.Abs.EAdd expr1 expr2 -> prPrec i 2 (concatD [prt 2 expr1, doc (showString "+"), prt 3 expr2])
@@ -303,22 +300,27 @@ instance Print TidyParser.Abs.Void where
 
 instance Print TidyParser.Abs.LocalValueDecl where
   prt i e = case e of
-    TidyParser.Abs.LocalVDecl valuedecl -> prPrec i 0 (concatD [doc (showString "value"), prt 0 valuedecl])
+    TidyParser.Abs.LocalVDecl valuedecl -> prPrec i 0 (concatD [doc (showString "value"), prt 0 valuedecl, doc (showString ";")])
 
 instance Print TidyParser.Abs.LambdaFunction where
   prt i e = case e of
-    TidyParser.Abs.LambdaFunctionOneLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "get"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), prt 0 expr])
+    TidyParser.Abs.LambdaFunctionOneLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "get"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), prt 0 expr, doc (showString ";")])
     TidyParser.Abs.LambdaFunctionMultiLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "get"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), doc (showString "{"), prt 0 expr, doc (showString "}")])
 
 instance Print TidyParser.Abs.LambdaAction where
   prt i e = case e of
-    TidyParser.Abs.LambdaActionOneLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "do"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), prt 0 expr])
+    TidyParser.Abs.LambdaActionOneLine valuedecls expr -> prPrec i 0 (concatD [doc (showString "do"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), prt 0 expr, doc (showString ";")])
     TidyParser.Abs.LambdaActionMultiLine valuedecls exprs -> prPrec i 0 (concatD [doc (showString "do"), doc (showString "("), prt 0 valuedecls, doc (showString ")"), doc (showString "->"), doc (showString "{"), prt 0 exprs, doc (showString "}")])
 
 instance Print TidyParser.Abs.FunctionCall where
   prt i e = case e of
-    TidyParser.Abs.FunctionCallNoArgs functionident -> prPrec i 0 (concatD [prt 0 functionident])
-    TidyParser.Abs.FunctionCallWithArgs functionident functionarguments -> prPrec i 0 (concatD [prt 0 functionident, doc (showString "("), prt 0 functionarguments, doc (showString ")")])
+    TidyParser.Abs.FunctionCallNoArgs functionident -> prPrec i 0 (concatD [doc (showString "."), prt 0 functionident])
+    TidyParser.Abs.FunctionCallWithArgs functionident functionarguments -> prPrec i 0 (concatD [doc (showString "."), prt 0 functionident, doc (showString "("), prt 0 functionarguments, doc (showString ")")])
+
+instance Print TidyParser.Abs.ActionCall where
+  prt i e = case e of
+    TidyParser.Abs.ActionCallNoArgs functionident -> prPrec i 0 (concatD [doc (showString "#"), prt 0 functionident])
+    TidyParser.Abs.ActionCallWithArgs functionident functionarguments -> prPrec i 0 (concatD [doc (showString "#"), prt 0 functionident, doc (showString "("), prt 0 functionarguments, doc (showString ")")])
 
 instance Print [TidyParser.Abs.FunctionArgument] where
   prt = prtList
@@ -337,15 +339,15 @@ instance Print TidyParser.Abs.ConstructorCall where
 
 instance Print TidyParser.Abs.GetExpr where
   prt i e = case e of
-    TidyParser.Abs.GetExprInstance valueident functioncall -> prPrec i 0 (concatD [prt 0 valueident, doc (showString "."), prt 0 functioncall])
-    TidyParser.Abs.GetExprStatic classident functioncall -> prPrec i 0 (concatD [prt 0 classident, doc (showString "."), prt 0 functioncall])
-    TidyParser.Abs.GetExprChain getexpr functioncall -> prPrec i 0 (concatD [prt 0 getexpr, doc (showString "."), prt 0 functioncall])
+    TidyParser.Abs.GetExprInstance valueident functioncall -> prPrec i 0 (concatD [prt 0 valueident, prt 0 functioncall])
+    TidyParser.Abs.GetExprStatic classident functioncall -> prPrec i 0 (concatD [prt 0 classident, prt 0 functioncall])
+    TidyParser.Abs.GetExprChain getexpr functioncall -> prPrec i 0 (concatD [prt 0 getexpr, prt 0 functioncall])
 
 instance Print TidyParser.Abs.DoExpr where
   prt i e = case e of
-    TidyParser.Abs.DoExprInstance valueident functioncall -> prPrec i 0 (concatD [prt 0 valueident, doc (showString "#"), prt 0 functioncall])
-    TidyParser.Abs.DoExprStatic classident functioncall -> prPrec i 0 (concatD [prt 0 classident, doc (showString "#"), prt 0 functioncall])
-    TidyParser.Abs.DoExprChain getexpr functioncall -> prPrec i 0 (concatD [prt 0 getexpr, doc (showString "#"), prt 0 functioncall])
+    TidyParser.Abs.DoExprInstance valueident actioncall -> prPrec i 0 (concatD [prt 0 valueident, prt 0 actioncall])
+    TidyParser.Abs.DoExprStatic classident actioncall -> prPrec i 0 (concatD [prt 0 classident, prt 0 actioncall])
+    TidyParser.Abs.DoExprChain getexpr actioncall -> prPrec i 0 (concatD [prt 0 getexpr, prt 0 actioncall])
 
 instance Print TidyParser.Abs.ImperativeControlFlow where
   prt i e = case e of

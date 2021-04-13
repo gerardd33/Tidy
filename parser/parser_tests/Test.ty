@@ -1,15 +1,15 @@
 mutable class PhoneMessageReceiver extends MessageReceiver {
     
     values: {
-        messageReceived: String = "You got a new message!",
-        messageInvalid: String = "Invalid message",
-        maxMessageLength: Int = 100,
+        messageReceived: String = "You got a new message!";
+        messageInvalid: String = "Invalid message";
+        maxMessageLength: Int = 100;
         
-        notificationChannels: List[NotificationChannel]
+        notificationChannels: List[NotificationChannel];
     }
     
     variables: {
-        messages: List[Message] = List()
+        messages: List[Message] = List();
     }
     
     functions: {
@@ -54,7 +54,7 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
         // a bit more artificial example to show how some more advanced features work
         override transformMessages: (messageTransformer: do (complete: Bool) -> Void) -> Void = {
             value handleMessage: do (message: Message) -> Void = do (message: Message) -> {
-                System#printLine("Transforming message " ++ message)
+                // System#printLine("Transforming message " ++ message)
                 message#transform(local#messageTransformer(False))
             }
             

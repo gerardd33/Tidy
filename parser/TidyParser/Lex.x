@@ -19,7 +19,7 @@ $i = [$l $d _ ']     -- identifier character
 $u = [. \n]          -- universal: any character
 
 @rsyms =    -- symbols and non-identifier-like reserved words
-   \, | \{ | \} | "values" \: | "variables" \: | "functions" \: | "actions" \: | \[ | \] | \: | \= | \( | \) | \- \> | \. | \# | \- | \* | \/ | \+ | \+ \+ | \< | \< \= | \> | \> \= | \= \= | \! \=
+   \, | \{ | \} | "values" \: | "variables" \: | "functions" \: | "actions" \: | \[ | \] | \; | \: | \= | \( | \) | \- \> | \- | \* | \/ | \+ | \+ \+ | \. | \# | \< | \< \= | \> | \> \= | \= \= | \! \=
 
 :-
 
@@ -115,7 +115,7 @@ eitherResIdent tv s = treeFind resWords
                               | s == a = t
 
 resWords :: BTree
-resWords = b "case" 28 (b "<" 14 (b "++" 7 (b ")" 4 (b "#" 2 (b "!=" 1 N N) (b "(" 3 N N)) (b "+" 6 (b "*" 5 N N) N)) (b "." 11 (b "-" 9 (b "," 8 N N) (b "->" 10 N N)) (b ":" 13 (b "/" 12 N N) N))) (b "Pass" 21 (b ">" 18 (b "=" 16 (b "<=" 15 N N) (b "==" 17 N N)) (b "False" 20 (b ">=" 19 N N) N)) (b "abstract" 25 (b "[" 23 (b "True" 22 N N) (b "]" 24 N N)) (b "and" 27 (b "actions:" 26 N N) N)))) (b "not" 42 (b "get" 35 (b "extends" 32 (b "do" 30 (b "class" 29 N N) (b "else" 31 N N)) (b "functions:" 34 (b "for" 33 N N) N)) (b "local" 39 (b "immutable" 37 (b "if" 36 N N) (b "in" 38 N N)) (b "mutable" 41 (b "match" 40 N N) N))) (b "values:" 49 (b "singleton" 46 (b "override" 44 (b "or" 43 N N) (b "private" 45 N N)) (b "value" 48 (b "then" 47 N N) N)) (b "with" 52 (b "while" 51 (b "variables:" 50 N N) N) (b "}" 54 (b "{" 53 N N) N))))
+resWords = b "and" 28 (b ";" 14 (b "++" 7 (b ")" 4 (b "#" 2 (b "!=" 1 N N) (b "(" 3 N N)) (b "+" 6 (b "*" 5 N N) N)) (b "." 11 (b "-" 9 (b "," 8 N N) (b "->" 10 N N)) (b ":" 13 (b "/" 12 N N) N))) (b "False" 21 (b "==" 18 (b "<=" 16 (b "<" 15 N N) (b "=" 17 N N)) (b ">=" 20 (b ">" 19 N N) N)) (b "]" 25 (b "True" 23 (b "Pass" 22 N N) (b "[" 24 N N)) (b "actions:" 27 (b "abstract" 26 N N) N)))) (b "mutable" 42 (b "functions:" 35 (b "else" 32 (b "class" 30 (b "case" 29 N N) (b "do" 31 N N)) (b "for" 34 (b "extends" 33 N N) N)) (b "in" 39 (b "if" 37 (b "get" 36 N N) (b "immutable" 38 N N)) (b "match" 41 (b "local" 40 N N) N))) (b "value" 49 (b "private" 46 (b "or" 44 (b "not" 43 N N) (b "override" 45 N N)) (b "then" 48 (b "singleton" 47 N N) N)) (b "with" 53 (b "variables:" 51 (b "values:" 50 N N) (b "while" 52 N N)) (b "}" 55 (b "{" 54 N N) N))))
    where b s n = let bs = s
                  in  B bs (TS bs n)
 
