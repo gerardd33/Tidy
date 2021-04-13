@@ -178,22 +178,17 @@ LambdaActionOneLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" Expr ";" ;
 LambdaActionMultiLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" "{" [Expr] "}" ;
 
 
--- FUNCTION CALLS ----------------------------
+-- FUNCTION AND CONSTRUCTOR CALLS --------------
 
-FunctionCallNoArgs. FunctionCall ::= "." FunctionIdent ;
-FunctionCallWithArgs. FunctionCall ::= "." FunctionIdent "(" [FunctionArgument] ")" ;
-
-ActionCallNoArgs. ActionCall ::= "#" FunctionIdent ;
-ActionCallWithArgs. ActionCall ::= "#" FunctionIdent "(" [FunctionArgument] ")" ;
+ArgListAbsent. ArgumentList ::= ;
+ArgListPresent. ArgumentList ::= "(" [FunctionArgument] ")" ;
 
 separator FunctionArgument "," ;
 FunctionArg. FunctionArgument ::= Expr ;
 
-
--- CONSTRUCTOR CALLS --------------------------
-
-CtorCallNoArgs. ConstructorCall ::= ClassIdent ;
-CtorCallWithArgs. ConstructorCall ::= ClassIdent "(" [FunctionArgument] ")" ;
+FCall. FunctionCall ::= "." FunctionIdent ArgumentList ;
+ACall. ActionCall ::= "#" FunctionIdent ArgumentList ;
+CCall. ConstructorCall ::= ClassIdent ArgumentList ;
 
 
 -- GET EXPRESSIONS ----------------------------
