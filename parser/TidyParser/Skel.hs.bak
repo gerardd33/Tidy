@@ -57,7 +57,7 @@ transActionsSection x = case x of
   TidyParser.Abs.ActionsPresent asbody -> failure x
 transValSBody :: TidyParser.Abs.ValSBody -> Result
 transValSBody x = case x of
-  TidyParser.Abs.ValSBody valuedecls -> failure x
+  TidyParser.Abs.ValuesSBody valuedecls -> failure x
 transValueIdent :: TidyParser.Abs.ValueIdent -> Result
 transValueIdent x = case x of
   TidyParser.Abs.VIdent lowercaseident -> failure x
@@ -77,7 +77,7 @@ transValueDeclProper x = case x of
   TidyParser.Abs.InitialisedValue valueident valuetype expr -> failure x
 transVarSBody :: TidyParser.Abs.VarSBody -> Result
 transVarSBody x = case x of
-  TidyParser.Abs.VarSBody valuedecls -> failure x
+  TidyParser.Abs.VariablesSBody valuedecls -> failure x
 transFSBody :: TidyParser.Abs.FSBody -> Result
 transFSBody x = case x of
   TidyParser.Abs.FSBodyEmpty -> failure x
@@ -87,7 +87,10 @@ transFunctionIdent x = case x of
   TidyParser.Abs.FIdent lowercaseident -> failure x
 transMethodType :: TidyParser.Abs.MethodType -> Result
 transMethodType x = case x of
-  TidyParser.Abs.FType valuedecls valuetype -> failure x
+  TidyParser.Abs.FType parameterlist valuetype -> failure x
+transParameterList :: TidyParser.Abs.ParameterList -> Result
+transParameterList x = case x of
+  TidyParser.Abs.ParamList valuedeclpropers -> failure x
 transFunctionDecl :: TidyParser.Abs.FunctionDecl -> Result
 transFunctionDecl x = case x of
   TidyParser.Abs.OverrideFunctionDecl functionident methodtype functionbody -> failure x
@@ -118,17 +121,18 @@ transExpr :: TidyParser.Abs.Expr -> Result
 transExpr x = case x of
   TidyParser.Abs.ELiteral literal -> failure x
   TidyParser.Abs.ELocalValue valueident -> failure x
-  TidyParser.Abs.EUnaryNot expr -> failure x
-  TidyParser.Abs.EUnaryMinus expr -> failure x
+  TidyParser.Abs.EGetExpr getexpr -> failure x
+  TidyParser.Abs.EDoExpr doexpr -> failure x
   TidyParser.Abs.ELambdaFunction lambdafunction -> failure x
   TidyParser.Abs.ELambdaAction lambdaaction -> failure x
   TidyParser.Abs.ELocalFunctionCall functioncall -> failure x
   TidyParser.Abs.ELocalActionCall actioncall -> failure x
   TidyParser.Abs.ECtorCall constructorcall -> failure x
-  TidyParser.Abs.EGetExpr getexpr -> failure x
-  TidyParser.Abs.EDoExpr doexpr -> failure x
   TidyParser.Abs.EImperativeControlFlow imperativecontrolflow -> failure x
+  TidyParser.Abs.EFunctionalControlFlow functionalcontrolflow -> failure x
   TidyParser.Abs.ELocalValueDecl localvaluedecl -> failure x
+  TidyParser.Abs.EUnaryNot expr -> failure x
+  TidyParser.Abs.EUnaryMinus expr -> failure x
   TidyParser.Abs.EMultiply expr1 expr2 -> failure x
   TidyParser.Abs.EDivide expr1 expr2 -> failure x
   TidyParser.Abs.EAdd expr1 expr2 -> failure x
@@ -155,27 +159,28 @@ transLocalValueDecl x = case x of
   TidyParser.Abs.LocalVDecl valuedecl -> failure x
 transLambdaFunction :: TidyParser.Abs.LambdaFunction -> Result
 transLambdaFunction x = case x of
-  TidyParser.Abs.LambdaFunctionOneLine valuedecls expr -> failure x
-  TidyParser.Abs.LambdaFunctionMultiLine valuedecls expr -> failure x
+  TidyParser.Abs.LambdaFunctionOneLine parameterlist expr -> failure x
+  TidyParser.Abs.LambdaFunctionMultiLine parameterlist expr -> failure x
 transLambdaAction :: TidyParser.Abs.LambdaAction -> Result
 transLambdaAction x = case x of
-  TidyParser.Abs.LambdaActionOneLine valuedecls expr -> failure x
-  TidyParser.Abs.LambdaActionMultiLine valuedecls exprs -> failure x
-transFunctionCall :: TidyParser.Abs.FunctionCall -> Result
-transFunctionCall x = case x of
-  TidyParser.Abs.FunctionCallNoArgs functionident -> failure x
-  TidyParser.Abs.FunctionCallWithArgs functionident functionarguments -> failure x
-transActionCall :: TidyParser.Abs.ActionCall -> Result
-transActionCall x = case x of
-  TidyParser.Abs.ActionCallNoArgs functionident -> failure x
-  TidyParser.Abs.ActionCallWithArgs functionident functionarguments -> failure x
+  TidyParser.Abs.LambdaActionOneLine parameterlist expr -> failure x
+  TidyParser.Abs.LambdaActionMultiLine parameterlist exprs -> failure x
+transArgumentList :: TidyParser.Abs.ArgumentList -> Result
+transArgumentList x = case x of
+  TidyParser.Abs.ArgListAbsent -> failure x
+  TidyParser.Abs.ArgListPresent functionarguments -> failure x
 transFunctionArgument :: TidyParser.Abs.FunctionArgument -> Result
 transFunctionArgument x = case x of
   TidyParser.Abs.FunctionArg expr -> failure x
+transFunctionCall :: TidyParser.Abs.FunctionCall -> Result
+transFunctionCall x = case x of
+  TidyParser.Abs.FCall functionident argumentlist -> failure x
+transActionCall :: TidyParser.Abs.ActionCall -> Result
+transActionCall x = case x of
+  TidyParser.Abs.ACall functionident argumentlist -> failure x
 transConstructorCall :: TidyParser.Abs.ConstructorCall -> Result
 transConstructorCall x = case x of
-  TidyParser.Abs.CtorCallNoArgs classident -> failure x
-  TidyParser.Abs.CtorCallWithArgs classident functionarguments -> failure x
+  TidyParser.Abs.CCall classident argumentlist -> failure x
 transGetExpr :: TidyParser.Abs.GetExpr -> Result
 transGetExpr x = case x of
   TidyParser.Abs.GetExprInstance valueident functioncall -> failure x
@@ -207,6 +212,7 @@ transElseBranch :: TidyParser.Abs.ElseBranch -> Result
 transElseBranch x = case x of
   TidyParser.Abs.ElseOneLine expr -> failure x
   TidyParser.Abs.ElseMultiLine expr -> failure x
+  TidyParser.Abs.ElseIf functionalcontrolflow -> failure x
 transMatchCase :: TidyParser.Abs.MatchCase -> Result
 transMatchCase x = case x of
   TidyParser.Abs.Case pattern_ expr -> failure x

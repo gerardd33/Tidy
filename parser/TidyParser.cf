@@ -57,7 +57,7 @@ ActionsPresent. ActionsSection ::= "actions:" ASBody ;
 
 -- VALUES SECTION -----------------------------
 
-ValSBody. ValSBody ::= "{" [ValueDecl] "}" ;
+ValuesSBody. ValSBody ::= "{" [ValueDecl] "}" ;
 
 VIdent. ValueIdent ::= LowerCaseIdent ;
 
@@ -66,17 +66,18 @@ ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
 ValueTypeFunction. ValueType ::= "get" MethodType ;
 ValueTypeAction. ValueType ::= "do" MethodType ;
 
-terminator ValueDecl ";" ;
-PublicValueDecl. ValueDecl ::= ValueDeclProper ;
-PrivateValueDecl. ValueDecl ::= "private" ValueDeclProper ;
+separator ValueDecl "" ;
+PublicValueDecl. ValueDecl ::= ValueDeclProper ";" ;
+PrivateValueDecl. ValueDecl ::= "private" ValueDeclProper ";" ;
 
+separator ValueDeclProper "," ;
 UninitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType ;
 InitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType "=" Expr ;
 
 
 -- VARIABLES SECTION --------------------------
 
-VarSBody. VarSBody ::= "{" [ValueDecl] "}" ;
+VariablesSBody. VarSBody ::= "{" [ValueDecl] "}" ;
 
 
 -- FUNCTIONS SECTION --------------------------
@@ -85,7 +86,9 @@ FSBodyEmpty. FSBody ::= ;
 FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
 
 FIdent. FunctionIdent ::= LowerCaseIdent ;
-FType. MethodType ::= "(" [ValueDecl] ")" "->" ValueType;
+FType. MethodType ::= ParameterList "->" ValueType;
+
+ParamList. ParameterList ::= "(" [ValueDeclProper] ")" ;
 
 separator FunctionDecl "" ;
 OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" MethodType "=" FunctionBody ;
@@ -116,28 +119,28 @@ ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
 -- EXPRESSIONS -------------------------------
 
 separator Expr "" ;
-coercions Expr 7 ;
+coercions Expr 10 ;
 
-ELiteral. Expr7 ::= Literal ;
-ELocalValue. Expr7 ::= ValueIdent ;
+ELiteral. Expr10 ::= Literal ;
+ELocalValue. Expr10 ::= ValueIdent ;
 
-EUnaryNot. Expr6 ::= "not" Expr7 ;
-EUnaryMinus. Expr6 ::= "-" Expr7 ;
+EGetExpr. Expr9 ::= GetExpr ;
+EDoExpr. Expr9 ::= DoExpr ;
 
-ELambdaFunction. Expr5 ::= LambdaFunction ;
-ELambdaAction. Expr5 ::= LambdaAction ;
+ELambdaFunction. Expr8 ::= LambdaFunction ;
+ELambdaAction. Expr8 ::= LambdaAction ;
 
-ELocalFunctionCall. Expr5 ::= "local" FunctionCall ;
-ELocalActionCall. Expr5 ::= "local" ActionCall ;
-ECtorCall. Expr5 ::= ConstructorCall ;
+ELocalFunctionCall. Expr7 ::= "local" FunctionCall ;
+ELocalActionCall. Expr7 ::= "local" ActionCall ;
+ECtorCall. Expr7 ::= ConstructorCall ;
 
-EGetExpr. Expr5 ::= GetExpr ;
-EDoExpr. Expr5 ::= DoExpr ;
-
-EImperativeControlFlow. Expr5 ::= ImperativeControlFlow ;
-EFunctionalControlFlow. Expr5 ::= FunctionalControlFlow ;
+EImperativeControlFlow. Expr6 ::= ImperativeControlFlow ;
+EFunctionalControlFlow. Expr6 ::= FunctionalControlFlow ;
 
 ELocalValueDecl. Expr5 ::= LocalValueDecl ;
+
+EUnaryNot. Expr4 ::= "not" Expr5 ;
+EUnaryMinus. Expr4 ::= "-" Expr5 ;
 
 EMultiply. Expr3 ::= Expr3 "*" Expr4 ;
 EDivide. Expr3 ::= Expr3 "/" Expr4 ;
@@ -166,16 +169,16 @@ VPass. Void ::= "Pass" ;
 
 -- LOCAL VALUE DECLARATIONS ------------------
 
-LocalVDecl. LocalValueDecl ::= "value" ValueDecl ";" ;
+LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
 
 
 -- LAMBDAS -----------------------------------
 
-LambdaFunctionOneLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" Expr ";" ;
-LambdaFunctionMultiLine. LambdaFunction ::= "get" "(" [ValueDecl] ")" "->" "{" Expr "}" ;
+LambdaFunctionOneLine. LambdaFunction ::= "get" ParameterList "->" Expr ";" ;
+LambdaFunctionMultiLine. LambdaFunction ::= "get" ParameterList "->" "{" Expr "}" ;
 
-LambdaActionOneLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" Expr ";" ;
-LambdaActionMultiLine. LambdaAction ::= "do" "(" [ValueDecl] ")" "->" "{" [Expr] "}" ;
+LambdaActionOneLine. LambdaAction ::= "do" ParameterList "->" Expr ";" ;
+LambdaActionMultiLine. LambdaAction ::= "do" ParameterList "->" "{" [Expr] "}" ;
 
 
 -- FUNCTION AND CONSTRUCTOR CALLS --------------
@@ -223,6 +226,7 @@ ThenOneLine. ThenBranch ::= "then" Expr ";" ;
 ThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
 ElseOneLine. ElseBranch ::= "else" Expr ";" ;
 ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
+ElseIf. ElseBranch ::= "elif" "(" Expr ")" ThenBranch ElseBranch ;
 
 FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
 

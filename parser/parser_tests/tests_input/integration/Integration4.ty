@@ -1,15 +1,15 @@
 mutable class PhoneMessageReceiver extends MessageReceiver {
     
     values: {
-        messageReceived: String = "You got a new message!",
-        messageInvalid: String = "Invalid message",
-        maxMessageLength: Int = 100,
+        messageReceived: String = "You got a new message!";
+        messageInvalid: String = "Invalid message";
+        maxMessageLength: Int = 100;
         
-        notificationChannels: List[NotificationChannel]
+        notificationChannels: List[NotificationChannel];
     }
     
     variables: {
-        messages: List[Message] = List()
+        messages: List[Message] = List();
     }
     
     functions: {
@@ -34,20 +34,32 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
         override receive: (message: Message) -> Bool = {    
             System#printLine(this.messageReceived)
             
-            value response: String = this.parseMessage(message)
+            value response: String = this.parseMessage(message);
             System#printLine(response)
             
             if (response != this.messageInvalid) {
                 super#receive(message)
                 this#messages(this.messages.add(message))
                 
-                for (channel: NotificationChannel in this.notificationChannels) {
+                for (channel: NotificationChannel; in this.notificationChannels) {
                     channel#notify(response)
                 }
                 
                 True
             } else {
                 False
+            }
+        }
+        
+        // a bit more artificial example to show how some more advanced features work
+        override transformMessages: (messageTransformer: do (complete: Bool) -> Void) -> Void = {
+            value handleMessage: do (message: Message) -> Void = do (message: Message) -> {
+                System#printLine("Transforming message " ++ message)
+                message#transform(local#messageTransformer(False))
+            };
+            
+            for (message: Message; in this.messages) {
+                local#handleMessage(message)
             }
         }
     }

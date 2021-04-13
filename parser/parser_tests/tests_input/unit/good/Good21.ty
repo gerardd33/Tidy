@@ -2,7 +2,7 @@ singleton class Loop {
     
     actions: {
         loop: (list: SomeListType) -> Int = {
-            for (element: Int in list) {
+            for (element: Int; in list) {
                 3
             }
             2

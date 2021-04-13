@@ -1,26 +1,9 @@
-singleton class FunctionsAndActions { 
-    
-    values: {
-        twice: get (x: Int, y: Int) -> Int = get (x: Int, y: Int) -> 2 * x
-    }
-    
-    functions: {
-        someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> get (x: Int) -> Int = {
-            if (local.g(5)) then {
-                get (x: Int) -> this.twice(3, this.twice(4, 8))
-            } else {
-                get (x: Int) -> this.twice(3, 3 + 9 * 4)
-            }
-        }
-    }
-    
+mutable class Action {
+
     actions: {
-        someAction: (f: do (x: Int, y: Int) -> Void, g: get (x: Int) -> Bool) ->  get (x: Int) -> Int = {
-            if (local.g(5)) {
-                System#printLine("this case")
-                System#something
-                get (x: Int) -> this.twice(7, 3)
-            }
+        action: () -> Void = {
+            value newValue: Int = 3;
+            Actions.something.something.somethingElse#doSomething(newValue)
         }
     }
 }

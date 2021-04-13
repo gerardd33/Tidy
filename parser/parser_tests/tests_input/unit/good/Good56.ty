@@ -7,6 +7,6 @@ singleton class Expressions extends Something {
             } else {
                 8
             }
-        }
+        };
     }
 }

@@ -3,6 +3,8 @@ singleton class Random {
     functions: {
         randomValue: (seed: Int) -> Int = {
             313
-        } with values: x: Int = 8, y: Int = 16
+        } with values: {
+            x: Int = 8; y: Int = 16;
+        }
     }
 }

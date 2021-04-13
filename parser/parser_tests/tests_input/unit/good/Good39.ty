@@ -1,6 +1,8 @@
 singleton class RandomGenerator { 
     
-    values: randomInt: Int = 338894
+    values: {
+        randomInt: Int = 338894;
+    }
     
     functions: {
         generate: () -> Int = this.getRandomInt

@@ -2,7 +2,7 @@ singleton class FunctionsAndActions {
     
     functions: {
         someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> Bool = {
-            if (local.g(5)) then local.f(5) else local.f(7)
+            if (local.g(5)) then local.f(5); else local.f(7);
         }
     }
 }

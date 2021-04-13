@@ -4,9 +4,9 @@ singleton class Random {
         randomValue: (seed: Int) -> Int = {
             313
         } with values: {
-            x: Int = 8, 
-            y: Int = 16,
-            z: Int = 32
+            x: Int = 8;
+            y: Int = 16;
+            z: Int = 32;
         }
     }
 }

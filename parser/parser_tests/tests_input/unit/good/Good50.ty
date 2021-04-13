@@ -2,7 +2,7 @@ mutable class Action {
 
     actions: {
         action: () -> Void = {
-            value newValue: Int = 3
+            value newValue: Int = 3;
             Actions#doSomething(newValue)
         }
     }

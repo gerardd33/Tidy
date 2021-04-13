@@ -3,9 +3,9 @@ singleton class FunctionsAndActions {
     functions: {
         someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> get (x: Int) -> Int = {
             if (local.g(5)) then {
-                get (x: Int) -> 3
+                get (x: Int) -> 3;
             } else {
-                get (x: Int) -> 5 * x
+                get (x: Int) -> 5 * x;
             }
         }
     }
@@ -15,9 +15,9 @@ singleton class FunctionsAndActions {
             if (local.g(5)) {
                 System#printLine("this case")
                 System#something
-                get (x: Int) -> 5 * x
+                get (x: Int) -> 5 * x;
             } else {
-                get (x: Int) -> 7 * x
+                get (x: Int) -> 7 * x;
             }
         }
     }
