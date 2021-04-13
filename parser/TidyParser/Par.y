@@ -28,47 +28,49 @@ import TidyParser.Lex
   '.' { PT _ (TS _ 11) }
   '/' { PT _ (TS _ 12) }
   ':' { PT _ (TS _ 13) }
-  '<' { PT _ (TS _ 14) }
-  '<=' { PT _ (TS _ 15) }
-  '=' { PT _ (TS _ 16) }
-  '==' { PT _ (TS _ 17) }
-  '>' { PT _ (TS _ 18) }
-  '>=' { PT _ (TS _ 19) }
-  'False' { PT _ (TS _ 20) }
-  'Pass' { PT _ (TS _ 21) }
-  'True' { PT _ (TS _ 22) }
-  '[' { PT _ (TS _ 23) }
-  ']' { PT _ (TS _ 24) }
-  'abstract' { PT _ (TS _ 25) }
-  'actions:' { PT _ (TS _ 26) }
-  'and' { PT _ (TS _ 27) }
-  'case' { PT _ (TS _ 28) }
-  'class' { PT _ (TS _ 29) }
-  'do' { PT _ (TS _ 30) }
-  'else' { PT _ (TS _ 31) }
-  'extends' { PT _ (TS _ 32) }
-  'for' { PT _ (TS _ 33) }
-  'functions:' { PT _ (TS _ 34) }
-  'get' { PT _ (TS _ 35) }
-  'if' { PT _ (TS _ 36) }
-  'immutable' { PT _ (TS _ 37) }
-  'in' { PT _ (TS _ 38) }
-  'local' { PT _ (TS _ 39) }
-  'match' { PT _ (TS _ 40) }
-  'mutable' { PT _ (TS _ 41) }
-  'not' { PT _ (TS _ 42) }
-  'or' { PT _ (TS _ 43) }
-  'override' { PT _ (TS _ 44) }
-  'private' { PT _ (TS _ 45) }
-  'singleton' { PT _ (TS _ 46) }
-  'then' { PT _ (TS _ 47) }
-  'value' { PT _ (TS _ 48) }
-  'values:' { PT _ (TS _ 49) }
-  'variables:' { PT _ (TS _ 50) }
-  'while' { PT _ (TS _ 51) }
-  'with' { PT _ (TS _ 52) }
-  '{' { PT _ (TS _ 53) }
-  '}' { PT _ (TS _ 54) }
+  ';' { PT _ (TS _ 14) }
+  '<' { PT _ (TS _ 15) }
+  '<=' { PT _ (TS _ 16) }
+  '=' { PT _ (TS _ 17) }
+  '==' { PT _ (TS _ 18) }
+  '>' { PT _ (TS _ 19) }
+  '>=' { PT _ (TS _ 20) }
+  'False' { PT _ (TS _ 21) }
+  'Pass' { PT _ (TS _ 22) }
+  'True' { PT _ (TS _ 23) }
+  '[' { PT _ (TS _ 24) }
+  ']' { PT _ (TS _ 25) }
+  'abstract' { PT _ (TS _ 26) }
+  'actions:' { PT _ (TS _ 27) }
+  'and' { PT _ (TS _ 28) }
+  'case' { PT _ (TS _ 29) }
+  'class' { PT _ (TS _ 30) }
+  'do' { PT _ (TS _ 31) }
+  'elif' { PT _ (TS _ 32) }
+  'else' { PT _ (TS _ 33) }
+  'extends' { PT _ (TS _ 34) }
+  'for' { PT _ (TS _ 35) }
+  'functions:' { PT _ (TS _ 36) }
+  'get' { PT _ (TS _ 37) }
+  'if' { PT _ (TS _ 38) }
+  'immutable' { PT _ (TS _ 39) }
+  'in' { PT _ (TS _ 40) }
+  'local' { PT _ (TS _ 41) }
+  'match' { PT _ (TS _ 42) }
+  'mutable' { PT _ (TS _ 43) }
+  'not' { PT _ (TS _ 44) }
+  'or' { PT _ (TS _ 45) }
+  'override' { PT _ (TS _ 46) }
+  'private' { PT _ (TS _ 47) }
+  'singleton' { PT _ (TS _ 48) }
+  'then' { PT _ (TS _ 49) }
+  'value' { PT _ (TS _ 50) }
+  'values:' { PT _ (TS _ 51) }
+  'variables:' { PT _ (TS _ 52) }
+  'while' { PT _ (TS _ 53) }
+  'with' { PT _ (TS _ 54) }
+  '{' { PT _ (TS _ 55) }
+  '}' { PT _ (TS _ 56) }
   L_charac { PT _ (TC $$) }
   L_integ  { PT _ (TI $$) }
   L_quoted { PT _ (TL $$) }
@@ -141,8 +143,7 @@ ActionsSection : {- empty -} { TidyParser.Abs.ActionsAbsent }
                | 'actions:' ASBody { TidyParser.Abs.ActionsPresent $2 }
 
 ValSBody :: { TidyParser.Abs.ValSBody }
-ValSBody : ListValueDecl { TidyParser.Abs.ValSBodyOneLine $1 }
-         | '{' ListValueDecl '}' { TidyParser.Abs.ValSBodyMultiLine $2 }
+ValSBody : '{' ListValueDecl '}' { TidyParser.Abs.ValuesSBody $2 }
 
 ValueIdent :: { TidyParser.Abs.ValueIdent }
 ValueIdent : LowerCaseIdent { TidyParser.Abs.VIdent $1 }
@@ -155,20 +156,23 @@ ValueType : ClassIdent { TidyParser.Abs.ValueTypeClass $1 }
 
 ListValueDecl :: { [TidyParser.Abs.ValueDecl] }
 ListValueDecl : {- empty -} { [] }
-              | ValueDecl { (:[]) $1 }
-              | ValueDecl ',' ListValueDecl { (:) $1 $3 }
+              | ValueDecl ListValueDecl { (:) $1 $2 }
 
 ValueDecl :: { TidyParser.Abs.ValueDecl }
-ValueDecl : ValueDeclProper { TidyParser.Abs.PublicValueDecl $1 }
-          | 'private' ValueDeclProper { TidyParser.Abs.PrivateValueDecl $2 }
+ValueDecl : ValueDeclProper ';' { TidyParser.Abs.PublicValueDecl $1 }
+          | 'private' ValueDeclProper ';' { TidyParser.Abs.PrivateValueDecl $2 }
+
+ListValueDeclProper :: { [TidyParser.Abs.ValueDeclProper] }
+ListValueDeclProper : {- empty -} { [] }
+                    | ValueDeclProper { (:[]) $1 }
+                    | ValueDeclProper ',' ListValueDeclProper { (:) $1 $3 }
 
 ValueDeclProper :: { TidyParser.Abs.ValueDeclProper }
 ValueDeclProper : ValueIdent ':' ValueType { TidyParser.Abs.UninitialisedValue $1 $3 }
                 | ValueIdent ':' ValueType '=' Expr { TidyParser.Abs.InitialisedValue $1 $3 $5 }
 
 VarSBody :: { TidyParser.Abs.VarSBody }
-VarSBody : ListValueDecl { TidyParser.Abs.VarSBodyOneLine $1 }
-         | '{' ListValueDecl '}' { TidyParser.Abs.VarSBodyMultiLine $2 }
+VarSBody : '{' ListValueDecl '}' { TidyParser.Abs.VariablesSBody $2 }
 
 FSBody :: { TidyParser.Abs.FSBody }
 FSBody : {- empty -} { TidyParser.Abs.FSBodyEmpty }
@@ -178,7 +182,10 @@ FunctionIdent :: { TidyParser.Abs.FunctionIdent }
 FunctionIdent : LowerCaseIdent { TidyParser.Abs.FIdent $1 }
 
 MethodType :: { TidyParser.Abs.MethodType }
-MethodType : '(' ListValueDecl ')' '->' ValueType { TidyParser.Abs.FType $2 $5 }
+MethodType : ParameterList '->' ValueType { TidyParser.Abs.FType $1 $3 }
+
+ParameterList :: { TidyParser.Abs.ParameterList }
+ParameterList : '(' ListValueDeclProper ')' { TidyParser.Abs.ParamList $2 }
 
 ListFunctionDecl :: { [TidyParser.Abs.FunctionDecl] }
 ListFunctionDecl : {- empty -} { [] }
@@ -242,19 +249,34 @@ Expr4 : Expr5 { $1 }
       | '-' Expr5 { TidyParser.Abs.EUnaryMinus $2 }
 
 Expr5 :: { TidyParser.Abs.Expr }
-Expr5 : '(' Expr ')' { $2 }
-      | Literal { TidyParser.Abs.ELiteral $1 }
-      | ValueIdent { TidyParser.Abs.ELocalValue $1 }
+Expr5 : Expr6 { $1 }
       | LocalValueDecl { TidyParser.Abs.ELocalValueDecl $1 }
-      | LambdaFunction { TidyParser.Abs.ELambdaFunction $1 }
-      | LambdaAction { TidyParser.Abs.ELambdaAction $1 }
-      | 'local' '.' FunctionCall { TidyParser.Abs.ELocalFunctionCall $3 }
-      | 'local' '#' FunctionCall { TidyParser.Abs.ELocalActionCall $3 }
-      | ConstructorCall { TidyParser.Abs.ECtorCall $1 }
-      | GetExpr { TidyParser.Abs.EGetExpr $1 }
-      | DoExpr { TidyParser.Abs.EDoExpr $1 }
+
+Expr6 :: { TidyParser.Abs.Expr }
+Expr6 : Expr7 { $1 }
       | ImperativeControlFlow { TidyParser.Abs.EImperativeControlFlow $1 }
       | FunctionalControlFlow { TidyParser.Abs.EFunctionalControlFlow $1 }
+
+Expr7 :: { TidyParser.Abs.Expr }
+Expr7 : Expr8 { $1 }
+      | 'local' FunctionCall { TidyParser.Abs.ELocalFunctionCall $2 }
+      | 'local' ActionCall { TidyParser.Abs.ELocalActionCall $2 }
+      | ConstructorCall { TidyParser.Abs.ECtorCall $1 }
+
+Expr8 :: { TidyParser.Abs.Expr }
+Expr8 : Expr9 { $1 }
+      | LambdaFunction { TidyParser.Abs.ELambdaFunction $1 }
+      | LambdaAction { TidyParser.Abs.ELambdaAction $1 }
+
+Expr9 :: { TidyParser.Abs.Expr }
+Expr9 : Expr10 { $1 }
+      | GetExpr { TidyParser.Abs.EGetExpr $1 }
+      | DoExpr { TidyParser.Abs.EDoExpr $1 }
+
+Expr10 :: { TidyParser.Abs.Expr }
+Expr10 : '(' Expr ')' { $2 }
+       | Literal { TidyParser.Abs.ELiteral $1 }
+       | ValueIdent { TidyParser.Abs.ELocalValue $1 }
 
 Literal :: { TidyParser.Abs.Literal }
 Literal : Integer { TidyParser.Abs.LInt $1 }
@@ -274,16 +296,16 @@ LocalValueDecl :: { TidyParser.Abs.LocalValueDecl }
 LocalValueDecl : 'value' ValueDecl { TidyParser.Abs.LocalVDecl $2 }
 
 LambdaFunction :: { TidyParser.Abs.LambdaFunction }
-LambdaFunction : 'get' '(' ListValueDecl ')' '->' Expr { TidyParser.Abs.LambdaFunctionOneLine $3 $6 }
-               | 'get' '(' ListValueDecl ')' '->' '{' Expr '}' { TidyParser.Abs.LambdaFunctionMultiLine $3 $7 }
+LambdaFunction : 'get' ParameterList '->' Expr ';' { TidyParser.Abs.LambdaFunctionOneLine $2 $4 }
+               | 'get' ParameterList '->' '{' Expr '}' { TidyParser.Abs.LambdaFunctionMultiLine $2 $5 }
 
 LambdaAction :: { TidyParser.Abs.LambdaAction }
-LambdaAction : 'do' '(' ListValueDecl ')' '->' Expr { TidyParser.Abs.LambdaActionOneLine $3 $6 }
-             | 'do' '(' ListValueDecl ')' '->' '{' Expr '}' { TidyParser.Abs.LambdaActionMultiLine $3 $7 }
+LambdaAction : 'do' ParameterList '->' Expr ';' { TidyParser.Abs.LambdaActionOneLine $2 $4 }
+             | 'do' ParameterList '->' '{' ListExpr '}' { TidyParser.Abs.LambdaActionMultiLine $2 $5 }
 
-FunctionCall :: { TidyParser.Abs.FunctionCall }
-FunctionCall : FunctionIdent { TidyParser.Abs.FunctionCallNoArgs $1 }
-             | FunctionIdent '(' ListFunctionArgument ')' { TidyParser.Abs.FunctionCallWithArgs $1 $3 }
+ArgumentList :: { TidyParser.Abs.ArgumentList }
+ArgumentList : {- empty -} { TidyParser.Abs.ArgListAbsent }
+             | '(' ListFunctionArgument ')' { TidyParser.Abs.ArgListPresent $2 }
 
 ListFunctionArgument :: { [TidyParser.Abs.FunctionArgument] }
 ListFunctionArgument : {- empty -} { [] }
@@ -293,19 +315,24 @@ ListFunctionArgument : {- empty -} { [] }
 FunctionArgument :: { TidyParser.Abs.FunctionArgument }
 FunctionArgument : Expr { TidyParser.Abs.FunctionArg $1 }
 
+FunctionCall :: { TidyParser.Abs.FunctionCall }
+FunctionCall : '.' FunctionIdent ArgumentList { TidyParser.Abs.FCall $2 $3 }
+
+ActionCall :: { TidyParser.Abs.ActionCall }
+ActionCall : '#' FunctionIdent ArgumentList { TidyParser.Abs.ACall $2 $3 }
+
 ConstructorCall :: { TidyParser.Abs.ConstructorCall }
-ConstructorCall : ClassIdent { TidyParser.Abs.CtorCallNoArgs $1 }
-                | ClassIdent '(' ListFunctionArgument ')' { TidyParser.Abs.CtorCallWithArgs $1 $3 }
+ConstructorCall : ClassIdent ArgumentList { TidyParser.Abs.CCall $1 $2 }
 
 GetExpr :: { TidyParser.Abs.GetExpr }
-GetExpr : ValueIdent '.' FunctionCall { TidyParser.Abs.GetExprInstance $1 $3 }
-        | ClassIdent '.' FunctionCall { TidyParser.Abs.GetExprStatic $1 $3 }
-        | GetExpr '.' FunctionCall { TidyParser.Abs.GetExprChain $1 $3 }
+GetExpr : ValueIdent FunctionCall { TidyParser.Abs.GetExprInstance $1 $2 }
+        | ClassIdent FunctionCall { TidyParser.Abs.GetExprStatic $1 $2 }
+        | GetExpr FunctionCall { TidyParser.Abs.GetExprChain $1 $2 }
 
 DoExpr :: { TidyParser.Abs.DoExpr }
-DoExpr : ValueIdent '#' FunctionCall { TidyParser.Abs.DoExprInstance $1 $3 }
-       | ClassIdent '#' FunctionCall { TidyParser.Abs.DoExprStatic $1 $3 }
-       | GetExpr '#' FunctionCall { TidyParser.Abs.DoExprChain $1 $3 }
+DoExpr : ValueIdent ActionCall { TidyParser.Abs.DoExprInstance $1 $2 }
+       | ClassIdent ActionCall { TidyParser.Abs.DoExprStatic $1 $2 }
+       | GetExpr ActionCall { TidyParser.Abs.DoExprChain $1 $2 }
 
 ImperativeControlFlow :: { TidyParser.Abs.ImperativeControlFlow }
 ImperativeControlFlow : 'while' '(' Expr ')' '{' ListExpr '}' { TidyParser.Abs.IWhile $3 $6 }
@@ -321,12 +348,13 @@ FunctionalControlFlow : 'if' '(' Expr ')' ThenBranch ElseBranch { TidyParser.Abs
                       | 'match' Expr '{' ListMatchCase '}' { TidyParser.Abs.FMatch $2 $4 }
 
 ThenBranch :: { TidyParser.Abs.ThenBranch }
-ThenBranch : 'then' Expr { TidyParser.Abs.ThenOneLine $2 }
+ThenBranch : 'then' Expr ';' { TidyParser.Abs.ThenOneLine $2 }
            | 'then' '{' Expr '}' { TidyParser.Abs.ThenMultiLine $3 }
 
 ElseBranch :: { TidyParser.Abs.ElseBranch }
-ElseBranch : 'else' Expr { TidyParser.Abs.ElseOneLine $2 }
+ElseBranch : 'else' Expr ';' { TidyParser.Abs.ElseOneLine $2 }
            | 'else' '{' Expr '}' { TidyParser.Abs.ElseMultiLine $3 }
+           | 'elif' '(' Expr ')' ThenBranch ElseBranch { TidyParser.Abs.ElseIf $3 $5 $6 }
 
 ListMatchCase :: { [TidyParser.Abs.MatchCase] }
 ListMatchCase : {- empty -} { [] }

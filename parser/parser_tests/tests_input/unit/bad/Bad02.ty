@@ -1,14 +1,14 @@
 mutable class Student {
     
-    values: // Testing comments
+    values: {} // Testing comments
     
     ///* 
-    functions:
+    functions: {}
     //*/
     
-    variables: /* Here there should be some variables
+    variables: {} /* Here there should be some variables
     
     There are no functions */
     
-    actions: // But there are // some actions
+    actions: {} // But there are // some actions
 }

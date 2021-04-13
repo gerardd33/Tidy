@@ -1,6 +1,6 @@
 immutable class Student {
     
-    values:
+    values: {}
     
-    functions:
+    functions: {}
 }

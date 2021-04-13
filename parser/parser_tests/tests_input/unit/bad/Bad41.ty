@@ -1,0 +1,8 @@
+singleton class FunctionsAndActions { 
+    
+    functions: {
+        someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> Bool = {
+            if (g(5)) then f(5) else f(7)
+        }
+    }
+}

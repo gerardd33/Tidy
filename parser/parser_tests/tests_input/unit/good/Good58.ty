@@ -1,12 +1,12 @@
 singleton class Expressions extends Something { 
     
     variables: {
-        list: List[Int]
+        list: List[Int];
     }
     
     functions: {
-        override someFunction: (f: (x: Int) -> Int, g: (x: Int) -> Bool) -> Bool = {
-            this.list.map((x: Int) -> 5 * x)
+        override someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> Bool = {
+            this.list.map(get (x: Int) -> 5 * x;)
         }
     }
 }

@@ -1,8 +1,8 @@
 singleton class Expressions extends Something { 
     
     functions: {
-        override someFunction: (f: (x: Int) -> Int, g: (x: Int) -> Bool) -> Bool = {
-            (u: Int, w: Char) -> (k: Int) -> Int
+        override someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> Bool = {
+            get (u: Int, w: Char) -> get (k: Int) -> Int;;
         }
     }
 }

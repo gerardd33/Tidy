@@ -49,8 +49,7 @@ data FunctionsSection = FunctionsAbsent | FunctionsPresent FSBody
 data ActionsSection = ActionsAbsent | ActionsPresent ASBody
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValSBody
-    = ValSBodyOneLine [ValueDecl] | ValSBodyMultiLine [ValueDecl]
+data ValSBody = ValuesSBody [ValueDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ValueIdent = VIdent LowerCaseIdent
@@ -73,8 +72,7 @@ data ValueDeclProper
     | InitialisedValue ValueIdent ValueType Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data VarSBody
-    = VarSBodyOneLine [ValueDecl] | VarSBodyMultiLine [ValueDecl]
+data VarSBody = VariablesSBody [ValueDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FSBody = FSBodyEmpty | FSBodyFilled [FunctionDecl]
@@ -83,7 +81,10 @@ data FSBody = FSBodyEmpty | FSBodyFilled [FunctionDecl]
 data FunctionIdent = FIdent LowerCaseIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data MethodType = FType [ValueDecl] ValueType
+data MethodType = FType ParameterList ValueType
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data ParameterList = ParamList [ValueDeclProper]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionDecl
@@ -116,16 +117,16 @@ data ActionBody
 data Expr
     = ELiteral Literal
     | ELocalValue ValueIdent
-    | ELocalValueDecl LocalValueDecl
+    | EGetExpr GetExpr
+    | EDoExpr DoExpr
     | ELambdaFunction LambdaFunction
     | ELambdaAction LambdaAction
     | ELocalFunctionCall FunctionCall
-    | ELocalActionCall FunctionCall
+    | ELocalActionCall ActionCall
     | ECtorCall ConstructorCall
-    | EGetExpr GetExpr
-    | EDoExpr DoExpr
     | EImperativeControlFlow ImperativeControlFlow
     | EFunctionalControlFlow FunctionalControlFlow
+    | ELocalValueDecl LocalValueDecl
     | EUnaryNot Expr
     | EUnaryMinus Expr
     | EMultiply Expr Expr
@@ -155,26 +156,29 @@ data LocalValueDecl = LocalVDecl ValueDecl
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data LambdaFunction
-    = LambdaFunctionOneLine [ValueDecl] Expr
-    | LambdaFunctionMultiLine [ValueDecl] Expr
+    = LambdaFunctionOneLine ParameterList Expr
+    | LambdaFunctionMultiLine ParameterList Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data LambdaAction
-    = LambdaActionOneLine [ValueDecl] Expr
-    | LambdaActionMultiLine [ValueDecl] Expr
+    = LambdaActionOneLine ParameterList Expr
+    | LambdaActionMultiLine ParameterList [Expr]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FunctionCall
-    = FunctionCallNoArgs FunctionIdent
-    | FunctionCallWithArgs FunctionIdent [FunctionArgument]
+data ArgumentList
+    = ArgListAbsent | ArgListPresent [FunctionArgument]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionArgument = FunctionArg Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ConstructorCall
-    = CtorCallNoArgs ClassIdent
-    | CtorCallWithArgs ClassIdent [FunctionArgument]
+data FunctionCall = FCall FunctionIdent ArgumentList
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data ActionCall = ACall FunctionIdent ArgumentList
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data ConstructorCall = CCall ClassIdent ArgumentList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data GetExpr
@@ -184,9 +188,9 @@ data GetExpr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data DoExpr
-    = DoExprInstance ValueIdent FunctionCall
-    | DoExprStatic ClassIdent FunctionCall
-    | DoExprChain GetExpr FunctionCall
+    = DoExprInstance ValueIdent ActionCall
+    | DoExprStatic ClassIdent ActionCall
+    | DoExprChain GetExpr ActionCall
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ImperativeControlFlow
@@ -205,7 +209,10 @@ data FunctionalControlFlow
 data ThenBranch = ThenOneLine Expr | ThenMultiLine Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ElseBranch = ElseOneLine Expr | ElseMultiLine Expr
+data ElseBranch
+    = ElseOneLine Expr
+    | ElseMultiLine Expr
+    | ElseIf Expr ThenBranch ElseBranch
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data MatchCase = Case Pattern Expr

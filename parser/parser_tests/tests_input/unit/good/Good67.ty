@@ -1,0 +1,18 @@
+singleton class Utils {
+    
+    actions: {
+        convert: (x: Int) -> Int = {
+            value y: Int = 7;
+            
+            for (index1: Int; in indices) {
+                for (index2: Int; in indices) {
+                    for (index3: Int; in indices) {
+                        if (index1 == index2 and index2 == index3) {
+                            value z: Int = 9;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,4 +1,7 @@
-../build_parser.sh
-mkdir -p tests_output
+#!/bin/bash
 
-./single_test.sh
+WORKING_DIR=`dirname "$0"`
+"$WORKING_DIR"/../build_parser.sh
+mkdir -p "$WORKING_DIR"/tests_output
+
+"$WORKING_DIR"/single_test.sh

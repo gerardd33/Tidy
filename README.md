@@ -24,7 +24,7 @@ That last point is the main difference between Tidy and other languages that sti
 
 - LBNF grammar of the language is available in the [parser/TidyParser.cf file](https://github.com/gerardd33/Tidy/blob/main/parser/TidyParser.cf). 
 
-- You can play with the parser to get to know the syntax in [parser/parser_tests](https://github.com/gerardd33/Tidy/tree/main/parser/parser_tests). There you can run a suite of automatic tests with *run_all_tests.sh* or input your own example into *Test.ty* and run *build_and_run_single_test.sh*.
+- You can play with the parser to get to know the syntax in [parser/parser_tests](https://github.com/gerardd33/Tidy/tree/main/parser/parser_tests). There you can see examples of good and bad syntax, run a suite of automatic tests over them with *run_all_tests.sh* or input your own example into *Test.ty* and run *build_and_run_single_test.sh*.
 
 - **TODO Further instructions to run it etc.**
 
@@ -46,17 +46,17 @@ And here's a bigger one:
 mutable class Student {
     
     values: {
-        id: Int,
-        firstName: String,
-        lastName: String,
-        birthDate: Date,
-        gender: Gender
+        id: Int;
+        firstName: String;
+        lastName: String;
+        birthDate: Date;
+        gender: Gender;
     }
     
     variables: {
-        login: String,
-        private passwordHash: String,
-        classes: List[UniversityClass] = List()
+        login: String;
+        private passwordHash: String;
+        classes: List[UniversityClass] = List();
     }
     
     functions: {
@@ -70,7 +70,7 @@ mutable class Student {
     actions: {
         changePassword: (newPassword: String) -> Void = {
             Logger#log("Changing password for user " ++ this)
-            value hashedPassword: String = PasswordUtils.hash(newPassword)
+            value hashedPassword: String = PasswordUtils.hash(newPassword);
             this#passwordHash(hashedPassword)
         }
     

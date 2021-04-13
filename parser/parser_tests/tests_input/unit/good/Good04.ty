@@ -1,10 +1,10 @@
 mutable class Student {
     
-    values:
+    values: {}
     
-    variables:
+    variables: {}
     
-    functions:
+    functions: {}
     
-    actions:
+    actions: {}
 }

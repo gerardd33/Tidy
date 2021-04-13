@@ -1,12 +1,12 @@
 singleton class Expressions extends Something { 
     
     variables: {
-        twice: SomeType = (x: Int) -> {
+        twice: SomeType = get (x: Int) -> {
             if (x > 3) then {
                 5
             } else {
                 8
             }
-        }
+        };
     }
 }
