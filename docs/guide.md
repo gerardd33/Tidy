@@ -231,7 +231,7 @@ mutable class Student {
         firstName: String;
         lastName: String;
         birthDate: Date;
-        gender: Gende;
+        gender: Gender;
     }
     
     variables: {
