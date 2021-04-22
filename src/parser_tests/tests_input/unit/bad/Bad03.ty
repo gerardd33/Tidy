@@ -1,0 +1,9 @@
+mutable class Student { 
+    values: {
+        age: Int = 3;
+        firstName: String;
+        lastName: String
+    }
+    
+    variables: { numberOfClasses: Int; year: Int; }
+}

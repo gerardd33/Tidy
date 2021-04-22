@@ -1,0 +1,10 @@
+singleton class StructureClearer { 
+    
+    actions: {
+        clear: (structure: DataStructure) -> Void = {
+            while (not structure.empty) {
+                structure#remove
+            }
+        }
+    }
+}

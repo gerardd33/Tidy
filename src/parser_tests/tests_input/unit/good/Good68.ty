@@ -1,0 +1,16 @@
+singleton class Expressions extends Something { 
+    
+    actions: {
+        override someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> Bool = {
+            get (x: Int, y: Char) -> {
+                do (z: Int) -> {
+                    get (w: Int) -> {
+                        do (r: Int) -> {
+                            3
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

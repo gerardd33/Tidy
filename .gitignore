@@ -22,7 +22,9 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 
-*.out
-*.bak
 Test
 Par.info
+
+*.out
+*.bak
+*.log

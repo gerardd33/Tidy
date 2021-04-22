@@ -1,0 +1,6 @@
+singleton class Math { 
+    
+    functions: {
+        BadMethodName: () -> Int = 2 * 3 + 4 * 5
+    }
+}

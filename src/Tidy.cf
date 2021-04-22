@@ -1,0 +1,252 @@
+-- GLOBAL -------------------------------------
+
+token UpperCaseIdent (upper (letter | digit | '_')*) ;
+token LowerCaseIdent (lower (letter | digit | '_')*) ;
+
+
+-- PROGRAMS -----------------------------------
+
+entrypoints Program ;
+ProgramEntrypoint. Program ::= [ClassDecl] ;
+
+
+-- COMMENTS -----------------------------------
+
+comment "//" ;
+comment "/*" "*/" ;
+
+
+-- CLASS DECLARATIONS -------------------------
+
+separator ClassIdent "," ;
+CIdent. ClassIdent ::= UpperCaseIdent ;
+
+separator nonempty ClassDecl "" ;
+ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent Inheritance ClassBody ;
+ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassIdent Inheritance ClassBody ;
+
+SuperclassAbsent. Inheritance ::= ;
+SuperclassPresent. Inheritance ::= "extends" ClassIdent ;
+
+
+ClassBodyEmpty. ClassBody ::= ;
+ClassBodyFilled. ClassBody ::= "{" ValuesSection VariablesSection FunctionsSection ActionsSection "}" ;
+
+
+-- CLASS MODIFIERS ----------------------------
+
+MMutable. ClassType ::= "mutable" ;
+MImmutable. ClassType ::= "immutable" ;
+MSingleton. ClassType ::= "singleton" ;
+
+
+-- CLASS SECTION DECLARATIONS -----------------
+
+ValuesAbsent. ValuesSection ::= ;
+ValuesPresent. ValuesSection ::= "values:" ValSBody ;
+
+VariablesAbsent. VariablesSection ::= ;
+VariablesPresent. VariablesSection ::= "variables:" VarSBody ;
+
+FunctionsAbsent. FunctionsSection ::= ;
+FunctionsPresent. FunctionsSection ::= "functions:" FSBody ;
+
+ActionsAbsent. ActionsSection ::= ;
+ActionsPresent. ActionsSection ::= "actions:" ASBody ;
+
+
+-- VALUES SECTION -----------------------------
+
+ValuesSBody. ValSBody ::= "{" [ValueDecl] "}" ;
+
+VIdent. ValueIdent ::= LowerCaseIdent ;
+
+ValueTypeClass. ValueType ::=  ClassIdent ;
+ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
+ValueTypeFunction. ValueType ::= "get" MethodType ;
+ValueTypeAction. ValueType ::= "do" MethodType ;
+
+separator ValueDecl "" ;
+PublicValueDecl. ValueDecl ::= ValueDeclProper ";" ;
+PrivateValueDecl. ValueDecl ::= "private" ValueDeclProper ";" ;
+
+separator ValueDeclProper "," ;
+UninitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType ;
+InitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType "=" Expr ;
+
+
+-- VARIABLES SECTION --------------------------
+
+VariablesSBody. VarSBody ::= "{" [ValueDecl] "}" ;
+
+
+-- FUNCTIONS SECTION --------------------------
+
+FSBodyEmpty. FSBody ::= ;
+FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
+
+FIdent. FunctionIdent ::= LowerCaseIdent ;
+FType. MethodType ::= ParameterList "->" ValueType;
+
+ParamList. ParameterList ::= "(" [ValueDeclProper] ")" ;
+
+separator FunctionDecl "" ;
+OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" MethodType "=" FunctionBody ;
+PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" MethodType "=" FunctionBody ;
+PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" MethodType "=" FunctionBody ;
+
+FunctionBodyOneLine. FunctionBody ::= Expr ;
+FunctionBodyMultiLine. FunctionBody ::= "{" Expr "}" WithValues ;
+
+WithValuesAbsent. WithValues ::= ;
+WithValuesPresent. WithValues ::= "with" ValuesSection ;
+
+
+-- ACTIONS SECTION ----------------------------
+
+ASBodyEmpty. ASBody ::= ;
+ASBodyFilled. ASBody ::= "{" [ActionDecl] "}" ;
+
+separator ActionDecl "" ; 
+OverrideActionDecl. ActionDecl ::= "override" FunctionIdent ":" MethodType "=" ActionBody ;
+PublicActionDecl. ActionDecl ::= FunctionIdent ":" MethodType "=" ActionBody ;
+PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" MethodType "=" ActionBody ;
+
+ActionBodyOneLine. ActionBody ::= Expr ;
+ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
+
+
+-- EXPRESSIONS -------------------------------
+
+separator Expr "" ;
+coercions Expr 10 ;
+
+ELiteral. Expr10 ::= Literal ;
+ELocalValue. Expr10 ::= ValueIdent ;
+
+EGetExpr. Expr9 ::= GetExpr ;
+EDoExpr. Expr9 ::= DoExpr ;
+
+ELambdaFunction. Expr8 ::= LambdaFunction ;
+ELambdaAction. Expr8 ::= LambdaAction ;
+
+ELocalFunctionCall. Expr7 ::= "local" FunctionCall ;
+ELocalActionCall. Expr7 ::= "local" ActionCall ;
+ECtorCall. Expr7 ::= ConstructorCall ;
+
+EImperativeControlFlow. Expr6 ::= ImperativeControlFlow ;
+EFunctionalControlFlow. Expr6 ::= FunctionalControlFlow ;
+
+ELocalValueDecl. Expr5 ::= LocalValueDecl ;
+
+EUnaryNot. Expr4 ::= "not" Expr5 ;
+EUnaryMinus. Expr4 ::= "-" Expr5 ;
+
+EMultiply. Expr3 ::= Expr3 "*" Expr4 ;
+EDivide. Expr3 ::= Expr3 "/" Expr4 ;
+
+EAdd. Expr2 ::= Expr2 "+" Expr3 ;
+ESubtract. Expr2 ::= Expr2 "-" Expr3 ;
+EConcatenate. Expr2 ::= Expr2 "++" Expr3 ;
+
+ERelationalOperator. Expr1 ::= Expr1 RelationalOperator Expr2 ;
+
+EBooleanOperator. Expr ::= Expr1 BooleanOperator Expr ;
+
+
+-- LITERALS ----------------------------------
+
+LInt. Literal ::= Integer ;
+LBool. Literal ::= Boolean ;
+LChar. Literal ::= Char ;
+LString. Literal ::= String ;
+LVoid. Literal ::= Void ;
+
+BTrue. Boolean ::= "True" ;
+BFalse. Boolean ::= "False" ;
+VPass. Void ::= "Pass" ;
+
+
+-- LOCAL VALUE DECLARATIONS ------------------
+
+LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
+
+
+-- LAMBDAS -----------------------------------
+
+LambdaFunctionOneLine. LambdaFunction ::= "get" ParameterList "->" Expr ";" ;
+LambdaFunctionMultiLine. LambdaFunction ::= "get" ParameterList "->" "{" Expr "}" ;
+
+LambdaActionOneLine. LambdaAction ::= "do" ParameterList "->" Expr ";" ;
+LambdaActionMultiLine. LambdaAction ::= "do" ParameterList "->" "{" [Expr] "}" ;
+
+
+-- FUNCTION AND CONSTRUCTOR CALLS --------------
+
+ArgListAbsent. ArgumentList ::= ;
+ArgListPresent. ArgumentList ::= "(" [FunctionArgument] ")" ;
+
+separator FunctionArgument "," ;
+FunctionArg. FunctionArgument ::= Expr ;
+
+FCall. FunctionCall ::= "." FunctionIdent ArgumentList ;
+ACall. ActionCall ::= "#" FunctionIdent ArgumentList ;
+CCall. ConstructorCall ::= ClassIdent ArgumentList ;
+
+
+-- GET EXPRESSIONS ----------------------------
+
+GetExprInstance. GetExpr ::= ValueIdent FunctionCall ;
+GetExprStatic. GetExpr ::= ClassIdent FunctionCall ;
+GetExprChain. GetExpr ::= GetExpr FunctionCall ;
+
+
+-- DO EXPRESSIONS ----------------------------
+
+DoExprInstance. DoExpr ::= ValueIdent ActionCall ;
+DoExprStatic. DoExpr ::= ClassIdent ActionCall ;
+DoExprChain. DoExpr ::= GetExpr ActionCall ;
+
+
+-- IMPERATIVE CONTROL FLOW -------------------
+
+IWhile. ImperativeControlFlow ::= "while" "(" Expr ")" "{" [Expr] "}" ;
+IForeach. ImperativeControlFlow ::= "for" "(" ValueDecl "in" Expr ")" "{" [Expr] "}" ;
+IIf. ImperativeControlFlow ::= "if" "(" Expr ")" "{" [Expr] "}" OptionalElseBranch ;
+
+ElsePresent. OptionalElseBranch ::= "else" "{" [Expr] "}" ;
+ElseAbsent. OptionalElseBranch ::= ;
+
+
+-- FUNCTIONAL CONTROL FLOW -------------------
+
+FIfThenElse. FunctionalControlFlow ::= "if" "(" Expr ")" ThenBranch ElseBranch ;
+
+ThenOneLine. ThenBranch ::= "then" Expr ";" ;
+ThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
+ElseOneLine. ElseBranch ::= "else" Expr ";" ;
+ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
+ElseIf. ElseBranch ::= "elif" "(" Expr ")" ThenBranch ElseBranch ;
+
+FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
+
+separator MatchCase "" ;
+Case. MatchCase ::= "case" Pattern "->" Expr ;
+
+TypePattern. Pattern ::= ClassIdent ; 
+
+
+-- RELATIONAL OPERATORS ----------------------
+
+RLess. RelationalOperator ::= "<" ;
+RLessEqual. RelationalOperator ::= "<=" ;
+RGreater. RelationalOperator ::= ">" ;
+RGreaterEqual. RelationalOperator ::= ">=" ;
+REqual. RelationalOperator ::= "==" ;
+RNotEqual. RelationalOperator ::= "!=" ;
+
+
+-- BOOLEAN OPERATORS -------------------------
+
+BAnd. BooleanOperator ::= "and" ;
+BOr. BooleanOperator ::= "or" ;
