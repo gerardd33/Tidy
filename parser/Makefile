@@ -10,6 +10,9 @@ all : Tidy/Test
 
 # Rules for building the parser.
 
+Tidy/ErrM.hs Tidy/Lex.x Tidy/Print.hs Tidy/Par.y Tidy/Test.hs : ./Tidy.cf
+	bnfc --haskell -d ./Tidy.cf
+
 %.hs : %.y
 	happy --ghc --coerce --array --info $<
 
