@@ -1,4 +1,0 @@
-immutable class Secret { 
-    
-    values: { private secret: Int; }
-}

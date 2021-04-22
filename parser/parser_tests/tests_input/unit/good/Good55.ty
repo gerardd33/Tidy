@@ -1,8 +1,0 @@
-singleton class Expressions extends Something { 
-    
-    functions: {
-        override someFunction: (f: get (x: Int) -> Int, g: get (x: Int) -> Bool) -> Bool = {
-            local.f(2) == 2
-        }
-    }
-}

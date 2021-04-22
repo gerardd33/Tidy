@@ -1,8 +1,0 @@
-singleton class Math { 
-    
-    functions: {
-        twentySix: () -> Bool = {
-            16 / 4 / 2 - (-5) - 3 + 4 == 8 - 0
-        }
-    }
-}

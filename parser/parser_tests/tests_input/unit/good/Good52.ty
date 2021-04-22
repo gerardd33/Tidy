@@ -1,6 +1,0 @@
-singleton class Voids { 
-    
-    variables: {
-        strangeField: Void = Pass;
-    }
-}

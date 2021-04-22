@@ -1,6 +1,0 @@
-singleton class GoodClassName { 
-    
-    functions: {
-        goodMethodName: (BadParamName: Int) -> Int = 2 * 3 + 4 * 5
-    }
-}

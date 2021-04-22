@@ -1,7 +1,0 @@
-immutable class Student
-
-abstract mutable class Person
-
-singleton class StudentUtils
-
-abstract singleton class AbstractUtils

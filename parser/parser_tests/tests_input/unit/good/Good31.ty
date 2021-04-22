@@ -1,8 +1,0 @@
-singleton class Getter { 
-    
-    functions: {
-        checkSomeObscureAttribute: (person: Person) -> Bool = {
-            person.father.father.mother.animals.head.name != "Ralph"
-        }
-    }
-}

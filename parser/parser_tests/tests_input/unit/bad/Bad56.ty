@@ -1,3 +1,0 @@
-mutable class Student { 
-    values: age: Int;    
-}

@@ -1,8 +1,0 @@
-singleton class Getter { 
-    
-    functions: {
-        checkSomeImmediateAttribute: (person: Person) -> Bool = {
-            person.name != "Ralph"
-        }
-    }
-}

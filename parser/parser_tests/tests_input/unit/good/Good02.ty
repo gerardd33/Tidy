@@ -1,5 +1,0 @@
-immutable class Student {
-}
-
-mutable class Person {
-}

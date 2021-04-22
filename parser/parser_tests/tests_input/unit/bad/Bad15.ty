@@ -1,8 +1,0 @@
-mutable class Student { 
-    
-    values: {
-        age: Int = 3,
-        firstName,
-        lastName: String,
-    }
-}

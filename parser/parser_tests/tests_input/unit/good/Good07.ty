@@ -1,6 +1,0 @@
-singleton class Random { 
-    
-    functions: {
-        randomValue: (seed: Int) -> Int = 3
-    }
-}

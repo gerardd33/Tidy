@@ -1,8 +1,0 @@
-singleton class StudentFactory { 
-    
-    functions: {
-        getStudent: () -> Student = {
-            Student(Random.getString(), Random.getInt())
-        }
-    }
-}

@@ -1,8 +1,0 @@
-singleton class StudentFactory { 
-    
-    functions: {
-        getStudent: () -> List[Student] = {
-            Student
-        }
-    }
-}

@@ -1,8 +1,0 @@
-singleton class Greeter { 
-    
-    actions: {
-        greet: (name: String) -> Void = {
-            System#printLine("Hi " ++ name)
-        }
-    }
-}

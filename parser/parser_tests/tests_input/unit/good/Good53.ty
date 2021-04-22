@@ -1,6 +1,0 @@
-singleton class Expressions { 
-    
-    variables: {
-        expressionField: Int = 3 + 8 * 3 + this.randomValue + this.foo(5);
-    }
-}

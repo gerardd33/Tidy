@@ -1,8 +1,0 @@
-singleton class RandomGenerator { 
-    
-    values: RANDOM_INT: Int = 338894
-    
-    functions: {
-        generate: () -> Int = this.RANDOM_INT
-    }
-}

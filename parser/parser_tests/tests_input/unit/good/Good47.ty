@@ -1,8 +1,0 @@
-singleton class FunctionHandler { 
-    
-    functions: {
-        handleFunction: (f: BiFunction[Int, Int]) -> BiFunction[Int, Int] = {
-            f
-        }
-    }
-}

@@ -1,8 +1,0 @@
-singleton class SomePredicate { 
-    
-    functions: {
-        predicate: (x: Int) -> Bool = {
-            x > 3 x > 5
-        }
-    }
-}

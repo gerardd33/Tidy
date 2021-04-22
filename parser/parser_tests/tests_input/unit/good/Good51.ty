@@ -1,6 +1,0 @@
-singleton class Characters { 
-    
-    variables: {
-        character: Char = 'y';
-    }
-}
