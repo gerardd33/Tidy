@@ -6,11 +6,11 @@ import System.Environment ( getArgs, getProgName )
 import System.Exit        ( exitFailure, exitSuccess )
 import Control.Monad      ( when )
 
-import TidyParser.Lex   ( Token )
-import TidyParser.Par   ( pProgram, myLexer )
-import TidyParser.Skel  ()
-import TidyParser.Print ( Print, printTree )
-import TidyParser.Abs   ()
+import Tidy.Lex   ( Token )
+import Tidy.Par   ( pProgram, myLexer )
+import Tidy.Skel  ()
+import Tidy.Print ( Print, printTree )
+import Tidy.Abs   ()
 
 type Err = Either String
 type ParseFun a = [Token] -> Err a

@@ -4,13 +4,13 @@
 {-# OPTIONS_GHC -XPartialTypeSignatures #-}
 #endif
 {-# OPTIONS_GHC -fno-warn-incomplete-patterns -fno-warn-overlapping-patterns #-}
-module TidyParser.Par
+module Tidy.Par
   ( happyError
   , myLexer
   , pProgram
   ) where
-import qualified TidyParser.Abs
-import TidyParser.Lex
+import qualified Tidy.Abs
+import Tidy.Lex
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
 import qualified GHC.Exts as Happy_GHC_Exts
@@ -46,491 +46,491 @@ happyIn6 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap6 x)
 happyOut6 :: (HappyAbsSyn ) -> HappyWrap6
 happyOut6 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut6 #-}
-newtype HappyWrap7 = HappyWrap7 (TidyParser.Abs.UpperCaseIdent)
-happyIn7 :: (TidyParser.Abs.UpperCaseIdent) -> (HappyAbsSyn )
+newtype HappyWrap7 = HappyWrap7 (Tidy.Abs.UpperCaseIdent)
+happyIn7 :: (Tidy.Abs.UpperCaseIdent) -> (HappyAbsSyn )
 happyIn7 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap7 x)
 {-# INLINE happyIn7 #-}
 happyOut7 :: (HappyAbsSyn ) -> HappyWrap7
 happyOut7 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut7 #-}
-newtype HappyWrap8 = HappyWrap8 (TidyParser.Abs.LowerCaseIdent)
-happyIn8 :: (TidyParser.Abs.LowerCaseIdent) -> (HappyAbsSyn )
+newtype HappyWrap8 = HappyWrap8 (Tidy.Abs.LowerCaseIdent)
+happyIn8 :: (Tidy.Abs.LowerCaseIdent) -> (HappyAbsSyn )
 happyIn8 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap8 x)
 {-# INLINE happyIn8 #-}
 happyOut8 :: (HappyAbsSyn ) -> HappyWrap8
 happyOut8 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut8 #-}
-newtype HappyWrap9 = HappyWrap9 (TidyParser.Abs.Program)
-happyIn9 :: (TidyParser.Abs.Program) -> (HappyAbsSyn )
+newtype HappyWrap9 = HappyWrap9 (Tidy.Abs.Program)
+happyIn9 :: (Tidy.Abs.Program) -> (HappyAbsSyn )
 happyIn9 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap9 x)
 {-# INLINE happyIn9 #-}
 happyOut9 :: (HappyAbsSyn ) -> HappyWrap9
 happyOut9 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut9 #-}
-newtype HappyWrap10 = HappyWrap10 ([TidyParser.Abs.ClassIdent])
-happyIn10 :: ([TidyParser.Abs.ClassIdent]) -> (HappyAbsSyn )
+newtype HappyWrap10 = HappyWrap10 ([Tidy.Abs.ClassIdent])
+happyIn10 :: ([Tidy.Abs.ClassIdent]) -> (HappyAbsSyn )
 happyIn10 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap10 x)
 {-# INLINE happyIn10 #-}
 happyOut10 :: (HappyAbsSyn ) -> HappyWrap10
 happyOut10 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut10 #-}
-newtype HappyWrap11 = HappyWrap11 (TidyParser.Abs.ClassIdent)
-happyIn11 :: (TidyParser.Abs.ClassIdent) -> (HappyAbsSyn )
+newtype HappyWrap11 = HappyWrap11 (Tidy.Abs.ClassIdent)
+happyIn11 :: (Tidy.Abs.ClassIdent) -> (HappyAbsSyn )
 happyIn11 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap11 x)
 {-# INLINE happyIn11 #-}
 happyOut11 :: (HappyAbsSyn ) -> HappyWrap11
 happyOut11 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut11 #-}
-newtype HappyWrap12 = HappyWrap12 ([TidyParser.Abs.ClassDecl])
-happyIn12 :: ([TidyParser.Abs.ClassDecl]) -> (HappyAbsSyn )
+newtype HappyWrap12 = HappyWrap12 ([Tidy.Abs.ClassDecl])
+happyIn12 :: ([Tidy.Abs.ClassDecl]) -> (HappyAbsSyn )
 happyIn12 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap12 x)
 {-# INLINE happyIn12 #-}
 happyOut12 :: (HappyAbsSyn ) -> HappyWrap12
 happyOut12 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut12 #-}
-newtype HappyWrap13 = HappyWrap13 (TidyParser.Abs.ClassDecl)
-happyIn13 :: (TidyParser.Abs.ClassDecl) -> (HappyAbsSyn )
+newtype HappyWrap13 = HappyWrap13 (Tidy.Abs.ClassDecl)
+happyIn13 :: (Tidy.Abs.ClassDecl) -> (HappyAbsSyn )
 happyIn13 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap13 x)
 {-# INLINE happyIn13 #-}
 happyOut13 :: (HappyAbsSyn ) -> HappyWrap13
 happyOut13 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut13 #-}
-newtype HappyWrap14 = HappyWrap14 (TidyParser.Abs.Inheritance)
-happyIn14 :: (TidyParser.Abs.Inheritance) -> (HappyAbsSyn )
+newtype HappyWrap14 = HappyWrap14 (Tidy.Abs.Inheritance)
+happyIn14 :: (Tidy.Abs.Inheritance) -> (HappyAbsSyn )
 happyIn14 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap14 x)
 {-# INLINE happyIn14 #-}
 happyOut14 :: (HappyAbsSyn ) -> HappyWrap14
 happyOut14 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut14 #-}
-newtype HappyWrap15 = HappyWrap15 (TidyParser.Abs.ClassBody)
-happyIn15 :: (TidyParser.Abs.ClassBody) -> (HappyAbsSyn )
+newtype HappyWrap15 = HappyWrap15 (Tidy.Abs.ClassBody)
+happyIn15 :: (Tidy.Abs.ClassBody) -> (HappyAbsSyn )
 happyIn15 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap15 x)
 {-# INLINE happyIn15 #-}
 happyOut15 :: (HappyAbsSyn ) -> HappyWrap15
 happyOut15 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut15 #-}
-newtype HappyWrap16 = HappyWrap16 (TidyParser.Abs.ClassType)
-happyIn16 :: (TidyParser.Abs.ClassType) -> (HappyAbsSyn )
+newtype HappyWrap16 = HappyWrap16 (Tidy.Abs.ClassType)
+happyIn16 :: (Tidy.Abs.ClassType) -> (HappyAbsSyn )
 happyIn16 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap16 x)
 {-# INLINE happyIn16 #-}
 happyOut16 :: (HappyAbsSyn ) -> HappyWrap16
 happyOut16 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut16 #-}
-newtype HappyWrap17 = HappyWrap17 (TidyParser.Abs.ValuesSection)
-happyIn17 :: (TidyParser.Abs.ValuesSection) -> (HappyAbsSyn )
+newtype HappyWrap17 = HappyWrap17 (Tidy.Abs.ValuesSection)
+happyIn17 :: (Tidy.Abs.ValuesSection) -> (HappyAbsSyn )
 happyIn17 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap17 x)
 {-# INLINE happyIn17 #-}
 happyOut17 :: (HappyAbsSyn ) -> HappyWrap17
 happyOut17 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut17 #-}
-newtype HappyWrap18 = HappyWrap18 (TidyParser.Abs.VariablesSection)
-happyIn18 :: (TidyParser.Abs.VariablesSection) -> (HappyAbsSyn )
+newtype HappyWrap18 = HappyWrap18 (Tidy.Abs.VariablesSection)
+happyIn18 :: (Tidy.Abs.VariablesSection) -> (HappyAbsSyn )
 happyIn18 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap18 x)
 {-# INLINE happyIn18 #-}
 happyOut18 :: (HappyAbsSyn ) -> HappyWrap18
 happyOut18 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut18 #-}
-newtype HappyWrap19 = HappyWrap19 (TidyParser.Abs.FunctionsSection)
-happyIn19 :: (TidyParser.Abs.FunctionsSection) -> (HappyAbsSyn )
+newtype HappyWrap19 = HappyWrap19 (Tidy.Abs.FunctionsSection)
+happyIn19 :: (Tidy.Abs.FunctionsSection) -> (HappyAbsSyn )
 happyIn19 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap19 x)
 {-# INLINE happyIn19 #-}
 happyOut19 :: (HappyAbsSyn ) -> HappyWrap19
 happyOut19 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut19 #-}
-newtype HappyWrap20 = HappyWrap20 (TidyParser.Abs.ActionsSection)
-happyIn20 :: (TidyParser.Abs.ActionsSection) -> (HappyAbsSyn )
+newtype HappyWrap20 = HappyWrap20 (Tidy.Abs.ActionsSection)
+happyIn20 :: (Tidy.Abs.ActionsSection) -> (HappyAbsSyn )
 happyIn20 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap20 x)
 {-# INLINE happyIn20 #-}
 happyOut20 :: (HappyAbsSyn ) -> HappyWrap20
 happyOut20 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut20 #-}
-newtype HappyWrap21 = HappyWrap21 (TidyParser.Abs.ValSBody)
-happyIn21 :: (TidyParser.Abs.ValSBody) -> (HappyAbsSyn )
+newtype HappyWrap21 = HappyWrap21 (Tidy.Abs.ValSBody)
+happyIn21 :: (Tidy.Abs.ValSBody) -> (HappyAbsSyn )
 happyIn21 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap21 x)
 {-# INLINE happyIn21 #-}
 happyOut21 :: (HappyAbsSyn ) -> HappyWrap21
 happyOut21 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut21 #-}
-newtype HappyWrap22 = HappyWrap22 (TidyParser.Abs.ValueIdent)
-happyIn22 :: (TidyParser.Abs.ValueIdent) -> (HappyAbsSyn )
+newtype HappyWrap22 = HappyWrap22 (Tidy.Abs.ValueIdent)
+happyIn22 :: (Tidy.Abs.ValueIdent) -> (HappyAbsSyn )
 happyIn22 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap22 x)
 {-# INLINE happyIn22 #-}
 happyOut22 :: (HappyAbsSyn ) -> HappyWrap22
 happyOut22 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut22 #-}
-newtype HappyWrap23 = HappyWrap23 (TidyParser.Abs.ValueType)
-happyIn23 :: (TidyParser.Abs.ValueType) -> (HappyAbsSyn )
+newtype HappyWrap23 = HappyWrap23 (Tidy.Abs.ValueType)
+happyIn23 :: (Tidy.Abs.ValueType) -> (HappyAbsSyn )
 happyIn23 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap23 x)
 {-# INLINE happyIn23 #-}
 happyOut23 :: (HappyAbsSyn ) -> HappyWrap23
 happyOut23 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut23 #-}
-newtype HappyWrap24 = HappyWrap24 ([TidyParser.Abs.ValueDecl])
-happyIn24 :: ([TidyParser.Abs.ValueDecl]) -> (HappyAbsSyn )
+newtype HappyWrap24 = HappyWrap24 ([Tidy.Abs.ValueDecl])
+happyIn24 :: ([Tidy.Abs.ValueDecl]) -> (HappyAbsSyn )
 happyIn24 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap24 x)
 {-# INLINE happyIn24 #-}
 happyOut24 :: (HappyAbsSyn ) -> HappyWrap24
 happyOut24 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut24 #-}
-newtype HappyWrap25 = HappyWrap25 (TidyParser.Abs.ValueDecl)
-happyIn25 :: (TidyParser.Abs.ValueDecl) -> (HappyAbsSyn )
+newtype HappyWrap25 = HappyWrap25 (Tidy.Abs.ValueDecl)
+happyIn25 :: (Tidy.Abs.ValueDecl) -> (HappyAbsSyn )
 happyIn25 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap25 x)
 {-# INLINE happyIn25 #-}
 happyOut25 :: (HappyAbsSyn ) -> HappyWrap25
 happyOut25 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut25 #-}
-newtype HappyWrap26 = HappyWrap26 ([TidyParser.Abs.ValueDeclProper])
-happyIn26 :: ([TidyParser.Abs.ValueDeclProper]) -> (HappyAbsSyn )
+newtype HappyWrap26 = HappyWrap26 ([Tidy.Abs.ValueDeclProper])
+happyIn26 :: ([Tidy.Abs.ValueDeclProper]) -> (HappyAbsSyn )
 happyIn26 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap26 x)
 {-# INLINE happyIn26 #-}
 happyOut26 :: (HappyAbsSyn ) -> HappyWrap26
 happyOut26 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut26 #-}
-newtype HappyWrap27 = HappyWrap27 (TidyParser.Abs.ValueDeclProper)
-happyIn27 :: (TidyParser.Abs.ValueDeclProper) -> (HappyAbsSyn )
+newtype HappyWrap27 = HappyWrap27 (Tidy.Abs.ValueDeclProper)
+happyIn27 :: (Tidy.Abs.ValueDeclProper) -> (HappyAbsSyn )
 happyIn27 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap27 x)
 {-# INLINE happyIn27 #-}
 happyOut27 :: (HappyAbsSyn ) -> HappyWrap27
 happyOut27 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut27 #-}
-newtype HappyWrap28 = HappyWrap28 (TidyParser.Abs.VarSBody)
-happyIn28 :: (TidyParser.Abs.VarSBody) -> (HappyAbsSyn )
+newtype HappyWrap28 = HappyWrap28 (Tidy.Abs.VarSBody)
+happyIn28 :: (Tidy.Abs.VarSBody) -> (HappyAbsSyn )
 happyIn28 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap28 x)
 {-# INLINE happyIn28 #-}
 happyOut28 :: (HappyAbsSyn ) -> HappyWrap28
 happyOut28 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut28 #-}
-newtype HappyWrap29 = HappyWrap29 (TidyParser.Abs.FSBody)
-happyIn29 :: (TidyParser.Abs.FSBody) -> (HappyAbsSyn )
+newtype HappyWrap29 = HappyWrap29 (Tidy.Abs.FSBody)
+happyIn29 :: (Tidy.Abs.FSBody) -> (HappyAbsSyn )
 happyIn29 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap29 x)
 {-# INLINE happyIn29 #-}
 happyOut29 :: (HappyAbsSyn ) -> HappyWrap29
 happyOut29 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut29 #-}
-newtype HappyWrap30 = HappyWrap30 (TidyParser.Abs.FunctionIdent)
-happyIn30 :: (TidyParser.Abs.FunctionIdent) -> (HappyAbsSyn )
+newtype HappyWrap30 = HappyWrap30 (Tidy.Abs.FunctionIdent)
+happyIn30 :: (Tidy.Abs.FunctionIdent) -> (HappyAbsSyn )
 happyIn30 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap30 x)
 {-# INLINE happyIn30 #-}
 happyOut30 :: (HappyAbsSyn ) -> HappyWrap30
 happyOut30 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut30 #-}
-newtype HappyWrap31 = HappyWrap31 (TidyParser.Abs.MethodType)
-happyIn31 :: (TidyParser.Abs.MethodType) -> (HappyAbsSyn )
+newtype HappyWrap31 = HappyWrap31 (Tidy.Abs.MethodType)
+happyIn31 :: (Tidy.Abs.MethodType) -> (HappyAbsSyn )
 happyIn31 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap31 x)
 {-# INLINE happyIn31 #-}
 happyOut31 :: (HappyAbsSyn ) -> HappyWrap31
 happyOut31 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut31 #-}
-newtype HappyWrap32 = HappyWrap32 (TidyParser.Abs.ParameterList)
-happyIn32 :: (TidyParser.Abs.ParameterList) -> (HappyAbsSyn )
+newtype HappyWrap32 = HappyWrap32 (Tidy.Abs.ParameterList)
+happyIn32 :: (Tidy.Abs.ParameterList) -> (HappyAbsSyn )
 happyIn32 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap32 x)
 {-# INLINE happyIn32 #-}
 happyOut32 :: (HappyAbsSyn ) -> HappyWrap32
 happyOut32 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut32 #-}
-newtype HappyWrap33 = HappyWrap33 ([TidyParser.Abs.FunctionDecl])
-happyIn33 :: ([TidyParser.Abs.FunctionDecl]) -> (HappyAbsSyn )
+newtype HappyWrap33 = HappyWrap33 ([Tidy.Abs.FunctionDecl])
+happyIn33 :: ([Tidy.Abs.FunctionDecl]) -> (HappyAbsSyn )
 happyIn33 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap33 x)
 {-# INLINE happyIn33 #-}
 happyOut33 :: (HappyAbsSyn ) -> HappyWrap33
 happyOut33 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut33 #-}
-newtype HappyWrap34 = HappyWrap34 (TidyParser.Abs.FunctionDecl)
-happyIn34 :: (TidyParser.Abs.FunctionDecl) -> (HappyAbsSyn )
+newtype HappyWrap34 = HappyWrap34 (Tidy.Abs.FunctionDecl)
+happyIn34 :: (Tidy.Abs.FunctionDecl) -> (HappyAbsSyn )
 happyIn34 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap34 x)
 {-# INLINE happyIn34 #-}
 happyOut34 :: (HappyAbsSyn ) -> HappyWrap34
 happyOut34 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut34 #-}
-newtype HappyWrap35 = HappyWrap35 (TidyParser.Abs.FunctionBody)
-happyIn35 :: (TidyParser.Abs.FunctionBody) -> (HappyAbsSyn )
+newtype HappyWrap35 = HappyWrap35 (Tidy.Abs.FunctionBody)
+happyIn35 :: (Tidy.Abs.FunctionBody) -> (HappyAbsSyn )
 happyIn35 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap35 x)
 {-# INLINE happyIn35 #-}
 happyOut35 :: (HappyAbsSyn ) -> HappyWrap35
 happyOut35 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut35 #-}
-newtype HappyWrap36 = HappyWrap36 (TidyParser.Abs.WithValues)
-happyIn36 :: (TidyParser.Abs.WithValues) -> (HappyAbsSyn )
+newtype HappyWrap36 = HappyWrap36 (Tidy.Abs.WithValues)
+happyIn36 :: (Tidy.Abs.WithValues) -> (HappyAbsSyn )
 happyIn36 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap36 x)
 {-# INLINE happyIn36 #-}
 happyOut36 :: (HappyAbsSyn ) -> HappyWrap36
 happyOut36 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut36 #-}
-newtype HappyWrap37 = HappyWrap37 (TidyParser.Abs.ASBody)
-happyIn37 :: (TidyParser.Abs.ASBody) -> (HappyAbsSyn )
+newtype HappyWrap37 = HappyWrap37 (Tidy.Abs.ASBody)
+happyIn37 :: (Tidy.Abs.ASBody) -> (HappyAbsSyn )
 happyIn37 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap37 x)
 {-# INLINE happyIn37 #-}
 happyOut37 :: (HappyAbsSyn ) -> HappyWrap37
 happyOut37 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut37 #-}
-newtype HappyWrap38 = HappyWrap38 ([TidyParser.Abs.ActionDecl])
-happyIn38 :: ([TidyParser.Abs.ActionDecl]) -> (HappyAbsSyn )
+newtype HappyWrap38 = HappyWrap38 ([Tidy.Abs.ActionDecl])
+happyIn38 :: ([Tidy.Abs.ActionDecl]) -> (HappyAbsSyn )
 happyIn38 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap38 x)
 {-# INLINE happyIn38 #-}
 happyOut38 :: (HappyAbsSyn ) -> HappyWrap38
 happyOut38 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut38 #-}
-newtype HappyWrap39 = HappyWrap39 (TidyParser.Abs.ActionDecl)
-happyIn39 :: (TidyParser.Abs.ActionDecl) -> (HappyAbsSyn )
+newtype HappyWrap39 = HappyWrap39 (Tidy.Abs.ActionDecl)
+happyIn39 :: (Tidy.Abs.ActionDecl) -> (HappyAbsSyn )
 happyIn39 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap39 x)
 {-# INLINE happyIn39 #-}
 happyOut39 :: (HappyAbsSyn ) -> HappyWrap39
 happyOut39 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut39 #-}
-newtype HappyWrap40 = HappyWrap40 (TidyParser.Abs.ActionBody)
-happyIn40 :: (TidyParser.Abs.ActionBody) -> (HappyAbsSyn )
+newtype HappyWrap40 = HappyWrap40 (Tidy.Abs.ActionBody)
+happyIn40 :: (Tidy.Abs.ActionBody) -> (HappyAbsSyn )
 happyIn40 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap40 x)
 {-# INLINE happyIn40 #-}
 happyOut40 :: (HappyAbsSyn ) -> HappyWrap40
 happyOut40 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut40 #-}
-newtype HappyWrap41 = HappyWrap41 ([TidyParser.Abs.Expr])
-happyIn41 :: ([TidyParser.Abs.Expr]) -> (HappyAbsSyn )
+newtype HappyWrap41 = HappyWrap41 ([Tidy.Abs.Expr])
+happyIn41 :: ([Tidy.Abs.Expr]) -> (HappyAbsSyn )
 happyIn41 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap41 x)
 {-# INLINE happyIn41 #-}
 happyOut41 :: (HappyAbsSyn ) -> HappyWrap41
 happyOut41 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut41 #-}
-newtype HappyWrap42 = HappyWrap42 (TidyParser.Abs.Expr)
-happyIn42 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap42 = HappyWrap42 (Tidy.Abs.Expr)
+happyIn42 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn42 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap42 x)
 {-# INLINE happyIn42 #-}
 happyOut42 :: (HappyAbsSyn ) -> HappyWrap42
 happyOut42 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut42 #-}
-newtype HappyWrap43 = HappyWrap43 (TidyParser.Abs.Expr)
-happyIn43 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap43 = HappyWrap43 (Tidy.Abs.Expr)
+happyIn43 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn43 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap43 x)
 {-# INLINE happyIn43 #-}
 happyOut43 :: (HappyAbsSyn ) -> HappyWrap43
 happyOut43 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut43 #-}
-newtype HappyWrap44 = HappyWrap44 (TidyParser.Abs.Expr)
-happyIn44 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap44 = HappyWrap44 (Tidy.Abs.Expr)
+happyIn44 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn44 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap44 x)
 {-# INLINE happyIn44 #-}
 happyOut44 :: (HappyAbsSyn ) -> HappyWrap44
 happyOut44 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut44 #-}
-newtype HappyWrap45 = HappyWrap45 (TidyParser.Abs.Expr)
-happyIn45 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap45 = HappyWrap45 (Tidy.Abs.Expr)
+happyIn45 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn45 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap45 x)
 {-# INLINE happyIn45 #-}
 happyOut45 :: (HappyAbsSyn ) -> HappyWrap45
 happyOut45 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut45 #-}
-newtype HappyWrap46 = HappyWrap46 (TidyParser.Abs.Expr)
-happyIn46 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap46 = HappyWrap46 (Tidy.Abs.Expr)
+happyIn46 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn46 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap46 x)
 {-# INLINE happyIn46 #-}
 happyOut46 :: (HappyAbsSyn ) -> HappyWrap46
 happyOut46 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut46 #-}
-newtype HappyWrap47 = HappyWrap47 (TidyParser.Abs.Expr)
-happyIn47 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap47 = HappyWrap47 (Tidy.Abs.Expr)
+happyIn47 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn47 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap47 x)
 {-# INLINE happyIn47 #-}
 happyOut47 :: (HappyAbsSyn ) -> HappyWrap47
 happyOut47 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut47 #-}
-newtype HappyWrap48 = HappyWrap48 (TidyParser.Abs.Expr)
-happyIn48 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap48 = HappyWrap48 (Tidy.Abs.Expr)
+happyIn48 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn48 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap48 x)
 {-# INLINE happyIn48 #-}
 happyOut48 :: (HappyAbsSyn ) -> HappyWrap48
 happyOut48 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut48 #-}
-newtype HappyWrap49 = HappyWrap49 (TidyParser.Abs.Expr)
-happyIn49 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap49 = HappyWrap49 (Tidy.Abs.Expr)
+happyIn49 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn49 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap49 x)
 {-# INLINE happyIn49 #-}
 happyOut49 :: (HappyAbsSyn ) -> HappyWrap49
 happyOut49 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut49 #-}
-newtype HappyWrap50 = HappyWrap50 (TidyParser.Abs.Expr)
-happyIn50 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap50 = HappyWrap50 (Tidy.Abs.Expr)
+happyIn50 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn50 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap50 x)
 {-# INLINE happyIn50 #-}
 happyOut50 :: (HappyAbsSyn ) -> HappyWrap50
 happyOut50 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut50 #-}
-newtype HappyWrap51 = HappyWrap51 (TidyParser.Abs.Expr)
-happyIn51 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap51 = HappyWrap51 (Tidy.Abs.Expr)
+happyIn51 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn51 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap51 x)
 {-# INLINE happyIn51 #-}
 happyOut51 :: (HappyAbsSyn ) -> HappyWrap51
 happyOut51 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut51 #-}
-newtype HappyWrap52 = HappyWrap52 (TidyParser.Abs.Expr)
-happyIn52 :: (TidyParser.Abs.Expr) -> (HappyAbsSyn )
+newtype HappyWrap52 = HappyWrap52 (Tidy.Abs.Expr)
+happyIn52 :: (Tidy.Abs.Expr) -> (HappyAbsSyn )
 happyIn52 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap52 x)
 {-# INLINE happyIn52 #-}
 happyOut52 :: (HappyAbsSyn ) -> HappyWrap52
 happyOut52 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut52 #-}
-newtype HappyWrap53 = HappyWrap53 (TidyParser.Abs.Literal)
-happyIn53 :: (TidyParser.Abs.Literal) -> (HappyAbsSyn )
+newtype HappyWrap53 = HappyWrap53 (Tidy.Abs.Literal)
+happyIn53 :: (Tidy.Abs.Literal) -> (HappyAbsSyn )
 happyIn53 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap53 x)
 {-# INLINE happyIn53 #-}
 happyOut53 :: (HappyAbsSyn ) -> HappyWrap53
 happyOut53 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut53 #-}
-newtype HappyWrap54 = HappyWrap54 (TidyParser.Abs.Boolean)
-happyIn54 :: (TidyParser.Abs.Boolean) -> (HappyAbsSyn )
+newtype HappyWrap54 = HappyWrap54 (Tidy.Abs.Boolean)
+happyIn54 :: (Tidy.Abs.Boolean) -> (HappyAbsSyn )
 happyIn54 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap54 x)
 {-# INLINE happyIn54 #-}
 happyOut54 :: (HappyAbsSyn ) -> HappyWrap54
 happyOut54 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut54 #-}
-newtype HappyWrap55 = HappyWrap55 (TidyParser.Abs.Void)
-happyIn55 :: (TidyParser.Abs.Void) -> (HappyAbsSyn )
+newtype HappyWrap55 = HappyWrap55 (Tidy.Abs.Void)
+happyIn55 :: (Tidy.Abs.Void) -> (HappyAbsSyn )
 happyIn55 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap55 x)
 {-# INLINE happyIn55 #-}
 happyOut55 :: (HappyAbsSyn ) -> HappyWrap55
 happyOut55 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut55 #-}
-newtype HappyWrap56 = HappyWrap56 (TidyParser.Abs.LocalValueDecl)
-happyIn56 :: (TidyParser.Abs.LocalValueDecl) -> (HappyAbsSyn )
+newtype HappyWrap56 = HappyWrap56 (Tidy.Abs.LocalValueDecl)
+happyIn56 :: (Tidy.Abs.LocalValueDecl) -> (HappyAbsSyn )
 happyIn56 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap56 x)
 {-# INLINE happyIn56 #-}
 happyOut56 :: (HappyAbsSyn ) -> HappyWrap56
 happyOut56 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut56 #-}
-newtype HappyWrap57 = HappyWrap57 (TidyParser.Abs.LambdaFunction)
-happyIn57 :: (TidyParser.Abs.LambdaFunction) -> (HappyAbsSyn )
+newtype HappyWrap57 = HappyWrap57 (Tidy.Abs.LambdaFunction)
+happyIn57 :: (Tidy.Abs.LambdaFunction) -> (HappyAbsSyn )
 happyIn57 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap57 x)
 {-# INLINE happyIn57 #-}
 happyOut57 :: (HappyAbsSyn ) -> HappyWrap57
 happyOut57 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut57 #-}
-newtype HappyWrap58 = HappyWrap58 (TidyParser.Abs.LambdaAction)
-happyIn58 :: (TidyParser.Abs.LambdaAction) -> (HappyAbsSyn )
+newtype HappyWrap58 = HappyWrap58 (Tidy.Abs.LambdaAction)
+happyIn58 :: (Tidy.Abs.LambdaAction) -> (HappyAbsSyn )
 happyIn58 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap58 x)
 {-# INLINE happyIn58 #-}
 happyOut58 :: (HappyAbsSyn ) -> HappyWrap58
 happyOut58 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut58 #-}
-newtype HappyWrap59 = HappyWrap59 (TidyParser.Abs.ArgumentList)
-happyIn59 :: (TidyParser.Abs.ArgumentList) -> (HappyAbsSyn )
+newtype HappyWrap59 = HappyWrap59 (Tidy.Abs.ArgumentList)
+happyIn59 :: (Tidy.Abs.ArgumentList) -> (HappyAbsSyn )
 happyIn59 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap59 x)
 {-# INLINE happyIn59 #-}
 happyOut59 :: (HappyAbsSyn ) -> HappyWrap59
 happyOut59 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut59 #-}
-newtype HappyWrap60 = HappyWrap60 ([TidyParser.Abs.FunctionArgument])
-happyIn60 :: ([TidyParser.Abs.FunctionArgument]) -> (HappyAbsSyn )
+newtype HappyWrap60 = HappyWrap60 ([Tidy.Abs.FunctionArgument])
+happyIn60 :: ([Tidy.Abs.FunctionArgument]) -> (HappyAbsSyn )
 happyIn60 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap60 x)
 {-# INLINE happyIn60 #-}
 happyOut60 :: (HappyAbsSyn ) -> HappyWrap60
 happyOut60 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut60 #-}
-newtype HappyWrap61 = HappyWrap61 (TidyParser.Abs.FunctionArgument)
-happyIn61 :: (TidyParser.Abs.FunctionArgument) -> (HappyAbsSyn )
+newtype HappyWrap61 = HappyWrap61 (Tidy.Abs.FunctionArgument)
+happyIn61 :: (Tidy.Abs.FunctionArgument) -> (HappyAbsSyn )
 happyIn61 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap61 x)
 {-# INLINE happyIn61 #-}
 happyOut61 :: (HappyAbsSyn ) -> HappyWrap61
 happyOut61 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut61 #-}
-newtype HappyWrap62 = HappyWrap62 (TidyParser.Abs.FunctionCall)
-happyIn62 :: (TidyParser.Abs.FunctionCall) -> (HappyAbsSyn )
+newtype HappyWrap62 = HappyWrap62 (Tidy.Abs.FunctionCall)
+happyIn62 :: (Tidy.Abs.FunctionCall) -> (HappyAbsSyn )
 happyIn62 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap62 x)
 {-# INLINE happyIn62 #-}
 happyOut62 :: (HappyAbsSyn ) -> HappyWrap62
 happyOut62 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut62 #-}
-newtype HappyWrap63 = HappyWrap63 (TidyParser.Abs.ActionCall)
-happyIn63 :: (TidyParser.Abs.ActionCall) -> (HappyAbsSyn )
+newtype HappyWrap63 = HappyWrap63 (Tidy.Abs.ActionCall)
+happyIn63 :: (Tidy.Abs.ActionCall) -> (HappyAbsSyn )
 happyIn63 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap63 x)
 {-# INLINE happyIn63 #-}
 happyOut63 :: (HappyAbsSyn ) -> HappyWrap63
 happyOut63 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut63 #-}
-newtype HappyWrap64 = HappyWrap64 (TidyParser.Abs.ConstructorCall)
-happyIn64 :: (TidyParser.Abs.ConstructorCall) -> (HappyAbsSyn )
+newtype HappyWrap64 = HappyWrap64 (Tidy.Abs.ConstructorCall)
+happyIn64 :: (Tidy.Abs.ConstructorCall) -> (HappyAbsSyn )
 happyIn64 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap64 x)
 {-# INLINE happyIn64 #-}
 happyOut64 :: (HappyAbsSyn ) -> HappyWrap64
 happyOut64 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut64 #-}
-newtype HappyWrap65 = HappyWrap65 (TidyParser.Abs.GetExpr)
-happyIn65 :: (TidyParser.Abs.GetExpr) -> (HappyAbsSyn )
+newtype HappyWrap65 = HappyWrap65 (Tidy.Abs.GetExpr)
+happyIn65 :: (Tidy.Abs.GetExpr) -> (HappyAbsSyn )
 happyIn65 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap65 x)
 {-# INLINE happyIn65 #-}
 happyOut65 :: (HappyAbsSyn ) -> HappyWrap65
 happyOut65 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut65 #-}
-newtype HappyWrap66 = HappyWrap66 (TidyParser.Abs.DoExpr)
-happyIn66 :: (TidyParser.Abs.DoExpr) -> (HappyAbsSyn )
+newtype HappyWrap66 = HappyWrap66 (Tidy.Abs.DoExpr)
+happyIn66 :: (Tidy.Abs.DoExpr) -> (HappyAbsSyn )
 happyIn66 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap66 x)
 {-# INLINE happyIn66 #-}
 happyOut66 :: (HappyAbsSyn ) -> HappyWrap66
 happyOut66 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut66 #-}
-newtype HappyWrap67 = HappyWrap67 (TidyParser.Abs.ImperativeControlFlow)
-happyIn67 :: (TidyParser.Abs.ImperativeControlFlow) -> (HappyAbsSyn )
+newtype HappyWrap67 = HappyWrap67 (Tidy.Abs.ImperativeControlFlow)
+happyIn67 :: (Tidy.Abs.ImperativeControlFlow) -> (HappyAbsSyn )
 happyIn67 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap67 x)
 {-# INLINE happyIn67 #-}
 happyOut67 :: (HappyAbsSyn ) -> HappyWrap67
 happyOut67 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut67 #-}
-newtype HappyWrap68 = HappyWrap68 (TidyParser.Abs.OptionalElseBranch)
-happyIn68 :: (TidyParser.Abs.OptionalElseBranch) -> (HappyAbsSyn )
+newtype HappyWrap68 = HappyWrap68 (Tidy.Abs.OptionalElseBranch)
+happyIn68 :: (Tidy.Abs.OptionalElseBranch) -> (HappyAbsSyn )
 happyIn68 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap68 x)
 {-# INLINE happyIn68 #-}
 happyOut68 :: (HappyAbsSyn ) -> HappyWrap68
 happyOut68 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut68 #-}
-newtype HappyWrap69 = HappyWrap69 (TidyParser.Abs.FunctionalControlFlow)
-happyIn69 :: (TidyParser.Abs.FunctionalControlFlow) -> (HappyAbsSyn )
+newtype HappyWrap69 = HappyWrap69 (Tidy.Abs.FunctionalControlFlow)
+happyIn69 :: (Tidy.Abs.FunctionalControlFlow) -> (HappyAbsSyn )
 happyIn69 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap69 x)
 {-# INLINE happyIn69 #-}
 happyOut69 :: (HappyAbsSyn ) -> HappyWrap69
 happyOut69 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut69 #-}
-newtype HappyWrap70 = HappyWrap70 (TidyParser.Abs.ThenBranch)
-happyIn70 :: (TidyParser.Abs.ThenBranch) -> (HappyAbsSyn )
+newtype HappyWrap70 = HappyWrap70 (Tidy.Abs.ThenBranch)
+happyIn70 :: (Tidy.Abs.ThenBranch) -> (HappyAbsSyn )
 happyIn70 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap70 x)
 {-# INLINE happyIn70 #-}
 happyOut70 :: (HappyAbsSyn ) -> HappyWrap70
 happyOut70 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut70 #-}
-newtype HappyWrap71 = HappyWrap71 (TidyParser.Abs.ElseBranch)
-happyIn71 :: (TidyParser.Abs.ElseBranch) -> (HappyAbsSyn )
+newtype HappyWrap71 = HappyWrap71 (Tidy.Abs.ElseBranch)
+happyIn71 :: (Tidy.Abs.ElseBranch) -> (HappyAbsSyn )
 happyIn71 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap71 x)
 {-# INLINE happyIn71 #-}
 happyOut71 :: (HappyAbsSyn ) -> HappyWrap71
 happyOut71 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut71 #-}
-newtype HappyWrap72 = HappyWrap72 ([TidyParser.Abs.MatchCase])
-happyIn72 :: ([TidyParser.Abs.MatchCase]) -> (HappyAbsSyn )
+newtype HappyWrap72 = HappyWrap72 ([Tidy.Abs.MatchCase])
+happyIn72 :: ([Tidy.Abs.MatchCase]) -> (HappyAbsSyn )
 happyIn72 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap72 x)
 {-# INLINE happyIn72 #-}
 happyOut72 :: (HappyAbsSyn ) -> HappyWrap72
 happyOut72 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut72 #-}
-newtype HappyWrap73 = HappyWrap73 (TidyParser.Abs.MatchCase)
-happyIn73 :: (TidyParser.Abs.MatchCase) -> (HappyAbsSyn )
+newtype HappyWrap73 = HappyWrap73 (Tidy.Abs.MatchCase)
+happyIn73 :: (Tidy.Abs.MatchCase) -> (HappyAbsSyn )
 happyIn73 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap73 x)
 {-# INLINE happyIn73 #-}
 happyOut73 :: (HappyAbsSyn ) -> HappyWrap73
 happyOut73 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut73 #-}
-newtype HappyWrap74 = HappyWrap74 (TidyParser.Abs.Pattern)
-happyIn74 :: (TidyParser.Abs.Pattern) -> (HappyAbsSyn )
+newtype HappyWrap74 = HappyWrap74 (Tidy.Abs.Pattern)
+happyIn74 :: (Tidy.Abs.Pattern) -> (HappyAbsSyn )
 happyIn74 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap74 x)
 {-# INLINE happyIn74 #-}
 happyOut74 :: (HappyAbsSyn ) -> HappyWrap74
 happyOut74 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut74 #-}
-newtype HappyWrap75 = HappyWrap75 (TidyParser.Abs.RelationalOperator)
-happyIn75 :: (TidyParser.Abs.RelationalOperator) -> (HappyAbsSyn )
+newtype HappyWrap75 = HappyWrap75 (Tidy.Abs.RelationalOperator)
+happyIn75 :: (Tidy.Abs.RelationalOperator) -> (HappyAbsSyn )
 happyIn75 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap75 x)
 {-# INLINE happyIn75 #-}
 happyOut75 :: (HappyAbsSyn ) -> HappyWrap75
 happyOut75 x = Happy_GHC_Exts.unsafeCoerce# x
 {-# INLINE happyOut75 #-}
-newtype HappyWrap76 = HappyWrap76 (TidyParser.Abs.BooleanOperator)
-happyIn76 :: (TidyParser.Abs.BooleanOperator) -> (HappyAbsSyn )
+newtype HappyWrap76 = HappyWrap76 (Tidy.Abs.BooleanOperator)
+happyIn76 :: (Tidy.Abs.BooleanOperator) -> (HappyAbsSyn )
 happyIn76 x = Happy_GHC_Exts.unsafeCoerce# (HappyWrap76 x)
 {-# INLINE happyIn76 #-}
 happyOut76 :: (HappyAbsSyn ) -> HappyWrap76
@@ -763,21 +763,21 @@ happyReduce_4 = happySpecReduce_1  3# happyReduction_4
 happyReduction_4 happy_x_1
 	 =  case happyOutTok happy_x_1 of { (PT _ (T_UpperCaseIdent happy_var_1)) -> 
 	happyIn7
-		 (TidyParser.Abs.UpperCaseIdent happy_var_1
+		 (Tidy.Abs.UpperCaseIdent happy_var_1
 	)}
 
 happyReduce_5 = happySpecReduce_1  4# happyReduction_5
 happyReduction_5 happy_x_1
 	 =  case happyOutTok happy_x_1 of { (PT _ (T_LowerCaseIdent happy_var_1)) -> 
 	happyIn8
-		 (TidyParser.Abs.LowerCaseIdent happy_var_1
+		 (Tidy.Abs.LowerCaseIdent happy_var_1
 	)}
 
 happyReduce_6 = happySpecReduce_1  5# happyReduction_6
 happyReduction_6 happy_x_1
 	 =  case happyOut12 happy_x_1 of { (HappyWrap12 happy_var_1) -> 
 	happyIn9
-		 (TidyParser.Abs.ProgramEntrypoint happy_var_1
+		 (Tidy.Abs.ProgramEntrypoint happy_var_1
 	)}
 
 happyReduce_7 = happySpecReduce_0  6# happyReduction_7
@@ -806,7 +806,7 @@ happyReduce_10 = happySpecReduce_1  7# happyReduction_10
 happyReduction_10 happy_x_1
 	 =  case happyOut7 happy_x_1 of { (HappyWrap7 happy_var_1) -> 
 	happyIn11
-		 (TidyParser.Abs.CIdent happy_var_1
+		 (Tidy.Abs.CIdent happy_var_1
 	)}
 
 happyReduce_11 = happySpecReduce_1  8# happyReduction_11
@@ -837,7 +837,7 @@ happyReduction_13 (happy_x_5 `HappyStk`
 	case happyOut14 happy_x_4 of { (HappyWrap14 happy_var_4) -> 
 	case happyOut15 happy_x_5 of { (HappyWrap15 happy_var_5) -> 
 	happyIn13
-		 (TidyParser.Abs.ClassDeclConcrete happy_var_1 happy_var_3 happy_var_4 happy_var_5
+		 (Tidy.Abs.ClassDeclConcrete happy_var_1 happy_var_3 happy_var_4 happy_var_5
 	) `HappyStk` happyRest}}}}
 
 happyReduce_14 = happyReduce 6# 9# happyReduction_14
@@ -853,12 +853,12 @@ happyReduction_14 (happy_x_6 `HappyStk`
 	case happyOut14 happy_x_5 of { (HappyWrap14 happy_var_5) -> 
 	case happyOut15 happy_x_6 of { (HappyWrap15 happy_var_6) -> 
 	happyIn13
-		 (TidyParser.Abs.ClassDeclAbstract happy_var_2 happy_var_4 happy_var_5 happy_var_6
+		 (Tidy.Abs.ClassDeclAbstract happy_var_2 happy_var_4 happy_var_5 happy_var_6
 	) `HappyStk` happyRest}}}}
 
 happyReduce_15 = happySpecReduce_0  10# happyReduction_15
 happyReduction_15  =  happyIn14
-		 (TidyParser.Abs.SuperclassAbsent
+		 (Tidy.Abs.SuperclassAbsent
 	)
 
 happyReduce_16 = happySpecReduce_2  10# happyReduction_16
@@ -866,12 +866,12 @@ happyReduction_16 happy_x_2
 	happy_x_1
 	 =  case happyOut11 happy_x_2 of { (HappyWrap11 happy_var_2) -> 
 	happyIn14
-		 (TidyParser.Abs.SuperclassPresent happy_var_2
+		 (Tidy.Abs.SuperclassPresent happy_var_2
 	)}
 
 happyReduce_17 = happySpecReduce_0  11# happyReduction_17
 happyReduction_17  =  happyIn15
-		 (TidyParser.Abs.ClassBodyEmpty
+		 (Tidy.Abs.ClassBodyEmpty
 	)
 
 happyReduce_18 = happyReduce 6# 11# happyReduction_18
@@ -887,30 +887,30 @@ happyReduction_18 (happy_x_6 `HappyStk`
 	case happyOut19 happy_x_4 of { (HappyWrap19 happy_var_4) -> 
 	case happyOut20 happy_x_5 of { (HappyWrap20 happy_var_5) -> 
 	happyIn15
-		 (TidyParser.Abs.ClassBodyFilled happy_var_2 happy_var_3 happy_var_4 happy_var_5
+		 (Tidy.Abs.ClassBodyFilled happy_var_2 happy_var_3 happy_var_4 happy_var_5
 	) `HappyStk` happyRest}}}}
 
 happyReduce_19 = happySpecReduce_1  12# happyReduction_19
 happyReduction_19 happy_x_1
 	 =  happyIn16
-		 (TidyParser.Abs.MMutable
+		 (Tidy.Abs.MMutable
 	)
 
 happyReduce_20 = happySpecReduce_1  12# happyReduction_20
 happyReduction_20 happy_x_1
 	 =  happyIn16
-		 (TidyParser.Abs.MImmutable
+		 (Tidy.Abs.MImmutable
 	)
 
 happyReduce_21 = happySpecReduce_1  12# happyReduction_21
 happyReduction_21 happy_x_1
 	 =  happyIn16
-		 (TidyParser.Abs.MSingleton
+		 (Tidy.Abs.MSingleton
 	)
 
 happyReduce_22 = happySpecReduce_0  13# happyReduction_22
 happyReduction_22  =  happyIn17
-		 (TidyParser.Abs.ValuesAbsent
+		 (Tidy.Abs.ValuesAbsent
 	)
 
 happyReduce_23 = happySpecReduce_2  13# happyReduction_23
@@ -918,12 +918,12 @@ happyReduction_23 happy_x_2
 	happy_x_1
 	 =  case happyOut21 happy_x_2 of { (HappyWrap21 happy_var_2) -> 
 	happyIn17
-		 (TidyParser.Abs.ValuesPresent happy_var_2
+		 (Tidy.Abs.ValuesPresent happy_var_2
 	)}
 
 happyReduce_24 = happySpecReduce_0  14# happyReduction_24
 happyReduction_24  =  happyIn18
-		 (TidyParser.Abs.VariablesAbsent
+		 (Tidy.Abs.VariablesAbsent
 	)
 
 happyReduce_25 = happySpecReduce_2  14# happyReduction_25
@@ -931,12 +931,12 @@ happyReduction_25 happy_x_2
 	happy_x_1
 	 =  case happyOut28 happy_x_2 of { (HappyWrap28 happy_var_2) -> 
 	happyIn18
-		 (TidyParser.Abs.VariablesPresent happy_var_2
+		 (Tidy.Abs.VariablesPresent happy_var_2
 	)}
 
 happyReduce_26 = happySpecReduce_0  15# happyReduction_26
 happyReduction_26  =  happyIn19
-		 (TidyParser.Abs.FunctionsAbsent
+		 (Tidy.Abs.FunctionsAbsent
 	)
 
 happyReduce_27 = happySpecReduce_2  15# happyReduction_27
@@ -944,12 +944,12 @@ happyReduction_27 happy_x_2
 	happy_x_1
 	 =  case happyOut29 happy_x_2 of { (HappyWrap29 happy_var_2) -> 
 	happyIn19
-		 (TidyParser.Abs.FunctionsPresent happy_var_2
+		 (Tidy.Abs.FunctionsPresent happy_var_2
 	)}
 
 happyReduce_28 = happySpecReduce_0  16# happyReduction_28
 happyReduction_28  =  happyIn20
-		 (TidyParser.Abs.ActionsAbsent
+		 (Tidy.Abs.ActionsAbsent
 	)
 
 happyReduce_29 = happySpecReduce_2  16# happyReduction_29
@@ -957,7 +957,7 @@ happyReduction_29 happy_x_2
 	happy_x_1
 	 =  case happyOut37 happy_x_2 of { (HappyWrap37 happy_var_2) -> 
 	happyIn20
-		 (TidyParser.Abs.ActionsPresent happy_var_2
+		 (Tidy.Abs.ActionsPresent happy_var_2
 	)}
 
 happyReduce_30 = happySpecReduce_3  17# happyReduction_30
@@ -966,21 +966,21 @@ happyReduction_30 happy_x_3
 	happy_x_1
 	 =  case happyOut24 happy_x_2 of { (HappyWrap24 happy_var_2) -> 
 	happyIn21
-		 (TidyParser.Abs.ValuesSBody happy_var_2
+		 (Tidy.Abs.ValuesSBody happy_var_2
 	)}
 
 happyReduce_31 = happySpecReduce_1  18# happyReduction_31
 happyReduction_31 happy_x_1
 	 =  case happyOut8 happy_x_1 of { (HappyWrap8 happy_var_1) -> 
 	happyIn22
-		 (TidyParser.Abs.VIdent happy_var_1
+		 (Tidy.Abs.VIdent happy_var_1
 	)}
 
 happyReduce_32 = happySpecReduce_1  19# happyReduction_32
 happyReduction_32 happy_x_1
 	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
 	happyIn23
-		 (TidyParser.Abs.ValueTypeClass happy_var_1
+		 (Tidy.Abs.ValueTypeClass happy_var_1
 	)}
 
 happyReduce_33 = happyReduce 4# 19# happyReduction_33
@@ -992,7 +992,7 @@ happyReduction_33 (happy_x_4 `HappyStk`
 	 = case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
 	case happyOut10 happy_x_3 of { (HappyWrap10 happy_var_3) -> 
 	happyIn23
-		 (TidyParser.Abs.ValueTypeGeneric happy_var_1 happy_var_3
+		 (Tidy.Abs.ValueTypeGeneric happy_var_1 happy_var_3
 	) `HappyStk` happyRest}}
 
 happyReduce_34 = happySpecReduce_2  19# happyReduction_34
@@ -1000,7 +1000,7 @@ happyReduction_34 happy_x_2
 	happy_x_1
 	 =  case happyOut31 happy_x_2 of { (HappyWrap31 happy_var_2) -> 
 	happyIn23
-		 (TidyParser.Abs.ValueTypeFunction happy_var_2
+		 (Tidy.Abs.ValueTypeFunction happy_var_2
 	)}
 
 happyReduce_35 = happySpecReduce_2  19# happyReduction_35
@@ -1008,7 +1008,7 @@ happyReduction_35 happy_x_2
 	happy_x_1
 	 =  case happyOut31 happy_x_2 of { (HappyWrap31 happy_var_2) -> 
 	happyIn23
-		 (TidyParser.Abs.ValueTypeAction happy_var_2
+		 (Tidy.Abs.ValueTypeAction happy_var_2
 	)}
 
 happyReduce_36 = happySpecReduce_0  20# happyReduction_36
@@ -1030,7 +1030,7 @@ happyReduction_38 happy_x_2
 	happy_x_1
 	 =  case happyOut27 happy_x_1 of { (HappyWrap27 happy_var_1) -> 
 	happyIn25
-		 (TidyParser.Abs.PublicValueDecl happy_var_1
+		 (Tidy.Abs.PublicValueDecl happy_var_1
 	)}
 
 happyReduce_39 = happySpecReduce_3  21# happyReduction_39
@@ -1039,7 +1039,7 @@ happyReduction_39 happy_x_3
 	happy_x_1
 	 =  case happyOut27 happy_x_2 of { (HappyWrap27 happy_var_2) -> 
 	happyIn25
-		 (TidyParser.Abs.PrivateValueDecl happy_var_2
+		 (Tidy.Abs.PrivateValueDecl happy_var_2
 	)}
 
 happyReduce_40 = happySpecReduce_0  22# happyReduction_40
@@ -1071,7 +1071,7 @@ happyReduction_43 happy_x_3
 	 =  case happyOut22 happy_x_1 of { (HappyWrap22 happy_var_1) -> 
 	case happyOut23 happy_x_3 of { (HappyWrap23 happy_var_3) -> 
 	happyIn27
-		 (TidyParser.Abs.UninitialisedValue happy_var_1 happy_var_3
+		 (Tidy.Abs.UninitialisedValue happy_var_1 happy_var_3
 	)}}
 
 happyReduce_44 = happyReduce 5# 23# happyReduction_44
@@ -1085,7 +1085,7 @@ happyReduction_44 (happy_x_5 `HappyStk`
 	case happyOut23 happy_x_3 of { (HappyWrap23 happy_var_3) -> 
 	case happyOut42 happy_x_5 of { (HappyWrap42 happy_var_5) -> 
 	happyIn27
-		 (TidyParser.Abs.InitialisedValue happy_var_1 happy_var_3 happy_var_5
+		 (Tidy.Abs.InitialisedValue happy_var_1 happy_var_3 happy_var_5
 	) `HappyStk` happyRest}}}
 
 happyReduce_45 = happySpecReduce_3  24# happyReduction_45
@@ -1094,12 +1094,12 @@ happyReduction_45 happy_x_3
 	happy_x_1
 	 =  case happyOut24 happy_x_2 of { (HappyWrap24 happy_var_2) -> 
 	happyIn28
-		 (TidyParser.Abs.VariablesSBody happy_var_2
+		 (Tidy.Abs.VariablesSBody happy_var_2
 	)}
 
 happyReduce_46 = happySpecReduce_0  25# happyReduction_46
 happyReduction_46  =  happyIn29
-		 (TidyParser.Abs.FSBodyEmpty
+		 (Tidy.Abs.FSBodyEmpty
 	)
 
 happyReduce_47 = happySpecReduce_3  25# happyReduction_47
@@ -1108,14 +1108,14 @@ happyReduction_47 happy_x_3
 	happy_x_1
 	 =  case happyOut33 happy_x_2 of { (HappyWrap33 happy_var_2) -> 
 	happyIn29
-		 (TidyParser.Abs.FSBodyFilled happy_var_2
+		 (Tidy.Abs.FSBodyFilled happy_var_2
 	)}
 
 happyReduce_48 = happySpecReduce_1  26# happyReduction_48
 happyReduction_48 happy_x_1
 	 =  case happyOut8 happy_x_1 of { (HappyWrap8 happy_var_1) -> 
 	happyIn30
-		 (TidyParser.Abs.FIdent happy_var_1
+		 (Tidy.Abs.FIdent happy_var_1
 	)}
 
 happyReduce_49 = happySpecReduce_3  27# happyReduction_49
@@ -1125,7 +1125,7 @@ happyReduction_49 happy_x_3
 	 =  case happyOut32 happy_x_1 of { (HappyWrap32 happy_var_1) -> 
 	case happyOut23 happy_x_3 of { (HappyWrap23 happy_var_3) -> 
 	happyIn31
-		 (TidyParser.Abs.FType happy_var_1 happy_var_3
+		 (Tidy.Abs.FType happy_var_1 happy_var_3
 	)}}
 
 happyReduce_50 = happySpecReduce_3  28# happyReduction_50
@@ -1134,7 +1134,7 @@ happyReduction_50 happy_x_3
 	happy_x_1
 	 =  case happyOut26 happy_x_2 of { (HappyWrap26 happy_var_2) -> 
 	happyIn32
-		 (TidyParser.Abs.ParamList happy_var_2
+		 (Tidy.Abs.ParamList happy_var_2
 	)}
 
 happyReduce_51 = happySpecReduce_0  29# happyReduction_51
@@ -1163,7 +1163,7 @@ happyReduction_53 (happy_x_6 `HappyStk`
 	case happyOut31 happy_x_4 of { (HappyWrap31 happy_var_4) -> 
 	case happyOut35 happy_x_6 of { (HappyWrap35 happy_var_6) -> 
 	happyIn34
-		 (TidyParser.Abs.OverrideFunctionDecl happy_var_2 happy_var_4 happy_var_6
+		 (Tidy.Abs.OverrideFunctionDecl happy_var_2 happy_var_4 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_54 = happyReduce 5# 30# happyReduction_54
@@ -1177,7 +1177,7 @@ happyReduction_54 (happy_x_5 `HappyStk`
 	case happyOut31 happy_x_3 of { (HappyWrap31 happy_var_3) -> 
 	case happyOut35 happy_x_5 of { (HappyWrap35 happy_var_5) -> 
 	happyIn34
-		 (TidyParser.Abs.PublicFunctionDecl happy_var_1 happy_var_3 happy_var_5
+		 (Tidy.Abs.PublicFunctionDecl happy_var_1 happy_var_3 happy_var_5
 	) `HappyStk` happyRest}}}
 
 happyReduce_55 = happyReduce 6# 30# happyReduction_55
@@ -1192,14 +1192,14 @@ happyReduction_55 (happy_x_6 `HappyStk`
 	case happyOut31 happy_x_4 of { (HappyWrap31 happy_var_4) -> 
 	case happyOut35 happy_x_6 of { (HappyWrap35 happy_var_6) -> 
 	happyIn34
-		 (TidyParser.Abs.PrivateFunctionDecl happy_var_2 happy_var_4 happy_var_6
+		 (Tidy.Abs.PrivateFunctionDecl happy_var_2 happy_var_4 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_56 = happySpecReduce_1  31# happyReduction_56
 happyReduction_56 happy_x_1
 	 =  case happyOut42 happy_x_1 of { (HappyWrap42 happy_var_1) -> 
 	happyIn35
-		 (TidyParser.Abs.FunctionBodyOneLine happy_var_1
+		 (Tidy.Abs.FunctionBodyOneLine happy_var_1
 	)}
 
 happyReduce_57 = happyReduce 4# 31# happyReduction_57
@@ -1211,12 +1211,12 @@ happyReduction_57 (happy_x_4 `HappyStk`
 	 = case happyOut42 happy_x_2 of { (HappyWrap42 happy_var_2) -> 
 	case happyOut36 happy_x_4 of { (HappyWrap36 happy_var_4) -> 
 	happyIn35
-		 (TidyParser.Abs.FunctionBodyMultiLine happy_var_2 happy_var_4
+		 (Tidy.Abs.FunctionBodyMultiLine happy_var_2 happy_var_4
 	) `HappyStk` happyRest}}
 
 happyReduce_58 = happySpecReduce_0  32# happyReduction_58
 happyReduction_58  =  happyIn36
-		 (TidyParser.Abs.WithValuesAbsent
+		 (Tidy.Abs.WithValuesAbsent
 	)
 
 happyReduce_59 = happySpecReduce_2  32# happyReduction_59
@@ -1224,12 +1224,12 @@ happyReduction_59 happy_x_2
 	happy_x_1
 	 =  case happyOut17 happy_x_2 of { (HappyWrap17 happy_var_2) -> 
 	happyIn36
-		 (TidyParser.Abs.WithValuesPresent happy_var_2
+		 (Tidy.Abs.WithValuesPresent happy_var_2
 	)}
 
 happyReduce_60 = happySpecReduce_0  33# happyReduction_60
 happyReduction_60  =  happyIn37
-		 (TidyParser.Abs.ASBodyEmpty
+		 (Tidy.Abs.ASBodyEmpty
 	)
 
 happyReduce_61 = happySpecReduce_3  33# happyReduction_61
@@ -1238,7 +1238,7 @@ happyReduction_61 happy_x_3
 	happy_x_1
 	 =  case happyOut38 happy_x_2 of { (HappyWrap38 happy_var_2) -> 
 	happyIn37
-		 (TidyParser.Abs.ASBodyFilled happy_var_2
+		 (Tidy.Abs.ASBodyFilled happy_var_2
 	)}
 
 happyReduce_62 = happySpecReduce_0  34# happyReduction_62
@@ -1267,7 +1267,7 @@ happyReduction_64 (happy_x_6 `HappyStk`
 	case happyOut31 happy_x_4 of { (HappyWrap31 happy_var_4) -> 
 	case happyOut40 happy_x_6 of { (HappyWrap40 happy_var_6) -> 
 	happyIn39
-		 (TidyParser.Abs.OverrideActionDecl happy_var_2 happy_var_4 happy_var_6
+		 (Tidy.Abs.OverrideActionDecl happy_var_2 happy_var_4 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_65 = happyReduce 5# 35# happyReduction_65
@@ -1281,7 +1281,7 @@ happyReduction_65 (happy_x_5 `HappyStk`
 	case happyOut31 happy_x_3 of { (HappyWrap31 happy_var_3) -> 
 	case happyOut40 happy_x_5 of { (HappyWrap40 happy_var_5) -> 
 	happyIn39
-		 (TidyParser.Abs.PublicActionDecl happy_var_1 happy_var_3 happy_var_5
+		 (Tidy.Abs.PublicActionDecl happy_var_1 happy_var_3 happy_var_5
 	) `HappyStk` happyRest}}}
 
 happyReduce_66 = happyReduce 6# 35# happyReduction_66
@@ -1296,14 +1296,14 @@ happyReduction_66 (happy_x_6 `HappyStk`
 	case happyOut31 happy_x_4 of { (HappyWrap31 happy_var_4) -> 
 	case happyOut40 happy_x_6 of { (HappyWrap40 happy_var_6) -> 
 	happyIn39
-		 (TidyParser.Abs.PrivateActionDecl happy_var_2 happy_var_4 happy_var_6
+		 (Tidy.Abs.PrivateActionDecl happy_var_2 happy_var_4 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_67 = happySpecReduce_1  36# happyReduction_67
 happyReduction_67 happy_x_1
 	 =  case happyOut42 happy_x_1 of { (HappyWrap42 happy_var_1) -> 
 	happyIn40
-		 (TidyParser.Abs.ActionBodyOneLine happy_var_1
+		 (Tidy.Abs.ActionBodyOneLine happy_var_1
 	)}
 
 happyReduce_68 = happySpecReduce_3  36# happyReduction_68
@@ -1312,7 +1312,7 @@ happyReduction_68 happy_x_3
 	happy_x_1
 	 =  case happyOut41 happy_x_2 of { (HappyWrap41 happy_var_2) -> 
 	happyIn40
-		 (TidyParser.Abs.ActionBodyMultiLine happy_var_2
+		 (Tidy.Abs.ActionBodyMultiLine happy_var_2
 	)}
 
 happyReduce_69 = happySpecReduce_0  37# happyReduction_69
@@ -1344,7 +1344,7 @@ happyReduction_72 happy_x_3
 	case happyOut76 happy_x_2 of { (HappyWrap76 happy_var_2) -> 
 	case happyOut42 happy_x_3 of { (HappyWrap42 happy_var_3) -> 
 	happyIn42
-		 (TidyParser.Abs.EBooleanOperator happy_var_1 happy_var_2 happy_var_3
+		 (Tidy.Abs.EBooleanOperator happy_var_1 happy_var_2 happy_var_3
 	)}}}
 
 happyReduce_73 = happySpecReduce_1  39# happyReduction_73
@@ -1362,7 +1362,7 @@ happyReduction_74 happy_x_3
 	case happyOut75 happy_x_2 of { (HappyWrap75 happy_var_2) -> 
 	case happyOut44 happy_x_3 of { (HappyWrap44 happy_var_3) -> 
 	happyIn43
-		 (TidyParser.Abs.ERelationalOperator happy_var_1 happy_var_2 happy_var_3
+		 (Tidy.Abs.ERelationalOperator happy_var_1 happy_var_2 happy_var_3
 	)}}}
 
 happyReduce_75 = happySpecReduce_1  40# happyReduction_75
@@ -1379,7 +1379,7 @@ happyReduction_76 happy_x_3
 	 =  case happyOut44 happy_x_1 of { (HappyWrap44 happy_var_1) -> 
 	case happyOut45 happy_x_3 of { (HappyWrap45 happy_var_3) -> 
 	happyIn44
-		 (TidyParser.Abs.EAdd happy_var_1 happy_var_3
+		 (Tidy.Abs.EAdd happy_var_1 happy_var_3
 	)}}
 
 happyReduce_77 = happySpecReduce_3  40# happyReduction_77
@@ -1389,7 +1389,7 @@ happyReduction_77 happy_x_3
 	 =  case happyOut44 happy_x_1 of { (HappyWrap44 happy_var_1) -> 
 	case happyOut45 happy_x_3 of { (HappyWrap45 happy_var_3) -> 
 	happyIn44
-		 (TidyParser.Abs.ESubtract happy_var_1 happy_var_3
+		 (Tidy.Abs.ESubtract happy_var_1 happy_var_3
 	)}}
 
 happyReduce_78 = happySpecReduce_3  40# happyReduction_78
@@ -1399,7 +1399,7 @@ happyReduction_78 happy_x_3
 	 =  case happyOut44 happy_x_1 of { (HappyWrap44 happy_var_1) -> 
 	case happyOut45 happy_x_3 of { (HappyWrap45 happy_var_3) -> 
 	happyIn44
-		 (TidyParser.Abs.EConcatenate happy_var_1 happy_var_3
+		 (Tidy.Abs.EConcatenate happy_var_1 happy_var_3
 	)}}
 
 happyReduce_79 = happySpecReduce_1  41# happyReduction_79
@@ -1416,7 +1416,7 @@ happyReduction_80 happy_x_3
 	 =  case happyOut45 happy_x_1 of { (HappyWrap45 happy_var_1) -> 
 	case happyOut46 happy_x_3 of { (HappyWrap46 happy_var_3) -> 
 	happyIn45
-		 (TidyParser.Abs.EMultiply happy_var_1 happy_var_3
+		 (Tidy.Abs.EMultiply happy_var_1 happy_var_3
 	)}}
 
 happyReduce_81 = happySpecReduce_3  41# happyReduction_81
@@ -1426,7 +1426,7 @@ happyReduction_81 happy_x_3
 	 =  case happyOut45 happy_x_1 of { (HappyWrap45 happy_var_1) -> 
 	case happyOut46 happy_x_3 of { (HappyWrap46 happy_var_3) -> 
 	happyIn45
-		 (TidyParser.Abs.EDivide happy_var_1 happy_var_3
+		 (Tidy.Abs.EDivide happy_var_1 happy_var_3
 	)}}
 
 happyReduce_82 = happySpecReduce_1  42# happyReduction_82
@@ -1441,7 +1441,7 @@ happyReduction_83 happy_x_2
 	happy_x_1
 	 =  case happyOut47 happy_x_2 of { (HappyWrap47 happy_var_2) -> 
 	happyIn46
-		 (TidyParser.Abs.EUnaryNot happy_var_2
+		 (Tidy.Abs.EUnaryNot happy_var_2
 	)}
 
 happyReduce_84 = happySpecReduce_2  42# happyReduction_84
@@ -1449,7 +1449,7 @@ happyReduction_84 happy_x_2
 	happy_x_1
 	 =  case happyOut47 happy_x_2 of { (HappyWrap47 happy_var_2) -> 
 	happyIn46
-		 (TidyParser.Abs.EUnaryMinus happy_var_2
+		 (Tidy.Abs.EUnaryMinus happy_var_2
 	)}
 
 happyReduce_85 = happySpecReduce_1  43# happyReduction_85
@@ -1463,7 +1463,7 @@ happyReduce_86 = happySpecReduce_1  43# happyReduction_86
 happyReduction_86 happy_x_1
 	 =  case happyOut56 happy_x_1 of { (HappyWrap56 happy_var_1) -> 
 	happyIn47
-		 (TidyParser.Abs.ELocalValueDecl happy_var_1
+		 (Tidy.Abs.ELocalValueDecl happy_var_1
 	)}
 
 happyReduce_87 = happySpecReduce_1  44# happyReduction_87
@@ -1477,14 +1477,14 @@ happyReduce_88 = happySpecReduce_1  44# happyReduction_88
 happyReduction_88 happy_x_1
 	 =  case happyOut67 happy_x_1 of { (HappyWrap67 happy_var_1) -> 
 	happyIn48
-		 (TidyParser.Abs.EImperativeControlFlow happy_var_1
+		 (Tidy.Abs.EImperativeControlFlow happy_var_1
 	)}
 
 happyReduce_89 = happySpecReduce_1  44# happyReduction_89
 happyReduction_89 happy_x_1
 	 =  case happyOut69 happy_x_1 of { (HappyWrap69 happy_var_1) -> 
 	happyIn48
-		 (TidyParser.Abs.EFunctionalControlFlow happy_var_1
+		 (Tidy.Abs.EFunctionalControlFlow happy_var_1
 	)}
 
 happyReduce_90 = happySpecReduce_1  45# happyReduction_90
@@ -1499,7 +1499,7 @@ happyReduction_91 happy_x_2
 	happy_x_1
 	 =  case happyOut62 happy_x_2 of { (HappyWrap62 happy_var_2) -> 
 	happyIn49
-		 (TidyParser.Abs.ELocalFunctionCall happy_var_2
+		 (Tidy.Abs.ELocalFunctionCall happy_var_2
 	)}
 
 happyReduce_92 = happySpecReduce_2  45# happyReduction_92
@@ -1507,14 +1507,14 @@ happyReduction_92 happy_x_2
 	happy_x_1
 	 =  case happyOut63 happy_x_2 of { (HappyWrap63 happy_var_2) -> 
 	happyIn49
-		 (TidyParser.Abs.ELocalActionCall happy_var_2
+		 (Tidy.Abs.ELocalActionCall happy_var_2
 	)}
 
 happyReduce_93 = happySpecReduce_1  45# happyReduction_93
 happyReduction_93 happy_x_1
 	 =  case happyOut64 happy_x_1 of { (HappyWrap64 happy_var_1) -> 
 	happyIn49
-		 (TidyParser.Abs.ECtorCall happy_var_1
+		 (Tidy.Abs.ECtorCall happy_var_1
 	)}
 
 happyReduce_94 = happySpecReduce_1  46# happyReduction_94
@@ -1528,14 +1528,14 @@ happyReduce_95 = happySpecReduce_1  46# happyReduction_95
 happyReduction_95 happy_x_1
 	 =  case happyOut57 happy_x_1 of { (HappyWrap57 happy_var_1) -> 
 	happyIn50
-		 (TidyParser.Abs.ELambdaFunction happy_var_1
+		 (Tidy.Abs.ELambdaFunction happy_var_1
 	)}
 
 happyReduce_96 = happySpecReduce_1  46# happyReduction_96
 happyReduction_96 happy_x_1
 	 =  case happyOut58 happy_x_1 of { (HappyWrap58 happy_var_1) -> 
 	happyIn50
-		 (TidyParser.Abs.ELambdaAction happy_var_1
+		 (Tidy.Abs.ELambdaAction happy_var_1
 	)}
 
 happyReduce_97 = happySpecReduce_1  47# happyReduction_97
@@ -1549,14 +1549,14 @@ happyReduce_98 = happySpecReduce_1  47# happyReduction_98
 happyReduction_98 happy_x_1
 	 =  case happyOut65 happy_x_1 of { (HappyWrap65 happy_var_1) -> 
 	happyIn51
-		 (TidyParser.Abs.EGetExpr happy_var_1
+		 (Tidy.Abs.EGetExpr happy_var_1
 	)}
 
 happyReduce_99 = happySpecReduce_1  47# happyReduction_99
 happyReduction_99 happy_x_1
 	 =  case happyOut66 happy_x_1 of { (HappyWrap66 happy_var_1) -> 
 	happyIn51
-		 (TidyParser.Abs.EDoExpr happy_var_1
+		 (Tidy.Abs.EDoExpr happy_var_1
 	)}
 
 happyReduce_100 = happySpecReduce_3  48# happyReduction_100
@@ -1572,67 +1572,67 @@ happyReduce_101 = happySpecReduce_1  48# happyReduction_101
 happyReduction_101 happy_x_1
 	 =  case happyOut53 happy_x_1 of { (HappyWrap53 happy_var_1) -> 
 	happyIn52
-		 (TidyParser.Abs.ELiteral happy_var_1
+		 (Tidy.Abs.ELiteral happy_var_1
 	)}
 
 happyReduce_102 = happySpecReduce_1  48# happyReduction_102
 happyReduction_102 happy_x_1
 	 =  case happyOut22 happy_x_1 of { (HappyWrap22 happy_var_1) -> 
 	happyIn52
-		 (TidyParser.Abs.ELocalValue happy_var_1
+		 (Tidy.Abs.ELocalValue happy_var_1
 	)}
 
 happyReduce_103 = happySpecReduce_1  49# happyReduction_103
 happyReduction_103 happy_x_1
 	 =  case happyOut5 happy_x_1 of { (HappyWrap5 happy_var_1) -> 
 	happyIn53
-		 (TidyParser.Abs.LInt happy_var_1
+		 (Tidy.Abs.LInt happy_var_1
 	)}
 
 happyReduce_104 = happySpecReduce_1  49# happyReduction_104
 happyReduction_104 happy_x_1
 	 =  case happyOut54 happy_x_1 of { (HappyWrap54 happy_var_1) -> 
 	happyIn53
-		 (TidyParser.Abs.LBool happy_var_1
+		 (Tidy.Abs.LBool happy_var_1
 	)}
 
 happyReduce_105 = happySpecReduce_1  49# happyReduction_105
 happyReduction_105 happy_x_1
 	 =  case happyOut4 happy_x_1 of { (HappyWrap4 happy_var_1) -> 
 	happyIn53
-		 (TidyParser.Abs.LChar happy_var_1
+		 (Tidy.Abs.LChar happy_var_1
 	)}
 
 happyReduce_106 = happySpecReduce_1  49# happyReduction_106
 happyReduction_106 happy_x_1
 	 =  case happyOut6 happy_x_1 of { (HappyWrap6 happy_var_1) -> 
 	happyIn53
-		 (TidyParser.Abs.LString happy_var_1
+		 (Tidy.Abs.LString happy_var_1
 	)}
 
 happyReduce_107 = happySpecReduce_1  49# happyReduction_107
 happyReduction_107 happy_x_1
 	 =  case happyOut55 happy_x_1 of { (HappyWrap55 happy_var_1) -> 
 	happyIn53
-		 (TidyParser.Abs.LVoid happy_var_1
+		 (Tidy.Abs.LVoid happy_var_1
 	)}
 
 happyReduce_108 = happySpecReduce_1  50# happyReduction_108
 happyReduction_108 happy_x_1
 	 =  happyIn54
-		 (TidyParser.Abs.BTrue
+		 (Tidy.Abs.BTrue
 	)
 
 happyReduce_109 = happySpecReduce_1  50# happyReduction_109
 happyReduction_109 happy_x_1
 	 =  happyIn54
-		 (TidyParser.Abs.BFalse
+		 (Tidy.Abs.BFalse
 	)
 
 happyReduce_110 = happySpecReduce_1  51# happyReduction_110
 happyReduction_110 happy_x_1
 	 =  happyIn55
-		 (TidyParser.Abs.VPass
+		 (Tidy.Abs.VPass
 	)
 
 happyReduce_111 = happySpecReduce_2  52# happyReduction_111
@@ -1640,7 +1640,7 @@ happyReduction_111 happy_x_2
 	happy_x_1
 	 =  case happyOut25 happy_x_2 of { (HappyWrap25 happy_var_2) -> 
 	happyIn56
-		 (TidyParser.Abs.LocalVDecl happy_var_2
+		 (Tidy.Abs.LocalVDecl happy_var_2
 	)}
 
 happyReduce_112 = happyReduce 5# 53# happyReduction_112
@@ -1653,7 +1653,7 @@ happyReduction_112 (happy_x_5 `HappyStk`
 	 = case happyOut32 happy_x_2 of { (HappyWrap32 happy_var_2) -> 
 	case happyOut42 happy_x_4 of { (HappyWrap42 happy_var_4) -> 
 	happyIn57
-		 (TidyParser.Abs.LambdaFunctionOneLine happy_var_2 happy_var_4
+		 (Tidy.Abs.LambdaFunctionOneLine happy_var_2 happy_var_4
 	) `HappyStk` happyRest}}
 
 happyReduce_113 = happyReduce 6# 53# happyReduction_113
@@ -1667,7 +1667,7 @@ happyReduction_113 (happy_x_6 `HappyStk`
 	 = case happyOut32 happy_x_2 of { (HappyWrap32 happy_var_2) -> 
 	case happyOut42 happy_x_5 of { (HappyWrap42 happy_var_5) -> 
 	happyIn57
-		 (TidyParser.Abs.LambdaFunctionMultiLine happy_var_2 happy_var_5
+		 (Tidy.Abs.LambdaFunctionMultiLine happy_var_2 happy_var_5
 	) `HappyStk` happyRest}}
 
 happyReduce_114 = happyReduce 5# 54# happyReduction_114
@@ -1680,7 +1680,7 @@ happyReduction_114 (happy_x_5 `HappyStk`
 	 = case happyOut32 happy_x_2 of { (HappyWrap32 happy_var_2) -> 
 	case happyOut42 happy_x_4 of { (HappyWrap42 happy_var_4) -> 
 	happyIn58
-		 (TidyParser.Abs.LambdaActionOneLine happy_var_2 happy_var_4
+		 (Tidy.Abs.LambdaActionOneLine happy_var_2 happy_var_4
 	) `HappyStk` happyRest}}
 
 happyReduce_115 = happyReduce 6# 54# happyReduction_115
@@ -1694,12 +1694,12 @@ happyReduction_115 (happy_x_6 `HappyStk`
 	 = case happyOut32 happy_x_2 of { (HappyWrap32 happy_var_2) -> 
 	case happyOut41 happy_x_5 of { (HappyWrap41 happy_var_5) -> 
 	happyIn58
-		 (TidyParser.Abs.LambdaActionMultiLine happy_var_2 happy_var_5
+		 (Tidy.Abs.LambdaActionMultiLine happy_var_2 happy_var_5
 	) `HappyStk` happyRest}}
 
 happyReduce_116 = happySpecReduce_0  55# happyReduction_116
 happyReduction_116  =  happyIn59
-		 (TidyParser.Abs.ArgListAbsent
+		 (Tidy.Abs.ArgListAbsent
 	)
 
 happyReduce_117 = happySpecReduce_3  55# happyReduction_117
@@ -1708,7 +1708,7 @@ happyReduction_117 happy_x_3
 	happy_x_1
 	 =  case happyOut60 happy_x_2 of { (HappyWrap60 happy_var_2) -> 
 	happyIn59
-		 (TidyParser.Abs.ArgListPresent happy_var_2
+		 (Tidy.Abs.ArgListPresent happy_var_2
 	)}
 
 happyReduce_118 = happySpecReduce_0  56# happyReduction_118
@@ -1737,7 +1737,7 @@ happyReduce_121 = happySpecReduce_1  57# happyReduction_121
 happyReduction_121 happy_x_1
 	 =  case happyOut42 happy_x_1 of { (HappyWrap42 happy_var_1) -> 
 	happyIn61
-		 (TidyParser.Abs.FunctionArg happy_var_1
+		 (Tidy.Abs.FunctionArg happy_var_1
 	)}
 
 happyReduce_122 = happySpecReduce_3  58# happyReduction_122
@@ -1747,7 +1747,7 @@ happyReduction_122 happy_x_3
 	 =  case happyOut30 happy_x_2 of { (HappyWrap30 happy_var_2) -> 
 	case happyOut59 happy_x_3 of { (HappyWrap59 happy_var_3) -> 
 	happyIn62
-		 (TidyParser.Abs.FCall happy_var_2 happy_var_3
+		 (Tidy.Abs.FCall happy_var_2 happy_var_3
 	)}}
 
 happyReduce_123 = happySpecReduce_3  59# happyReduction_123
@@ -1757,7 +1757,7 @@ happyReduction_123 happy_x_3
 	 =  case happyOut30 happy_x_2 of { (HappyWrap30 happy_var_2) -> 
 	case happyOut59 happy_x_3 of { (HappyWrap59 happy_var_3) -> 
 	happyIn63
-		 (TidyParser.Abs.ACall happy_var_2 happy_var_3
+		 (Tidy.Abs.ACall happy_var_2 happy_var_3
 	)}}
 
 happyReduce_124 = happySpecReduce_2  60# happyReduction_124
@@ -1766,7 +1766,7 @@ happyReduction_124 happy_x_2
 	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
 	case happyOut59 happy_x_2 of { (HappyWrap59 happy_var_2) -> 
 	happyIn64
-		 (TidyParser.Abs.CCall happy_var_1 happy_var_2
+		 (Tidy.Abs.CCall happy_var_1 happy_var_2
 	)}}
 
 happyReduce_125 = happySpecReduce_2  61# happyReduction_125
@@ -1775,7 +1775,7 @@ happyReduction_125 happy_x_2
 	 =  case happyOut22 happy_x_1 of { (HappyWrap22 happy_var_1) -> 
 	case happyOut62 happy_x_2 of { (HappyWrap62 happy_var_2) -> 
 	happyIn65
-		 (TidyParser.Abs.GetExprInstance happy_var_1 happy_var_2
+		 (Tidy.Abs.GetExprInstance happy_var_1 happy_var_2
 	)}}
 
 happyReduce_126 = happySpecReduce_2  61# happyReduction_126
@@ -1784,7 +1784,7 @@ happyReduction_126 happy_x_2
 	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
 	case happyOut62 happy_x_2 of { (HappyWrap62 happy_var_2) -> 
 	happyIn65
-		 (TidyParser.Abs.GetExprStatic happy_var_1 happy_var_2
+		 (Tidy.Abs.GetExprStatic happy_var_1 happy_var_2
 	)}}
 
 happyReduce_127 = happySpecReduce_2  61# happyReduction_127
@@ -1793,7 +1793,7 @@ happyReduction_127 happy_x_2
 	 =  case happyOut65 happy_x_1 of { (HappyWrap65 happy_var_1) -> 
 	case happyOut62 happy_x_2 of { (HappyWrap62 happy_var_2) -> 
 	happyIn65
-		 (TidyParser.Abs.GetExprChain happy_var_1 happy_var_2
+		 (Tidy.Abs.GetExprChain happy_var_1 happy_var_2
 	)}}
 
 happyReduce_128 = happySpecReduce_2  62# happyReduction_128
@@ -1802,7 +1802,7 @@ happyReduction_128 happy_x_2
 	 =  case happyOut22 happy_x_1 of { (HappyWrap22 happy_var_1) -> 
 	case happyOut63 happy_x_2 of { (HappyWrap63 happy_var_2) -> 
 	happyIn66
-		 (TidyParser.Abs.DoExprInstance happy_var_1 happy_var_2
+		 (Tidy.Abs.DoExprInstance happy_var_1 happy_var_2
 	)}}
 
 happyReduce_129 = happySpecReduce_2  62# happyReduction_129
@@ -1811,7 +1811,7 @@ happyReduction_129 happy_x_2
 	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
 	case happyOut63 happy_x_2 of { (HappyWrap63 happy_var_2) -> 
 	happyIn66
-		 (TidyParser.Abs.DoExprStatic happy_var_1 happy_var_2
+		 (Tidy.Abs.DoExprStatic happy_var_1 happy_var_2
 	)}}
 
 happyReduce_130 = happySpecReduce_2  62# happyReduction_130
@@ -1820,7 +1820,7 @@ happyReduction_130 happy_x_2
 	 =  case happyOut65 happy_x_1 of { (HappyWrap65 happy_var_1) -> 
 	case happyOut63 happy_x_2 of { (HappyWrap63 happy_var_2) -> 
 	happyIn66
-		 (TidyParser.Abs.DoExprChain happy_var_1 happy_var_2
+		 (Tidy.Abs.DoExprChain happy_var_1 happy_var_2
 	)}}
 
 happyReduce_131 = happyReduce 7# 63# happyReduction_131
@@ -1835,7 +1835,7 @@ happyReduction_131 (happy_x_7 `HappyStk`
 	 = case happyOut42 happy_x_3 of { (HappyWrap42 happy_var_3) -> 
 	case happyOut41 happy_x_6 of { (HappyWrap41 happy_var_6) -> 
 	happyIn67
-		 (TidyParser.Abs.IWhile happy_var_3 happy_var_6
+		 (Tidy.Abs.IWhile happy_var_3 happy_var_6
 	) `HappyStk` happyRest}}
 
 happyReduce_132 = happyReduce 9# 63# happyReduction_132
@@ -1853,7 +1853,7 @@ happyReduction_132 (happy_x_9 `HappyStk`
 	case happyOut42 happy_x_5 of { (HappyWrap42 happy_var_5) -> 
 	case happyOut41 happy_x_8 of { (HappyWrap41 happy_var_8) -> 
 	happyIn67
-		 (TidyParser.Abs.IForeach happy_var_3 happy_var_5 happy_var_8
+		 (Tidy.Abs.IForeach happy_var_3 happy_var_5 happy_var_8
 	) `HappyStk` happyRest}}}
 
 happyReduce_133 = happyReduce 8# 63# happyReduction_133
@@ -1870,7 +1870,7 @@ happyReduction_133 (happy_x_8 `HappyStk`
 	case happyOut41 happy_x_6 of { (HappyWrap41 happy_var_6) -> 
 	case happyOut68 happy_x_8 of { (HappyWrap68 happy_var_8) -> 
 	happyIn67
-		 (TidyParser.Abs.IIf happy_var_3 happy_var_6 happy_var_8
+		 (Tidy.Abs.IIf happy_var_3 happy_var_6 happy_var_8
 	) `HappyStk` happyRest}}}
 
 happyReduce_134 = happyReduce 4# 64# happyReduction_134
@@ -1881,12 +1881,12 @@ happyReduction_134 (happy_x_4 `HappyStk`
 	happyRest)
 	 = case happyOut41 happy_x_3 of { (HappyWrap41 happy_var_3) -> 
 	happyIn68
-		 (TidyParser.Abs.ElsePresent happy_var_3
+		 (Tidy.Abs.ElsePresent happy_var_3
 	) `HappyStk` happyRest}
 
 happyReduce_135 = happySpecReduce_0  64# happyReduction_135
 happyReduction_135  =  happyIn68
-		 (TidyParser.Abs.ElseAbsent
+		 (Tidy.Abs.ElseAbsent
 	)
 
 happyReduce_136 = happyReduce 6# 65# happyReduction_136
@@ -1901,7 +1901,7 @@ happyReduction_136 (happy_x_6 `HappyStk`
 	case happyOut70 happy_x_5 of { (HappyWrap70 happy_var_5) -> 
 	case happyOut71 happy_x_6 of { (HappyWrap71 happy_var_6) -> 
 	happyIn69
-		 (TidyParser.Abs.FIfThenElse happy_var_3 happy_var_5 happy_var_6
+		 (Tidy.Abs.FIfThenElse happy_var_3 happy_var_5 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_137 = happyReduce 5# 65# happyReduction_137
@@ -1914,7 +1914,7 @@ happyReduction_137 (happy_x_5 `HappyStk`
 	 = case happyOut42 happy_x_2 of { (HappyWrap42 happy_var_2) -> 
 	case happyOut72 happy_x_4 of { (HappyWrap72 happy_var_4) -> 
 	happyIn69
-		 (TidyParser.Abs.FMatch happy_var_2 happy_var_4
+		 (Tidy.Abs.FMatch happy_var_2 happy_var_4
 	) `HappyStk` happyRest}}
 
 happyReduce_138 = happySpecReduce_3  66# happyReduction_138
@@ -1923,7 +1923,7 @@ happyReduction_138 happy_x_3
 	happy_x_1
 	 =  case happyOut42 happy_x_2 of { (HappyWrap42 happy_var_2) -> 
 	happyIn70
-		 (TidyParser.Abs.ThenOneLine happy_var_2
+		 (Tidy.Abs.ThenOneLine happy_var_2
 	)}
 
 happyReduce_139 = happyReduce 4# 66# happyReduction_139
@@ -1934,7 +1934,7 @@ happyReduction_139 (happy_x_4 `HappyStk`
 	happyRest)
 	 = case happyOut42 happy_x_3 of { (HappyWrap42 happy_var_3) -> 
 	happyIn70
-		 (TidyParser.Abs.ThenMultiLine happy_var_3
+		 (Tidy.Abs.ThenMultiLine happy_var_3
 	) `HappyStk` happyRest}
 
 happyReduce_140 = happySpecReduce_3  67# happyReduction_140
@@ -1943,7 +1943,7 @@ happyReduction_140 happy_x_3
 	happy_x_1
 	 =  case happyOut42 happy_x_2 of { (HappyWrap42 happy_var_2) -> 
 	happyIn71
-		 (TidyParser.Abs.ElseOneLine happy_var_2
+		 (Tidy.Abs.ElseOneLine happy_var_2
 	)}
 
 happyReduce_141 = happyReduce 4# 67# happyReduction_141
@@ -1954,7 +1954,7 @@ happyReduction_141 (happy_x_4 `HappyStk`
 	happyRest)
 	 = case happyOut42 happy_x_3 of { (HappyWrap42 happy_var_3) -> 
 	happyIn71
-		 (TidyParser.Abs.ElseMultiLine happy_var_3
+		 (Tidy.Abs.ElseMultiLine happy_var_3
 	) `HappyStk` happyRest}
 
 happyReduce_142 = happyReduce 6# 67# happyReduction_142
@@ -1969,7 +1969,7 @@ happyReduction_142 (happy_x_6 `HappyStk`
 	case happyOut70 happy_x_5 of { (HappyWrap70 happy_var_5) -> 
 	case happyOut71 happy_x_6 of { (HappyWrap71 happy_var_6) -> 
 	happyIn71
-		 (TidyParser.Abs.ElseIf happy_var_3 happy_var_5 happy_var_6
+		 (Tidy.Abs.ElseIf happy_var_3 happy_var_5 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_143 = happySpecReduce_0  68# happyReduction_143
@@ -1995,62 +1995,62 @@ happyReduction_145 (happy_x_4 `HappyStk`
 	 = case happyOut74 happy_x_2 of { (HappyWrap74 happy_var_2) -> 
 	case happyOut42 happy_x_4 of { (HappyWrap42 happy_var_4) -> 
 	happyIn73
-		 (TidyParser.Abs.Case happy_var_2 happy_var_4
+		 (Tidy.Abs.Case happy_var_2 happy_var_4
 	) `HappyStk` happyRest}}
 
 happyReduce_146 = happySpecReduce_1  70# happyReduction_146
 happyReduction_146 happy_x_1
 	 =  case happyOut11 happy_x_1 of { (HappyWrap11 happy_var_1) -> 
 	happyIn74
-		 (TidyParser.Abs.TypePattern happy_var_1
+		 (Tidy.Abs.TypePattern happy_var_1
 	)}
 
 happyReduce_147 = happySpecReduce_1  71# happyReduction_147
 happyReduction_147 happy_x_1
 	 =  happyIn75
-		 (TidyParser.Abs.RLess
+		 (Tidy.Abs.RLess
 	)
 
 happyReduce_148 = happySpecReduce_1  71# happyReduction_148
 happyReduction_148 happy_x_1
 	 =  happyIn75
-		 (TidyParser.Abs.RLessEqual
+		 (Tidy.Abs.RLessEqual
 	)
 
 happyReduce_149 = happySpecReduce_1  71# happyReduction_149
 happyReduction_149 happy_x_1
 	 =  happyIn75
-		 (TidyParser.Abs.RGreater
+		 (Tidy.Abs.RGreater
 	)
 
 happyReduce_150 = happySpecReduce_1  71# happyReduction_150
 happyReduction_150 happy_x_1
 	 =  happyIn75
-		 (TidyParser.Abs.RGreaterEqual
+		 (Tidy.Abs.RGreaterEqual
 	)
 
 happyReduce_151 = happySpecReduce_1  71# happyReduction_151
 happyReduction_151 happy_x_1
 	 =  happyIn75
-		 (TidyParser.Abs.REqual
+		 (Tidy.Abs.REqual
 	)
 
 happyReduce_152 = happySpecReduce_1  71# happyReduction_152
 happyReduction_152 happy_x_1
 	 =  happyIn75
-		 (TidyParser.Abs.RNotEqual
+		 (Tidy.Abs.RNotEqual
 	)
 
 happyReduce_153 = happySpecReduce_1  72# happyReduction_153
 happyReduction_153 happy_x_1
 	 =  happyIn76
-		 (TidyParser.Abs.BAnd
+		 (Tidy.Abs.BAnd
 	)
 
 happyReduce_154 = happySpecReduce_1  72# happyReduction_154
 happyReduction_154 happy_x_1
 	 =  happyIn76
-		 (TidyParser.Abs.BOr
+		 (Tidy.Abs.BOr
 	)
 
 happyNewToken action sts stk [] =

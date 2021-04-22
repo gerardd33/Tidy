@@ -6,7 +6,7 @@
 
 # Default goal.
 
-all : TidyParser/Test
+all : Tidy/Test
 
 # Rules for building the parser.
 
@@ -16,16 +16,16 @@ all : TidyParser/Test
 %.hs : %.x
 	alex --ghc $<
 
-TidyParser/Test : TidyParser/Test.hs TidyParser/ErrM.hs TidyParser/Lex.hs TidyParser/Par.hs TidyParser/Print.hs
+Tidy/Test : Tidy/Test.hs Tidy/ErrM.hs Tidy/Lex.hs Tidy/Par.hs Tidy/Print.hs
 	ghc -dynamic --make $< -o $@
 
 # Rules for cleaning generated files.
 
 clean :
-	-rm -f TidyParser/*.hi TidyParser/*.o TidyParser/*.log TidyParser/*.aux TidyParser/*.dvi
+	-rm -f Tidy/*.hi Tidy/*.o Tidy/*.log Tidy/*.aux Tidy/*.dvi
 
 distclean : clean
-	-rm -f TidyParser/Abs.hs TidyParser/Abs.hs.bak TidyParser/ComposOp.hs TidyParser/ComposOp.hs.bak TidyParser/Doc.txt TidyParser/Doc.txt.bak TidyParser/ErrM.hs TidyParser/ErrM.hs.bak TidyParser/Layout.hs TidyParser/Layout.hs.bak TidyParser/Lex.x TidyParser/Lex.x.bak TidyParser/Par.y TidyParser/Par.y.bak TidyParser/Print.hs TidyParser/Print.hs.bak TidyParser/Skel.hs TidyParser/Skel.hs.bak TidyParser/Test.hs TidyParser/Test.hs.bak TidyParser/XML.hs TidyParser/XML.hs.bak TidyParser/AST.agda TidyParser/AST.agda.bak TidyParser/Parser.agda TidyParser/Parser.agda.bak TidyParser/IOLib.agda TidyParser/IOLib.agda.bak TidyParser/Main.agda TidyParser/Main.agda.bak TidyParser/TidyParser.dtd TidyParser/TidyParser.dtd.bak TidyParser/Test TidyParser/Lex.hs TidyParser/Par.hs TidyParser/Par.info TidyParser/ParData.hs Makefile
-	-rmdir -p TidyParser/
+	-rm -f Tidy/Abs.hs Tidy/Abs.hs.bak Tidy/ComposOp.hs Tidy/ComposOp.hs.bak Tidy/Doc.txt Tidy/Doc.txt.bak Tidy/ErrM.hs Tidy/ErrM.hs.bak Tidy/Layout.hs Tidy/Layout.hs.bak Tidy/Lex.x Tidy/Lex.x.bak Tidy/Par.y Tidy/Par.y.bak Tidy/Print.hs Tidy/Print.hs.bak Tidy/Skel.hs Tidy/Skel.hs.bak Tidy/Test.hs Tidy/Test.hs.bak Tidy/XML.hs Tidy/XML.hs.bak Tidy/AST.agda Tidy/AST.agda.bak Tidy/Parser.agda Tidy/Parser.agda.bak Tidy/IOLib.agda Tidy/IOLib.agda.bak Tidy/Main.agda Tidy/Main.agda.bak Tidy/Tidy.dtd Tidy/Tidy.dtd.bak Tidy/Test Tidy/Lex.hs Tidy/Par.hs Tidy/Par.info Tidy/ParData.hs Makefile
+	-rmdir -p Tidy/
 
 # EOF
