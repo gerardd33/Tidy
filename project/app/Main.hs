@@ -11,12 +11,22 @@ import           Parser.Tidy.Lex
 import           Parser.Tidy.Par
 
 
+main :: IO ()
+main = do
+    -- Changing the default directory to Tidy project root instead of the stack project root.
+    setCurrentDirectory ".."
+    args <- getArgs
+    case args of
+        []           -> usage
+        [sourceFile] -> interpretFile sourceFile
+        _            -> usage
+
+
 lexer :: String -> [Token]
 lexer = myLexer
 
 parser :: [Token] -> Either String Program
 parser = pProgram
-
 
 interpretFile :: String -> IO ()
 interpretFile filePath = do
@@ -34,13 +44,3 @@ interpretFile filePath = do
 
 usage :: IO ()
 usage = putStrLn "Usage: ./tidy source_file_path"
-
-main :: IO ()
-main = do
-    -- Changing the default directory to Tidy project root instead of the stack project root.
-    setCurrentDirectory ".."
-    args <- getArgs
-    case args of
-        []           -> usage
-        [sourceFile] -> interpretFile sourceFile
-        _            -> usage
