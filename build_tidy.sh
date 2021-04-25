@@ -2,4 +2,4 @@
 
 WORKING_DIR=$(dirname ${0})
 
-(cd ${WORKING_DIR}/project; stack build)
+(cd ${WORKING_DIR}/project; stack build --)

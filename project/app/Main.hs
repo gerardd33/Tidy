@@ -1,10 +1,12 @@
 module Main where
 
+import           Control.Monad
 import           System.Directory   (doesFileExist, setCurrentDirectory)
 import           System.Environment (getArgs)
 import           System.Exit        (exitFailure)
 import           System.IO
 
+import           Commons
 import           Interpreter.Main
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex
@@ -17,9 +19,11 @@ main = do
     setCurrentDirectory ".."
     args <- getArgs
     case args of
-        []           -> usage
-        [sourceFile] -> interpretFile sourceFile
-        _            -> usage
+        []                     -> usage
+        "--debug":[sourceFile] -> interpretFile Debug sourceFile
+        sourceFile:["--debug"] -> interpretFile Debug sourceFile
+        [sourceFile]           -> interpretFile Production sourceFile
+        _                      -> usage
 
 
 lexer :: String -> [Token]
@@ -28,8 +32,12 @@ lexer = myLexer
 parser :: [Token] -> Either String Program
 parser = pProgram
 
-interpretFile :: String -> IO ()
-interpretFile filePath = do
+usage :: IO ()
+usage = putStrLn "Usage: ./tidy source_file_path [--debug]"
+
+interpretFile :: Mode -> String -> IO ()
+interpretFile mode filePath = do
+    when (mode == Debug) $ putStrLn "\nINFO: Interpreter running in DEBUG mode.\n"
     fileExists <- doesFileExist filePath
     if not fileExists then do
         hPutStrLn stderr $ "Error: file " ++ filePath ++ " does not exist."
@@ -39,8 +47,4 @@ interpretFile filePath = do
             Left error -> do
                 hPutStrLn stderr $ "Error: " ++ error
                 exitFailure
-            Right astTree -> interpret astTree
-
-
-usage :: IO ()
-usage = putStrLn "Usage: ./tidy source_file_path"
+            Right astTree -> interpret mode astTree
