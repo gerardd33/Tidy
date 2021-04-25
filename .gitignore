@@ -23,6 +23,9 @@ cabal.project.local~
 .ghc.environment.*
 cache/
 
+.idea/
+*.iml
+
 Test
 Par.info
 SyntaxTest/
