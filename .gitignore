@@ -21,8 +21,15 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+cache/
+
+.idea/
+*.iml
+
+Test
+Par.info
+SyntaxTest/
 
 *.out
 *.bak
-Test
-Par.info
+*.log

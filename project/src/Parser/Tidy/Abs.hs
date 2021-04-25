@@ -3,7 +3,7 @@
 
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
-module TidyParser.Abs where
+module Parser.Tidy.Abs where
 
 import Prelude (Char, Double, Integer, String)
 import qualified Prelude as C (Eq, Ord, Show, Read)
