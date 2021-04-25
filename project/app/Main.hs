@@ -1,15 +1,15 @@
 module Main where
 
-import           System.Directory   (doesFileExist, setCurrentDirectory)
-import           System.Environment (getArgs)
-import           System.Exit        (exitFailure)
+import           System.Directory       (doesFileExist, setCurrentDirectory)
+import           System.Environment     (getArgs)
+import           System.Exit            (exitFailure)
 import           System.IO
 
 import           Commons
-import           Interpreter.Main
+import           Interpreter.Entrypoint (interpret)
 import           Parser.Tidy.Abs
-import           Parser.Tidy.Lex
-import           Parser.Tidy.Par
+import           Parser.Tidy.Lex        (Token)
+import           Parser.Tidy.Par        (myLexer, pProgram)
 
 
 main :: IO ()

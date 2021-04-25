@@ -1,17 +1,18 @@
-module Interpreter.Main (interpret) where
+module Interpreter.Entrypoint (interpret) where
 
 import           Commons
-import qualified Data.Map        as Map
+import qualified Data.Map            as Map
+import           Interpreter.Runtime (runtime)
 import           Parser.Tidy.Abs
 
-type ClassEnv = Map.Map String ClassDecl
-
 -- TODO static type checking before evaluation
+-- TODO better separation of class loading and main execution, for now a POC
 interpret :: Mode -> Program -> IO ()
 interpret mode (ProgramEntrypoint classDeclarations) = do
     ifDebug mode $ mapM_ print classDeclarations >> putStrLn ""
-    print classEnv
-    where classEnv = loadClasses classDeclarations emptyClassEnv
+    let classEnv = loadClasses classDeclarations emptyClassEnv
+    ifDebug mode $ print classEnv
+    runtime classEnv
 
 
 emptyClassEnv :: ClassEnv
