@@ -1,6 +1,6 @@
 module Main where
 
-import           System.Directory   (doesFileExist)
+import           System.Directory   (doesFileExist, setCurrentDirectory)
 import           System.Environment (getArgs)
 import           System.Exit        (exitFailure)
 import           System.IO
@@ -39,6 +39,8 @@ usage = putStrLn "Usage: ./tidy source_file_path"
 
 main :: IO ()
 main = do
+    -- Changing the default directory to Tidy project root instead of the stack project root
+    setCurrentDirectory ".."
     args <- getArgs
     case args of
         []           -> usage
