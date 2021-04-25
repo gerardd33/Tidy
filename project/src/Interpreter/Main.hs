@@ -9,7 +9,7 @@ type ClassEnv = Map.Map ClassIdent ClassDecl
 -- TODO static type checking before evaluation
 interpret :: Mode -> Program -> IO ()
 interpret mode (ProgramEntrypoint classDeclarations) = do
-    -- print classDeclarations -- TODO remove debug
+    ifDebug mode $ mapM_ print classDeclarations
     print classEnv
     where classEnv = loadClasses classDeclarations emptyClassEnv
 

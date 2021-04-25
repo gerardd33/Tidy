@@ -1,6 +1,5 @@
 module Main where
 
-import           Control.Monad
 import           System.Directory   (doesFileExist, setCurrentDirectory)
 import           System.Environment (getArgs)
 import           System.Exit        (exitFailure)
@@ -37,7 +36,7 @@ usage = putStrLn "Usage: ./tidy source_file_path [--debug]"
 
 interpretFile :: Mode -> String -> IO ()
 interpretFile mode filePath = do
-    when (mode == Debug) $ putStrLn "\nINFO: Interpreter running in DEBUG mode.\n"
+    ifDebug mode $ putStrLn "\nINFO: Interpreter running in DEBUG mode.\n"
     fileExists <- doesFileExist filePath
     if not fileExists then do
         hPutStrLn stderr $ "Error: file " ++ filePath ++ " does not exist."
