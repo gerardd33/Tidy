@@ -21,7 +21,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Interpreter.Main
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex
