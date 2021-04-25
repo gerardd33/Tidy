@@ -1,5 +1,3 @@
 #! /bin/bash
 
-WORKING_DIR=$(dirname ${0})
-
-(cd ${WORKING_DIR}/project; stack build --)
+(cd ./project || exit 1; stack build --)
