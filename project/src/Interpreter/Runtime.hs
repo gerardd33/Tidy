@@ -17,6 +17,15 @@ runtime mode classEnv = runExceptT $ evalStateT (runReaderT (runtimeBody mode cl
 runtimeBody :: Mode -> ClassEnv -> StateMonad Result
 runtimeBody mode classEnv = do
     liftIO $ ifDebug mode $ putStrLn "Runtime..."
-    env <- ask
+    -- TODO change environment updating
+    (_, env) <- declareValue "testVar" 2137
+    (_, env) <- declareValue "anotherVar" 776
+    (_, env) <- declareValue "someVar" 3333
+    state <- get
+    ifDebug mode $ liftIO $ print state
     return (Nothing, env)
 
+-- TODO POC, very simple
+declareValue :: Identifier -> Integer -> StateMonad Result
+declareValue identifier valueExpr = do
+    addValue identifier (IntValue valueExpr)

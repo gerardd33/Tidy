@@ -44,21 +44,21 @@ getLocation identifier = do
 getValue :: Identifier -> StateMonad StoredValue
 getValue identifier = do
     location <- getLocation identifier
-    (state, _) <- get
-    return $ fromJust $ Map.lookup location state
+    (store, _) <- get
+    return $ fromJust $ Map.lookup location store
 
 setValue :: Identifier -> StoredValue -> StateMonad Result
 setValue identifier value = do
     location <- getLocation identifier
-    (state, nextLocation) <- get
-    put (Map.insert location value state, nextLocation)
+    (store, nextLocation) <- get
+    put (Map.insert location value store, nextLocation)
     returnNow
 
 addValue :: Identifier -> StoredValue -> StateMonad Result
 addValue identifier value = do
     env <- ask
-    (state, nextLocation) <- get
-    put (Map.insert nextLocation value state, nextLocation + 1)
+    (store, nextLocation) <- get
+    put (Map.insert nextLocation value store, nextLocation + 1)
     return (Nothing, Map.insert identifier nextLocation env)
 
 returnNow :: StateMonad Result
