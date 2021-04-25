@@ -29,6 +29,7 @@ cache/
 Test
 Par.info
 SyntaxTest/
+testSamples/
 
 *.out
 *.bak
