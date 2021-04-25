@@ -29,7 +29,7 @@ cache/
 Test
 Par.info
 SyntaxTest/
-TmpSample.ty
+testSamples/
 
 *.out
 *.bak
