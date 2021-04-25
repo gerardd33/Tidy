@@ -2,7 +2,7 @@
 
 module Parser.Tidy.Skel where
 
-import qualified Parser.Tidy.Abs as Tidy.Abs
+import qualified Parser.Tidy.Abs
 
 type Err = Either String
 type Result = Err String
@@ -10,225 +10,225 @@ type Result = Err String
 failure :: Show a => a -> Result
 failure x = Left $ "Undefined case: " ++ show x
 
-transUpperCaseIdent :: Tidy.Abs.UpperCaseIdent -> Result
+transUpperCaseIdent :: Parser.Tidy.Abs.UpperCaseIdent -> Result
 transUpperCaseIdent x = case x of
-  Tidy.Abs.UpperCaseIdent string -> failure x
-transLowerCaseIdent :: Tidy.Abs.LowerCaseIdent -> Result
+  Parser.Tidy.Abs.UpperCaseIdent string -> failure x
+transLowerCaseIdent :: Parser.Tidy.Abs.LowerCaseIdent -> Result
 transLowerCaseIdent x = case x of
-  Tidy.Abs.LowerCaseIdent string -> failure x
-transProgram :: Tidy.Abs.Program -> Result
+  Parser.Tidy.Abs.LowerCaseIdent string -> failure x
+transProgram :: Parser.Tidy.Abs.Program -> Result
 transProgram x = case x of
-  Tidy.Abs.ProgramEntrypoint classdecls -> failure x
-transClassIdent :: Tidy.Abs.ClassIdent -> Result
+  Parser.Tidy.Abs.ProgramEntrypoint classdecls -> failure x
+transClassIdent :: Parser.Tidy.Abs.ClassIdent -> Result
 transClassIdent x = case x of
-  Tidy.Abs.CIdent uppercaseident -> failure x
-transClassDecl :: Tidy.Abs.ClassDecl -> Result
+  Parser.Tidy.Abs.CIdent uppercaseident -> failure x
+transClassDecl :: Parser.Tidy.Abs.ClassDecl -> Result
 transClassDecl x = case x of
-  Tidy.Abs.ClassDeclConcrete classtype classident inheritance classbody -> failure x
-  Tidy.Abs.ClassDeclAbstract classtype classident inheritance classbody -> failure x
-transInheritance :: Tidy.Abs.Inheritance -> Result
+  Parser.Tidy.Abs.ClassDeclConcrete classtype classident inheritance classbody -> failure x
+  Parser.Tidy.Abs.ClassDeclAbstract classtype classident inheritance classbody -> failure x
+transInheritance :: Parser.Tidy.Abs.Inheritance -> Result
 transInheritance x = case x of
-  Tidy.Abs.SuperclassAbsent -> failure x
-  Tidy.Abs.SuperclassPresent classident -> failure x
-transClassBody :: Tidy.Abs.ClassBody -> Result
+  Parser.Tidy.Abs.SuperclassAbsent -> failure x
+  Parser.Tidy.Abs.SuperclassPresent classident -> failure x
+transClassBody :: Parser.Tidy.Abs.ClassBody -> Result
 transClassBody x = case x of
-  Tidy.Abs.ClassBodyEmpty -> failure x
-  Tidy.Abs.ClassBodyFilled valuessection variablessection functionssection actionssection -> failure x
-transClassType :: Tidy.Abs.ClassType -> Result
+  Parser.Tidy.Abs.ClassBodyEmpty -> failure x
+  Parser.Tidy.Abs.ClassBodyFilled valuessection variablessection functionssection actionssection -> failure x
+transClassType :: Parser.Tidy.Abs.ClassType -> Result
 transClassType x = case x of
-  Tidy.Abs.MMutable -> failure x
-  Tidy.Abs.MImmutable -> failure x
-  Tidy.Abs.MSingleton -> failure x
-transValuesSection :: Tidy.Abs.ValuesSection -> Result
+  Parser.Tidy.Abs.MMutable -> failure x
+  Parser.Tidy.Abs.MImmutable -> failure x
+  Parser.Tidy.Abs.MSingleton -> failure x
+transValuesSection :: Parser.Tidy.Abs.ValuesSection -> Result
 transValuesSection x = case x of
-  Tidy.Abs.ValuesAbsent -> failure x
-  Tidy.Abs.ValuesPresent valsbody -> failure x
-transVariablesSection :: Tidy.Abs.VariablesSection -> Result
+  Parser.Tidy.Abs.ValuesAbsent -> failure x
+  Parser.Tidy.Abs.ValuesPresent valsbody -> failure x
+transVariablesSection :: Parser.Tidy.Abs.VariablesSection -> Result
 transVariablesSection x = case x of
-  Tidy.Abs.VariablesAbsent -> failure x
-  Tidy.Abs.VariablesPresent varsbody -> failure x
-transFunctionsSection :: Tidy.Abs.FunctionsSection -> Result
+  Parser.Tidy.Abs.VariablesAbsent -> failure x
+  Parser.Tidy.Abs.VariablesPresent varsbody -> failure x
+transFunctionsSection :: Parser.Tidy.Abs.FunctionsSection -> Result
 transFunctionsSection x = case x of
-  Tidy.Abs.FunctionsAbsent -> failure x
-  Tidy.Abs.FunctionsPresent fsbody -> failure x
-transActionsSection :: Tidy.Abs.ActionsSection -> Result
+  Parser.Tidy.Abs.FunctionsAbsent -> failure x
+  Parser.Tidy.Abs.FunctionsPresent fsbody -> failure x
+transActionsSection :: Parser.Tidy.Abs.ActionsSection -> Result
 transActionsSection x = case x of
-  Tidy.Abs.ActionsAbsent -> failure x
-  Tidy.Abs.ActionsPresent asbody -> failure x
-transValSBody :: Tidy.Abs.ValSBody -> Result
+  Parser.Tidy.Abs.ActionsAbsent -> failure x
+  Parser.Tidy.Abs.ActionsPresent asbody -> failure x
+transValSBody :: Parser.Tidy.Abs.ValSBody -> Result
 transValSBody x = case x of
-  Tidy.Abs.ValuesSBody valuedecls -> failure x
-transValueIdent :: Tidy.Abs.ValueIdent -> Result
+  Parser.Tidy.Abs.ValuesSBody valuedecls -> failure x
+transValueIdent :: Parser.Tidy.Abs.ValueIdent -> Result
 transValueIdent x = case x of
-  Tidy.Abs.VIdent lowercaseident -> failure x
-transValueType :: Tidy.Abs.ValueType -> Result
+  Parser.Tidy.Abs.VIdent lowercaseident -> failure x
+transValueType :: Parser.Tidy.Abs.ValueType -> Result
 transValueType x = case x of
-  Tidy.Abs.ValueTypeClass classident -> failure x
-  Tidy.Abs.ValueTypeGeneric classident classidents -> failure x
-  Tidy.Abs.ValueTypeFunction methodtype -> failure x
-  Tidy.Abs.ValueTypeAction methodtype -> failure x
-transValueDecl :: Tidy.Abs.ValueDecl -> Result
+  Parser.Tidy.Abs.ValueTypeClass classident -> failure x
+  Parser.Tidy.Abs.ValueTypeGeneric classident classidents -> failure x
+  Parser.Tidy.Abs.ValueTypeFunction methodtype -> failure x
+  Parser.Tidy.Abs.ValueTypeAction methodtype -> failure x
+transValueDecl :: Parser.Tidy.Abs.ValueDecl -> Result
 transValueDecl x = case x of
-  Tidy.Abs.PublicValueDecl valuedeclproper -> failure x
-  Tidy.Abs.PrivateValueDecl valuedeclproper -> failure x
-transValueDeclProper :: Tidy.Abs.ValueDeclProper -> Result
+  Parser.Tidy.Abs.PublicValueDecl valuedeclproper -> failure x
+  Parser.Tidy.Abs.PrivateValueDecl valuedeclproper -> failure x
+transValueDeclProper :: Parser.Tidy.Abs.ValueDeclProper -> Result
 transValueDeclProper x = case x of
-  Tidy.Abs.UninitialisedValue valueident valuetype -> failure x
-  Tidy.Abs.InitialisedValue valueident valuetype expr -> failure x
-transVarSBody :: Tidy.Abs.VarSBody -> Result
+  Parser.Tidy.Abs.UninitialisedValue valueident valuetype -> failure x
+  Parser.Tidy.Abs.InitialisedValue valueident valuetype expr -> failure x
+transVarSBody :: Parser.Tidy.Abs.VarSBody -> Result
 transVarSBody x = case x of
-  Tidy.Abs.VariablesSBody valuedecls -> failure x
-transFSBody :: Tidy.Abs.FSBody -> Result
+  Parser.Tidy.Abs.VariablesSBody valuedecls -> failure x
+transFSBody :: Parser.Tidy.Abs.FSBody -> Result
 transFSBody x = case x of
-  Tidy.Abs.FSBodyEmpty -> failure x
-  Tidy.Abs.FSBodyFilled functiondecls -> failure x
-transFunctionIdent :: Tidy.Abs.FunctionIdent -> Result
+  Parser.Tidy.Abs.FSBodyEmpty -> failure x
+  Parser.Tidy.Abs.FSBodyFilled functiondecls -> failure x
+transFunctionIdent :: Parser.Tidy.Abs.FunctionIdent -> Result
 transFunctionIdent x = case x of
-  Tidy.Abs.FIdent lowercaseident -> failure x
-transMethodType :: Tidy.Abs.MethodType -> Result
+  Parser.Tidy.Abs.FIdent lowercaseident -> failure x
+transMethodType :: Parser.Tidy.Abs.MethodType -> Result
 transMethodType x = case x of
-  Tidy.Abs.FType parameterlist valuetype -> failure x
-transParameterList :: Tidy.Abs.ParameterList -> Result
+  Parser.Tidy.Abs.FType parameterlist valuetype -> failure x
+transParameterList :: Parser.Tidy.Abs.ParameterList -> Result
 transParameterList x = case x of
-  Tidy.Abs.ParamList valuedeclpropers -> failure x
-transFunctionDecl :: Tidy.Abs.FunctionDecl -> Result
+  Parser.Tidy.Abs.ParamList valuedeclpropers -> failure x
+transFunctionDecl :: Parser.Tidy.Abs.FunctionDecl -> Result
 transFunctionDecl x = case x of
-  Tidy.Abs.OverrideFunctionDecl functionident methodtype functionbody -> failure x
-  Tidy.Abs.PublicFunctionDecl functionident methodtype functionbody -> failure x
-  Tidy.Abs.PrivateFunctionDecl functionident methodtype functionbody -> failure x
-transFunctionBody :: Tidy.Abs.FunctionBody -> Result
+  Parser.Tidy.Abs.OverrideFunctionDecl functionident methodtype functionbody -> failure x
+  Parser.Tidy.Abs.PublicFunctionDecl functionident methodtype functionbody -> failure x
+  Parser.Tidy.Abs.PrivateFunctionDecl functionident methodtype functionbody -> failure x
+transFunctionBody :: Parser.Tidy.Abs.FunctionBody -> Result
 transFunctionBody x = case x of
-  Tidy.Abs.FunctionBodyOneLine expr -> failure x
-  Tidy.Abs.FunctionBodyMultiLine expr withvalues -> failure x
-transWithValues :: Tidy.Abs.WithValues -> Result
+  Parser.Tidy.Abs.FunctionBodyOneLine expr -> failure x
+  Parser.Tidy.Abs.FunctionBodyMultiLine expr withvalues -> failure x
+transWithValues :: Parser.Tidy.Abs.WithValues -> Result
 transWithValues x = case x of
-  Tidy.Abs.WithValuesAbsent -> failure x
-  Tidy.Abs.WithValuesPresent valuessection -> failure x
-transASBody :: Tidy.Abs.ASBody -> Result
+  Parser.Tidy.Abs.WithValuesAbsent -> failure x
+  Parser.Tidy.Abs.WithValuesPresent valuessection -> failure x
+transASBody :: Parser.Tidy.Abs.ASBody -> Result
 transASBody x = case x of
-  Tidy.Abs.ASBodyEmpty -> failure x
-  Tidy.Abs.ASBodyFilled actiondecls -> failure x
-transActionDecl :: Tidy.Abs.ActionDecl -> Result
+  Parser.Tidy.Abs.ASBodyEmpty -> failure x
+  Parser.Tidy.Abs.ASBodyFilled actiondecls -> failure x
+transActionDecl :: Parser.Tidy.Abs.ActionDecl -> Result
 transActionDecl x = case x of
-  Tidy.Abs.OverrideActionDecl functionident methodtype actionbody -> failure x
-  Tidy.Abs.PublicActionDecl functionident methodtype actionbody -> failure x
-  Tidy.Abs.PrivateActionDecl functionident methodtype actionbody -> failure x
-transActionBody :: Tidy.Abs.ActionBody -> Result
+  Parser.Tidy.Abs.OverrideActionDecl functionident methodtype actionbody -> failure x
+  Parser.Tidy.Abs.PublicActionDecl functionident methodtype actionbody -> failure x
+  Parser.Tidy.Abs.PrivateActionDecl functionident methodtype actionbody -> failure x
+transActionBody :: Parser.Tidy.Abs.ActionBody -> Result
 transActionBody x = case x of
-  Tidy.Abs.ActionBodyOneLine expr -> failure x
-  Tidy.Abs.ActionBodyMultiLine exprs -> failure x
-transExpr :: Tidy.Abs.Expr -> Result
+  Parser.Tidy.Abs.ActionBodyOneLine expr -> failure x
+  Parser.Tidy.Abs.ActionBodyMultiLine exprs -> failure x
+transExpr :: Parser.Tidy.Abs.Expr -> Result
 transExpr x = case x of
-  Tidy.Abs.ELiteral literal -> failure x
-  Tidy.Abs.ELocalValue valueident -> failure x
-  Tidy.Abs.EGetExpr getexpr -> failure x
-  Tidy.Abs.EDoExpr doexpr -> failure x
-  Tidy.Abs.ELambdaFunction lambdafunction -> failure x
-  Tidy.Abs.ELambdaAction lambdaaction -> failure x
-  Tidy.Abs.ELocalFunctionCall functioncall -> failure x
-  Tidy.Abs.ELocalActionCall actioncall -> failure x
-  Tidy.Abs.ECtorCall constructorcall -> failure x
-  Tidy.Abs.EImperativeControlFlow imperativecontrolflow -> failure x
-  Tidy.Abs.EFunctionalControlFlow functionalcontrolflow -> failure x
-  Tidy.Abs.ELocalValueDecl localvaluedecl -> failure x
-  Tidy.Abs.EUnaryNot expr -> failure x
-  Tidy.Abs.EUnaryMinus expr -> failure x
-  Tidy.Abs.EMultiply expr1 expr2 -> failure x
-  Tidy.Abs.EDivide expr1 expr2 -> failure x
-  Tidy.Abs.EAdd expr1 expr2 -> failure x
-  Tidy.Abs.ESubtract expr1 expr2 -> failure x
-  Tidy.Abs.EConcatenate expr1 expr2 -> failure x
-  Tidy.Abs.ERelationalOperator expr1 relationaloperator expr2 -> failure x
-  Tidy.Abs.EBooleanOperator expr1 booleanoperator expr2 -> failure x
-transLiteral :: Tidy.Abs.Literal -> Result
+  Parser.Tidy.Abs.ELiteral literal -> failure x
+  Parser.Tidy.Abs.ELocalValue valueident -> failure x
+  Parser.Tidy.Abs.EGetExpr getexpr -> failure x
+  Parser.Tidy.Abs.EDoExpr doexpr -> failure x
+  Parser.Tidy.Abs.ELambdaFunction lambdafunction -> failure x
+  Parser.Tidy.Abs.ELambdaAction lambdaaction -> failure x
+  Parser.Tidy.Abs.ELocalFunctionCall functioncall -> failure x
+  Parser.Tidy.Abs.ELocalActionCall actioncall -> failure x
+  Parser.Tidy.Abs.ECtorCall constructorcall -> failure x
+  Parser.Tidy.Abs.EImperativeControlFlow imperativecontrolflow -> failure x
+  Parser.Tidy.Abs.EFunctionalControlFlow functionalcontrolflow -> failure x
+  Parser.Tidy.Abs.ELocalValueDecl localvaluedecl -> failure x
+  Parser.Tidy.Abs.EUnaryNot expr -> failure x
+  Parser.Tidy.Abs.EUnaryMinus expr -> failure x
+  Parser.Tidy.Abs.EMultiply expr1 expr2 -> failure x
+  Parser.Tidy.Abs.EDivide expr1 expr2 -> failure x
+  Parser.Tidy.Abs.EAdd expr1 expr2 -> failure x
+  Parser.Tidy.Abs.ESubtract expr1 expr2 -> failure x
+  Parser.Tidy.Abs.EConcatenate expr1 expr2 -> failure x
+  Parser.Tidy.Abs.ERelationalOperator expr1 relationaloperator expr2 -> failure x
+  Parser.Tidy.Abs.EBooleanOperator expr1 booleanoperator expr2 -> failure x
+transLiteral :: Parser.Tidy.Abs.Literal -> Result
 transLiteral x = case x of
-  Tidy.Abs.LInt integer -> failure x
-  Tidy.Abs.LBool boolean -> failure x
-  Tidy.Abs.LChar char -> failure x
-  Tidy.Abs.LString string -> failure x
-  Tidy.Abs.LVoid void -> failure x
-transBoolean :: Tidy.Abs.Boolean -> Result
+  Parser.Tidy.Abs.LInt integer -> failure x
+  Parser.Tidy.Abs.LBool boolean -> failure x
+  Parser.Tidy.Abs.LChar char -> failure x
+  Parser.Tidy.Abs.LString string -> failure x
+  Parser.Tidy.Abs.LVoid void -> failure x
+transBoolean :: Parser.Tidy.Abs.Boolean -> Result
 transBoolean x = case x of
-  Tidy.Abs.BTrue -> failure x
-  Tidy.Abs.BFalse -> failure x
-transVoid :: Tidy.Abs.Void -> Result
+  Parser.Tidy.Abs.BTrue -> failure x
+  Parser.Tidy.Abs.BFalse -> failure x
+transVoid :: Parser.Tidy.Abs.Void -> Result
 transVoid x = case x of
-  Tidy.Abs.VPass -> failure x
-transLocalValueDecl :: Tidy.Abs.LocalValueDecl -> Result
+  Parser.Tidy.Abs.VPass -> failure x
+transLocalValueDecl :: Parser.Tidy.Abs.LocalValueDecl -> Result
 transLocalValueDecl x = case x of
-  Tidy.Abs.LocalVDecl valuedecl -> failure x
-transLambdaFunction :: Tidy.Abs.LambdaFunction -> Result
+  Parser.Tidy.Abs.LocalVDecl valuedecl -> failure x
+transLambdaFunction :: Parser.Tidy.Abs.LambdaFunction -> Result
 transLambdaFunction x = case x of
-  Tidy.Abs.LambdaFunctionOneLine parameterlist expr -> failure x
-  Tidy.Abs.LambdaFunctionMultiLine parameterlist expr -> failure x
-transLambdaAction :: Tidy.Abs.LambdaAction -> Result
+  Parser.Tidy.Abs.LambdaFunctionOneLine parameterlist expr -> failure x
+  Parser.Tidy.Abs.LambdaFunctionMultiLine parameterlist expr -> failure x
+transLambdaAction :: Parser.Tidy.Abs.LambdaAction -> Result
 transLambdaAction x = case x of
-  Tidy.Abs.LambdaActionOneLine parameterlist expr -> failure x
-  Tidy.Abs.LambdaActionMultiLine parameterlist exprs -> failure x
-transArgumentList :: Tidy.Abs.ArgumentList -> Result
+  Parser.Tidy.Abs.LambdaActionOneLine parameterlist expr -> failure x
+  Parser.Tidy.Abs.LambdaActionMultiLine parameterlist exprs -> failure x
+transArgumentList :: Parser.Tidy.Abs.ArgumentList -> Result
 transArgumentList x = case x of
-  Tidy.Abs.ArgListAbsent -> failure x
-  Tidy.Abs.ArgListPresent functionarguments -> failure x
-transFunctionArgument :: Tidy.Abs.FunctionArgument -> Result
+  Parser.Tidy.Abs.ArgListAbsent -> failure x
+  Parser.Tidy.Abs.ArgListPresent functionarguments -> failure x
+transFunctionArgument :: Parser.Tidy.Abs.FunctionArgument -> Result
 transFunctionArgument x = case x of
-  Tidy.Abs.FunctionArg expr -> failure x
-transFunctionCall :: Tidy.Abs.FunctionCall -> Result
+  Parser.Tidy.Abs.FunctionArg expr -> failure x
+transFunctionCall :: Parser.Tidy.Abs.FunctionCall -> Result
 transFunctionCall x = case x of
-  Tidy.Abs.FCall functionident argumentlist -> failure x
-transActionCall :: Tidy.Abs.ActionCall -> Result
+  Parser.Tidy.Abs.FCall functionident argumentlist -> failure x
+transActionCall :: Parser.Tidy.Abs.ActionCall -> Result
 transActionCall x = case x of
-  Tidy.Abs.ACall functionident argumentlist -> failure x
-transConstructorCall :: Tidy.Abs.ConstructorCall -> Result
+  Parser.Tidy.Abs.ACall functionident argumentlist -> failure x
+transConstructorCall :: Parser.Tidy.Abs.ConstructorCall -> Result
 transConstructorCall x = case x of
-  Tidy.Abs.CCall classident argumentlist -> failure x
-transGetExpr :: Tidy.Abs.GetExpr -> Result
+  Parser.Tidy.Abs.CCall classident argumentlist -> failure x
+transGetExpr :: Parser.Tidy.Abs.GetExpr -> Result
 transGetExpr x = case x of
-  Tidy.Abs.GetExprInstance valueident functioncall -> failure x
-  Tidy.Abs.GetExprStatic classident functioncall -> failure x
-  Tidy.Abs.GetExprChain getexpr functioncall -> failure x
-transDoExpr :: Tidy.Abs.DoExpr -> Result
+  Parser.Tidy.Abs.GetExprInstance valueident functioncall -> failure x
+  Parser.Tidy.Abs.GetExprStatic classident functioncall -> failure x
+  Parser.Tidy.Abs.GetExprChain getexpr functioncall -> failure x
+transDoExpr :: Parser.Tidy.Abs.DoExpr -> Result
 transDoExpr x = case x of
-  Tidy.Abs.DoExprInstance valueident actioncall -> failure x
-  Tidy.Abs.DoExprStatic classident actioncall -> failure x
-  Tidy.Abs.DoExprChain getexpr actioncall -> failure x
-transImperativeControlFlow :: Tidy.Abs.ImperativeControlFlow -> Result
+  Parser.Tidy.Abs.DoExprInstance valueident actioncall -> failure x
+  Parser.Tidy.Abs.DoExprStatic classident actioncall -> failure x
+  Parser.Tidy.Abs.DoExprChain getexpr actioncall -> failure x
+transImperativeControlFlow :: Parser.Tidy.Abs.ImperativeControlFlow -> Result
 transImperativeControlFlow x = case x of
-  Tidy.Abs.IWhile expr exprs -> failure x
-  Tidy.Abs.IForeach valuedecl expr exprs -> failure x
-  Tidy.Abs.IIf expr exprs optionalelsebranch -> failure x
-transOptionalElseBranch :: Tidy.Abs.OptionalElseBranch -> Result
+  Parser.Tidy.Abs.IWhile expr exprs -> failure x
+  Parser.Tidy.Abs.IForeach valuedecl expr exprs -> failure x
+  Parser.Tidy.Abs.IIf expr exprs optionalelsebranch -> failure x
+transOptionalElseBranch :: Parser.Tidy.Abs.OptionalElseBranch -> Result
 transOptionalElseBranch x = case x of
-  Tidy.Abs.ElsePresent exprs -> failure x
-  Tidy.Abs.ElseAbsent -> failure x
-transFunctionalControlFlow :: Tidy.Abs.FunctionalControlFlow -> Result
+  Parser.Tidy.Abs.ElsePresent exprs -> failure x
+  Parser.Tidy.Abs.ElseAbsent -> failure x
+transFunctionalControlFlow :: Parser.Tidy.Abs.FunctionalControlFlow -> Result
 transFunctionalControlFlow x = case x of
-  Tidy.Abs.FIfThenElse expr thenbranch elsebranch -> failure x
-  Tidy.Abs.FMatch expr matchcases -> failure x
-transThenBranch :: Tidy.Abs.ThenBranch -> Result
+  Parser.Tidy.Abs.FIfThenElse expr thenbranch elsebranch -> failure x
+  Parser.Tidy.Abs.FMatch expr matchcases -> failure x
+transThenBranch :: Parser.Tidy.Abs.ThenBranch -> Result
 transThenBranch x = case x of
-  Tidy.Abs.ThenOneLine expr -> failure x
-  Tidy.Abs.ThenMultiLine expr -> failure x
-transElseBranch :: Tidy.Abs.ElseBranch -> Result
+  Parser.Tidy.Abs.ThenOneLine expr -> failure x
+  Parser.Tidy.Abs.ThenMultiLine expr -> failure x
+transElseBranch :: Parser.Tidy.Abs.ElseBranch -> Result
 transElseBranch x = case x of
-  Tidy.Abs.ElseOneLine expr -> failure x
-  Tidy.Abs.ElseMultiLine expr -> failure x
-  Tidy.Abs.ElseIf expr thenbranch elsebranch -> failure x
-transMatchCase :: Tidy.Abs.MatchCase -> Result
+  Parser.Tidy.Abs.ElseOneLine expr -> failure x
+  Parser.Tidy.Abs.ElseMultiLine expr -> failure x
+  Parser.Tidy.Abs.ElseIf expr thenbranch elsebranch -> failure x
+transMatchCase :: Parser.Tidy.Abs.MatchCase -> Result
 transMatchCase x = case x of
-  Tidy.Abs.Case pattern_ expr -> failure x
-transPattern :: Tidy.Abs.Pattern -> Result
+  Parser.Tidy.Abs.Case pattern_ expr -> failure x
+transPattern :: Parser.Tidy.Abs.Pattern -> Result
 transPattern x = case x of
-  Tidy.Abs.TypePattern classident -> failure x
-transRelationalOperator :: Tidy.Abs.RelationalOperator -> Result
+  Parser.Tidy.Abs.TypePattern classident -> failure x
+transRelationalOperator :: Parser.Tidy.Abs.RelationalOperator -> Result
 transRelationalOperator x = case x of
-  Tidy.Abs.RLess -> failure x
-  Tidy.Abs.RLessEqual -> failure x
-  Tidy.Abs.RGreater -> failure x
-  Tidy.Abs.RGreaterEqual -> failure x
-  Tidy.Abs.REqual -> failure x
-  Tidy.Abs.RNotEqual -> failure x
-transBooleanOperator :: Tidy.Abs.BooleanOperator -> Result
+  Parser.Tidy.Abs.RLess -> failure x
+  Parser.Tidy.Abs.RLessEqual -> failure x
+  Parser.Tidy.Abs.RGreater -> failure x
+  Parser.Tidy.Abs.RGreaterEqual -> failure x
+  Parser.Tidy.Abs.REqual -> failure x
+  Parser.Tidy.Abs.RNotEqual -> failure x
+transBooleanOperator :: Parser.Tidy.Abs.BooleanOperator -> Result
 transBooleanOperator x = case x of
-  Tidy.Abs.BAnd -> failure x
-  Tidy.Abs.BOr -> failure x
+  Parser.Tidy.Abs.BAnd -> failure x
+  Parser.Tidy.Abs.BOr -> failure x
 

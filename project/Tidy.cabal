@@ -28,7 +28,6 @@ library
       Parser.Tidy.Par
       Parser.Tidy.Print
       Parser.Tidy.Skel
-      Parser.Tidy.Test
   other-modules:
       Paths_Tidy
   hs-source-dirs:
