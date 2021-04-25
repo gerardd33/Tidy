@@ -4,7 +4,7 @@
 
 These tests are designed to test the syntax defined in ``Tidy/src/Parser/Tidy.cf`` and the parser generated from it by BNFC over manually prepared Tidy source files.
 
-The tests are a group of .ty files: *good* and *bad* syntax examples in the *unit* directory and larger *integration* tests for syntax.
+The tests are a group of *.ty* files: *good* and *bad* syntax examples in the *unit* directory and larger *integration* tests for syntax.
 
 
 ## Testing
