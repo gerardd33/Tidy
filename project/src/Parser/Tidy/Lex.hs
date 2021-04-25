@@ -4,7 +4,7 @@
 
 {-# OPTIONS -fno-warn-incomplete-patterns #-}
 {-# OPTIONS_GHC -w #-}
-module Tidy.Lex where
+module Parser.Tidy.Lex where
 
 import qualified Data.Bits
 import Data.Word (Word8)

@@ -6,10 +6,6 @@ author:              "Gerard Dróżdż"
 maintainer:          "example@example.com"
 copyright:           "2021 Gerard Dróżdż"
 
-extra-source-files:
-- README.md
-- ChangeLog.md
-
 # Metadata used when publishing your package
 # synopsis:            The Tidy programming language
 # category:            Web
@@ -21,6 +17,7 @@ description:         Please see the README on GitHub at https://github.com/gerar
 
 dependencies:
 - base >= 4.7 && < 5
+- array >= 0.5.4.0
 
 library:
   source-dirs: src

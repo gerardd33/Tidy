@@ -16,7 +16,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
-module Tidy.ErrM where
+module Parser.Tidy.ErrM where
 
 import Control.Monad       (MonadPlus(..))
 import Control.Applicative (Alternative(..))

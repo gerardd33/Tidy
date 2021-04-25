@@ -4,13 +4,13 @@
 {-# OPTIONS_GHC -XPartialTypeSignatures #-}
 #endif
 {-# OPTIONS_GHC -fno-warn-incomplete-patterns -fno-warn-overlapping-patterns #-}
-module Tidy.Par
+module Parser.Tidy.Par
   ( happyError
   , myLexer
   , pProgram
   ) where
-import qualified Tidy.Abs
-import Tidy.Lex
+import qualified Parser.Tidy.Abs as Tidy.Abs
+import Parser.Tidy.Lex
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
 import qualified GHC.Exts as Happy_GHC_Exts
