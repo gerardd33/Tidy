@@ -23,6 +23,7 @@ library
   exposed-modules:
       Commons
       Interpreter.Entrypoint
+      Interpreter.Environment
       Interpreter.Runtime
       Parser.Tidy.Abs
       Parser.Tidy.ErrM

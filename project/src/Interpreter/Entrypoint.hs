@@ -1,8 +1,9 @@
 module Interpreter.Entrypoint (interpret) where
 
 import           Commons
-import qualified Data.Map            as Map
-import           Interpreter.Runtime (runtime)
+import qualified Data.Map                as Map
+import           Interpreter.Environment
+import           Interpreter.Runtime     (runtime)
 import           Parser.Tidy.Abs
 
 -- TODO static type checking before evaluation
@@ -12,7 +13,8 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     ifDebug mode $ mapM_ print classDeclarations >> putStrLn ""
     let classEnv = loadClasses classDeclarations emptyClassEnv
     ifDebug mode $ print classEnv
-    runtime classEnv
+    result <- runtime mode classEnv
+    print result
 
 
 emptyClassEnv :: ClassEnv
