@@ -1,0 +1,12 @@
+singleton class SimpleMain {
+    
+    values: {
+        numberOfMessages: Integer = 1;
+    }
+    
+    actions: {
+        main: () -> Int = {
+            13
+        }
+    }
+}

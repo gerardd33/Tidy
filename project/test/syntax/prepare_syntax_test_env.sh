@@ -4,7 +4,7 @@ WORKING_DIR=$(dirname "${0}")
 
 mkdir -p "${WORKING_DIR}"/tests_output
 
-bnfc --haskell -d -m "${WORKING_DIR}"/../src/Parser/Tidy.cf -o "${WORKING_DIR}" -p "SyntaxTest" && \
+bnfc --haskell -d -m "${WORKING_DIR}"/../../src/Parser/Tidy.cf -o "${WORKING_DIR}" -p "SyntaxTest" && \
 echo && echo "Test environment prepared." && echo
 
 
