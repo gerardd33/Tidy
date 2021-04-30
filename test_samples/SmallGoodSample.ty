@@ -1,0 +1,9 @@
+immutable class Student
+
+singleton class StudentUtils
+
+mutable class SomeClass
+
+immutable class SomeOtherClass
+
+immutable class OneMoreClass

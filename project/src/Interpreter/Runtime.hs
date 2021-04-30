@@ -8,21 +8,24 @@ import qualified Data.Map                as Map
 import           Interpreter.Environment
 import           System.IO
 
+import           Parser.Tidy.Abs
+
 
 -- TODO for now a POC
 -- TODO there should be something more to execute passed besides ClassEnv
-runtime :: Mode -> ClassEnv -> IO (Either RuntimeException Result)
-runtime mode classEnv = runExceptT $ evalStateT (runReaderT (runtimeBody mode classEnv) Map.empty) (Map.empty, 0)
+runtime :: Mode -> ClassEnv -> ClassDecl -> IO (Either RuntimeException Result)
+runtime mode classEnv mainClass = runExceptT $ evalStateT (runReaderT (runtimeBody mode classEnv mainClass) Map.empty) (Map.empty, 0)
 
-runtimeBody :: Mode -> ClassEnv -> StateMonad Result
-runtimeBody mode classEnv = do
-    liftIO $ ifDebug mode $ putStrLn "Runtime..."
+runtimeBody :: Mode -> ClassEnv -> ClassDecl -> StateMonad Result
+runtimeBody mode classEnv mainClass = do
+    liftIO $ debugLog mode "Runtime..."
     -- TODO change environment updating
-    (_, env) <- declareValue "testVar" 2137
-    (_, env) <- declareValue "anotherVar" 776
-    (_, env) <- declareValue "someVar" 3333
-    state <- get
-    ifDebug mode $ liftIO $ print state
+--     (_, env) <- declareValue "testVar" 2137
+--     (_, env) <- declareValue "anotherVar" 776
+--     (_, env) <- declareValue "someVar" 3333
+--     state <- get
+--     ifDebug mode $ liftIO $ print state
+    env <- ask
     return (Nothing, env)
 
 -- TODO POC, very simple

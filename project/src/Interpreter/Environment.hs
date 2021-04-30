@@ -27,11 +27,18 @@ data Value = IntValue Integer | BoolValue Bool | VoidValue
 
 -- TODO other exceptions
 -- TODO rename OtherException to RuntimeException if possible
+-- TODO better handling and custom show instance
 data RuntimeException =
     DivideByZeroException
     | OtherException
     deriving (Show)
 
+data CompilationError =
+    NoMainMethodError
+    | OtherError
+    deriving (Show)
+
+-- TODO rename later
 type Result = (Maybe Value, Env)
 
 

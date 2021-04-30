@@ -36,10 +36,10 @@ usage = putStrLn "Usage: ./tidy source_file_path [--debug]"
 
 interpretFile :: Mode -> String -> IO ()
 interpretFile mode filePath = do
-    ifDebug mode $ putStrLn "\nINFO: Interpreter running in DEBUG mode.\n"
+    infoLog "Tidy interpreter running in DEBUG mode."
     fileExists <- doesFileExist filePath
     if not fileExists then do
-        hPutStrLn stderr $ "Error: file " ++ filePath ++ " does not exist."
+        hPutStrLn stderr $ "Error: Source file " ++ filePath ++ " does not exist."
     else do
         source <- readFile filePath
         case (parser . lexer) source of

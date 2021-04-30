@@ -9,3 +9,12 @@ data Mode = Debug | Production
 
 ifDebug :: Applicative f => Mode -> f () -> f ()
 ifDebug mode = when (mode == Debug)
+
+debugPrint :: (Show a) => Mode -> String -> a -> IO ()
+debugPrint mode header item = ifDebug mode $ putStrLn ("DEBUG: " ++ header) >> print item >> putStrLn ""
+
+debugLog :: Mode -> String -> IO ()
+debugLog mode message = ifDebug mode $ putStrLn ("DEBUG: " ++ message) >> putStrLn ""
+
+infoLog :: String -> IO ()
+infoLog message = putStrLn ("INFO: " ++ message) >> putStrLn ""
