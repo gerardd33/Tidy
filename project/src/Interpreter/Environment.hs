@@ -5,8 +5,9 @@ import           Control.Monad.Reader
 import           Control.Monad.State
 import qualified Data.Map             as Map
 import           Data.Maybe
-import           Parser.Tidy.Abs
 import           Prelude              hiding (lookup)
+
+import           Parser.Tidy.Abs
 
 
 type ClassEnv = Map.Map String ClassDecl

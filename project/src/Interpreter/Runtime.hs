@@ -1,13 +1,13 @@
 module Interpreter.Runtime (runtime) where
 
-import           Commons
 import           Control.Monad.Except
 import           Control.Monad.Reader
 import           Control.Monad.State
 import qualified Data.Map                as Map
-import           Interpreter.Environment
 import           System.IO
 
+import           Commons
+import           Interpreter.Environment
 import           Parser.Tidy.Abs
 
 
@@ -19,12 +19,7 @@ runtime mode classEnv mainClass = runExceptT $ evalStateT (runReaderT (runtimeBo
 runtimeBody :: Mode -> ClassEnv -> ClassDecl -> StateMonad Result
 runtimeBody mode classEnv mainClass = do
     liftIO $ debugLog mode "Runtime..."
-    -- TODO change environment updating
---     (_, env) <- declareValue "testVar" 2137
---     (_, env) <- declareValue "anotherVar" 776
---     (_, env) <- declareValue "someVar" 3333
---     state <- get
---     ifDebug mode $ liftIO $ print state
+    -- TODO initial environment and state updates
     env <- ask
     return (Nothing, env)
 

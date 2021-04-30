@@ -22,6 +22,7 @@ source-repository head
 library
   exposed-modules:
       Commons
+      Interpreter.Classes
       Interpreter.Entrypoint
       Interpreter.Environment
       Interpreter.Runtime

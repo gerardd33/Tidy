@@ -6,7 +6,9 @@ singleton class SimpleMain {
     
     actions: {
         main: () -> Int = {
-            13
+            15 * 4
+            val x: Int = 5;
+            x + 3
         }
     }
 }

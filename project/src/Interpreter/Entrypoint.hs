@@ -4,6 +4,7 @@ import           Commons
 import qualified Data.List               as List
 import qualified Data.Map                as Map
 import           Data.Maybe
+import           Interpreter.Classes
 import           Interpreter.Environment
 import           Interpreter.Runtime     (runtime)
 import           Parser.Tidy.Abs
@@ -38,17 +39,3 @@ evalClassDeclaration decl = case decl of
 --  once I have monads adapted for static checking
 findMainClass :: [ClassDecl] -> ClassDecl
 findMainClass = head . filter hasMainAction
-
-hasMainAction :: ClassDecl -> Bool
-hasMainAction = isJust . getMainAction
-
--- TODO does not support inherited main method
-getMainAction :: ClassDecl -> Maybe ActionDecl
-getMainAction (ClassDeclConcrete MSingleton _ _ (ClassBodyFilled _ _ _ (ActionsPresent (ASBodyFilled actions)))) =
-    List.find isActionMain actions
-getMainAction _ = Nothing
-
-isActionMain :: ActionDecl -> Bool
-isActionMain (PublicActionDecl (FIdent (LowerCaseIdent "main")) _ _)   = True
-isActionMain (OverrideActionDecl (FIdent (LowerCaseIdent "main")) _ _) = True
-isActionMain _                                                         = False
