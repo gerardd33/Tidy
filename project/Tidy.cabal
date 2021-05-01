@@ -21,8 +21,13 @@ source-repository head
 
 library
   exposed-modules:
-      Commons
-      Interpreter.Main
+      Interpreter.Classes
+      Interpreter.Commons
+      Interpreter.Entrypoint
+      Interpreter.Environment
+      Interpreter.Expressions
+      Interpreter.Functions
+      Interpreter.Runtime
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

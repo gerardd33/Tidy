@@ -1,15 +1,15 @@
 module Main where
 
-import           System.Directory   (doesFileExist, setCurrentDirectory)
-import           System.Environment (getArgs)
-import           System.Exit        (exitFailure)
+import           System.Directory       (doesFileExist, setCurrentDirectory)
+import           System.Environment     (getArgs)
+import           System.Exit            (exitFailure)
 import           System.IO
 
-import           Commons
-import           Interpreter.Main
+import           Interpreter.Commons
+import           Interpreter.Entrypoint (interpret)
 import           Parser.Tidy.Abs
-import           Parser.Tidy.Lex
-import           Parser.Tidy.Par
+import           Parser.Tidy.Lex        (Token)
+import           Parser.Tidy.Par        (myLexer, pProgram)
 
 
 main :: IO ()
@@ -36,10 +36,10 @@ usage = putStrLn "Usage: ./tidy source_file_path [--debug]"
 
 interpretFile :: Mode -> String -> IO ()
 interpretFile mode filePath = do
-    ifDebug mode $ putStrLn "\nINFO: Interpreter running in DEBUG mode.\n"
+    infoLog "Tidy interpreter running in DEBUG mode."
     fileExists <- doesFileExist filePath
     if not fileExists then do
-        hPutStrLn stderr $ "Error: file " ++ filePath ++ " does not exist."
+        hPutStrLn stderr $ "Error: Source file " ++ filePath ++ " does not exist."
     else do
         source <- readFile filePath
         case (parser . lexer) source of

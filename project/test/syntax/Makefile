@@ -10,8 +10,8 @@ all : SyntaxTest/Tidy/Test
 
 # Rules for building the parser.
 
-SyntaxTest/Tidy/ErrM.hs SyntaxTest/Tidy/Lex.x SyntaxTest/Tidy/Print.hs SyntaxTest/Tidy/Par.y SyntaxTest/Tidy/Test.hs : ./../src/Parser/Tidy.cf
-	bnfc --haskell -p SyntaxTest -d ./../src/Parser/Tidy.cf
+SyntaxTest/Tidy/ErrM.hs SyntaxTest/Tidy/Lex.x SyntaxTest/Tidy/Print.hs SyntaxTest/Tidy/Par.y SyntaxTest/Tidy/Test.hs : ./../../src/Parser/Tidy.cf
+	bnfc --haskell -p SyntaxTest -d ./../../src/Parser/Tidy.cf
 
 %.hs : %.y
 	happy --ghc --coerce --array --info $<
