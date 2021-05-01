@@ -5,7 +5,7 @@ import           System.Environment     (getArgs)
 import           System.Exit            (exitFailure)
 import           System.IO
 
-import           Commons
+import           Interpreter.Commons
 import           Interpreter.Entrypoint (interpret)
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex        (Token)

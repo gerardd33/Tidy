@@ -1,4 +1,4 @@
-module Commons where
+module Interpreter.Commons where
 
 import           Control.Monad
 import           Parser.Tidy.Abs

@@ -17,13 +17,12 @@ type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
 -- TODO These are temporary structures to be replaced
 -- with more accurate representations, for now a POC
 -- of environments and state handling to be developed iteratively
-type Identifier = String
 type Location = Integer
-type Env = Map.Map Identifier Location
+type Env = Map.Map ValueIdent Location
 type RTState = (Map.Map Location Value, Location)
 
 -- TODO other types
-data Value = IntValue Integer | BoolValue Bool | VoidValue
+data Value = IntValue Integer | BoolValue Boolean | VoidValue
     deriving (Eq, Show)
 
 -- TODO other exceptions
@@ -43,25 +42,25 @@ data CompilationError =
 type Result = (Maybe Value, Env)
 
 
-getLocation :: Identifier -> StateMonad Location
+getLocation :: ValueIdent -> StateMonad Location
 getLocation identifier = do
     Just location <- asks $ Map.lookup identifier
     return location
 
-getValue :: Identifier -> StateMonad Value
+getValue :: ValueIdent -> StateMonad Value
 getValue identifier = do
     location <- getLocation identifier
     (state, _) <- get
     return $ fromJust $ Map.lookup location state
 
-setValue :: Identifier -> Value -> StateMonad Result
+setValue :: ValueIdent -> Value -> StateMonad Result
 setValue identifier value = do
     location <- getLocation identifier
     (state, nextLocation) <- get
     put (Map.insert location value state, nextLocation)
     returnNothing
 
-addValue :: Identifier -> Value -> StateMonad Result
+addValue :: ValueIdent -> Value -> StateMonad Result
 addValue identifier value = do
     env <- ask
     (state, nextLocation) <- get

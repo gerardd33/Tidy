@@ -1,10 +1,10 @@
 module Interpreter.Entrypoint (interpret) where
 
-import           Commons
-import qualified Data.List               as List
 import qualified Data.Map                as Map
 import           Data.Maybe
+
 import           Interpreter.Classes
+import           Interpreter.Commons
 import           Interpreter.Environment
 import           Interpreter.Runtime     (runtime)
 import           Parser.Tidy.Abs
@@ -39,3 +39,8 @@ evalClassDeclaration decl = case decl of
 --  once I have monads adapted for static checking
 findMainClass :: [ClassDecl] -> ClassDecl
 findMainClass = head . filter hasMainAction
+
+
+-- TODO further things to check statically:
+-- make sure expression lists in action bodies are not empty
+-- not allowing uninitialized values outside of a class and checking them inside a class

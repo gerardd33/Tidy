@@ -1,5 +1,9 @@
-module Interpreter.Classes (hasMainAction, getMainAction, isActionMain) where
+module Interpreter.Classes where
 
+import qualified Data.List             as List
+import           Data.Maybe
+
+import           Interpreter.Functions
 import           Parser.Tidy.Abs
 
 
@@ -11,8 +15,3 @@ getMainAction :: ClassDecl -> Maybe ActionDecl
 getMainAction (ClassDeclConcrete MSingleton _ _ (ClassBodyFilled _ _ _ (ActionsPresent (ASBodyFilled actions)))) =
     List.find isActionMain actions
 getMainAction _ = Nothing
-
-isActionMain :: ActionDecl -> Bool
-isActionMain (PublicActionDecl (FIdent (LowerCaseIdent "main")) _ _)   = True
-isActionMain (OverrideActionDecl (FIdent (LowerCaseIdent "main")) _ _) = True
-isActionMain _                                                         = False
