@@ -25,6 +25,7 @@ library
       Interpreter.Commons
       Interpreter.Entrypoint
       Interpreter.Environment
+      Interpreter.Expressions
       Interpreter.Functions
       Interpreter.Runtime
       Parser.Tidy.Abs
