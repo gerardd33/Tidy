@@ -1,5 +1,7 @@
 module Interpreter.Common.Types where
 
+import qualified Data.Map        as Map
+
 import           Parser.Tidy.Abs
 
 
@@ -11,3 +13,7 @@ data Value = IntValue Integer
     | VoidValue
     deriving (Eq, Show)
 
+data Object = Object ValueType ObjectEnv
+
+data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
+type ValueEnv = Map.Map ValueIdent Object
