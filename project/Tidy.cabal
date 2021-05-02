@@ -22,6 +22,8 @@ source-repository head
 library
   exposed-modules:
       Interpreter.Common.Environment
+      Interpreter.Common.Errors
+      Interpreter.Common.Types
       Interpreter.Common.Utils
       Interpreter.Entrypoint
       Interpreter.Eval.Actions

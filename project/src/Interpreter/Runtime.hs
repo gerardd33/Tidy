@@ -6,6 +6,7 @@ import           Control.Monad.State
 import           Data.Maybe
 
 import           Interpreter.Common.Environment
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils
 import           Interpreter.Eval.Actions
 import           Interpreter.Eval.Classes

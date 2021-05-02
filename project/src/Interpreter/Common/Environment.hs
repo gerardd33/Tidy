@@ -3,10 +3,12 @@ module Interpreter.Common.Environment where
 import           Control.Monad.Except
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map             as Map
+import qualified Data.Map                  as Map
 import           Data.Maybe
-import           Prelude              hiding (lookup)
+import           Prelude                   hiding (lookup)
 
+import           Interpreter.Common.Errors
+import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
@@ -19,26 +21,6 @@ type ClassEnv = Map.Map ClassIdent ClassDecl
 
 type Result = (Value, Env)
 type Location = Integer
-
--- TODO other types, especially proper objects
-data Value = IntValue Integer
-    | BoolValue Boolean
-    | CharValue Char
-    | StringValue String
-    | VoidValue
-    deriving (Eq, Show)
-
--- TODO other exceptions
--- TODO rename OtherException to RuntimeException if possible
--- TODO better handling and custom show instance
-data RuntimeException = DivideByZeroException
-    | OtherException
-    deriving (Show)
-
-data CompilationError = NoMainMethodError
-    | OtherError
-    deriving (Show)
-
 
 buildInitialEnv :: ClassEnv -> Env
 buildInitialEnv classEnv = (Map.empty, classEnv)

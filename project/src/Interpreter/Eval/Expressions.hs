@@ -4,6 +4,7 @@ import           Control.Monad.Reader
 import           Data.Maybe
 
 import           Interpreter.Common.Environment
+import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
