@@ -18,8 +18,9 @@ evalExpr (ELocalValueDecl (LocalVDecl (PublicValueDecl decl))) = declareValue de
 evalLiteral :: Literal -> StateMonad Value
 evalLiteral (LInt int)   = return (IntValue int)
 evalLiteral (LBool bool) = return (BoolValue bool)
+evalLiteral (LChar char) = return (CharValue char)
+evalLiteral (LString string) = return (StringValue string)
 evalLiteral (LVoid void) = return VoidValue
--- TODO char, string
 
 declareValue :: ValueDeclProper -> StateMonad Value
 declareValue (InitialisedValue identifier valueType expr) = do

@@ -15,19 +15,21 @@ type RTState = Map.Map ValueIdent Value
 type ClassEnv = Map.Map ClassIdent ClassDecl
 
 -- TODO other types, especially objects
-data Value = IntValue Integer | BoolValue Boolean | VoidValue
+data Value = IntValue Integer
+    | BoolValue Boolean
+    | CharValue Char
+    | StringValue String
+    | VoidValue
     deriving (Eq, Show)
 
 -- TODO other exceptions
 -- TODO rename OtherException to RuntimeException if possible
 -- TODO better handling and custom show instance
-data RuntimeException =
-    DivideByZeroException
+data RuntimeException = DivideByZeroException
     | OtherException
     deriving (Show)
 
-data CompilationError =
-    NoMainMethodError
+data CompilationError = NoMainMethodError
     | OtherError
     deriving (Show)
 
