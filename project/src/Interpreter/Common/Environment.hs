@@ -1,4 +1,4 @@
-module Interpreter.Environment where
+module Interpreter.Common.Environment where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader

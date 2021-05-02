@@ -1,9 +1,9 @@
-module Interpreter.Expressions where
+module Interpreter.Eval.Expressions where
 
 import           Control.Monad.Reader
 import           Data.Maybe
 
-import           Interpreter.Environment
+import           Interpreter.Common.Environment
 import           Parser.Tidy.Abs
 
 

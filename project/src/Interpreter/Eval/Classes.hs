@@ -1,11 +1,11 @@
-module Interpreter.Classes where
+module Interpreter.Eval.Classes where
 
-import qualified Data.List           as List
-import qualified Data.Map            as Map
+import qualified Data.List                      as List
+import qualified Data.Map                       as Map
 import           Data.Maybe
 
-import           Interpreter.Actions
-import           Interpreter.Environment
+import           Interpreter.Common.Environment
+import           Interpreter.Eval.Actions
 import           Parser.Tidy.Abs
 
 

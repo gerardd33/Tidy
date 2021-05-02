@@ -1,7 +1,7 @@
-module Interpreter.Actions where
+module Interpreter.Eval.Actions where
 
-import           Interpreter.Expressions
-import           Interpreter.Environment
+import           Interpreter.Common.Environment
+import           Interpreter.Eval.Expressions
 import           Parser.Tidy.Abs
 
 

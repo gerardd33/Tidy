@@ -5,10 +5,10 @@ import           Control.Monad.Reader
 import           Control.Monad.State
 import           Data.Maybe
 
-import           Interpreter.Actions
-import           Interpreter.Classes
-import           Interpreter.Environment
-import           Interpreter.Utils
+import           Interpreter.Common.Environment
+import           Interpreter.Common.Utils
+import           Interpreter.Eval.Actions
+import           Interpreter.Eval.Classes
 import           Parser.Tidy.Abs
 
 

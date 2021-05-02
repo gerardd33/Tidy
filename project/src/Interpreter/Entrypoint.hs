@@ -2,10 +2,10 @@ module Interpreter.Entrypoint (interpret) where
 
 import           Data.Maybe
 
-import           Interpreter.Classes
+import           Interpreter.Common.Environment
+import           Interpreter.Common.Utils
+import           Interpreter.Eval.Classes
 import           Interpreter.Runtime
-import           Interpreter.Environment
-import           Interpreter.Utils
 import           Parser.Tidy.Abs
 
 
