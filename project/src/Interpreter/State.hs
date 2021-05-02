@@ -9,10 +9,10 @@ import           Prelude              hiding (lookup)
 import           Parser.Tidy.Abs
 
 
-type ClassEnv = Map.Map ClassIdent ClassDecl
-
 type StateMonad = StateT RTState (ExceptT RuntimeException IO)
 type RTState = Map.Map ValueIdent Value
+
+type ClassEnv = Map.Map ClassIdent ClassDecl
 
 -- TODO other types, especially objects
 data Value = IntValue Integer | BoolValue Boolean | VoidValue

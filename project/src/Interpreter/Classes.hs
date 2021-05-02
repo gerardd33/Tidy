@@ -1,10 +1,10 @@
 module Interpreter.Classes where
 
-import qualified Data.List             as List
-import qualified Data.Map              as Map
+import qualified Data.List           as List
+import qualified Data.Map            as Map
 import           Data.Maybe
 
-import           Interpreter.Functions
+import           Interpreter.Actions
 import           Interpreter.State
 import           Parser.Tidy.Abs
 
@@ -27,8 +27,6 @@ evalClassDeclaration decl = case decl of
     (ClassDeclConcrete modifier identifier inheritance body) -> (identifier, decl)
     (ClassDeclAbstract modifier identifier inheritance body) -> (identifier, decl)
 
--- TODO temporary behaviour, expand it later
--- TODO here print NoMainActionError and terminate if list empty,
---  once I have monads adapted for static checking
+-- TODO here print NoMainActionError and terminate if list empty, once I have monads adapted for static checking
 findMainClass :: [ClassDecl] -> ClassDecl
 findMainClass = head . filter hasMainAction

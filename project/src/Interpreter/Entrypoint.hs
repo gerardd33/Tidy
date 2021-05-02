@@ -3,9 +3,9 @@ module Interpreter.Entrypoint (interpret) where
 import           Data.Maybe
 
 import           Interpreter.Classes
-import           Interpreter.Commons
-import           Interpreter.Runtime (runtime)
+import           Interpreter.Runtime
 import           Interpreter.State
+import           Interpreter.Utils
 import           Parser.Tidy.Abs
 
 
