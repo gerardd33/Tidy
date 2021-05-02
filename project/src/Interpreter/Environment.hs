@@ -10,42 +10,46 @@ import           Prelude              hiding (lookup)
 import           Parser.Tidy.Abs
 
 
-type ClassEnv = Map.Map String ClassDecl
-
 type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
-
--- TODO These are temporary structures to be replaced
--- with more accurate representations, for now a POC
--- of environments and state handling to be developed iteratively
-type Location = Integer
-type Env = Map.Map ValueIdent Location
 type RTState = (Map.Map Location Value, Location)
 
--- TODO other types
-data Value = IntValue Integer | BoolValue Boolean | VoidValue
+type Env = (LocalEnv, ClassEnv)
+type LocalEnv = Map.Map ValueIdent Location
+type ClassEnv = Map.Map ClassIdent ClassDecl
+
+type Result = (Value, Env)
+type Location = Integer
+
+-- TODO other types, especially proper objects
+data Value = IntValue Integer
+    | BoolValue Boolean
+    | CharValue Char
+    | StringValue String
+    | VoidValue
     deriving (Eq, Show)
 
 -- TODO other exceptions
 -- TODO rename OtherException to RuntimeException if possible
 -- TODO better handling and custom show instance
-data RuntimeException =
-    DivideByZeroException
+data RuntimeException = DivideByZeroException
     | OtherException
     deriving (Show)
 
-data CompilationError =
-    NoMainMethodError
+data CompilationError = NoMainMethodError
     | OtherError
     deriving (Show)
 
--- TODO rename later
-type Result = (Maybe Value, Env)
 
+buildInitialEnv :: ClassEnv -> Env
+buildInitialEnv classEnv = (Map.empty, classEnv)
+
+buildInitialState :: RTState
+buildInitialState = (Map.empty, 0)
 
 getLocation :: ValueIdent -> StateMonad Location
 getLocation identifier = do
-    Just location <- asks $ Map.lookup identifier
-    return location
+    (localEnv, _) <- ask
+    return $ fromJust $ Map.lookup identifier localEnv
 
 getValue :: ValueIdent -> StateMonad Value
 getValue identifier = do
@@ -58,16 +62,22 @@ setValue identifier value = do
     location <- getLocation identifier
     (state, nextLocation) <- get
     put (Map.insert location value state, nextLocation)
-    returnNothing
+    returnVoid
 
 addValue :: ValueIdent -> Value -> StateMonad Result
 addValue identifier value = do
-    env <- ask
+    (localEnv, classEnv) <- ask
     (state, nextLocation) <- get
     put (Map.insert nextLocation value state, nextLocation + 1)
-    return (Nothing, Map.insert identifier nextLocation env)
+    return (VoidValue, (Map.insert identifier nextLocation localEnv, classEnv))
 
-returnNothing :: StateMonad Result
-returnNothing = do
+returnVoid :: StateMonad Result
+returnVoid = do
     env <- ask
-    return (Nothing, env)
+    return (VoidValue, env)
+
+returnPure :: StateMonad Value -> StateMonad Result
+returnPure function = do
+    env <- ask
+    value <- function
+    return (value, env)

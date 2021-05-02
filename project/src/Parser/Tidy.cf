@@ -71,8 +71,8 @@ PublicValueDecl. ValueDecl ::= ValueDeclProper ";" ;
 PrivateValueDecl. ValueDecl ::= "private" ValueDeclProper ";" ;
 
 separator ValueDeclProper "," ;
-UninitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType ;
-InitialisedValue. ValueDeclProper ::= ValueIdent ":" ValueType "=" Expr ;
+UninitializedValue. ValueDeclProper ::= ValueIdent ":" ValueType ;
+InitializedValue. ValueDeclProper ::= ValueIdent ":" ValueType "=" Expr ;
 
 
 -- VARIABLES SECTION --------------------------
