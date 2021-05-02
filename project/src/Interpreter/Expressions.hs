@@ -10,19 +10,19 @@ import           Parser.Tidy.Abs
 evalExpressionList :: [Expr] -> StateMonad Result
 evalExpressionList [expr] = evalExpr expr
 evalExpressionList (expr:exprs) = do
-    (_, env) <- evalExpr expr
-    local (const env) (evalExpressionList exprs)
+    (_, localEnv) <- evalExpr expr
+    local (const localEnv) (evalExpressionList exprs)
 
 evalExpr :: Expr -> StateMonad Result
 evalExpr (ELiteral literal) = do
     result <- evalLiteral literal
-    env <- ask
-    return (Just result, env)
+    localEnv <- ask
+    return (Just result, localEnv)
 
 evalExpr (ELocalValue identifier) = do
-    env <- ask
+    localEnv <- ask
     value <- getValue identifier
-    return (Just value, env)
+    return (Just value, localEnv)
 
 evalExpr (ELocalValueDecl (LocalVDecl (PublicValueDecl decl))) =
     declareValue decl

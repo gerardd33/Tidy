@@ -12,13 +12,13 @@ import           Parser.Tidy.Abs
 
 type ClassEnv = Map.Map String ClassDecl
 
-type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
+type StateMonad = ReaderT LocalEnv (StateT RTState (ExceptT RuntimeException IO))
 
 -- TODO These are temporary structures to be replaced
 -- with more accurate representations, for now a POC
 -- of environments and state handling to be developed iteratively
 type Location = Integer
-type Env = Map.Map ValueIdent Location
+type LocalEnv = Map.Map ValueIdent Location
 type RTState = (Map.Map Location Value, Location)
 
 -- TODO other types
@@ -39,7 +39,7 @@ data CompilationError =
     deriving (Show)
 
 -- TODO rename later
-type Result = (Maybe Value, Env)
+type Result = (Maybe Value, LocalEnv)
 
 
 getLocation :: ValueIdent -> StateMonad Location
@@ -62,12 +62,12 @@ setValue identifier value = do
 
 addValue :: ValueIdent -> Value -> StateMonad Result
 addValue identifier value = do
-    env <- ask
+    localEnv <- ask
     (state, nextLocation) <- get
     put (Map.insert nextLocation value state, nextLocation + 1)
-    return (Nothing, Map.insert identifier nextLocation env)
+    return (Nothing, Map.insert identifier nextLocation localEnv)
 
 returnNothing :: StateMonad Result
 returnNothing = do
-    env <- ask
-    return (Nothing, env)
+    localEnv <- ask
+    return (Nothing, localEnv)
