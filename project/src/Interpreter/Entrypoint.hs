@@ -4,8 +4,8 @@ import           Data.Maybe
 
 import           Interpreter.Classes
 import           Interpreter.Commons
+import           Interpreter.Runtime (runtime)
 import           Interpreter.State
-import           Interpreter.Runtime     (runtime)
 import           Parser.Tidy.Abs
 
 
