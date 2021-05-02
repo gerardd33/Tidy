@@ -5,7 +5,7 @@ import qualified Data.Map            as Map
 import           Data.Maybe
 
 import           Interpreter.Actions
-import           Interpreter.State
+import           Interpreter.Environment
 import           Parser.Tidy.Abs
 
 

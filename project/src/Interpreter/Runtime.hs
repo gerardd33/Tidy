@@ -6,7 +6,7 @@ import           Data.Maybe
 
 import           Interpreter.Actions
 import           Interpreter.Classes
-import           Interpreter.State
+import           Interpreter.Environment
 import           Interpreter.Utils
 import           Parser.Tidy.Abs
 

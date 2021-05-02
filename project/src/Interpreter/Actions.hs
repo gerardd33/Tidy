@@ -1,7 +1,7 @@
 module Interpreter.Actions where
 
 import           Interpreter.Expressions
-import           Interpreter.State
+import           Interpreter.Environment
 import           Parser.Tidy.Abs
 
 

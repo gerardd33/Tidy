@@ -24,9 +24,9 @@ library
       Interpreter.Actions
       Interpreter.Classes
       Interpreter.Entrypoint
+      Interpreter.Environment
       Interpreter.Expressions
       Interpreter.Runtime
-      Interpreter.State
       Interpreter.Utils
       Parser.Tidy.Abs
       Parser.Tidy.ErrM

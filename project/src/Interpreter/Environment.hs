@@ -1,4 +1,4 @@
-module Interpreter.State where
+module Interpreter.Environment where
 
 import           Control.Monad.Except
 import           Control.Monad.State
