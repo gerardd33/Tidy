@@ -168,8 +168,8 @@ ListValueDeclProper : {- empty -} { [] }
                     | ValueDeclProper ',' ListValueDeclProper { (:) $1 $3 }
 
 ValueDeclProper :: { Parser.Tidy.Abs.ValueDeclProper }
-ValueDeclProper : ValueIdent ':' ValueType { Parser.Tidy.Abs.UninitialisedValue $1 $3 }
-                | ValueIdent ':' ValueType '=' Expr { Parser.Tidy.Abs.InitialisedValue $1 $3 $5 }
+ValueDeclProper : ValueIdent ':' ValueType { Parser.Tidy.Abs.UninitializedValue $1 $3 }
+                | ValueIdent ':' ValueType '=' Expr { Parser.Tidy.Abs.initializedValue $1 $3 $5 }
 
 VarSBody :: { Parser.Tidy.Abs.VarSBody }
 VarSBody : '{' ListValueDecl '}' { Parser.Tidy.Abs.VariablesSBody $2 }

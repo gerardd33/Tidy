@@ -73,8 +73,8 @@ transValueDecl x = case x of
   Parser.Tidy.Abs.PrivateValueDecl valuedeclproper -> failure x
 transValueDeclProper :: Parser.Tidy.Abs.ValueDeclProper -> Result
 transValueDeclProper x = case x of
-  Parser.Tidy.Abs.UninitialisedValue valueident valuetype -> failure x
-  Parser.Tidy.Abs.InitialisedValue valueident valuetype expr -> failure x
+  Parser.Tidy.Abs.UninitializedValue valueident valuetype -> failure x
+  Parser.Tidy.Abs.InitializedValue valueident valuetype expr -> failure x
 transVarSBody :: Parser.Tidy.Abs.VarSBody -> Result
 transVarSBody x = case x of
   Parser.Tidy.Abs.VariablesSBody valuedecls -> failure x

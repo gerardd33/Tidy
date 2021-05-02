@@ -68,8 +68,8 @@ data ValueDecl
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ValueDeclProper
-    = UninitialisedValue ValueIdent ValueType
-    | InitialisedValue ValueIdent ValueType Expr
+    = UninitializedValue ValueIdent ValueType
+    | InitializedValue ValueIdent ValueType Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data VarSBody = VariablesSBody [ValueDecl]

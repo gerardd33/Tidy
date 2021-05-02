@@ -8,7 +8,7 @@ Its main goal is to make it easy to, at the same time:
 
 - Write transparent functional code wherever possible
 
-- Preserve the ability to structure it on a high level in a clean, organised object-oriented fashion
+- Preserve the ability to structure it on a high level in a clean, organized object-oriented fashion
 
 - Preserve the ability to store state, in an easy but highly controlled and visible way so as not to compromise that transparency
 

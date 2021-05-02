@@ -118,7 +118,7 @@ There are several new things here:
 
 - Private members.
 
-- Fields initialised with a value (``List()``).
+- Fields initialized with a value (``List()``).
 
 
 Note that in Tidy you don't have to write a lot of semicolons, like e.g. in Java. However, there is one important place where this is necessary, namely after each value/variable definition. They're also used (to avoid syntax conflicts) in very few situations when you want to write one-liners without curly brackets: in expressions like *if-then-else* or *lambdas*, for example:
@@ -162,7 +162,7 @@ values: {
 
 It's important to mention that in Tidy you don't need to write the classic OOP boiler-plate code. It will automatically generate for you:
 
-- A constructor, that takes as parameters all of the fields that you don't initialise explicitly. There is no *null* reference in Tidy, so the object must be complete with all the fields initialised from the moment it's born.
+- A constructor, that takes as parameters all of the fields that you don't initialize explicitly. There is no *null* reference in Tidy, so the object must be complete with all the fields initialized from the moment it's born.
 
 - Public getters for all public (not marked as *private*) attributes (values and variables).
 

@@ -193,8 +193,8 @@ instance Print [Parser.Tidy.Abs.ValueDeclProper] where
 
 instance Print Parser.Tidy.Abs.ValueDeclProper where
   prt i e = case e of
-    Parser.Tidy.Abs.UninitialisedValue valueident valuetype -> prPrec i 0 (concatD [prt 0 valueident, doc (showString ":"), prt 0 valuetype])
-    Parser.Tidy.Abs.InitialisedValue valueident valuetype expr -> prPrec i 0 (concatD [prt 0 valueident, doc (showString ":"), prt 0 valuetype, doc (showString "="), prt 0 expr])
+    Parser.Tidy.Abs.UninitializedValue valueident valuetype -> prPrec i 0 (concatD [prt 0 valueident, doc (showString ":"), prt 0 valuetype])
+    Parser.Tidy.Abs.InitializedValue valueident valuetype expr -> prPrec i 0 (concatD [prt 0 valueident, doc (showString ":"), prt 0 valuetype, doc (showString "="), prt 0 expr])
   prtList _ [] = concatD []
   prtList _ [x] = concatD [prt 0 x]
   prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]

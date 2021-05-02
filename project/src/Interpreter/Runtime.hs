@@ -1,4 +1,4 @@
-module Interpreter.Runtime (runtime) where
+module Interpreter.Runtime where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader

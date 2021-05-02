@@ -60,6 +60,6 @@ evalDivision :: Value -> Value -> StateMonad Value
 evalDivision (IntValue v1) (IntValue v2) = return $ IntValue $ v1 `div` v2
 
 declareValue :: ValueDeclProper -> StateMonad Result
-declareValue (InitialisedValue identifier valueType expr) = do
-    (initialisationValue, _) <- evalExpr expr
-    addValue identifier initialisationValue
+declareValue (InitializedValue identifier valueType expr) = do
+    (initializationValue, _) <- evalExpr expr
+    addValue identifier initializationValue
