@@ -3,7 +3,7 @@ module Interpreter.Expressions where
 import           Control.Monad.Reader
 import           Data.Maybe
 
-import           Interpreter.Environment
+import           Interpreter.State
 import           Parser.Tidy.Abs
 
 

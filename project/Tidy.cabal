@@ -24,10 +24,10 @@ library
       Interpreter.Classes
       Interpreter.Commons
       Interpreter.Entrypoint
-      Interpreter.Environment
       Interpreter.Expressions
       Interpreter.Functions
       Interpreter.Runtime
+      Interpreter.State
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

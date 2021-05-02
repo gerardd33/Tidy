@@ -9,7 +9,7 @@ import           System.IO
 
 import           Interpreter.Classes
 import           Interpreter.Commons
-import           Interpreter.Environment
+import           Interpreter.State
 import           Interpreter.Expressions
 import           Interpreter.Functions
 import           Parser.Tidy.Abs
