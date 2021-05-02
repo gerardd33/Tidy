@@ -10,7 +10,7 @@ import           Prelude              hiding (lookup)
 import           Parser.Tidy.Abs
 
 
-type ClassEnv = Map.Map String ClassDecl
+type ClassEnv = Map.Map ClassIdent ClassDecl
 
 type StateMonad = ReaderT LocalEnv (StateT RTState (ExceptT RuntimeException IO))
 
