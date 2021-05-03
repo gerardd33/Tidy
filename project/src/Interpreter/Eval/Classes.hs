@@ -24,8 +24,8 @@ loadClasses declarations = Map.fromList $ map evalClassDeclaration declarations
 -- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
 evalClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 evalClassDeclaration decl = case decl of
-    (ClassDeclConcrete modifier identifier inheritance body) -> (identifier, decl)
-    (ClassDeclAbstract modifier identifier inheritance body) -> (identifier, decl)
+    (ClassDeclConcrete _ identifier _ _) -> (identifier, decl)
+    (ClassDeclAbstract _ identifier _ _) -> (identifier, decl)
 
 -- TODO here print NoMainActionError and terminate if list empty, once I have monads adapted for static checking
 findMainClass :: [ClassDecl] -> ClassDecl
@@ -42,9 +42,35 @@ getValueList (ValueTypeClass className) = do
     return $ getValues $ classEnv Map.! className
 
 getValues :: ClassDecl -> [ValueIdent]
-getValues (ClassDeclConcrete _ _ _ (ClassBodyFilled (ValuesPresent (ValuesSBody valueDecls)) _ _ _)) =
-    map getValueNameFromDecl valueDecls
+getValues classDecl = map getValueName (getValueDecls classDecl)
 
-getValueNameFromDecl :: ValueDecl -> ValueIdent
-getValueNameFromDecl (PublicValueDecl (UninitializedValue name _)) = name
-getValueNameFromDecl (PublicValueDecl (InitializedValue name _ _)) = name
+getValueDecls :: ClassDecl -> [ValueDecl]
+getValueDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled (ValuesPresent (ValuesSBody valueDecls)) _ _ _)) =
+    valueDecls
+getValueDecls _ = []
+
+getVariableDecls :: ClassDecl -> [ValueDecl]
+getVariableDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled _ (VariablesPresent (VariablesSBody variableDecls)) _ _)) =
+    variableDecls
+getVariableDecls _ = []
+
+getCtorArgsList :: ClassDecl -> [ValueIdent]
+getCtorArgsList classDecl = uninitializedValues ++ uninitializedVariables
+    where uninitializedValues = map getValueName $ filter isUninitialized (getValueDecls classDecl)
+          uninitializedVariables = map getValueName $ filter isUninitialized (getVariableDecls classDecl)
+
+isUninitialized :: ValueDecl -> Bool
+isUninitialized (PublicValueDecl (UninitializedValue _ _))  = True
+isUninitialized (PrivateValueDecl (UninitializedValue _ _)) = True
+isUninitialized _                                           = False
+
+toNameTypePair :: ValueDecl -> (ValueIdent, ValueType)
+toNameTypePair (PublicValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
+toNameTypePair (PrivateValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
+
+getValueName :: ValueDecl -> ValueIdent
+getValueName (PublicValueDecl (UninitializedValue name _)) = name
+getValueName (PublicValueDecl (InitializedValue name _ _)) = name
+
+classIdentFromType :: ValueType -> ClassIdent
+classIdentFromType (ValueTypeClass classIdent) = classIdent

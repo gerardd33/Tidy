@@ -16,6 +16,9 @@ buildInitialEnv classEnv = (Map.empty, classEnv)
 buildInitialState :: RTState
 buildInitialState = (Map.empty, 0)
 
+emptyValueEnv :: ValueEnv
+emptyValueEnv = Map.empty
+
 getLocation :: ValueIdent -> StateMonad Location
 getLocation identifier = do
     (localEnv, _) <- ask

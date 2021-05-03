@@ -2,6 +2,7 @@ module Interpreter.Eval.Expressions where
 
 import           Control.Monad.Reader
 import           Data.Maybe
+import Data.Tuple
 
 import           Interpreter.Common.Types
 import           Interpreter.Eval.Environment
@@ -40,6 +41,13 @@ evalExpr (EDivide expr1 expr2) = do
     (v1, _) <- evalExpr expr1
     (v2, _) <- evalExpr expr2
     returnPure $ evalDivision v1 v2
+
+evalExpr (ECtorCall (CCall classIdentifier args)) = do
+    env <- ask
+    evalResults <- mapM evalExpr (argsToExprList args)
+    let evaluatedArgs = map fst evalResults
+    object <- newRegularObject (ValueTypeClass classIdentifier) evaluatedArgs
+    return (object, env)
 
 evalLiteral :: Literal -> StateMonad Value
 -- TODO NOW Pass "int" as constructor argument here
