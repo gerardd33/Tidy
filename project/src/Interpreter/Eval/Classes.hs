@@ -1,5 +1,6 @@
 module Interpreter.Eval.Classes where
 
+import           Control.Monad.Reader
 import qualified Data.List                as List
 import qualified Data.Map                 as Map
 import           Data.Maybe
@@ -35,4 +36,15 @@ isActionMain (PublicActionDecl (FIdent (LowerCaseIdent "main")) _ _)   = True
 isActionMain (OverrideActionDecl (FIdent (LowerCaseIdent "main")) _ _) = True
 isActionMain _                                                         = False
 
--- getValueList :: ValueType ->
+getValueList :: ValueType -> StateMonad [ValueIdent]
+getValueList (ValueTypeClass className) = do
+    (_, classEnv) <- ask
+    return $ getValues $ classEnv Map.! className
+
+getValues :: ClassDecl -> [ValueIdent]
+getValues (ClassDeclConcrete _ _ _ (ClassBodyFilled (ValuesPresent (ValuesSBody valueDecls)) _ _ _)) =
+    map getValueNameFromDecl valueDecls
+
+getValueNameFromDecl :: ValueDecl -> ValueIdent
+getValueNameFromDecl (PublicValueDecl (UninitializedValue name _)) = name
+getValueNameFromDecl (PublicValueDecl (InitializedValue name _ _)) = name

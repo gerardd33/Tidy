@@ -1,5 +1,8 @@
 module Interpreter.Eval.Objects where
 
+import           Control.Monad.Reader
+import qualified Data.Map                 as Map
+
 import           Interpreter.Common.Types
 import           Interpreter.Eval.Classes
 import           Parser.Tidy.Abs
@@ -17,8 +20,8 @@ pass :: Value
 pass = newSingleValueObject VoidValue
 
 objectEnvFromArgs :: ValueType -> ValueEnv -> StateMonad ObjectEnv
--- objectEnvFromArgs objectType args = do
---     (localEnv, classEnv) <- ask
---     let objectValueList = getValueList objectType
---     let (values, variables) = partition (`elem` objectValueList) args
-objectEnvFromArgs = undefined
+objectEnvFromArgs objectType args = do
+    (localEnv, classEnv) <- ask
+    objectValueList <- getValueList objectType
+    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) args
+    return $ ObjectEnv values variables
