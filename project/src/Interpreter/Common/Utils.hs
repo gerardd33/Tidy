@@ -15,3 +15,7 @@ debugPrint mode header item = ifDebug mode $ putStrLn ("DEBUG: " ++ header) >> p
 
 debugLog :: Mode -> String -> IO ()
 debugLog mode message = ifDebug mode $ putStrLn ("DEBUG: " ++ message) >> putStrLn ""
+
+
+classIdent :: String -> ClassIdent
+classIdent identifier = CIdent (UpperCaseIdent identifier)

@@ -44,19 +44,19 @@ setValue identifier value = do
     location <- getLocation identifier
     (state, nextLocation) <- get
     put (Map.insert location value state, nextLocation)
-    returnVoid
+    returnPass
 
 addValue :: ValueIdent -> Value -> StateMonad Result
 addValue identifier value = do
     (localEnv, classEnv) <- ask
     (state, nextLocation) <- get
     put (Map.insert nextLocation value state, nextLocation + 1)
-    return (VoidValue, (Map.insert identifier nextLocation localEnv, classEnv))
+    return (pass, (Map.insert identifier nextLocation localEnv, classEnv))
 
-returnVoid :: StateMonad Result
-returnVoid = do
+returnPass :: StateMonad Result
+returnPass = do
     env <- ask
-    return (VoidValue, env)
+    return (pass, env)
 
 returnPure :: StateMonad Value -> StateMonad Result
 returnPure function = do
