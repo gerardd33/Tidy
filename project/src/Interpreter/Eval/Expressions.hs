@@ -45,6 +45,14 @@ evalExpr (EDivide expr1 expr2) = do
     (v2, _) <- evalExpr expr2
     returnPure $ evalDivision v1 v2
 
+evalExpr (EUnaryNot expr) = do
+    (value, _) <- evalExpr expr
+    returnPure $ evalUnaryNot value
+
+evalExpr (EUnaryMinus expr) = do
+    (value, _) <- evalExpr expr
+    returnPure $ evalUnaryMinus value
+
 evalExpr (ECtorCall (CCall classIdentifier args)) = do
     env <- ask
     evalResults <- mapM evalExpr (argsToExprList args)
@@ -53,6 +61,7 @@ evalExpr (ECtorCall (CCall classIdentifier args)) = do
     objectEnv <- buildObjectEnv objectType evaluatedArgs
     object <- newRegularObject objectType objectEnv
     return (object, env)
+
 
 evalLiteral :: Literal -> StateMonad Value
 -- TODO NOW Pass "int" as constructor argument here
@@ -78,6 +87,12 @@ evalMultiplication (SingleValueObject (IntValue v1)) (SingleValueObject (IntValu
 evalDivision :: Value -> Value -> StateMonad Value
 evalDivision (SingleValueObject (IntValue v1)) (SingleValueObject (IntValue v2)) =
     return (newSingleValueObject $ IntValue $ v1 `div` v2)
+
+evalUnaryNot :: Value -> StateMonad Value
+evalUnaryNot (SingleValueObject (BoolValue value)) = return (newSingleValueObject $ BoolValue $ not value)
+
+evalUnaryMinus :: Value -> StateMonad Value
+evalUnaryMinus (SingleValueObject (IntValue value)) = return (newSingleValueObject $ BoolValue $ -value)
 
 declareValue :: ValueDeclProper -> StateMonad Result
 declareValue (InitializedValue identifier valueType expr) = do
