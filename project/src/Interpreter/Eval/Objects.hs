@@ -29,11 +29,3 @@ buildObjectEnv objectType args = do
     objectValueList <- getValueList objectType
     let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
     return $ ObjectEnv values variables
-
-argsToExprList :: ArgumentList -> [Expr]
-argsToExprList ArgListAbsent = []
-argsToExprList (ArgListPresent args) = map argToExpr args
-
-argToExpr :: FunctionArgument -> Expr
-argToExpr (FunctionArg expr) = expr
-

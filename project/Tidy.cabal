@@ -29,6 +29,7 @@ library
       Interpreter.Eval.Classes
       Interpreter.Eval.Environment
       Interpreter.Eval.Expressions
+      Interpreter.Eval.Functions
       Interpreter.Eval.Objects
       Interpreter.Runtime
       Parser.Tidy.Abs

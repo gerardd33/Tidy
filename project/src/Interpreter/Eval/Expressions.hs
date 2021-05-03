@@ -2,10 +2,11 @@ module Interpreter.Eval.Expressions where
 
 import           Control.Monad.Reader
 import           Data.Maybe
-import Data.Tuple
+import           Data.Tuple
 
 import           Interpreter.Common.Types
 import           Interpreter.Eval.Environment
+import           Interpreter.Eval.Functions
 import           Interpreter.Eval.Objects
 import           Parser.Tidy.Abs
 
