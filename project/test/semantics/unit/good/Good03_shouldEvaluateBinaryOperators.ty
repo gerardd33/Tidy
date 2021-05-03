@@ -2,8 +2,9 @@ singleton class BinaryOperators {
     
     actions: {
         main: () -> Int = {
-            value x: Int = 5 * 2;
-            5 - x * 3 + 2 * 9 / 3
+            value y: Int = 4 + 4; // 8
+            value x: Int = 2 + y; // 10
+            24 - (2 * x + y) / 7 // 20
         }
     }
 }

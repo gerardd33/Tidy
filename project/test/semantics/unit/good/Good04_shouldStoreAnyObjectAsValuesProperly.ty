@@ -1,0 +1,16 @@
+mutable class Student {
+    
+    values: {
+        id: Int = 38493;
+    }
+}
+
+singleton class ObjectsAsValues {
+    
+    actions: {
+        main: () -> Student = {
+            value student: Student = Student;
+            student
+        }
+    }
+}

@@ -1085,7 +1085,7 @@ happyReduction_44 (happy_x_5 `HappyStk`
 	case happyOut23 happy_x_3 of { (HappyWrap23 happy_var_3) -> 
 	case happyOut42 happy_x_5 of { (HappyWrap42 happy_var_5) -> 
 	happyIn27
-		 (Parser.Tidy.Abs.initializedValue happy_var_1 happy_var_3 happy_var_5
+		 (Parser.Tidy.Abs.InitializedValue happy_var_1 happy_var_3 happy_var_5
 	) `HappyStk` happyRest}}}
 
 happyReduce_45 = happySpecReduce_3  24# happyReduction_45

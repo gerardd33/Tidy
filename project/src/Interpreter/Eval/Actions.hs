@@ -1,14 +1,9 @@
-module Interpreter.Actions where
+module Interpreter.Eval.Actions where
 
-import           Interpreter.Expressions
-import           Interpreter.Environment
+import           Interpreter.Common.Types
+import           Interpreter.Eval.Expressions
 import           Parser.Tidy.Abs
 
-
-isActionMain :: ActionDecl -> Bool
-isActionMain (PublicActionDecl (FIdent (LowerCaseIdent "main")) _ _)   = True
-isActionMain (OverrideActionDecl (FIdent (LowerCaseIdent "main")) _ _) = True
-isActionMain _                                                         = False
 
 getActionBody :: ActionDecl -> ActionBody
 getActionBody (OverrideActionDecl _ _ actionBody) = actionBody

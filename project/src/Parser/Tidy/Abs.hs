@@ -6,7 +6,7 @@
 module Parser.Tidy.Abs where
 
 import Prelude (Char, Double, Integer, String)
-import qualified Prelude as C (Eq, Ord, Show, Read)
+import qualified Prelude as C (Eq, Ord, Show, Read, show)
 import qualified Data.String
 
 newtype UpperCaseIdent = UpperCaseIdent String
@@ -19,7 +19,7 @@ data Program = ProgramEntrypoint [ClassDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ClassIdent = CIdent UpperCaseIdent
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
+  deriving (C.Eq, C.Ord, C.Read)
 
 data ClassDecl
     = ClassDeclConcrete ClassType ClassIdent Inheritance ClassBody
@@ -53,7 +53,7 @@ data ValSBody = ValuesSBody [ValueDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ValueIdent = VIdent LowerCaseIdent
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
+  deriving (C.Eq, C.Ord, C.Read)
 
 data ValueType
     = ValueTypeClass ClassIdent
@@ -233,3 +233,8 @@ data RelationalOperator
 data BooleanOperator = BAnd | BOr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
+instance C.Show ValueIdent where
+    show (VIdent (LowerCaseIdent ident)) = C.show ident
+
+instance C.Show ClassIdent where
+    show (CIdent (UpperCaseIdent ident)) = C.show ident
