@@ -1,10 +1,12 @@
 module Interpreter.Eval.Expressions where
 
 import           Control.Monad.Reader
+import qualified Data.Map                     as Map
 import           Data.Maybe
 import           Data.Tuple
 
 import           Interpreter.Common.Types
+import           Interpreter.Eval.Classes
 import           Interpreter.Eval.Environment
 import           Interpreter.Eval.Functions
 import           Interpreter.Eval.Objects
@@ -47,7 +49,9 @@ evalExpr (ECtorCall (CCall classIdentifier args)) = do
     env <- ask
     evalResults <- mapM evalExpr (argsToExprList args)
     let evaluatedArgs = map fst evalResults
-    object <- newRegularObject (ValueTypeClass classIdentifier) evaluatedArgs
+    let objectType = ValueTypeClass classIdentifier
+    objectEnv <- buildObjectEnv objectType evaluatedArgs
+    object <- newRegularObject objectType objectEnv
     return (object, env)
 
 evalLiteral :: Literal -> StateMonad Value
@@ -79,3 +83,21 @@ declareValue :: ValueDeclProper -> StateMonad Result
 declareValue (InitializedValue identifier valueType expr) = do
     (initializationValue, _) <- evalExpr expr
     addValue identifier initializationValue
+
+buildObjectEnv :: ValueType -> [Value] -> StateMonad ObjectEnv
+buildObjectEnv objectType args = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let ctorArgsList = getCtorArgsList classDecl
+    initializedAttributes <- evalAttributeExpressions (getInitializedAttributeList classDecl)
+    let attributesFromCtor = Map.fromList $ zip ctorArgsList args
+    let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
+    objectValueList <- getValueList objectType
+    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    return $ ObjectEnv values variables
+
+evalAttributeExpressions :: [(ValueIdent, Expr)] -> StateMonad [(ValueIdent, Value)]
+evalAttributeExpressions attributeList = do
+    let (names, exprs) = unzip attributeList
+    evalResults <- mapM evalExpr exprs
+    return $ zip names (map fst evalResults)

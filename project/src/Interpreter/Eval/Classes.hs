@@ -8,6 +8,8 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+{-# ANN module ("HLint: ignore Use record patterns"::String) #-}
+
 
 hasMainAction :: ClassDecl -> Bool
 hasMainAction = isJust . getMainAction
@@ -56,21 +58,32 @@ getVariableDecls _ = []
 
 getCtorArgsList :: ClassDecl -> [ValueIdent]
 getCtorArgsList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map getValueName $ filter isUninitialized (getValueDecls classDecl)
-          uninitializedVariables = map getValueName $ filter isUninitialized (getVariableDecls classDecl)
+    where uninitializedValues = map getValueName $ filter (not . isInitialized) (getValueDecls classDecl)
+          uninitializedVariables = map getValueName $ filter (not . isInitialized) (getVariableDecls classDecl)
 
-isUninitialized :: ValueDecl -> Bool
-isUninitialized (PublicValueDecl (UninitializedValue _ _))  = True
-isUninitialized (PrivateValueDecl (UninitializedValue _ _)) = True
-isUninitialized _                                           = False
+isInitialized :: ValueDecl -> Bool
+isInitialized (PublicValueDecl (InitializedValue _ _ _))  = True
+isInitialized (PrivateValueDecl (InitializedValue _ _ _)) = True
+isInitialized _                                           = False
 
 toNameTypePair :: ValueDecl -> (ValueIdent, ValueType)
 toNameTypePair (PublicValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
 toNameTypePair (PrivateValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
 
 getValueName :: ValueDecl -> ValueIdent
-getValueName (PublicValueDecl (UninitializedValue name _)) = name
-getValueName (PublicValueDecl (InitializedValue name _ _)) = name
+getValueName (PublicValueDecl (UninitializedValue name _))  = name
+getValueName (PublicValueDecl (InitializedValue name _ _))  = name
+getValueName (PrivateValueDecl (UninitializedValue name _)) = name
+getValueName (PrivateValueDecl (InitializedValue name _ _)) = name
+
+getNameExprPair :: ValueDecl -> (ValueIdent, Expr)
+getNameExprPair (PublicValueDecl (InitializedValue name _ expr))  = (name, expr)
+getNameExprPair (PrivateValueDecl (InitializedValue name _ expr)) = (name, expr)
 
 classIdentFromType :: ValueType -> ClassIdent
 classIdentFromType (ValueTypeClass classIdent) = classIdent
+
+getInitializedAttributeList :: ClassDecl -> [(ValueIdent, Expr)]
+getInitializedAttributeList classDecl = initializedValues ++ initializedVariables
+    where initializedValues = map getNameExprPair $ filter isInitialized (getValueDecls classDecl)
+          initializedVariables = map getNameExprPair $ filter isInitialized (getVariableDecls classDecl)
