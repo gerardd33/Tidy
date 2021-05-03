@@ -2,7 +2,7 @@ module Interpreter.Entrypoint (interpret) where
 
 import           Data.Maybe
 
-import           Interpreter.Common.Environment
+import           Interpreter.Common.Types
 import           Interpreter.Common.Utils
 import           Interpreter.Eval.Classes
 import           Interpreter.Runtime

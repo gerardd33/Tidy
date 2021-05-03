@@ -3,8 +3,9 @@ module Interpreter.Eval.Expressions where
 import           Control.Monad.Reader
 import           Data.Maybe
 
-import           Interpreter.Common.Environment
 import           Interpreter.Common.Types
+import           Interpreter.Eval.Environment
+import           Interpreter.Eval.Objects
 import           Parser.Tidy.Abs
 
 
@@ -50,20 +51,20 @@ evalLiteral (LVoid void)        = return (newSingleValueObject VoidValue)
 
 evalAddition :: Value -> Value -> StateMonad Value
 evalAddition (SingleValueObject (IntValue v1)) (SingleValueObject (IntValue v2)) =
-    return (newSingleValueObject (IntValue $ v1 + v2))
+    return (newSingleValueObject $ IntValue $ v1 + v2)
 
 evalSubtraction :: Value -> Value -> StateMonad Value
 evalSubtraction (SingleValueObject (IntValue v1)) (SingleValueObject (IntValue v2)) =
-    return (newSingleValueObject (IntValue $ v1 - v2))
+    return (newSingleValueObject $ IntValue $ v1 - v2)
 
 evalMultiplication :: Value -> Value -> StateMonad Value
 evalMultiplication (SingleValueObject (IntValue v1)) (SingleValueObject (IntValue v2)) =
-    return (newSingleValueObject (IntValue $ v1 * v2))
+    return (newSingleValueObject $ IntValue $ v1 * v2)
 
 -- -- TODO throw if division by zero
 evalDivision :: Value -> Value -> StateMonad Value
 evalDivision (SingleValueObject (IntValue v1)) (SingleValueObject (IntValue v2)) =
-    return (newSingleValueObject (IntValue $ v1 `div` v2))
+    return (newSingleValueObject $ IntValue $ v1 `div` v2)
 
 declareValue :: ValueDeclProper -> StateMonad Result
 declareValue (InitializedValue identifier valueType expr) = do

@@ -1,26 +1,14 @@
-module Interpreter.Common.Environment where
+module Interpreter.Eval.Environment where
 
-import           Control.Monad.Except
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                  as Map
+import qualified Data.Map                 as Map
 import           Data.Maybe
-import           Prelude                   hiding (lookup)
 
-import           Interpreter.Common.Errors
 import           Interpreter.Common.Types
+import           Interpreter.Eval.Objects
 import           Parser.Tidy.Abs
 
-
-type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
-type RTState = (Map.Map Location Value, Location)
-
-type Env = (LocalEnv, ClassEnv)
-type LocalEnv = Map.Map ValueIdent Location
-type ClassEnv = Map.Map ClassIdent ClassDecl
-
-type Result = (Value, Env)
-type Location = Integer
 
 buildInitialEnv :: ClassEnv -> Env
 buildInitialEnv classEnv = (Map.empty, classEnv)

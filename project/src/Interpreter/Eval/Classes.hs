@@ -1,11 +1,10 @@
 module Interpreter.Eval.Classes where
 
-import qualified Data.List                      as List
-import qualified Data.Map                       as Map
+import qualified Data.List                as List
+import qualified Data.Map                 as Map
 import           Data.Maybe
 
-import           Interpreter.Common.Environment
-import           Interpreter.Eval.Actions
+import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
@@ -30,3 +29,10 @@ evalClassDeclaration decl = case decl of
 -- TODO here print NoMainActionError and terminate if list empty, once I have monads adapted for static checking
 findMainClass :: [ClassDecl] -> ClassDecl
 findMainClass = head . filter hasMainAction
+
+isActionMain :: ActionDecl -> Bool
+isActionMain (PublicActionDecl (FIdent (LowerCaseIdent "main")) _ _)   = True
+isActionMain (OverrideActionDecl (FIdent (LowerCaseIdent "main")) _ _) = True
+isActionMain _                                                         = False
+
+-- getValueList :: ValueType ->

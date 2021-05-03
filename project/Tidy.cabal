@@ -21,14 +21,15 @@ source-repository head
 
 library
   exposed-modules:
-      Interpreter.Common.Environment
       Interpreter.Common.Errors
       Interpreter.Common.Types
       Interpreter.Common.Utils
       Interpreter.Entrypoint
       Interpreter.Eval.Actions
       Interpreter.Eval.Classes
+      Interpreter.Eval.Environment
       Interpreter.Eval.Expressions
+      Interpreter.Eval.Objects
       Interpreter.Runtime
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
