@@ -21,37 +21,14 @@ evalExpressionList (expr:exprs) = do
 
 evalExpr :: Expr -> StateMonad Result
 evalExpr (ELiteral literal) = returnPure $ evalLiteral literal
-
 evalExpr (ELocalValue identifier) = returnPure $ getValue identifier
 evalExpr (ELocalValueDecl (LocalVDecl (PublicValueDecl decl))) = declareValue decl
-
-evalExpr (EAdd expr1 expr2) = do
-    (v1, _) <- evalExpr expr1
-    (v2, _) <- evalExpr expr2
-    returnPure $ evalAddition v1 v2
-
-evalExpr (ESubtract expr1 expr2) = do
-    (v1, _) <- evalExpr expr1
-    (v2, _) <- evalExpr expr2
-    returnPure $ evalSubtraction v1 v2
-
-evalExpr (EMultiply expr1 expr2) = do
-    (v1, _) <- evalExpr expr1
-    (v2, _) <- evalExpr expr2
-    returnPure $ evalMultiplication v1 v2
-
-evalExpr (EDivide expr1 expr2) = do
-    (v1, _) <- evalExpr expr1
-    (v2, _) <- evalExpr expr2
-    returnPure $ evalDivision v1 v2
-
-evalExpr (EUnaryNot expr) = do
-    (value, _) <- evalExpr expr
-    returnPure $ evalUnaryNot value
-
-evalExpr (EUnaryMinus expr) = do
-    (value, _) <- evalExpr expr
-    returnPure $ evalUnaryMinus value
+evalExpr (EAdd expr1 expr2) = evalBinaryOperator expr1 expr2 evalAddition
+evalExpr (ESubtract expr1 expr2) = evalBinaryOperator expr1 expr2 evalSubtraction
+evalExpr (EMultiply expr1 expr2) = evalBinaryOperator expr1 expr2 evalMultiplication
+evalExpr (EDivide expr1 expr2) = evalBinaryOperator expr1 expr2 evalMultiplication
+evalExpr (EUnaryNot expr) = evalUnaryOperator expr evalUnaryNot
+evalExpr (EUnaryMinus expr) = evalUnaryOperator expr evalUnaryMinus
 
 evalExpr (ECtorCall (CCall classIdentifier args)) = do
     env <- ask
@@ -63,8 +40,18 @@ evalExpr (ECtorCall (CCall classIdentifier args)) = do
     return (object, env)
 
 
+evalBinaryOperator :: Expr -> Expr -> (Value -> Value -> StateMonad Value) -> StateMonad Result
+evalBinaryOperator expr1 expr2 evaluator = do
+    (v1, _) <- evalExpr expr1
+    (v2, _) <- evalExpr expr2
+    returnPure $ evaluator v1 v2
+
+evalUnaryOperator :: Expr -> (Value -> StateMonad Value) -> StateMonad Result
+evalUnaryOperator expr evaluator = do
+    (value, _) <- evalExpr expr
+    returnPure $ evaluator value
+
 evalLiteral :: Literal -> StateMonad Value
--- TODO NOW Pass "int" as constructor argument here
 evalLiteral (LInt int)          = return (newSingleValueObject (IntValue int))
 evalLiteral (LBool bool)        = return (newSingleValueObject (BoolValue bool))
 evalLiteral (LChar char)        = return (newSingleValueObject (CharValue char))
@@ -89,10 +76,11 @@ evalDivision (SingleValueObject (IntValue v1)) (SingleValueObject (IntValue v2))
     return (newSingleValueObject $ IntValue $ v1 `div` v2)
 
 evalUnaryNot :: Value -> StateMonad Value
-evalUnaryNot (SingleValueObject (BoolValue value)) = return (newSingleValueObject $ BoolValue $ not value)
+evalUnaryNot (SingleValueObject (BoolValue BTrue)) = return (newSingleValueObject $ BoolValue BFalse)
+evalUnaryNot (SingleValueObject (BoolValue BFalse)) = return (newSingleValueObject $ BoolValue BTrue)
 
 evalUnaryMinus :: Value -> StateMonad Value
-evalUnaryMinus (SingleValueObject (IntValue value)) = return (newSingleValueObject $ BoolValue $ -value)
+evalUnaryMinus (SingleValueObject (IntValue value)) = return (newSingleValueObject $ IntValue $ -value)
 
 declareValue :: ValueDeclProper -> StateMonad Result
 declareValue (InitializedValue identifier valueType expr) = do
