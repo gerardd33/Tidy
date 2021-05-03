@@ -17,6 +17,8 @@ type Arguments = ValueEnv
 
 data SingleValue = IntValue Integer
     | BoolValue Boolean
+    | CharValue Char
+    | StringValue [Char]
     | VoidValue
     deriving (Eq, Show)
 
