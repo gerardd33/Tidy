@@ -6,43 +6,29 @@ import           Interpreter.Common.Utils
 import           Parser.Tidy.Abs
 
 -- TODO better printing (custom show instance)
-data Value = Object ObjectType ObjectEnv
+data Value = RegularObject ValueType ObjectEnv | SingleValueObject SingleValue
     deriving (Show)
-data ObjectType = UserObject ValueType | BuiltinObject ValueType
-    deriving (Show)
+
 data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
     deriving (Show)
+
 type ValueEnv = Map.Map ValueIdent Value
+type Arguments = ValueEnv
 
--- TODO add constructor arguments
-newObject :: ObjectType -> Value
-newObject (BuiltinObject objectType) = newBuiltinObject objectType
-newObject (UserObject objectType)    = undefined
--- TODO case for UserObject
+data SingleValue = IntValue Integer
+    | BoolValue Boolean
+    | VoidValue
+    deriving (Eq, Show)
 
-emptyObjectEnv :: ObjectEnv
-emptyObjectEnv = ObjectEnv Map.empty Map.empty
 
-newBuiltinObject :: ValueType -> Value
-newBuiltinObject (ValueTypeClass (CIdent (UpperCaseIdent "Int"))) =
-    Object intObject emptyObjectEnv
--- TODO other cases
+newSingleValueObject :: SingleValue -> Value
+newSingleValueObject = SingleValueObject
 
--- TODO extract to a built-ins module
-intObject :: ObjectType
-intObject = BuiltinObject $ ValueTypeClass (classIdent "Int")
-
-boolObject :: ObjectType
-boolObject = BuiltinObject $ ValueTypeClass (classIdent "Bool")
-
-charObject :: ObjectType
-charObject = BuiltinObject $ ValueTypeClass (classIdent "Char")
-
-stringObject :: ObjectType
-stringObject = BuiltinObject $ ValueTypeClass (classIdent "String")
-
-voidObject :: ObjectType
-voidObject = BuiltinObject $ ValueTypeClass (classIdent "Void")
+newRegularObject :: ValueType -> Arguments -> Value
+newRegularObject valueType args = RegularObject valueType (objectEnvFromArgs args)
 
 pass :: Value
-pass = newObject voidObject
+pass = newSingleValueObject VoidValue
+
+objectEnvFromArgs :: Arguments -> ObjectEnv
+objectEnvFromArgs = undefined

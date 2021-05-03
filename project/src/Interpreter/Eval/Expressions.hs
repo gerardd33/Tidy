@@ -42,7 +42,7 @@ evalExpr (ELocalValueDecl (LocalVDecl (PublicValueDecl decl))) = declareValue de
 
 evalLiteral :: Literal -> StateMonad Value
 -- TODO NOW Pass "int" as constructor argument here
-evalLiteral (LInt int)       = return (newObject intObject)
+evalLiteral (LInt int)       = return (newSingleValueObject (IntValue int))
 -- evalLiteral (LBool bool)     = return (newObject boolObject bool)
 -- -- evalLiteral (LChar char)     = return (newObject charObject char)
 -- -- evalLiteral (LString string) = return (newObject stringObject string)
