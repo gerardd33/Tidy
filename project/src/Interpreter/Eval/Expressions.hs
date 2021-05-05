@@ -42,6 +42,9 @@ evalExpr (ECtorCall (CCall classIdentifier args)) = do
     object <- newRegularObject objectType objectEnv
     return (object, env)
 
+evalExpr (EFunctionalControlFlow (FIfThenElse expr thenBranch elseBranch)) = do
+    (predicateValue, _) <- evalExpr expr
+    if isValueTrue predicateValue then evalThenBranch thenBranch else evalElseBranch elseBranch
 
 evalBinaryOperator :: Expr -> Expr -> (Value -> Value -> StateMonad Value) -> StateMonad Result
 evalBinaryOperator expr1 expr2 evaluator = do
@@ -141,6 +144,16 @@ evalAttributeExpressions attributeList = do
     evalResults <- mapM evalExpr exprs
     return $ zip names (map fst evalResults)
 
+evalThenBranch :: ThenBranch -> StateMonad Result
+evalThenBranch (ThenOneLine expr)   = evalThenBranch (ThenMultiLine expr)
+evalThenBranch (ThenMultiLine expr) = evalExpr expr
+
+evalElseBranch :: ElseBranch -> StateMonad Result
+evalElseBranch (ElseOneLine expr) = evalElseBranch (ElseMultiLine expr)
+evalElseBranch (ElseIf expr thenBranch elseBranch) =
+    evalExpr (EFunctionalControlFlow (FIfThenElse expr thenBranch elseBranch))
+evalElseBranch (ElseMultiLine expr) = evalExpr expr
+
 toBoolean :: Bool -> Boolean
 toBoolean True  = BTrue
 toBoolean False = BFalse
@@ -148,3 +161,8 @@ toBoolean False = BFalse
 fromBoolean :: Boolean -> Bool
 fromBoolean BTrue  = True
 fromBoolean BFalse = False
+
+isValueTrue :: Value -> Bool
+isValueTrue (SingleValueObject (BoolValue BTrue))  = True
+isValueTrue (SingleValueObject (BoolValue BFalse)) = False
+-- TODO exception in other cases
