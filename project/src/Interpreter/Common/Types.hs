@@ -22,10 +22,10 @@ type Location = Integer
 
 -- TODO better printing (custom show instance)
 data Value = RegularObject ValueType ObjectEnv | SingleValueObject SingleValue
-    deriving (Show)
+    deriving (Eq, Show)
 
 data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
-    deriving (Show)
+    deriving (Eq, Show)
 
 type ValueEnv = Map.Map ValueIdent Value
 

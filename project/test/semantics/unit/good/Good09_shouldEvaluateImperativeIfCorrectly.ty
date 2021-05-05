@@ -1,0 +1,42 @@
+singleton class IfThenElse {
+    
+    actions: {
+        main: () -> String = {
+            value val1: Int = 3 * 3;
+            value val2: Int = 5 * 4;
+            value string0: String = "Zero";
+            value string1: String = "One";
+            value string2: String = "Two";
+            value string3: String = "More";
+            
+            value val3: Int = if (val1 > val2) then 1; else 2;;
+            if (val3 == 0) {
+                string0
+            } else {
+                if (val3 == 1) {
+                    string1
+                } else {
+                    if (val3 == 2) {
+                        value string22: String = "New two"; 
+                        if (val1 < 4) {
+                            string22 ++ " and less"
+                        } else {
+                            if (val1 < 10) {
+                                string22 ++ " and so-so"
+                            } else {
+                                string22 ++ " and more"
+                            }
+                        }
+                    } else {
+                        string3
+                    }
+                }
+            }
+            
+            // Should return "New two and so-so"
+            
+            // Note that this is only a test designed to test semantics. This is not a recommended
+            // use of imperative if expressions. One should use functional if-then-else in such cases.
+        }
+    }
+}
