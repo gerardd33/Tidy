@@ -13,11 +13,11 @@ import           Interpreter.Eval.Objects
 import           Parser.Tidy.Abs
 
 
-evalExpressionList :: [Expr] -> StateMonad Result
-evalExpressionList [expr] = evalExpr expr
-evalExpressionList (expr:exprs) = do
+evalExprList :: [Expr] -> StateMonad Result
+evalExprList [expr] = evalExpr expr
+evalExprList (expr:exprs) = do
     (_, env) <- evalExpr expr
-    local (const env) (evalExpressionList exprs)
+    local (const env) (evalExprList exprs)
 
 evalExpr :: Expr -> StateMonad Result
 evalExpr (ELiteral literal) = returnPure $ evalLiteral literal
@@ -42,9 +42,23 @@ evalExpr (ECtorCall (CCall classIdentifier args)) = do
     object <- newRegularObject objectType objectEnv
     return (object, env)
 
-evalExpr (EFunctionalControlFlow (FIfThenElse expr thenBranch elseBranch)) = do
-    (predicateValue, _) <- evalExpr expr
+evalExpr (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
+    (predicateValue, _) <- evalExpr predicate
     if isValueTrue predicateValue then evalThenBranch thenBranch else evalElseBranch elseBranch
+
+evalExpr (EImperativeControlFlow (IWhile predicate body)) = do
+    (predicateValue, _) <- evalExpr predicate
+    if isValueTrue predicateValue
+    then evalExprList body >> evalExpr (EImperativeControlFlow (IWhile predicate body))
+    else returnPass
+
+evalExpr (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
+    (predicateValue, _) <- evalExpr predicate
+    if isValueTrue predicateValue then evalExprList body
+    else case optionalElseBranch of
+        ElseAbsent -> returnPass
+        ElsePresent body -> evalExprList body
+
 
 evalBinaryOperator :: Expr -> Expr -> (Value -> Value -> StateMonad Value) -> StateMonad Result
 evalBinaryOperator expr1 expr2 evaluator = do

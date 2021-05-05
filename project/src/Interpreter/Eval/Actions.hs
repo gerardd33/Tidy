@@ -15,5 +15,5 @@ evalAction :: ActionDecl -> StateMonad Result
 evalAction action = evalActionBody (getActionBody action)
 
 evalActionBody :: ActionBody -> StateMonad Result
-evalActionBody (ActionBodyOneLine expr)    = evalExpressionList [expr]
-evalActionBody (ActionBodyMultiLine exprs) = evalExpressionList exprs
+evalActionBody (ActionBodyOneLine expr)    = evalExprList [expr]
+evalActionBody (ActionBodyMultiLine exprs) = evalExprList exprs
