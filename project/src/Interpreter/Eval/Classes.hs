@@ -1,11 +1,12 @@
 module Interpreter.Eval.Classes where
 
 import           Control.Monad.Reader
-import qualified Data.List                as List
-import qualified Data.Map                 as Map
+import qualified Data.List                  as List
+import qualified Data.Map                   as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
+import           Interpreter.Eval.Functions
 import           Parser.Tidy.Abs
 
 {-# ANN module ("HLint: ignore Use record patterns"::String) #-}
@@ -87,3 +88,14 @@ getInitializedAttributeList :: ClassDecl -> [(ValueIdent, Expr)]
 getInitializedAttributeList classDecl = initializedValues ++ initializedVariables
     where initializedValues = map getNameExprPair $ filter isInitialized (getValueDecls classDecl)
           initializedVariables = map getNameExprPair $ filter isInitialized (getVariableDecls classDecl)
+
+getMemberFunction :: ValueType -> FunctionIdent -> StateMonad FunctionDecl
+getMemberFunction (ValueTypeClass className) functionIdentifier = do
+    (_, classEnv) <- ask
+    let functions = getFunctionDecls $ classEnv Map.! className
+    return $ fromJust $ List.find (\f -> getFunctionName f == functionIdentifier) functions
+
+getFunctionDecls :: ClassDecl -> [FunctionDecl]
+getFunctionDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled _ _ (FunctionsPresent (FSBodyFilled functionDecls)) _)) =
+    functionDecls
+getFunctionDecls _ = []

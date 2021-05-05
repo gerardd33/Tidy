@@ -10,3 +10,8 @@ argsToExprList (ArgListPresent args) = map argToExpr args
 
 argToExpr :: FunctionArgument -> Expr
 argToExpr (FunctionArg expr) = expr
+
+getFunctionName :: FunctionDecl -> FunctionIdent
+getFunctionName (OverrideFunctionDecl identifier _ _) = identifier
+getFunctionName (PublicFunctionDecl identifier _ _)   = identifier
+getFunctionName (PrivateFunctionDecl identifier _ _)  = identifier

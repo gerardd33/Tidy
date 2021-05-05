@@ -56,8 +56,14 @@ evalExpr (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
     (predicateValue, _) <- evalExpr predicate
     if isValueTrue predicateValue then evalExprList body
     else case optionalElseBranch of
-        ElseAbsent -> returnPass
+        ElseAbsent       -> returnPass
         ElsePresent body -> evalExprList body
+
+-- TODO add other cases
+evalExpr (EGetExpr (GetExprInstance objectIdentifier (FCall functionIdentifier argList))) = do
+    object <- getValue objectIdentifier
+    function <- getMemberFunction (getObjectType object) functionIdentifier
+    evalFunction function
 
 
 evalBinaryOperator :: Expr -> Expr -> (Value -> Value -> StateMonad Value) -> StateMonad Result
@@ -167,6 +173,17 @@ evalElseBranch (ElseOneLine expr) = evalElseBranch (ElseMultiLine expr)
 evalElseBranch (ElseIf expr thenBranch elseBranch) =
     evalExpr (EFunctionalControlFlow (FIfThenElse expr thenBranch elseBranch))
 evalElseBranch (ElseMultiLine expr) = evalExpr expr
+
+evalFunction :: FunctionDecl -> StateMonad Result
+evalFunction (OverrideFunctionDecl _ _ body) = evalFunctionBody body
+evalFunction (PublicFunctionDecl _ _ body)   = evalFunctionBody body
+evalFunction (PrivateFunctionDecl _ _ body)  = evalFunctionBody body
+
+evalFunctionBody :: FunctionBody -> StateMonad Result
+evalFunctionBody (FunctionBodyOneLine expr)                    = evalExpr expr
+evalFunctionBody (FunctionBodyMultiLine expr WithValuesAbsent) = evalExpr expr
+-- TODO case for "with values" present
+
 
 toBoolean :: Bool -> Boolean
 toBoolean True  = BTrue

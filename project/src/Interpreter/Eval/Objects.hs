@@ -14,3 +14,17 @@ newRegularObject objectType objectEnv = return $ RegularObject objectType object
 
 pass :: Value
 pass = newSingleValueObject VoidValue
+
+getObjectType :: Value -> ValueType
+getObjectType (SingleValueObject object)  = valueTypeForSingleValueObject object
+getObjectType (RegularObject valueType _) = valueType
+
+valueTypeForSingleValueObject :: SingleValue -> ValueType
+valueTypeForSingleValueObject (IntValue _)    = valueTypeFromClassName "Int"
+valueTypeForSingleValueObject (BoolValue _)   = valueTypeFromClassName "Bool"
+valueTypeForSingleValueObject (CharValue _)   = valueTypeFromClassName "Char"
+valueTypeForSingleValueObject (StringValue _) = valueTypeFromClassName "String"
+valueTypeForSingleValueObject VoidValue       = valueTypeFromClassName "Void"
+
+valueTypeFromClassName :: String -> ValueType
+valueTypeFromClassName name = ValueTypeClass (CIdent (UpperCaseIdent name))
