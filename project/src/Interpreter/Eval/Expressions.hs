@@ -188,10 +188,12 @@ evalFunctionBody (FunctionBodyOneLine expr)                    = evalExpr expr
 evalFunctionBody (FunctionBodyMultiLine expr WithValuesAbsent) = evalExpr expr
 evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent ValuesAbsent)) = evalExpr expr
 evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent (ValuesPresent (ValuesSBody valueDecls)))) = do
+    originalEnv <- ask
     let decls = map getProperValueDecl valueDecls
     declsResult <- mapM declareValue decls
     let localEnv = snd $ head declsResult
-    local (const localEnv) (evalExpr expr)
+    (result, _) <- local (const localEnv) (evalExpr expr)
+    return (result, originalEnv)
 
 
 toBoolean :: Bool -> Boolean
