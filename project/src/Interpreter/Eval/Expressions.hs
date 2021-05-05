@@ -146,6 +146,10 @@ declareValue (InitializedValue identifier valueType expr) = do
     (initializationValue, _) <- evalExpr expr
     addValue identifier initializationValue
 
+getProperValueDecl :: ValueDecl -> ValueDeclProper
+getProperValueDecl (PublicValueDecl declProper)  = declProper
+getProperValueDecl (PrivateValueDecl declProper) = declProper
+
 buildObjectEnv :: ValueType -> [Value] -> StateMonad ObjectEnv
 buildObjectEnv objectType args = do
     (_, classEnv) <- ask
@@ -182,7 +186,12 @@ evalFunction (PrivateFunctionDecl _ _ body)  = evalFunctionBody body
 evalFunctionBody :: FunctionBody -> StateMonad Result
 evalFunctionBody (FunctionBodyOneLine expr)                    = evalExpr expr
 evalFunctionBody (FunctionBodyMultiLine expr WithValuesAbsent) = evalExpr expr
--- TODO case for "with values" present
+evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent ValuesAbsent)) = evalExpr expr
+evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent (ValuesPresent (ValuesSBody valueDecls)))) = do
+    let decls = map getProperValueDecl valueDecls
+    declsResult <- mapM declareValue decls
+    let localEnv = snd $ head declsResult
+    local (const localEnv) (evalExpr expr)
 
 
 toBoolean :: Bool -> Boolean
