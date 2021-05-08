@@ -60,15 +60,13 @@ evalExpr (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
         ElsePresent body -> evalExprList body
 
 -- TODO add other cases
-evalExpr (EGetExpr (GetExprInstance objectIdentifier (FCall functionIdentifier argList))) = do
-    originalEnv <- ask
-    evaluatedArgs <- evalArgumentList argList
+evalExpr (EGetExpr (GetExprInstance objectIdentifier methodCall)) = do
     object <- getValue objectIdentifier
-    takeGetter <- hasGetter (getObjectType object) functionIdentifier
-    (result, _) <- if null evaluatedArgs && takeGetter
-                 then evalGetter object functionIdentifier
-                 else evalMemberFunction object functionIdentifier evaluatedArgs
-    return (result, originalEnv)
+    evalGetExprOnObject object methodCall
+
+evalExpr (EGetExpr (GetExprChain prefixGetExpr methodCall)) = do
+    (prefixValue, _) <- evalExpr $ EGetExpr prefixGetExpr
+    evalGetExprOnObject prefixValue methodCall
 
 
 evalBinaryOperator :: Expr -> Expr -> (Value -> Value -> StateMonad Value) -> StateMonad Result
@@ -234,6 +232,16 @@ declareValue :: ValueDeclProper -> StateMonad Result
 declareValue (InitializedValue identifier valueType expr) = do
     (initializationValue, _) <- evalExpr expr
     addValue identifier initializationValue
+
+evalGetExprOnObject :: Value -> FunctionCall -> StateMonad Result
+evalGetExprOnObject object (FCall functionIdentifier argList) = do
+    originalEnv <- ask
+    evaluatedArgs <- evalArgumentList argList
+    takeGetter <- hasGetter (getObjectType object) functionIdentifier
+    (result, _) <- if null evaluatedArgs && takeGetter
+                 then evalGetter object functionIdentifier
+                 else evalMemberFunction object functionIdentifier evaluatedArgs
+    return (result, originalEnv)
 
 toBoolean :: Bool -> Boolean
 toBoolean True  = BTrue
