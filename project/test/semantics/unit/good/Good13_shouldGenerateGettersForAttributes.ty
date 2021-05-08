@@ -9,7 +9,7 @@ mutable class Student {
     
     variables: {
         age: Int;
-        year: Int;
+        year: String;
     }
 }
 
@@ -33,8 +33,8 @@ singleton class AttributeGetters {
     
     actions: {
         main: () -> Student = {
-            value student: Student = Student("Diana", "Frost", Grades(11, 12, 14), 20, 2);
-            student.firstName ++ " " ++ student.lastName
+            value student: Student = Student("Diana", "Frost", Grades(11, 12, 14), 20, "BS1");
+            student.firstName ++ " " ++ student.lastName ++ ", year: " ++ student.year
         }
     }
 }

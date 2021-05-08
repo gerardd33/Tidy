@@ -48,6 +48,9 @@ getValueList (ValueTypeClass className) = do
 getValues :: ClassDecl -> [ValueIdent]
 getValues classDecl = map getValueName (getValueDecls classDecl)
 
+getVariables :: ClassDecl -> [ValueIdent]
+getVariables classDecl = map getValueName (getVariableDecls classDecl)
+
 getValueDecls :: ClassDecl -> [ValueDecl]
 getValueDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled (ValuesPresent (ValuesSBody valueDecls)) _ _ _)) =
     valueDecls
@@ -81,3 +84,11 @@ getFunctionDecls :: ClassDecl -> [FunctionDecl]
 getFunctionDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled _ _ (FunctionsPresent (FSBodyFilled functionDecls)) _)) =
     functionDecls
 getFunctionDecls _ = []
+
+hasGetter :: ValueType -> FunctionIdent -> StateMonad Bool
+hasGetter objectType functionIdentifier = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let attributeIdentifier = functionToValueIdent functionIdentifier
+    let attributes = getValues classDecl ++ getVariables classDecl
+    return $ attributeIdentifier `elem` attributes

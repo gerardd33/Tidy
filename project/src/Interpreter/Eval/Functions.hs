@@ -25,3 +25,6 @@ getFunctionType (PrivateFunctionDecl _ methodType _)  = methodType
 getMethodParamsList :: MethodType -> [ValueIdent]
 getMethodParamsList (FType (ParamList valueDecls) _) =
     map (getValueName . PublicValueDecl) valueDecls
+
+functionToValueIdent :: FunctionIdent -> ValueIdent
+functionToValueIdent (FIdent ident) = VIdent ident

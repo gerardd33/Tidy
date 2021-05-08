@@ -51,6 +51,10 @@ returnPass = do
 
 returnPure :: StateMonad Value -> StateMonad Result
 returnPure function = do
-    env <- ask
     value <- function
+    returnValue value
+
+returnValue :: Value -> StateMonad Result
+returnValue value = do
+    env <- ask
     return (value, env)
