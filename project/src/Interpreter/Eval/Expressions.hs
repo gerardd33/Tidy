@@ -64,9 +64,10 @@ evalExpr (EGetExpr (GetExprInstance objectIdentifier (FCall functionIdentifier a
     originalEnv <- ask
     evaluatedArgs <- evalArgumentList argList
     object <- getValue objectIdentifier
-    function <- getMemberFunction (getObjectType object) functionIdentifier
-    (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
-    (result, _) <- local (const functionLocalEnv) (evalFunction function)
+--     (result, _) <- if null evaluatedArgs && hasAttribute object functionIdentifier
+--                  then evalGetter object functionIdentifier
+--                  else evalMemberFunction object functionIdentifier evaluatedArgs
+    (result, _) <- evalMemberFunction object functionIdentifier evaluatedArgs
     return (result, originalEnv)
 
 
@@ -202,6 +203,12 @@ evalArgumentList argList = do
     env <- ask
     evalResults <- mapM evalExpr (argsToExprList argList)
     return $ map fst evalResults
+
+evalMemberFunction :: Value -> FunctionIdent -> [Value] -> StateMonad Result
+evalMemberFunction object functionIdentifier evaluatedArgs = do
+    function <- getMemberFunction (getObjectType object) functionIdentifier
+    (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
+    local (const functionLocalEnv) (evalFunction function)
 
 executeDeclarations :: [ValueDeclProper] -> StateMonad Result
 executeDeclarations [] = returnPass

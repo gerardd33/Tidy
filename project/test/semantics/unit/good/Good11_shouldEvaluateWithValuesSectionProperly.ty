@@ -7,9 +7,10 @@ immutable class SomeDummyInstantiableClass {
     
     functions: {
         someDummyFunction: () -> Int = {
-            2 * result
+            2 * (result1 + result2)
         } with values: {
-            result: Int = 22;
+            result1: Int = 9;
+            result2: Int = 13;
         }
     }
 }
