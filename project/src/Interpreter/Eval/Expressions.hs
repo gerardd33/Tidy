@@ -1,7 +1,7 @@
 module Interpreter.Eval.Expressions where
 
 import           Control.Monad.Reader
-import qualified Data.Map                     as Map
+import qualified Data.Map                           as Map
 import           Data.Maybe
 import           Data.Tuple
 
@@ -10,6 +10,7 @@ import           Interpreter.Eval.Classes
 import           Interpreter.Eval.Environment
 import           Interpreter.Eval.Functions
 import           Interpreter.Eval.Objects
+import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
 
 
@@ -33,10 +34,9 @@ evalExpr (EUnaryMinus expr) = evalUnaryOperator expr evalUnaryMinus
 evalExpr (ERelationalOperator expr1 operator expr2) = evalRelationalOperator expr1 expr2 operator
 evalExpr (EBooleanOperator expr1 operator expr2) = evalBooleanOperator expr1 expr2 operator
 
-evalExpr (ECtorCall (CCall classIdentifier args)) = do
+evalExpr (ECtorCall (CCall classIdentifier argList)) = do
     env <- ask
-    evalResults <- mapM evalExpr (argsToExprList args)
-    let evaluatedArgs = map fst evalResults
+    evaluatedArgs <- evalArgumentList argList
     let objectType = ValueTypeClass classIdentifier
     objectEnv <- buildObjectEnv objectType evaluatedArgs
     object <- newRegularObject objectType objectEnv
@@ -61,9 +61,13 @@ evalExpr (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
 
 -- TODO add other cases
 evalExpr (EGetExpr (GetExprInstance objectIdentifier (FCall functionIdentifier argList))) = do
+    originalEnv <- ask
+    evaluatedArgs <- evalArgumentList argList
     object <- getValue objectIdentifier
     function <- getMemberFunction (getObjectType object) functionIdentifier
-    evalFunction function
+    (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
+    (result, _) <- local (const functionLocalEnv) (evalFunction function)
+    return (result, originalEnv)
 
 
 evalBinaryOperator :: Expr -> Expr -> (Value -> Value -> StateMonad Value) -> StateMonad Result
@@ -141,26 +145,25 @@ evalEquality v1 v2 = return (newSingleValueObject $ BoolValue $ toBoolean $ v1 =
 evalNonEquality :: Value -> Value -> StateMonad Value
 evalNonEquality v1 v2 = return (newSingleValueObject $ BoolValue $ toBoolean $ v1 /= v2)
 
-declareValue :: ValueDeclProper -> StateMonad Result
-declareValue (InitializedValue identifier valueType expr) = do
-    (initializationValue, _) <- evalExpr expr
-    addValue identifier initializationValue
-
-getProperValueDecl :: ValueDecl -> ValueDeclProper
-getProperValueDecl (PublicValueDecl declProper)  = declProper
-getProperValueDecl (PrivateValueDecl declProper) = declProper
-
 buildObjectEnv :: ValueType -> [Value] -> StateMonad ObjectEnv
 buildObjectEnv objectType args = do
     (_, classEnv) <- ask
     let classDecl = classEnv Map.! classIdentFromType objectType
-    let ctorArgsList = getCtorArgsList classDecl
+    let ctorParamsList = getCtorParamsList classDecl
     initializedAttributes <- evalAttributeExpressions (getInitializedAttributeList classDecl)
-    let attributesFromCtor = Map.fromList $ zip ctorArgsList args
+    let attributesFromCtor = Map.fromList $ zip ctorParamsList args
     let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
     objectValueList <- getValueList objectType
     let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
     return $ ObjectEnv values variables
+
+addArgumentsToEnv :: FunctionDecl -> [Value] -> StateMonad Result
+addArgumentsToEnv function evaluatedArgs = do
+    (localEnv, classEnv) <- ask
+    let methodParamsList = getMethodParamsList $ getFunctionType function
+    let decls = zip methodParamsList evaluatedArgs
+    (_, newEnv) <- executeValueAdditions decls
+    return (pass, newEnv)
 
 evalAttributeExpressions :: [(ValueIdent, Expr)] -> StateMonad [(ValueIdent, Value)]
 evalAttributeExpressions attributeList = do
@@ -190,11 +193,32 @@ evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent ValuesAbsent)) =
 evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent (ValuesPresent (ValuesSBody valueDecls)))) = do
     originalEnv <- ask
     let decls = map getProperValueDecl valueDecls
-    declsResult <- mapM declareValue decls
-    let localEnv = snd $ head declsResult
+    (_, localEnv) <-  executeDeclarations decls
     (result, _) <- local (const localEnv) (evalExpr expr)
     return (result, originalEnv)
 
+evalArgumentList :: ArgumentList -> StateMonad [Value]
+evalArgumentList argList = do
+    env <- ask
+    evalResults <- mapM evalExpr (argsToExprList argList)
+    return $ map fst evalResults
+
+executeDeclarations :: [ValueDeclProper] -> StateMonad Result
+executeDeclarations [] = returnPass
+executeDeclarations (decl:decls) = do
+    (_, env) <- declareValue decl
+    local (const env) $ executeDeclarations decls
+
+executeValueAdditions :: [(ValueIdent, Value)] -> StateMonad Result
+executeValueAdditions [] = returnPass
+executeValueAdditions (addition:additions) = do
+    (_, env) <- uncurry addValue addition
+    local (const env) $ executeValueAdditions additions
+
+declareValue :: ValueDeclProper -> StateMonad Result
+declareValue (InitializedValue identifier valueType expr) = do
+    (initializationValue, _) <- evalExpr expr
+    addValue identifier initializationValue
 
 toBoolean :: Bool -> Boolean
 toBoolean True  = BTrue
