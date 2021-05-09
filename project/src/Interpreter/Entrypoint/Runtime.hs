@@ -1,4 +1,4 @@
-module Interpreter.Runtime where
+module Interpreter.Entrypoint.Runtime where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
@@ -23,6 +23,6 @@ runtimeBody :: Mode -> ClassDecl -> StateMonad Value
 runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
     (_, classEnv) <- ask
-    (_, singletonEnv) <- buildInitialLocalEnv classEnv
-    result <- local (const singletonEnv) $ evalAction $ fromJust $ getMainAction mainClass
+    (_, initialEnv) <- buildInitialLocalEnv classEnv
+    result <- local (const initialEnv) $ evalAction $ fromJust $ getMainAction mainClass
     return $ fst result

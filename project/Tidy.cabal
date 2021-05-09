@@ -24,14 +24,14 @@ library
       Interpreter.Common.Errors
       Interpreter.Common.Types
       Interpreter.Common.Utils
-      Interpreter.Entrypoint
+      Interpreter.Entrypoint.Runtime
+      Interpreter.Entrypoint.Static
       Interpreter.Eval.Actions
       Interpreter.Eval.Classes
       Interpreter.Eval.Expressions
       Interpreter.Eval.Functions
       Interpreter.Eval.Objects
       Interpreter.Eval.ValueDeclarations
-      Interpreter.Runtime
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

@@ -1,16 +1,15 @@
-module Interpreter.Entrypoint (interpret) where
+module Interpreter.Entrypoint.Static (interpret) where
 
 import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Interpreter.Common.Utils
+import           Interpreter.Entrypoint.Runtime
 import           Interpreter.Eval.Classes
-import           Interpreter.Runtime
 import           Parser.Tidy.Abs
 
 
 -- TODO static type checking before evaluation
--- TODO better separation of class loading and main execution, for now a POC
 interpret :: Mode -> Program -> IO ()
 interpret mode (ProgramEntrypoint classDeclarations) = do
     debugPrint mode "Loaded classes" classDeclarations
@@ -18,7 +17,7 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     let mainClass = findMainClass classDeclarations
     debugPrint mode "Main action" $ fromJust $ getMainAction mainClass
     result <- runtime mode classEnv mainClass
-    print result
+    debugPrint mode "Result" result
 
 
 -- TODO further things to check statically:
