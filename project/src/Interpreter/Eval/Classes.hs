@@ -7,6 +7,7 @@ import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Interpreter.Eval.Functions
+import           Interpreter.Eval.Objects
 import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
 
@@ -92,3 +93,22 @@ hasGetter objectType functionIdentifier = do
     let attributeIdentifier = functionToValueIdent functionIdentifier
     let attributes = getValues classDecl ++ getVariables classDecl
     return $ attributeIdentifier `elem` attributes
+
+singletonInstanceIdentifier :: ClassIdent -> ValueIdent
+singletonInstanceIdentifier (CIdent (UpperCaseIdent name)) = VIdent (LowerCaseIdent ("_singleton_" ++ name))
+
+buildObjectEnv :: ValueType -> [Value] -> [(ValueIdent, Value)] -> StateMonad ObjectEnv
+buildObjectEnv objectType args initializedAttributes = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let ctorParamsList = getCtorParamsList classDecl
+    let attributesFromCtor = Map.fromList $ zip ctorParamsList args
+    let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
+    objectValueList <- getValueList objectType
+    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    return $ ObjectEnv values variables
+
+isSingletonClass :: ClassDecl -> Bool
+isSingletonClass (ClassDeclConcrete MSingleton _ _ _) = True
+isSingletonClass (ClassDeclAbstract MSingleton _ _ _) = True
+isSingletonClass _ = False

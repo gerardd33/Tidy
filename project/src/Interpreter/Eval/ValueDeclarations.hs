@@ -2,7 +2,6 @@ module Interpreter.Eval.ValueDeclarations where
 
 import           Control.Monad.Reader
 import           Interpreter.Common.Types
-import           Interpreter.Eval.Environment
 import           Parser.Tidy.Abs
 
 

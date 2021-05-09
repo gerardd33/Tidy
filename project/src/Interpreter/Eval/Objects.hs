@@ -1,6 +1,7 @@
 module Interpreter.Eval.Objects where
 
 import           Control.Monad.Reader
+import qualified Data.Map                 as Map
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs

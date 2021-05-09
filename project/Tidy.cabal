@@ -27,7 +27,6 @@ library
       Interpreter.Entrypoint
       Interpreter.Eval.Actions
       Interpreter.Eval.Classes
-      Interpreter.Eval.Environment
       Interpreter.Eval.Expressions
       Interpreter.Eval.Functions
       Interpreter.Eval.Objects
