@@ -1,0 +1,20 @@
+singleton class Generator {
+    
+    values: {
+        base: Int = 478393;
+    }
+    
+    functions: {
+        generate: (seed: Int) -> Int = seed + 99
+    }
+}
+
+singleton class SingletonClasses {
+    
+    actions: {
+        main: () -> Int = {
+            Generator.base + Generator.generate(7) // 478499
+        }
+    }
+}
+

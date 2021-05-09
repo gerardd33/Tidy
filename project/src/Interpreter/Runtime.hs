@@ -11,17 +11,18 @@ import           Interpreter.Common.Types
 import           Interpreter.Common.Utils
 import           Interpreter.Eval.Actions
 import           Interpreter.Eval.Classes
-import           Interpreter.Eval.Environment
+import           Interpreter.Eval.Expressions
 import           Parser.Tidy.Abs
 
 
 runtime :: Mode -> ClassEnv -> ClassDecl -> IO (Either RuntimeException Value)
 runtime mode classEnv mainClass = runExceptT $ evalStateT
-    (runReaderT (runtimeBody mode classEnv mainClass) (buildInitialEnv classEnv)) buildInitialState
+    (runReaderT (runtimeBody mode mainClass) (buildInitialEnv classEnv)) buildInitialState
 
-runtimeBody :: Mode -> ClassEnv -> ClassDecl -> StateMonad Value
-runtimeBody mode classEnv mainClass = do
+runtimeBody :: Mode -> ClassDecl -> StateMonad Value
+runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
-    -- TODO initial environment and state updates
-    result <- evalAction $ fromJust $ getMainAction mainClass
+    (_, classEnv) <- ask
+    (_, singletonEnv) <- buildInitialLocalEnv classEnv
+    result <- local (const singletonEnv) $ evalAction $ fromJust $ getMainAction mainClass
     return $ fst result

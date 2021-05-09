@@ -1,0 +1,26 @@
+immutable class SomeDummyInstantiableClass {
+    
+    values: {
+        someDummyAttribute: Int = 3;
+        anotherDummyAttribute: Int;
+    }
+    
+    functions: {
+        someDummyFunction: () -> Int = {
+            2 * (result1 + result2)
+        } with values: {
+            result1: Int = 9;
+            result2: Int = 13;
+        }
+    }
+}
+
+singleton class Methods {
+    
+    actions: {
+        main: () -> Int = {
+            value worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
+            worker.someDummyFunction() // 44
+        }
+    }
+}

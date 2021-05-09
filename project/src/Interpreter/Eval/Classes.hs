@@ -1,11 +1,14 @@
 module Interpreter.Eval.Classes where
 
 import           Control.Monad.Reader
-import qualified Data.List                as List
-import qualified Data.Map                 as Map
+import qualified Data.List                          as List
+import qualified Data.Map                           as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
+import           Interpreter.Eval.Functions
+import           Interpreter.Eval.Objects
+import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
 
 {-# ANN module ("HLint: ignore Use record patterns"::String) #-}
@@ -46,6 +49,9 @@ getValueList (ValueTypeClass className) = do
 getValues :: ClassDecl -> [ValueIdent]
 getValues classDecl = map getValueName (getValueDecls classDecl)
 
+getVariables :: ClassDecl -> [ValueIdent]
+getVariables classDecl = map getValueName (getVariableDecls classDecl)
+
 getValueDecls :: ClassDecl -> [ValueDecl]
 getValueDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled (ValuesPresent (ValuesSBody valueDecls)) _ _ _)) =
     valueDecls
@@ -56,29 +62,10 @@ getVariableDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled _ (VariablesPresent (
     variableDecls
 getVariableDecls _ = []
 
-getCtorArgsList :: ClassDecl -> [ValueIdent]
-getCtorArgsList classDecl = uninitializedValues ++ uninitializedVariables
+getCtorParamsList :: ClassDecl -> [ValueIdent]
+getCtorParamsList classDecl = uninitializedValues ++ uninitializedVariables
     where uninitializedValues = map getValueName $ filter (not . isInitialized) (getValueDecls classDecl)
           uninitializedVariables = map getValueName $ filter (not . isInitialized) (getVariableDecls classDecl)
-
-isInitialized :: ValueDecl -> Bool
-isInitialized (PublicValueDecl (InitializedValue _ _ _))  = True
-isInitialized (PrivateValueDecl (InitializedValue _ _ _)) = True
-isInitialized _                                           = False
-
-toNameTypePair :: ValueDecl -> (ValueIdent, ValueType)
-toNameTypePair (PublicValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
-toNameTypePair (PrivateValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
-
-getValueName :: ValueDecl -> ValueIdent
-getValueName (PublicValueDecl (UninitializedValue name _))  = name
-getValueName (PublicValueDecl (InitializedValue name _ _))  = name
-getValueName (PrivateValueDecl (UninitializedValue name _)) = name
-getValueName (PrivateValueDecl (InitializedValue name _ _)) = name
-
-getNameExprPair :: ValueDecl -> (ValueIdent, Expr)
-getNameExprPair (PublicValueDecl (InitializedValue name _ expr))  = (name, expr)
-getNameExprPair (PrivateValueDecl (InitializedValue name _ expr)) = (name, expr)
 
 classIdentFromType :: ValueType -> ClassIdent
 classIdentFromType (ValueTypeClass classIdent) = classIdent
@@ -87,3 +74,41 @@ getInitializedAttributeList :: ClassDecl -> [(ValueIdent, Expr)]
 getInitializedAttributeList classDecl = initializedValues ++ initializedVariables
     where initializedValues = map getNameExprPair $ filter isInitialized (getValueDecls classDecl)
           initializedVariables = map getNameExprPair $ filter isInitialized (getVariableDecls classDecl)
+
+getMemberFunction :: ValueType -> FunctionIdent -> StateMonad FunctionDecl
+getMemberFunction (ValueTypeClass className) functionIdentifier = do
+    (_, classEnv) <- ask
+    let functions = getFunctionDecls $ classEnv Map.! className
+    return $ fromJust $ List.find (\f -> getFunctionName f == functionIdentifier) functions
+
+getFunctionDecls :: ClassDecl -> [FunctionDecl]
+getFunctionDecls (ClassDeclConcrete _ _ _ (ClassBodyFilled _ _ (FunctionsPresent (FSBodyFilled functionDecls)) _)) =
+    functionDecls
+getFunctionDecls _ = []
+
+hasGetter :: ValueType -> FunctionIdent -> StateMonad Bool
+hasGetter objectType functionIdentifier = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let attributeIdentifier = functionToValueIdent functionIdentifier
+    let attributes = getValues classDecl ++ getVariables classDecl
+    return $ attributeIdentifier `elem` attributes
+
+singletonInstanceIdentifier :: ClassIdent -> ValueIdent
+singletonInstanceIdentifier (CIdent (UpperCaseIdent name)) = VIdent (LowerCaseIdent ("_singleton_" ++ name))
+
+buildObjectEnv :: ValueType -> [Value] -> [(ValueIdent, Value)] -> StateMonad ObjectEnv
+buildObjectEnv objectType args initializedAttributes = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let ctorParamsList = getCtorParamsList classDecl
+    let attributesFromCtor = Map.fromList $ zip ctorParamsList args
+    let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
+    objectValueList <- getValueList objectType
+    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    return $ ObjectEnv values variables
+
+isSingletonClass :: ClassDecl -> Bool
+isSingletonClass (ClassDeclConcrete MSingleton _ _ _) = True
+isSingletonClass (ClassDeclAbstract MSingleton _ _ _) = True
+isSingletonClass _ = False
