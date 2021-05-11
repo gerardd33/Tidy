@@ -8,9 +8,9 @@ import           Data.Tuple
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Types
-import           Interpreter.Common.Utils
-import           Interpreter.Eval.Actions
-import           Interpreter.Eval.Classes
+import           Interpreter.Common.Debug
+import           Interpreter.Common.Helper.Methods
+import           Interpreter.Common.Helper.Classes
 import           Interpreter.Eval.Expressions
 import           Parser.Tidy.Abs
 

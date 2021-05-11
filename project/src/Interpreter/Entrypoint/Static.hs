@@ -3,9 +3,9 @@ module Interpreter.Entrypoint.Static (interpret) where
 import           Data.Maybe
 
 import           Interpreter.Common.Types
-import           Interpreter.Common.Utils
+import           Interpreter.Common.Debug
 import           Interpreter.Entrypoint.Runtime
-import           Interpreter.Eval.Classes
+import           Interpreter.Common.Helper.Classes
 import           Parser.Tidy.Abs
 
 

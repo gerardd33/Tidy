@@ -1,9 +1,12 @@
-module Interpreter.Eval.Functions where
+module Interpreter.Common.Helper.Methods where
 
+import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Types
-import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
 
+
+getActionBody :: ActionDecl -> ActionBody
+getActionBody (ActionDeclaration _ _ _ _ actionBody) = actionBody
 
 argsToExprList :: ArgList -> [Expr]
 argsToExprList ArgumentListAbsent         = []

@@ -6,7 +6,7 @@ import           System.Environment            (getArgs)
 import           System.Exit                   (exitFailure)
 import           System.IO
 
-import           Interpreter.Common.Utils
+import           Interpreter.Common.Debug
 import           Interpreter.Entrypoint.Static (interpret)
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex               (Token)

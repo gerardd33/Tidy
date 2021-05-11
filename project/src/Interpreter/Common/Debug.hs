@@ -1,4 +1,4 @@
-module Interpreter.Common.Utils where
+module Interpreter.Common.Debug where
 
 import           Control.Monad
 import           Parser.Tidy.Abs

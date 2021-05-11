@@ -1,17 +1,12 @@
-module Interpreter.Eval.Classes where
+module Interpreter.Common.Helper.Classes where
 
-import           Control.Monad.Reader
-import qualified Data.List                          as List
-import qualified Data.Map                           as Map
+import qualified Data.List                         as List
+import qualified Data.Map                          as Map
 import           Data.Maybe
 
+import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Types
-import           Interpreter.Eval.Functions
-import           Interpreter.Eval.Objects
-import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
-
-{-# ANN module ("HLint: ignore Use record patterns"::String) #-}
 
 
 hasMainAction :: ClassDecl -> Bool
@@ -37,11 +32,6 @@ findMainClass = head . filter hasMainAction
 isActionMain :: ActionDecl -> Bool
 isActionMain (ActionDeclaration _ _ (MethodIdentifier (LowerCaseIdent "main")) _ _)   = True
 isActionMain _                                                                        = False
-
-getValueList :: ObjectType -> StateMonad [ObjectIdent]
-getValueList (ObjectTypeClass className _) = do
-    (_, classEnv) <- ask
-    return $ getValues $ classEnv Map.! className
 
 getValues :: ClassDecl -> [ObjectIdent]
 getValues classDecl = map getObjectName (getValueDecls classDecl)
@@ -72,40 +62,15 @@ getInitializedAttributeList classDecl = initializedValues ++ initializedVariable
     where initializedValues = map toNameExprPair $ filter isInitialized (getValueDecls classDecl)
           initializedVariables = map toNameExprPair $ filter isInitialized (getVariableDecls classDecl)
 
-getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
-getMemberFunction (ObjectTypeClass className _) functionIdentifier = do
-    (_, classEnv) <- ask
-    let functions = getFunctionDecls $ classEnv Map.! className
-    return $ fromJust $ List.find (\f -> getFunctionName f == functionIdentifier) functions
-
 getFunctionDecls :: ClassDecl -> [FunctionDecl]
 getFunctionDecls (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ (FunctionsPresent functionDecls) _)) =
     functionDecls
 getFunctionDecls _ = []
 
-hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
-hasGetter objectType functionIdentifier = do
-    (_, classEnv) <- ask
-    let classDecl = classEnv Map.! classIdentFromType objectType
-    let attributeIdentifier = functionToObjectIdent functionIdentifier
-    let attributes = getValues classDecl ++ getVariables classDecl
-    return $ attributeIdentifier `elem` attributes
+isSingletonClass :: ClassDecl -> Bool
+isSingletonClass (ClassDeclaration _ MSingleton _ _ _) = True
+isSingletonClass _                                     = False
 
 singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
 singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent name)) =
     ObjectIdentifier (LowerCaseIdent ("_singleton_" ++ name))
-
-buildObjectEnv :: ObjectType -> [Value] -> [(ObjectIdent, Value)] -> StateMonad ObjectEnv
-buildObjectEnv objectType args initializedAttributes = do
-    (_, classEnv) <- ask
-    let classDecl = classEnv Map.! classIdentFromType objectType
-    let ctorParamsList = getCtorParamsList classDecl
-    let attributesFromCtor = Map.fromList $ zip ctorParamsList args
-    let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
-    objectValueList <- getValueList objectType
-    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
-    return $ ObjectEnv values variables
-
-isSingletonClass :: ClassDecl -> Bool
-isSingletonClass (ClassDeclaration _ MSingleton _ _ _) = True
-isSingletonClass _                                     = False

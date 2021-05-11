@@ -6,7 +6,7 @@ import           Control.Monad.State
 import qualified Data.Map                  as Map
 
 import           Interpreter.Common.Errors
-import           Interpreter.Common.Utils
+import           Interpreter.Common.Debug
 import           Parser.Tidy.Abs
 
 
@@ -20,7 +20,6 @@ type ClassEnv = Map.Map ClassIdent ClassDecl
 type Result = (Value, Env)
 type Location = Integer
 
--- TODO better printing (custom show instance)
 data Value = RegularObject ObjectType ObjectEnv | SingleValueObject SingleValue
     deriving (Eq, Show)
 

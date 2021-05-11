@@ -2,15 +2,15 @@ module Interpreter.Eval.Expressions where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                           as Map
+import qualified Data.List                         as List
+import qualified Data.Map                          as Map
 import           Data.Maybe
 import           Data.Tuple
 
+import           Interpreter.Common.Helper.Classes
+import           Interpreter.Common.Helper.Methods
+import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Types
-import           Interpreter.Eval.Classes
-import           Interpreter.Eval.Functions
-import           Interpreter.Eval.Objects
-import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
 
 
@@ -42,7 +42,7 @@ evalExpr (EConstructorCall (CallConstructor classIdentifier argList)) = do
     let objectType = ObjectTypeClass classIdentifier GenericParameterAbsent
     initializedAttributes <- evalAttributeExpressions (getInitializedAttributeList classDecl)
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
-    object <- newRegularObject objectType objectEnv
+    let object = RegularObject objectType objectEnv
     return (object, (localEnv, classEnv))
 
 evalExpr (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
@@ -311,4 +311,46 @@ buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
     let objectType = ObjectTypeClass classIdentifier GenericParameterAbsent
     initializedAttributes <- evalAttributeExpressions (getInitializedAttributeList classDecl)
     objectEnv <- buildObjectEnv objectType [] initializedAttributes
-    newRegularObject objectType objectEnv
+    return $ RegularObject objectType objectEnv
+
+
+
+-- TODO refactor and move somewhere else
+
+-- TODO passing parameters and other context information
+evalAction :: ActionDecl -> StateMonad Result
+evalAction action = evalActionBody (getActionBody action)
+
+evalActionBody :: ActionBody -> StateMonad Result
+evalActionBody (ActionBodyOneLine expr)    = evalExprList [expr]
+evalActionBody (ActionBodyMultiLine exprs) = evalExprList exprs
+
+getValueList :: ObjectType -> StateMonad [ObjectIdent]
+getValueList (ObjectTypeClass className _) = do
+    (_, classEnv) <- ask
+    return $ getValues $ classEnv Map.! className
+
+getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
+getMemberFunction (ObjectTypeClass className _) functionIdentifier = do
+    (_, classEnv) <- ask
+    let functions = getFunctionDecls $ classEnv Map.! className
+    return $ fromJust $ List.find (\f -> getFunctionName f == functionIdentifier) functions
+
+hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
+hasGetter objectType functionIdentifier = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let attributeIdentifier = functionToObjectIdent functionIdentifier
+    let attributes = getValues classDecl ++ getVariables classDecl
+    return $ attributeIdentifier `elem` attributes
+
+buildObjectEnv :: ObjectType -> [Value] -> [(ObjectIdent, Value)] -> StateMonad ObjectEnv
+buildObjectEnv objectType args initializedAttributes = do
+    (_, classEnv) <- ask
+    let classDecl = classEnv Map.! classIdentFromType objectType
+    let ctorParamsList = getCtorParamsList classDecl
+    let attributesFromCtor = Map.fromList $ zip ctorParamsList args
+    let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
+    objectValueList <- getValueList objectType
+    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    return $ ObjectEnv values variables
