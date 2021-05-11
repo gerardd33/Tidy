@@ -82,15 +82,16 @@ Initialized. Initialization ::= "=" Expr ;
 
 -- FUNCTIONS --------------------------
 
-FIdent. FunctionIdent ::= LowerCaseIdent ;
-FType. MethodType ::= ParameterList "->" ObjectType;
+MethodIdentifier. MethodIdent ::= LowerCaseIdent ;
+MethodTypeSignature. MethodType ::= ParameterList "->" ObjectType;
 
 ParamList. ParameterList ::= "(" [ObjectDeclProper] ")" ;
 
 separator FunctionDecl "" ;
-OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" MethodType "=" FunctionBody ;
-PublicFunctionDecl. FunctionDecl ::= FunctionIdent ":" MethodType "=" FunctionBody ;
-PrivateFunctionDecl. FunctionDecl ::= "private" FunctionIdent ":" MethodType "=" FunctionBody ;
+FunctionDeclaration. FunctionDecl ::= OverrideModifier VisibilityModifier MethodIdent ":" MethodType "=" FunctionBody ;
+
+MNonOverriding. OverrideModifier ::= ;
+MOverride. OverrideModifier ::= "override" ;
 
 FunctionBodyOneLine. FunctionBody ::= Expr ;
 FunctionBodyMultiLine. FunctionBody ::= "{" Expr "}" WithValues ;
@@ -102,9 +103,7 @@ WithValuesPresent. WithValues ::= "with" ValuesSection ;
 -- ACTIONS ----------------------------
 
 separator ActionDecl "" ; 
-OverrideActionDecl. ActionDecl ::= "override" FunctionIdent ":" MethodType "=" ActionBody ;
-PublicActionDecl. ActionDecl ::= FunctionIdent ":" MethodType "=" ActionBody ;
-PrivateActionDecl. ActionDecl ::= "private" FunctionIdent ":" MethodType "=" ActionBody ;
+ActionDeclaration. ActionDecl ::= OverrideModifier VisibilityModifier MethodIdent ":" MethodType "=" ActionBody ;
 
 ActionBodyOneLine. ActionBody ::= Expr ;
 ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
@@ -183,8 +182,8 @@ ArgListPresent. ArgumentList ::= "(" [FunctionArgument] ")" ;
 separator FunctionArgument "," ;
 FunctionArg. FunctionArgument ::= Expr ;
 
-FCall. FunctionCall ::= "." FunctionIdent ArgumentList ;
-ACall. ActionCall ::= "#" FunctionIdent ArgumentList ;
+FCall. FunctionCall ::= "." MethodIdent ArgumentList ;
+ACall. ActionCall ::= "#" MethodIdent ArgumentList ;
 CCall. ConstructorCall ::= ClassIdent ArgumentList ;
 
 
