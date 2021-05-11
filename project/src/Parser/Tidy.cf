@@ -19,15 +19,13 @@ comment "/*" "*/" ;
 -- CLASS DECLARATIONS -------------------------
 
 separator ClassIdent "," ;
-CIdent. ClassIdent ::= UpperCaseIdent ;
+ClassIdentifier. ClassIdent ::= UpperCaseIdent ;
 
 separator nonempty ClassDecl "" ;
-ClassDeclConcrete. ClassDecl ::= ClassType "class" ClassIdent Inheritance ClassBody ;
-ClassDeclAbstract. ClassDecl ::= "abstract" ClassType "class" ClassIdent Inheritance ClassBody ;
+ClassDeclaration. ClassDecl ::= AbstractModifier ClassTypeModifier "class" ClassIdent Inheritance ClassBody ;
 
-SuperclassAbsent. Inheritance ::= ;
-SuperclassPresent. Inheritance ::= "extends" ClassIdent ;
-
+SuperclassPresent. Inheritance ::= ;
+SuperclassAbsent. Inheritance ::= "extends" ClassIdent ;
 
 ClassBodyEmpty. ClassBody ::= ;
 ClassBodyFilled. ClassBody ::= "{" ValuesSection VariablesSection FunctionsSection ActionsSection "}" ;
@@ -35,60 +33,59 @@ ClassBodyFilled. ClassBody ::= "{" ValuesSection VariablesSection FunctionsSecti
 
 -- CLASS MODIFIERS ----------------------------
 
-MMutable. ClassType ::= "mutable" ;
-MImmutable. ClassType ::= "immutable" ;
-MSingleton. ClassType ::= "singleton" ;
+MMutable. ClassTypeModifier ::= "mutable" ;
+MImmutable. ClassTypeModifier ::= "immutable" ;
+MSingleton. ClassTypeModifier ::= "singleton" ;
+
+MConcrete. AbstractModifier ::= ;
+MAbstract. AbstractModifier ::= "abstract" ;
 
 
--- CLASS SECTION DECLARATIONS -----------------
+-- CLASS SECTIONS -----------------
 
 ValuesAbsent. ValuesSection ::= ;
-ValuesPresent. ValuesSection ::= "values:" ValSBody ;
+ValuesPresent. ValuesSection ::= "values:" "{" [ObjectDecl] "}" ;
 
 VariablesAbsent. VariablesSection ::= ;
-VariablesPresent. VariablesSection ::= "variables:" VarSBody ;
+VariablesPresent. VariablesSection ::= "variables:" "{" [ObjectDecl] "}" ;
 
 FunctionsAbsent. FunctionsSection ::= ;
-FunctionsPresent. FunctionsSection ::= "functions:" FSBody ;
+FunctionsPresent. FunctionsSection ::= "functions:" "{" [FunctionDecl] "}" ;
 
 ActionsAbsent. ActionsSection ::= ;
-ActionsPresent. ActionsSection ::= "actions:" ASBody ;
+ActionsPresent. ActionsSection ::= "actions:" "{" [ActionDecl] "}" ;
 
 
--- VALUES SECTION -----------------------------
+-- OBJECTS -----------------------------
 
-ValuesSBody. ValSBody ::= "{" [ValueDecl] "}" ;
+ObjectIdentifier. ObjectIdent ::= LowerCaseIdent ;
 
-VIdent. ValueIdent ::= LowerCaseIdent ;
+ObjectTypeClass. ObjectType ::=  ClassIdent GenericParameter ;
+ObjectTypeFunction. ObjectType ::= "get" MethodType ;
+ObjectTypeAction. ObjectType ::= "do" MethodType ;
 
-ValueTypeClass. ValueType ::=  ClassIdent ;
-ValueTypeGeneric. ValueType ::= ClassIdent "[" [ClassIdent] "]" ;
-ValueTypeFunction. ValueType ::= "get" MethodType ;
-ValueTypeAction. ValueType ::= "do" MethodType ;
+GenericPrameterAbsent. GenericParameter ::= ;
+GenericParameterPresent. GenericParameter ::= "[" [ClassIdent] "]" ; 
 
-separator ValueDecl "" ;
-PublicValueDecl. ValueDecl ::= ValueDeclProper ";" ;
-PrivateValueDecl. ValueDecl ::= "private" ValueDeclProper ";" ;
+separator ObjectDecl "" ;
+ObjectDeclaration. ObjectDecl ::= VisibilityModifier ObjectDeclProper ";" ;
 
-separator ValueDeclProper "," ;
-UninitializedValue. ValueDeclProper ::= ValueIdent ":" ValueType ;
-InitializedValue. ValueDeclProper ::= ValueIdent ":" ValueType "=" Expr ;
+MPublic. VisibilityModifier ::= ;
+MPrivate. VisibilityModifier ::= "private" ;
 
+separator ObjectDeclProper "," ;
+ObjectDeclarationProper. ObjectDeclProper ::= ObjectIdent ":" ObjectType Initialization ;
 
--- VARIABLES SECTION --------------------------
-
-VariablesSBody. VarSBody ::= "{" [ValueDecl] "}" ;
+Uninitialized. Initialization ::= ;
+Initialized. Initialization ::= "=" Expr ;
 
 
--- FUNCTIONS SECTION --------------------------
-
-FSBodyEmpty. FSBody ::= ;
-FSBodyFilled. FSBody ::= "{" [FunctionDecl] "}" ;
+-- FUNCTIONS --------------------------
 
 FIdent. FunctionIdent ::= LowerCaseIdent ;
-FType. MethodType ::= ParameterList "->" ValueType;
+FType. MethodType ::= ParameterList "->" ObjectType;
 
-ParamList. ParameterList ::= "(" [ValueDeclProper] ")" ;
+ParamList. ParameterList ::= "(" [ObjectDeclProper] ")" ;
 
 separator FunctionDecl "" ;
 OverrideFunctionDecl. FunctionDecl ::= "override" FunctionIdent ":" MethodType "=" FunctionBody ;
@@ -102,10 +99,7 @@ WithValuesAbsent. WithValues ::= ;
 WithValuesPresent. WithValues ::= "with" ValuesSection ;
 
 
--- ACTIONS SECTION ----------------------------
-
-ASBodyEmpty. ASBody ::= ;
-ASBodyFilled. ASBody ::= "{" [ActionDecl] "}" ;
+-- ACTIONS ----------------------------
 
 separator ActionDecl "" ; 
 OverrideActionDecl. ActionDecl ::= "override" FunctionIdent ":" MethodType "=" ActionBody ;
@@ -122,7 +116,7 @@ separator Expr "" ;
 coercions Expr 10 ;
 
 ELiteral. Expr10 ::= Literal ;
-ELocalValue. Expr10 ::= ValueIdent ;
+ELocalValue. Expr10 ::= ObjectIdent ;
 
 EGetExpr. Expr9 ::= GetExpr ;
 EDoExpr. Expr9 ::= DoExpr ;
@@ -137,7 +131,7 @@ ECtorCall. Expr7 ::= ConstructorCall ;
 EImperativeControlFlow. Expr6 ::= ImperativeControlFlow ;
 EFunctionalControlFlow. Expr6 ::= FunctionalControlFlow ;
 
-ELocalValueDecl. Expr5 ::= LocalValueDecl ;
+ELocalObjectDecl. Expr5 ::= LocalObjectDecl ;
 
 EUnaryNot. Expr4 ::= "not" Expr5 ;
 EUnaryMinus. Expr4 ::= "-" Expr5 ;
@@ -169,7 +163,7 @@ VPass. Void ::= "Pass" ;
 
 -- LOCAL VALUE DECLARATIONS ------------------
 
-LocalVDecl. LocalValueDecl ::= "value" ValueDecl ;
+LocalVDecl. LocalObjectDecl ::= "value" ObjectDecl ;
 
 
 -- LAMBDAS -----------------------------------
@@ -196,14 +190,14 @@ CCall. ConstructorCall ::= ClassIdent ArgumentList ;
 
 -- GET EXPRESSIONS ----------------------------
 
-GetExprInstance. GetExpr ::= ValueIdent FunctionCall ;
+GetExprInstance. GetExpr ::= ObjectIdent FunctionCall ;
 GetExprStatic. GetExpr ::= ClassIdent FunctionCall ;
 GetExprChain. GetExpr ::= GetExpr FunctionCall ;
 
 
 -- DO EXPRESSIONS ----------------------------
 
-DoExprInstance. DoExpr ::= ValueIdent ActionCall ;
+DoExprInstance. DoExpr ::= ObjectIdent ActionCall ;
 DoExprStatic. DoExpr ::= ClassIdent ActionCall ;
 DoExprChain. DoExpr ::= GetExpr ActionCall ;
 
@@ -211,7 +205,7 @@ DoExprChain. DoExpr ::= GetExpr ActionCall ;
 -- IMPERATIVE CONTROL FLOW -------------------
 
 IWhile. ImperativeControlFlow ::= "while" "(" Expr ")" "{" [Expr] "}" ;
-IForeach. ImperativeControlFlow ::= "for" "(" ValueDecl "in" Expr ")" "{" [Expr] "}" ;
+IForeach. ImperativeControlFlow ::= "for" "(" ObjectDecl "in" Expr ")" "{" [Expr] "}" ;
 IIf. ImperativeControlFlow ::= "if" "(" Expr ")" "{" [Expr] "}" OptionalElseBranch ;
 
 ElsePresent. OptionalElseBranch ::= "else" "{" [Expr] "}" ;
