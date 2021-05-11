@@ -41,7 +41,7 @@ MConcrete. AbstractModifier ::= ;
 MAbstract. AbstractModifier ::= "abstract" ;
 
 
--- CLASS SECTIONS -----------------
+-- CLASS SECTIONS -----------------------------
 
 ValuesAbsent. ValuesSection ::= ;
 ValuesPresent. ValuesSection ::= "values:" "{" [ObjectDecl] "}" ;
@@ -56,7 +56,7 @@ ActionsAbsent. ActionsSection ::= ;
 ActionsPresent. ActionsSection ::= "actions:" "{" [ActionDecl] "}" ;
 
 
--- OBJECTS -----------------------------
+-- OBJECTS ------------------------------------
 
 ObjectIdentifier. ObjectIdent ::= LowerCaseIdent ;
 ObjectTypeClass. ObjectType ::=  ClassIdent GenericParameter ;
@@ -79,7 +79,7 @@ Uninitialized. Initialization ::= ;
 Initialized. Initialization ::= "=" Expr ;
 
 
--- FUNCTIONS --------------------------
+-- METHODS ------------------------------------
 
 MethodIdentifier. MethodIdent ::= LowerCaseIdent ;
 MethodTypeSignature. MethodType ::= ParamList "->" ObjectType;
@@ -97,9 +97,6 @@ FunctionBodyMultiLine. FunctionBody ::= "{" Expr "}" WithValues ;
 WithValuesAbsent. WithValues ::= ;
 WithValuesPresent. WithValues ::= "with" ValuesSection ;
 
-
--- ACTIONS ----------------------------
-
 separator ActionDecl "" ;
 ActionDeclaration. ActionDecl ::= OverrideModifier VisibilityModifier MethodIdent ":" MethodType "=" ActionBody ;
 
@@ -107,7 +104,7 @@ ActionBodyOneLine. ActionBody ::= Expr ;
 ActionBodyMultiLine. ActionBody ::= "{" [Expr] "}" ;
 
 
--- EXPRESSIONS -------------------------------
+-- EXPRESSIONS --------------------------------
 
 separator Expr "" ;
 coercions Expr 10 ;
@@ -118,12 +115,10 @@ ELocalValue. Expr10 ::= ObjectIdent ;
 EGetExpression. Expr9 ::= GetExpr ;
 EDoExpression. Expr9 ::= DoExpr ;
 
-ELambdaFunction. Expr8 ::= LambdaFunction ;
-ELambdaAction. Expr8 ::= LambdaAction ;
+EConstructorCall. Expr8 ::= CtorCall ;
 
-ELocalFunctionCall. Expr7 ::= "local" FunctionCall ;
-ELocalActionCall. Expr7 ::= "local" ActionCall ;
-EConstructorCall. Expr7 ::= CtorCall ;
+ELambdaFunction. Expr7 ::= LambdaFunction ;
+ELambdaAction. Expr7 ::= LambdaAction ;
 
 EImperativeControlFlow. Expr6 ::= ImperativeControlFlow ;
 EFunctionalControlFlow. Expr6 ::= FunctionalControlFlow ;
@@ -135,6 +130,7 @@ EUnaryMinus. Expr4 ::= "-" Expr5 ;
 
 EMultiply. Expr3 ::= Expr3 "*" Expr4 ;
 EDivide. Expr3 ::= Expr3 "/" Expr4 ;
+EModulo. Expr3 ::= Expr3 "%" Expr4 ;
 
 EAdd. Expr2 ::= Expr2 "+" Expr3 ;
 ESubtract. Expr2 ::= Expr2 "-" Expr3 ;
@@ -145,7 +141,7 @@ ERelationalOperator. Expr1 ::= Expr1 RelationalOperator Expr2 ;
 EBooleanOperator. Expr ::= Expr1 BooleanOperator Expr ;
 
 
--- LITERALS ----------------------------------
+-- LITERALS -----------------------------------
 
 LInt. Literal ::= Integer ;
 LBool. Literal ::= Boolean ;
@@ -158,12 +154,12 @@ BFalse. Boolean ::= "False" ;
 VPass. Void ::= "Pass" ;
 
 
--- LOCAL VALUES ------------------
+-- LOCAL VALUES -------------------------------
 
 LocalValueDeclaration. LocalValueDecl ::= "value" ObjectDecl ;
 
 
--- LAMBDAS -----------------------------------
+-- LAMBDAS ------------------------------------
 
 LambdaFunctionOneLine. LambdaFunction ::= "get" ParamList "->" Expr ";" ;
 LambdaFunctionMultiLine. LambdaFunction ::= "get" ParamList "->" "{" Expr "}" ;
@@ -172,7 +168,7 @@ LambdaActionOneLine. LambdaAction ::= "do" ParamList "->" Expr ";" ;
 LambdaActionMultiLine. LambdaAction ::= "do" ParamList "->" "{" [Expr] "}" ;
 
 
--- FUNCTION AND CONSTRUCTOR CALLS --------------
+-- FUNCTION AND CONSTRUCTOR CALLS -------------
 
 ArgumentListAbsent. ArgList ::= ;
 ArgumentListPresent. ArgList ::= "(" [FunctionArg] ")" ;
@@ -192,14 +188,14 @@ GetExpressionStatic. GetExpr ::= ClassIdent FunctionCall ;
 GetExpressionChain. GetExpr ::= GetExpr FunctionCall ;
 
 
--- DO EXPRESSIONS ----------------------------
+-- DO EXPRESSIONS -----------------------------
 
 DoExpressionInstance. DoExpr ::= ObjectIdent ActionCall ;
 DoExpressionStatic. DoExpr ::= ClassIdent ActionCall ;
 DoExpressionChain. DoExpr ::= GetExpr ActionCall ;
 
 
--- IMPERATIVE CONTROL FLOW -------------------
+-- IMPERATIVE CONTROL FLOW --------------------
 
 IWhile. ImperativeControlFlow ::= "while" "(" Expr ")" "{" [Expr] "}" ;
 IForeach. ImperativeControlFlow ::= "for" "(" ObjectDecl "in" Expr ")" "{" [Expr] "}" ;
@@ -210,7 +206,7 @@ IElseIf. OptionalElseBranch ::= "elif" "(" Expr ")" "{" [Expr] "}" OptionalElseB
 IElseAbsent. OptionalElseBranch ::= ;
 
 
--- FUNCTIONAL CONTROL FLOW -------------------
+-- FUNCTIONAL CONTROL FLOW --------------------
 
 FIfThenElse. FunctionalControlFlow ::= "if" "(" Expr ")" ThenBranch ElseBranch ;
 
@@ -228,7 +224,7 @@ FCase. MatchCase ::= "case" Pattern "->" Expr ;
 FTypePattern. Pattern ::= ClassIdent ; 
 
 
--- RELATIONAL OPERATORS ----------------------
+-- RELATIONAL OPERATORS -----------------------
 
 RLess. RelationalOperator ::= "<" ;
 RLessEqual. RelationalOperator ::= "<=" ;
@@ -238,7 +234,7 @@ REqual. RelationalOperator ::= "==" ;
 RNotEqual. RelationalOperator ::= "!=" ;
 
 
--- BOOLEAN OPERATORS -------------------------
+-- BOOLEAN OPERATORS --------------------------
 
 BAnd. BooleanOperator ::= "and" ;
 BOr. BooleanOperator ::= "or" ;
