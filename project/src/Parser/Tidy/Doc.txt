@@ -42,18 +42,19 @@ The reserved words used in Tidy are the following:
   | ``and`` | ``case`` | ``class`` | ``do``
   | ``elif`` | ``else`` | ``extends`` | ``for``
   | ``get`` | ``if`` | ``immutable`` | ``in``
-  | ``local`` | ``match`` | ``mutable`` | ``not``
-  | ``or`` | ``override`` | ``private`` | ``singleton``
-  | ``then`` | ``value`` | ``while`` | ``with``
+  | ``match`` | ``mutable`` | ``not`` | ``or``
+  | ``override`` | ``private`` | ``singleton`` | ``then``
+  | ``value`` | ``while`` | ``with`` |
 
 The symbols used in Tidy are the following:
   | , | { | } | values:
   | variables: | functions: | actions: | [
   | ] | ; | : | =
   | -> | ( | ) | -
-  | * | / | + | ++
-  | . | # | < | <=
-  | > | >= | == | !=
+  | * | / | % | +
+  | ++ | . | # | <
+  | <= | > | >= | ==
+  | != |  |  |
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -71,60 +72,56 @@ All other symbols are terminals.
   | //ClassIdent// | -> | //UpperCaseIdent//
   | //[ClassDecl]// | -> | //ClassDecl//
   |  |  **|**  | //ClassDecl// //[ClassDecl]//
-  | //ClassDecl// | -> | //ClassType// ``class`` //ClassIdent// //Inheritance// //ClassBody//
-  |  |  **|**  | ``abstract`` //ClassType// ``class`` //ClassIdent// //Inheritance// //ClassBody//
+  | //ClassDecl// | -> | //AbstractModifier// //ClassTypeModifier// ``class`` //ClassIdent// //Inheritance// //ClassBody//
   | //Inheritance// | -> | **eps**
   |  |  **|**  | ``extends`` //ClassIdent//
   | //ClassBody// | -> | **eps**
   |  |  **|**  | ``{`` //ValuesSection// //VariablesSection// //FunctionsSection// //ActionsSection// ``}``
-  | //ClassType// | -> | ``mutable``
+  | //ClassTypeModifier// | -> | ``mutable``
   |  |  **|**  | ``immutable``
   |  |  **|**  | ``singleton``
+  | //AbstractModifier// | -> | **eps**
+  |  |  **|**  | ``abstract``
   | //ValuesSection// | -> | **eps**
-  |  |  **|**  | ``values:`` //ValSBody//
+  |  |  **|**  | ``values:`` ``{`` //[ObjectDecl]// ``}``
   | //VariablesSection// | -> | **eps**
-  |  |  **|**  | ``variables:`` //VarSBody//
+  |  |  **|**  | ``variables:`` ``{`` //[ObjectDecl]// ``}``
   | //FunctionsSection// | -> | **eps**
-  |  |  **|**  | ``functions:`` //FSBody//
+  |  |  **|**  | ``functions:`` ``{`` //[FunctionDecl]// ``}``
   | //ActionsSection// | -> | **eps**
-  |  |  **|**  | ``actions:`` //ASBody//
-  | //ValSBody// | -> | ``{`` //[ValueDecl]// ``}``
-  | //ValueIdent// | -> | //LowerCaseIdent//
-  | //ValueType// | -> | //ClassIdent//
-  |  |  **|**  | //ClassIdent// ``[`` //[ClassIdent]// ``]``
+  |  |  **|**  | ``actions:`` ``{`` //[ActionDecl]// ``}``
+  | //ObjectIdent// | -> | //LowerCaseIdent//
+  | //ObjectType// | -> | //ClassIdent// //GenericParameter//
   |  |  **|**  | ``get`` //MethodType//
   |  |  **|**  | ``do`` //MethodType//
-  | //[ValueDecl]// | -> | **eps**
-  |  |  **|**  | //ValueDecl// //[ValueDecl]//
-  | //ValueDecl// | -> | //ValueDeclProper// ``;``
-  |  |  **|**  | ``private`` //ValueDeclProper// ``;``
-  | //[ValueDeclProper]// | -> | **eps**
-  |  |  **|**  | //ValueDeclProper//
-  |  |  **|**  | //ValueDeclProper// ``,`` //[ValueDeclProper]//
-  | //ValueDeclProper// | -> | //ValueIdent// ``:`` //ValueType//
-  |  |  **|**  | //ValueIdent// ``:`` //ValueType// ``=`` //Expr//
-  | //VarSBody// | -> | ``{`` //[ValueDecl]// ``}``
-  | //FSBody// | -> | **eps**
-  |  |  **|**  | ``{`` //[FunctionDecl]// ``}``
-  | //FunctionIdent// | -> | //LowerCaseIdent//
-  | //MethodType// | -> | //ParameterList// ``->`` //ValueType//
-  | //ParameterList// | -> | ``(`` //[ValueDeclProper]// ``)``
+  | //GenericParameter// | -> | **eps**
+  |  |  **|**  | ``[`` //[ClassIdent]// ``]``
+  | //[ObjectDecl]// | -> | **eps**
+  |  |  **|**  | //ObjectDecl// //[ObjectDecl]//
+  | //ObjectDecl// | -> | //VisibilityModifier// //ObjectDeclProper// ``;``
+  | //VisibilityModifier// | -> | **eps**
+  |  |  **|**  | ``private``
+  | //[ObjectDeclProper]// | -> | **eps**
+  |  |  **|**  | //ObjectDeclProper//
+  |  |  **|**  | //ObjectDeclProper// ``,`` //[ObjectDeclProper]//
+  | //ObjectDeclProper// | -> | //ObjectIdent// ``:`` //ObjectType// //Initialization//
+  | //Initialization// | -> | **eps**
+  |  |  **|**  | ``=`` //Expr//
+  | //MethodIdent// | -> | //LowerCaseIdent//
+  | //MethodType// | -> | //ParamList// ``->`` //ObjectType//
+  | //ParamList// | -> | ``(`` //[ObjectDeclProper]// ``)``
   | //[FunctionDecl]// | -> | **eps**
   |  |  **|**  | //FunctionDecl// //[FunctionDecl]//
-  | //FunctionDecl// | -> | ``override`` //FunctionIdent// ``:`` //MethodType// ``=`` //FunctionBody//
-  |  |  **|**  | //FunctionIdent// ``:`` //MethodType// ``=`` //FunctionBody//
-  |  |  **|**  | ``private`` //FunctionIdent// ``:`` //MethodType// ``=`` //FunctionBody//
+  | //FunctionDecl// | -> | //OverrideModifier// //VisibilityModifier// //MethodIdent// ``:`` //MethodType// ``=`` //FunctionBody//
+  | //OverrideModifier// | -> | **eps**
+  |  |  **|**  | ``override``
   | //FunctionBody// | -> | //Expr//
   |  |  **|**  | ``{`` //Expr// ``}`` //WithValues//
   | //WithValues// | -> | **eps**
   |  |  **|**  | ``with`` //ValuesSection//
-  | //ASBody// | -> | **eps**
-  |  |  **|**  | ``{`` //[ActionDecl]// ``}``
   | //[ActionDecl]// | -> | **eps**
   |  |  **|**  | //ActionDecl// //[ActionDecl]//
-  | //ActionDecl// | -> | ``override`` //FunctionIdent// ``:`` //MethodType// ``=`` //ActionBody//
-  |  |  **|**  | //FunctionIdent// ``:`` //MethodType// ``=`` //ActionBody//
-  |  |  **|**  | ``private`` //FunctionIdent// ``:`` //MethodType// ``=`` //ActionBody//
+  | //ActionDecl// | -> | //OverrideModifier// //VisibilityModifier// //MethodIdent// ``:`` //MethodType// ``=`` //ActionBody//
   | //ActionBody// | -> | //Expr//
   |  |  **|**  | ``{`` //[Expr]// ``}``
   | //[Expr]// | -> | **eps**
@@ -140,6 +137,7 @@ All other symbols are terminals.
   | //Expr3// | -> | //Expr4//
   |  |  **|**  | //Expr3// ``*`` //Expr4//
   |  |  **|**  | //Expr3// ``/`` //Expr4//
+  |  |  **|**  | //Expr3// ``%`` //Expr4//
   | //Expr4// | -> | //Expr5//
   |  |  **|**  | ``not`` //Expr5//
   |  |  **|**  | ``-`` //Expr5//
@@ -149,18 +147,16 @@ All other symbols are terminals.
   |  |  **|**  | //ImperativeControlFlow//
   |  |  **|**  | //FunctionalControlFlow//
   | //Expr7// | -> | //Expr8//
-  |  |  **|**  | ``local`` //FunctionCall//
-  |  |  **|**  | ``local`` //ActionCall//
-  |  |  **|**  | //ConstructorCall//
-  | //Expr8// | -> | //Expr9//
   |  |  **|**  | //LambdaFunction//
   |  |  **|**  | //LambdaAction//
+  | //Expr8// | -> | //Expr9//
+  |  |  **|**  | //CtorCall//
   | //Expr9// | -> | //Expr10//
   |  |  **|**  | //GetExpr//
   |  |  **|**  | //DoExpr//
   | //Expr10// | -> | ``(`` //Expr// ``)``
   |  |  **|**  | //Literal//
-  |  |  **|**  | //ValueIdent//
+  |  |  **|**  | //ObjectIdent//
   | //Literal// | -> | //Integer//
   |  |  **|**  | //Boolean//
   |  |  **|**  | //Char//
@@ -169,30 +165,31 @@ All other symbols are terminals.
   | //Boolean// | -> | ``True``
   |  |  **|**  | ``False``
   | //Void// | -> | ``Pass``
-  | //LocalValueDecl// | -> | ``value`` //ValueDecl//
-  | //LambdaFunction// | -> | ``get`` //ParameterList// ``->`` //Expr// ``;``
-  |  |  **|**  | ``get`` //ParameterList// ``->`` ``{`` //Expr// ``}``
-  | //LambdaAction// | -> | ``do`` //ParameterList// ``->`` //Expr// ``;``
-  |  |  **|**  | ``do`` //ParameterList// ``->`` ``{`` //[Expr]// ``}``
-  | //ArgumentList// | -> | **eps**
-  |  |  **|**  | ``(`` //[FunctionArgument]// ``)``
-  | //[FunctionArgument]// | -> | **eps**
-  |  |  **|**  | //FunctionArgument//
-  |  |  **|**  | //FunctionArgument// ``,`` //[FunctionArgument]//
-  | //FunctionArgument// | -> | //Expr//
-  | //FunctionCall// | -> | ``.`` //FunctionIdent// //ArgumentList//
-  | //ActionCall// | -> | ``#`` //FunctionIdent// //ArgumentList//
-  | //ConstructorCall// | -> | //ClassIdent// //ArgumentList//
-  | //GetExpr// | -> | //ValueIdent// //FunctionCall//
+  | //LocalValueDecl// | -> | ``value`` //ObjectDecl//
+  | //LambdaFunction// | -> | ``get`` //ParamList// ``->`` //Expr// ``;``
+  |  |  **|**  | ``get`` //ParamList// ``->`` ``{`` //Expr// ``}``
+  | //LambdaAction// | -> | ``do`` //ParamList// ``->`` //Expr// ``;``
+  |  |  **|**  | ``do`` //ParamList// ``->`` ``{`` //[Expr]// ``}``
+  | //ArgList// | -> | **eps**
+  |  |  **|**  | ``(`` //[FunctionArg]// ``)``
+  | //[FunctionArg]// | -> | **eps**
+  |  |  **|**  | //FunctionArg//
+  |  |  **|**  | //FunctionArg// ``,`` //[FunctionArg]//
+  | //FunctionArg// | -> | //Expr//
+  | //FunctionCall// | -> | ``.`` //MethodIdent// //ArgList//
+  | //ActionCall// | -> | ``#`` //MethodIdent// //ArgList//
+  | //CtorCall// | -> | //ClassIdent// //ArgList//
+  | //GetExpr// | -> | //ObjectIdent// //FunctionCall//
   |  |  **|**  | //ClassIdent// //FunctionCall//
   |  |  **|**  | //GetExpr// //FunctionCall//
-  | //DoExpr// | -> | //ValueIdent// //ActionCall//
+  | //DoExpr// | -> | //ObjectIdent// //ActionCall//
   |  |  **|**  | //ClassIdent// //ActionCall//
   |  |  **|**  | //GetExpr// //ActionCall//
   | //ImperativeControlFlow// | -> | ``while`` ``(`` //Expr// ``)`` ``{`` //[Expr]// ``}``
-  |  |  **|**  | ``for`` ``(`` //ValueDecl// ``in`` //Expr// ``)`` ``{`` //[Expr]// ``}``
+  |  |  **|**  | ``for`` ``(`` //ObjectDecl// ``in`` //Expr// ``)`` ``{`` //[Expr]// ``}``
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` ``{`` //[Expr]// ``}`` //OptionalElseBranch//
   | //OptionalElseBranch// | -> | ``else`` ``{`` //[Expr]// ``}``
+  |  |  **|**  | ``elif`` ``(`` //Expr// ``)`` ``{`` //[Expr]// ``}`` //OptionalElseBranch//
   |  |  **|**  | **eps**
   | //FunctionalControlFlow// | -> | ``if`` ``(`` //Expr// ``)`` //ThenBranch// //ElseBranch//
   |  |  **|**  | ``match`` //Expr// ``{`` //[MatchCase]// ``}``

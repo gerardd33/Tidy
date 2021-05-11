@@ -17,45 +17,45 @@ import Parser.Tidy.Lex
 %token
   '!=' { PT _ (TS _ 1) }
   '#' { PT _ (TS _ 2) }
-  '(' { PT _ (TS _ 3) }
-  ')' { PT _ (TS _ 4) }
-  '*' { PT _ (TS _ 5) }
-  '+' { PT _ (TS _ 6) }
-  '++' { PT _ (TS _ 7) }
-  ',' { PT _ (TS _ 8) }
-  '-' { PT _ (TS _ 9) }
-  '->' { PT _ (TS _ 10) }
-  '.' { PT _ (TS _ 11) }
-  '/' { PT _ (TS _ 12) }
-  ':' { PT _ (TS _ 13) }
-  ';' { PT _ (TS _ 14) }
-  '<' { PT _ (TS _ 15) }
-  '<=' { PT _ (TS _ 16) }
-  '=' { PT _ (TS _ 17) }
-  '==' { PT _ (TS _ 18) }
-  '>' { PT _ (TS _ 19) }
-  '>=' { PT _ (TS _ 20) }
-  'False' { PT _ (TS _ 21) }
-  'Pass' { PT _ (TS _ 22) }
-  'True' { PT _ (TS _ 23) }
-  '[' { PT _ (TS _ 24) }
-  ']' { PT _ (TS _ 25) }
-  'abstract' { PT _ (TS _ 26) }
-  'actions:' { PT _ (TS _ 27) }
-  'and' { PT _ (TS _ 28) }
-  'case' { PT _ (TS _ 29) }
-  'class' { PT _ (TS _ 30) }
-  'do' { PT _ (TS _ 31) }
-  'elif' { PT _ (TS _ 32) }
-  'else' { PT _ (TS _ 33) }
-  'extends' { PT _ (TS _ 34) }
-  'for' { PT _ (TS _ 35) }
-  'functions:' { PT _ (TS _ 36) }
-  'get' { PT _ (TS _ 37) }
-  'if' { PT _ (TS _ 38) }
-  'immutable' { PT _ (TS _ 39) }
-  'in' { PT _ (TS _ 40) }
-  'local' { PT _ (TS _ 41) }
+  '%' { PT _ (TS _ 3) }
+  '(' { PT _ (TS _ 4) }
+  ')' { PT _ (TS _ 5) }
+  '*' { PT _ (TS _ 6) }
+  '+' { PT _ (TS _ 7) }
+  '++' { PT _ (TS _ 8) }
+  ',' { PT _ (TS _ 9) }
+  '-' { PT _ (TS _ 10) }
+  '->' { PT _ (TS _ 11) }
+  '.' { PT _ (TS _ 12) }
+  '/' { PT _ (TS _ 13) }
+  ':' { PT _ (TS _ 14) }
+  ';' { PT _ (TS _ 15) }
+  '<' { PT _ (TS _ 16) }
+  '<=' { PT _ (TS _ 17) }
+  '=' { PT _ (TS _ 18) }
+  '==' { PT _ (TS _ 19) }
+  '>' { PT _ (TS _ 20) }
+  '>=' { PT _ (TS _ 21) }
+  'False' { PT _ (TS _ 22) }
+  'Pass' { PT _ (TS _ 23) }
+  'True' { PT _ (TS _ 24) }
+  '[' { PT _ (TS _ 25) }
+  ']' { PT _ (TS _ 26) }
+  'abstract' { PT _ (TS _ 27) }
+  'actions:' { PT _ (TS _ 28) }
+  'and' { PT _ (TS _ 29) }
+  'case' { PT _ (TS _ 30) }
+  'class' { PT _ (TS _ 31) }
+  'do' { PT _ (TS _ 32) }
+  'elif' { PT _ (TS _ 33) }
+  'else' { PT _ (TS _ 34) }
+  'extends' { PT _ (TS _ 35) }
+  'for' { PT _ (TS _ 36) }
+  'functions:' { PT _ (TS _ 37) }
+  'get' { PT _ (TS _ 38) }
+  'if' { PT _ (TS _ 39) }
+  'immutable' { PT _ (TS _ 40) }
+  'in' { PT _ (TS _ 41) }
   'match' { PT _ (TS _ 42) }
   'mutable' { PT _ (TS _ 43) }
   'not' { PT _ (TS _ 44) }
@@ -103,98 +103,102 @@ ListClassIdent : {- empty -} { [] }
                | ClassIdent ',' ListClassIdent { (:) $1 $3 }
 
 ClassIdent :: { Parser.Tidy.Abs.ClassIdent }
-ClassIdent : UpperCaseIdent { Parser.Tidy.Abs.CIdent $1 }
+ClassIdent : UpperCaseIdent { Parser.Tidy.Abs.ClassIdentifier $1 }
 
 ListClassDecl :: { [Parser.Tidy.Abs.ClassDecl] }
 ListClassDecl : ClassDecl { (:[]) $1 }
               | ClassDecl ListClassDecl { (:) $1 $2 }
 
 ClassDecl :: { Parser.Tidy.Abs.ClassDecl }
-ClassDecl : ClassType 'class' ClassIdent Inheritance ClassBody { Parser.Tidy.Abs.ClassDeclConcrete $1 $3 $4 $5 }
-          | 'abstract' ClassType 'class' ClassIdent Inheritance ClassBody { Parser.Tidy.Abs.ClassDeclAbstract $2 $4 $5 $6 }
+ClassDecl : AbstractModifier ClassTypeModifier 'class' ClassIdent Inheritance ClassBody { Parser.Tidy.Abs.ClassDeclaration $1 $2 $4 $5 $6 }
 
 Inheritance :: { Parser.Tidy.Abs.Inheritance }
-Inheritance : {- empty -} { Parser.Tidy.Abs.SuperclassAbsent }
-            | 'extends' ClassIdent { Parser.Tidy.Abs.SuperclassPresent $2 }
+Inheritance : {- empty -} { Parser.Tidy.Abs.SuperclassPresent }
+            | 'extends' ClassIdent { Parser.Tidy.Abs.SuperclassAbsent $2 }
 
 ClassBody :: { Parser.Tidy.Abs.ClassBody }
 ClassBody : {- empty -} { Parser.Tidy.Abs.ClassBodyEmpty }
           | '{' ValuesSection VariablesSection FunctionsSection ActionsSection '}' { Parser.Tidy.Abs.ClassBodyFilled $2 $3 $4 $5 }
 
-ClassType :: { Parser.Tidy.Abs.ClassType }
-ClassType : 'mutable' { Parser.Tidy.Abs.MMutable }
-          | 'immutable' { Parser.Tidy.Abs.MImmutable }
-          | 'singleton' { Parser.Tidy.Abs.MSingleton }
+ClassTypeModifier :: { Parser.Tidy.Abs.ClassTypeModifier }
+ClassTypeModifier : 'mutable' { Parser.Tidy.Abs.MMutable }
+                  | 'immutable' { Parser.Tidy.Abs.MImmutable }
+                  | 'singleton' { Parser.Tidy.Abs.MSingleton }
+
+AbstractModifier :: { Parser.Tidy.Abs.AbstractModifier }
+AbstractModifier : {- empty -} { Parser.Tidy.Abs.MConcrete }
+                 | 'abstract' { Parser.Tidy.Abs.MAbstract }
 
 ValuesSection :: { Parser.Tidy.Abs.ValuesSection }
 ValuesSection : {- empty -} { Parser.Tidy.Abs.ValuesAbsent }
-              | 'values:' ValSBody { Parser.Tidy.Abs.ValuesPresent $2 }
+              | 'values:' '{' ListObjectDecl '}' { Parser.Tidy.Abs.ValuesPresent $3 }
 
 VariablesSection :: { Parser.Tidy.Abs.VariablesSection }
 VariablesSection : {- empty -} { Parser.Tidy.Abs.VariablesAbsent }
-                 | 'variables:' VarSBody { Parser.Tidy.Abs.VariablesPresent $2 }
+                 | 'variables:' '{' ListObjectDecl '}' { Parser.Tidy.Abs.VariablesPresent $3 }
 
 FunctionsSection :: { Parser.Tidy.Abs.FunctionsSection }
 FunctionsSection : {- empty -} { Parser.Tidy.Abs.FunctionsAbsent }
-                 | 'functions:' FSBody { Parser.Tidy.Abs.FunctionsPresent $2 }
+                 | 'functions:' '{' ListFunctionDecl '}' { Parser.Tidy.Abs.FunctionsPresent $3 }
 
 ActionsSection :: { Parser.Tidy.Abs.ActionsSection }
 ActionsSection : {- empty -} { Parser.Tidy.Abs.ActionsAbsent }
-               | 'actions:' ASBody { Parser.Tidy.Abs.ActionsPresent $2 }
+               | 'actions:' '{' ListActionDecl '}' { Parser.Tidy.Abs.ActionsPresent $3 }
 
-ValSBody :: { Parser.Tidy.Abs.ValSBody }
-ValSBody : '{' ListValueDecl '}' { Parser.Tidy.Abs.ValuesSBody $2 }
+ObjectIdent :: { Parser.Tidy.Abs.ObjectIdent }
+ObjectIdent : LowerCaseIdent { Parser.Tidy.Abs.ObjectIdentifier $1 }
 
-ValueIdent :: { Parser.Tidy.Abs.ValueIdent }
-ValueIdent : LowerCaseIdent { Parser.Tidy.Abs.VIdent $1 }
+ObjectType :: { Parser.Tidy.Abs.ObjectType }
+ObjectType : ClassIdent GenericParameter { Parser.Tidy.Abs.ObjectTypeClass $1 $2 }
+           | 'get' MethodType { Parser.Tidy.Abs.ObjectTypeFunction $2 }
+           | 'do' MethodType { Parser.Tidy.Abs.ObjectTypeAction $2 }
 
-ValueType :: { Parser.Tidy.Abs.ValueType }
-ValueType : ClassIdent { Parser.Tidy.Abs.ValueTypeClass $1 }
-          | ClassIdent '[' ListClassIdent ']' { Parser.Tidy.Abs.ValueTypeGeneric $1 $3 }
-          | 'get' MethodType { Parser.Tidy.Abs.ValueTypeFunction $2 }
-          | 'do' MethodType { Parser.Tidy.Abs.ValueTypeAction $2 }
+GenericParameter :: { Parser.Tidy.Abs.GenericParameter }
+GenericParameter : {- empty -} { Parser.Tidy.Abs.GenericPrameterAbsent }
+                 | '[' ListClassIdent ']' { Parser.Tidy.Abs.GenericParameterPresent $2 }
 
-ListValueDecl :: { [Parser.Tidy.Abs.ValueDecl] }
-ListValueDecl : {- empty -} { [] }
-              | ValueDecl ListValueDecl { (:) $1 $2 }
+ListObjectDecl :: { [Parser.Tidy.Abs.ObjectDecl] }
+ListObjectDecl : {- empty -} { [] }
+               | ObjectDecl ListObjectDecl { (:) $1 $2 }
 
-ValueDecl :: { Parser.Tidy.Abs.ValueDecl }
-ValueDecl : ValueDeclProper ';' { Parser.Tidy.Abs.PublicValueDecl $1 }
-          | 'private' ValueDeclProper ';' { Parser.Tidy.Abs.PrivateValueDecl $2 }
+ObjectDecl :: { Parser.Tidy.Abs.ObjectDecl }
+ObjectDecl : VisibilityModifier ObjectDeclProper ';' { Parser.Tidy.Abs.ObjectDeclaration $1 $2 }
 
-ListValueDeclProper :: { [Parser.Tidy.Abs.ValueDeclProper] }
-ListValueDeclProper : {- empty -} { [] }
-                    | ValueDeclProper { (:[]) $1 }
-                    | ValueDeclProper ',' ListValueDeclProper { (:) $1 $3 }
+VisibilityModifier :: { Parser.Tidy.Abs.VisibilityModifier }
+VisibilityModifier : {- empty -} { Parser.Tidy.Abs.MPublic }
+                   | 'private' { Parser.Tidy.Abs.MPrivate }
 
-ValueDeclProper :: { Parser.Tidy.Abs.ValueDeclProper }
-ValueDeclProper : ValueIdent ':' ValueType { Parser.Tidy.Abs.UninitializedValue $1 $3 }
-                | ValueIdent ':' ValueType '=' Expr { Parser.Tidy.Abs.initializedValue $1 $3 $5 }
+ListObjectDeclProper :: { [Parser.Tidy.Abs.ObjectDeclProper] }
+ListObjectDeclProper : {- empty -} { [] }
+                     | ObjectDeclProper { (:[]) $1 }
+                     | ObjectDeclProper ',' ListObjectDeclProper { (:) $1 $3 }
 
-VarSBody :: { Parser.Tidy.Abs.VarSBody }
-VarSBody : '{' ListValueDecl '}' { Parser.Tidy.Abs.VariablesSBody $2 }
+ObjectDeclProper :: { Parser.Tidy.Abs.ObjectDeclProper }
+ObjectDeclProper : ObjectIdent ':' ObjectType Initialization { Parser.Tidy.Abs.ObjectDeclarationProper $1 $3 $4 }
 
-FSBody :: { Parser.Tidy.Abs.FSBody }
-FSBody : {- empty -} { Parser.Tidy.Abs.FSBodyEmpty }
-       | '{' ListFunctionDecl '}' { Parser.Tidy.Abs.FSBodyFilled $2 }
+Initialization :: { Parser.Tidy.Abs.Initialization }
+Initialization : {- empty -} { Parser.Tidy.Abs.Uninitialized }
+               | '=' Expr { Parser.Tidy.Abs.Initialized $2 }
 
-FunctionIdent :: { Parser.Tidy.Abs.FunctionIdent }
-FunctionIdent : LowerCaseIdent { Parser.Tidy.Abs.FIdent $1 }
+MethodIdent :: { Parser.Tidy.Abs.MethodIdent }
+MethodIdent : LowerCaseIdent { Parser.Tidy.Abs.MethodIdentifier $1 }
 
 MethodType :: { Parser.Tidy.Abs.MethodType }
-MethodType : ParameterList '->' ValueType { Parser.Tidy.Abs.FType $1 $3 }
+MethodType : ParamList '->' ObjectType { Parser.Tidy.Abs.MethodTypeSignature $1 $3 }
 
-ParameterList :: { Parser.Tidy.Abs.ParameterList }
-ParameterList : '(' ListValueDeclProper ')' { Parser.Tidy.Abs.ParamList $2 }
+ParamList :: { Parser.Tidy.Abs.ParamList }
+ParamList : '(' ListObjectDeclProper ')' { Parser.Tidy.Abs.ParameterList $2 }
 
 ListFunctionDecl :: { [Parser.Tidy.Abs.FunctionDecl] }
 ListFunctionDecl : {- empty -} { [] }
                  | FunctionDecl ListFunctionDecl { (:) $1 $2 }
 
 FunctionDecl :: { Parser.Tidy.Abs.FunctionDecl }
-FunctionDecl : 'override' FunctionIdent ':' MethodType '=' FunctionBody { Parser.Tidy.Abs.OverrideFunctionDecl $2 $4 $6 }
-             | FunctionIdent ':' MethodType '=' FunctionBody { Parser.Tidy.Abs.PublicFunctionDecl $1 $3 $5 }
-             | 'private' FunctionIdent ':' MethodType '=' FunctionBody { Parser.Tidy.Abs.PrivateFunctionDecl $2 $4 $6 }
+FunctionDecl : OverrideModifier VisibilityModifier MethodIdent ':' MethodType '=' FunctionBody { Parser.Tidy.Abs.FunctionDeclaration $1 $2 $3 $5 $7 }
+
+OverrideModifier :: { Parser.Tidy.Abs.OverrideModifier }
+OverrideModifier : {- empty -} { Parser.Tidy.Abs.MNonOverriding }
+                 | 'override' { Parser.Tidy.Abs.MOverride }
 
 FunctionBody :: { Parser.Tidy.Abs.FunctionBody }
 FunctionBody : Expr { Parser.Tidy.Abs.FunctionBodyOneLine $1 }
@@ -204,18 +208,12 @@ WithValues :: { Parser.Tidy.Abs.WithValues }
 WithValues : {- empty -} { Parser.Tidy.Abs.WithValuesAbsent }
            | 'with' ValuesSection { Parser.Tidy.Abs.WithValuesPresent $2 }
 
-ASBody :: { Parser.Tidy.Abs.ASBody }
-ASBody : {- empty -} { Parser.Tidy.Abs.ASBodyEmpty }
-       | '{' ListActionDecl '}' { Parser.Tidy.Abs.ASBodyFilled $2 }
-
 ListActionDecl :: { [Parser.Tidy.Abs.ActionDecl] }
 ListActionDecl : {- empty -} { [] }
                | ActionDecl ListActionDecl { (:) $1 $2 }
 
 ActionDecl :: { Parser.Tidy.Abs.ActionDecl }
-ActionDecl : 'override' FunctionIdent ':' MethodType '=' ActionBody { Parser.Tidy.Abs.OverrideActionDecl $2 $4 $6 }
-           | FunctionIdent ':' MethodType '=' ActionBody { Parser.Tidy.Abs.PublicActionDecl $1 $3 $5 }
-           | 'private' FunctionIdent ':' MethodType '=' ActionBody { Parser.Tidy.Abs.PrivateActionDecl $2 $4 $6 }
+ActionDecl : OverrideModifier VisibilityModifier MethodIdent ':' MethodType '=' ActionBody { Parser.Tidy.Abs.ActionDeclaration $1 $2 $3 $5 $7 }
 
 ActionBody :: { Parser.Tidy.Abs.ActionBody }
 ActionBody : Expr { Parser.Tidy.Abs.ActionBodyOneLine $1 }
@@ -242,6 +240,7 @@ Expr3 :: { Parser.Tidy.Abs.Expr }
 Expr3 : Expr4 { $1 }
       | Expr3 '*' Expr4 { Parser.Tidy.Abs.EMultiply $1 $3 }
       | Expr3 '/' Expr4 { Parser.Tidy.Abs.EDivide $1 $3 }
+      | Expr3 '%' Expr4 { Parser.Tidy.Abs.EModulo $1 $3 }
 
 Expr4 :: { Parser.Tidy.Abs.Expr }
 Expr4 : Expr5 { $1 }
@@ -250,7 +249,7 @@ Expr4 : Expr5 { $1 }
 
 Expr5 :: { Parser.Tidy.Abs.Expr }
 Expr5 : Expr6 { $1 }
-      | LocalValueDecl { Parser.Tidy.Abs.ELocalValueDecl $1 }
+      | LocalValueDecl { Parser.Tidy.Abs.ELocalValueDeclaration $1 }
 
 Expr6 :: { Parser.Tidy.Abs.Expr }
 Expr6 : Expr7 { $1 }
@@ -259,24 +258,22 @@ Expr6 : Expr7 { $1 }
 
 Expr7 :: { Parser.Tidy.Abs.Expr }
 Expr7 : Expr8 { $1 }
-      | 'local' FunctionCall { Parser.Tidy.Abs.ELocalFunctionCall $2 }
-      | 'local' ActionCall { Parser.Tidy.Abs.ELocalActionCall $2 }
-      | ConstructorCall { Parser.Tidy.Abs.ECtorCall $1 }
-
-Expr8 :: { Parser.Tidy.Abs.Expr }
-Expr8 : Expr9 { $1 }
       | LambdaFunction { Parser.Tidy.Abs.ELambdaFunction $1 }
       | LambdaAction { Parser.Tidy.Abs.ELambdaAction $1 }
 
+Expr8 :: { Parser.Tidy.Abs.Expr }
+Expr8 : Expr9 { $1 }
+      | CtorCall { Parser.Tidy.Abs.EConstructorCall $1 }
+
 Expr9 :: { Parser.Tidy.Abs.Expr }
 Expr9 : Expr10 { $1 }
-      | GetExpr { Parser.Tidy.Abs.EGetExpr $1 }
-      | DoExpr { Parser.Tidy.Abs.EDoExpr $1 }
+      | GetExpr { Parser.Tidy.Abs.EGetExpression $1 }
+      | DoExpr { Parser.Tidy.Abs.EDoExpression $1 }
 
 Expr10 :: { Parser.Tidy.Abs.Expr }
 Expr10 : '(' Expr ')' { $2 }
        | Literal { Parser.Tidy.Abs.ELiteral $1 }
-       | ValueIdent { Parser.Tidy.Abs.ELocalValue $1 }
+       | ObjectIdent { Parser.Tidy.Abs.ELocalValue $1 }
 
 Literal :: { Parser.Tidy.Abs.Literal }
 Literal : Integer { Parser.Tidy.Abs.LInt $1 }
@@ -293,78 +290,79 @@ Void :: { Parser.Tidy.Abs.Void }
 Void : 'Pass' { Parser.Tidy.Abs.VPass }
 
 LocalValueDecl :: { Parser.Tidy.Abs.LocalValueDecl }
-LocalValueDecl : 'value' ValueDecl { Parser.Tidy.Abs.LocalVDecl $2 }
+LocalValueDecl : 'value' ObjectDecl { Parser.Tidy.Abs.LocalValueDeclaration $2 }
 
 LambdaFunction :: { Parser.Tidy.Abs.LambdaFunction }
-LambdaFunction : 'get' ParameterList '->' Expr ';' { Parser.Tidy.Abs.LambdaFunctionOneLine $2 $4 }
-               | 'get' ParameterList '->' '{' Expr '}' { Parser.Tidy.Abs.LambdaFunctionMultiLine $2 $5 }
+LambdaFunction : 'get' ParamList '->' Expr ';' { Parser.Tidy.Abs.LambdaFunctionOneLine $2 $4 }
+               | 'get' ParamList '->' '{' Expr '}' { Parser.Tidy.Abs.LambdaFunctionMultiLine $2 $5 }
 
 LambdaAction :: { Parser.Tidy.Abs.LambdaAction }
-LambdaAction : 'do' ParameterList '->' Expr ';' { Parser.Tidy.Abs.LambdaActionOneLine $2 $4 }
-             | 'do' ParameterList '->' '{' ListExpr '}' { Parser.Tidy.Abs.LambdaActionMultiLine $2 $5 }
+LambdaAction : 'do' ParamList '->' Expr ';' { Parser.Tidy.Abs.LambdaActionOneLine $2 $4 }
+             | 'do' ParamList '->' '{' ListExpr '}' { Parser.Tidy.Abs.LambdaActionMultiLine $2 $5 }
 
-ArgumentList :: { Parser.Tidy.Abs.ArgumentList }
-ArgumentList : {- empty -} { Parser.Tidy.Abs.ArgListAbsent }
-             | '(' ListFunctionArgument ')' { Parser.Tidy.Abs.ArgListPresent $2 }
+ArgList :: { Parser.Tidy.Abs.ArgList }
+ArgList : {- empty -} { Parser.Tidy.Abs.ArgumentListAbsent }
+        | '(' ListFunctionArg ')' { Parser.Tidy.Abs.ArgumentListPresent $2 }
 
-ListFunctionArgument :: { [Parser.Tidy.Abs.FunctionArgument] }
-ListFunctionArgument : {- empty -} { [] }
-                     | FunctionArgument { (:[]) $1 }
-                     | FunctionArgument ',' ListFunctionArgument { (:) $1 $3 }
+ListFunctionArg :: { [Parser.Tidy.Abs.FunctionArg] }
+ListFunctionArg : {- empty -} { [] }
+                | FunctionArg { (:[]) $1 }
+                | FunctionArg ',' ListFunctionArg { (:) $1 $3 }
 
-FunctionArgument :: { Parser.Tidy.Abs.FunctionArgument }
-FunctionArgument : Expr { Parser.Tidy.Abs.FunctionArg $1 }
+FunctionArg :: { Parser.Tidy.Abs.FunctionArg }
+FunctionArg : Expr { Parser.Tidy.Abs.FunctionArgument $1 }
 
 FunctionCall :: { Parser.Tidy.Abs.FunctionCall }
-FunctionCall : '.' FunctionIdent ArgumentList { Parser.Tidy.Abs.FCall $2 $3 }
+FunctionCall : '.' MethodIdent ArgList { Parser.Tidy.Abs.CallFunction $2 $3 }
 
 ActionCall :: { Parser.Tidy.Abs.ActionCall }
-ActionCall : '#' FunctionIdent ArgumentList { Parser.Tidy.Abs.ACall $2 $3 }
+ActionCall : '#' MethodIdent ArgList { Parser.Tidy.Abs.CallAction $2 $3 }
 
-ConstructorCall :: { Parser.Tidy.Abs.ConstructorCall }
-ConstructorCall : ClassIdent ArgumentList { Parser.Tidy.Abs.CCall $1 $2 }
+CtorCall :: { Parser.Tidy.Abs.CtorCall }
+CtorCall : ClassIdent ArgList { Parser.Tidy.Abs.CallConstructor $1 $2 }
 
 GetExpr :: { Parser.Tidy.Abs.GetExpr }
-GetExpr : ValueIdent FunctionCall { Parser.Tidy.Abs.GetExprInstance $1 $2 }
-        | ClassIdent FunctionCall { Parser.Tidy.Abs.GetExprStatic $1 $2 }
-        | GetExpr FunctionCall { Parser.Tidy.Abs.GetExprChain $1 $2 }
+GetExpr : ObjectIdent FunctionCall { Parser.Tidy.Abs.GetExpressionInstance $1 $2 }
+        | ClassIdent FunctionCall { Parser.Tidy.Abs.GetExpressionStatic $1 $2 }
+        | GetExpr FunctionCall { Parser.Tidy.Abs.GetExpressionChain $1 $2 }
 
 DoExpr :: { Parser.Tidy.Abs.DoExpr }
-DoExpr : ValueIdent ActionCall { Parser.Tidy.Abs.DoExprInstance $1 $2 }
-       | ClassIdent ActionCall { Parser.Tidy.Abs.DoExprStatic $1 $2 }
-       | GetExpr ActionCall { Parser.Tidy.Abs.DoExprChain $1 $2 }
+DoExpr : ObjectIdent ActionCall { Parser.Tidy.Abs.DoExpressionInstance $1 $2 }
+       | ClassIdent ActionCall { Parser.Tidy.Abs.DoExpressionStatic $1 $2 }
+       | GetExpr ActionCall { Parser.Tidy.Abs.DoExpressionChain $1 $2 }
 
 ImperativeControlFlow :: { Parser.Tidy.Abs.ImperativeControlFlow }
 ImperativeControlFlow : 'while' '(' Expr ')' '{' ListExpr '}' { Parser.Tidy.Abs.IWhile $3 $6 }
-                      | 'for' '(' ValueDecl 'in' Expr ')' '{' ListExpr '}' { Parser.Tidy.Abs.IForeach $3 $5 $8 }
+                      | 'for' '(' ObjectDecl 'in' Expr ')' '{' ListExpr '}' { Parser.Tidy.Abs.IForeach $3 $5 $8 }
                       | 'if' '(' Expr ')' '{' ListExpr '}' OptionalElseBranch { Parser.Tidy.Abs.IIf $3 $6 $8 }
 
 OptionalElseBranch :: { Parser.Tidy.Abs.OptionalElseBranch }
-OptionalElseBranch : 'else' '{' ListExpr '}' { Parser.Tidy.Abs.ElsePresent $3 }
-                   | {- empty -} { Parser.Tidy.Abs.ElseAbsent }
+OptionalElseBranch : 'else' '{' ListExpr '}' { Parser.Tidy.Abs.IElsePresent $3 }
+                   | 'elif' '(' Expr ')' '{' ListExpr '}' OptionalElseBranch { Parser.Tidy.Abs.IElseIf $3 $6 $8 }
+                   | {- empty -} { Parser.Tidy.Abs.IElseAbsent }
 
 FunctionalControlFlow :: { Parser.Tidy.Abs.FunctionalControlFlow }
 FunctionalControlFlow : 'if' '(' Expr ')' ThenBranch ElseBranch { Parser.Tidy.Abs.FIfThenElse $3 $5 $6 }
-                      | 'match' Expr '{' ListMatchCase '}' { Parser.Tidy.Abs.FMatch $2 $4 }
+                      | 'match' Expr '{' ListMatchCase '}' { Parser.Tidy.Abs.FMatchCase $2 $4 }
 
 ThenBranch :: { Parser.Tidy.Abs.ThenBranch }
-ThenBranch : 'then' Expr ';' { Parser.Tidy.Abs.ThenOneLine $2 }
-           | 'then' '{' Expr '}' { Parser.Tidy.Abs.ThenMultiLine $3 }
+ThenBranch : 'then' Expr ';' { Parser.Tidy.Abs.FThenOneLine $2 }
+           | 'then' '{' Expr '}' { Parser.Tidy.Abs.FThenMultiLine $3 }
 
 ElseBranch :: { Parser.Tidy.Abs.ElseBranch }
-ElseBranch : 'else' Expr ';' { Parser.Tidy.Abs.ElseOneLine $2 }
-           | 'else' '{' Expr '}' { Parser.Tidy.Abs.ElseMultiLine $3 }
-           | 'elif' '(' Expr ')' ThenBranch ElseBranch { Parser.Tidy.Abs.ElseIf $3 $5 $6 }
+ElseBranch : 'else' Expr ';' { Parser.Tidy.Abs.FElseOneLine $2 }
+           | 'else' '{' Expr '}' { Parser.Tidy.Abs.FElseMultiLine $3 }
+           | 'elif' '(' Expr ')' ThenBranch ElseBranch { Parser.Tidy.Abs.FElseIf $3 $5 $6 }
 
 ListMatchCase :: { [Parser.Tidy.Abs.MatchCase] }
 ListMatchCase : {- empty -} { [] }
               | MatchCase ListMatchCase { (:) $1 $2 }
 
 MatchCase :: { Parser.Tidy.Abs.MatchCase }
-MatchCase : 'case' Pattern '->' Expr { Parser.Tidy.Abs.Case $2 $4 }
+MatchCase : 'case' Pattern '->' Expr { Parser.Tidy.Abs.FCase $2 $4 }
 
 Pattern :: { Parser.Tidy.Abs.Pattern }
-Pattern : ClassIdent { Parser.Tidy.Abs.TypePattern $1 }
+Pattern : ClassIdent { Parser.Tidy.Abs.FTypePattern $1 }
 
 RelationalOperator :: { Parser.Tidy.Abs.RelationalOperator }
 RelationalOperator : '<' { Parser.Tidy.Abs.RLess }

@@ -18,15 +18,14 @@ newtype LowerCaseIdent = LowerCaseIdent String
 data Program = ProgramEntrypoint [ClassDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ClassIdent = CIdent UpperCaseIdent
+data ClassIdent = ClassIdentifier UpperCaseIdent
   deriving (C.Eq, C.Ord, C.Read)
 
 data ClassDecl
-    = ClassDeclConcrete ClassType ClassIdent Inheritance ClassBody
-    | ClassDeclAbstract ClassType ClassIdent Inheritance ClassBody
+    = ClassDeclaration AbstractModifier ClassTypeModifier ClassIdent Inheritance ClassBody
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Inheritance = SuperclassAbsent | SuperclassPresent ClassIdent
+data Inheritance = SuperclassPresent | SuperclassAbsent ClassIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ClassBody
@@ -34,63 +33,67 @@ data ClassBody
     | ClassBodyFilled ValuesSection VariablesSection FunctionsSection ActionsSection
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ClassType = MMutable | MImmutable | MSingleton
+data ClassTypeModifier = MMutable | MImmutable | MSingleton
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValuesSection = ValuesAbsent | ValuesPresent ValSBody
+data AbstractModifier = MConcrete | MAbstract
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data VariablesSection = VariablesAbsent | VariablesPresent VarSBody
+data ValuesSection = ValuesAbsent | ValuesPresent [ObjectDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FunctionsSection = FunctionsAbsent | FunctionsPresent FSBody
+data VariablesSection
+    = VariablesAbsent | VariablesPresent [ObjectDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ActionsSection = ActionsAbsent | ActionsPresent ASBody
+data FunctionsSection
+    = FunctionsAbsent | FunctionsPresent [FunctionDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValSBody = ValuesSBody [ValueDecl]
+data ActionsSection = ActionsAbsent | ActionsPresent [ActionDecl]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValueIdent = VIdent LowerCaseIdent
+data ObjectIdent = ObjectIdentifier LowerCaseIdent
   deriving (C.Eq, C.Ord, C.Read)
 
-data ValueType
-    = ValueTypeClass ClassIdent
-    | ValueTypeGeneric ClassIdent [ClassIdent]
-    | ValueTypeFunction MethodType
-    | ValueTypeAction MethodType
+data ObjectType
+    = ObjectTypeClass ClassIdent GenericParameter
+    | ObjectTypeFunction MethodType
+    | ObjectTypeAction MethodType
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValueDecl
-    = PublicValueDecl ValueDeclProper
-    | PrivateValueDecl ValueDeclProper
+data GenericParameter
+    = GenericPrameterAbsent | GenericParameterPresent [ClassIdent]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ValueDeclProper
-    = UninitializedValue ValueIdent ValueType
-    | InitializedValue ValueIdent ValueType Expr
+data ObjectDecl
+    = ObjectDeclaration VisibilityModifier ObjectDeclProper
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data VarSBody = VariablesSBody [ValueDecl]
+data VisibilityModifier = MPublic | MPrivate
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FSBody = FSBodyEmpty | FSBodyFilled [FunctionDecl]
+data ObjectDeclProper
+    = ObjectDeclarationProper ObjectIdent ObjectType Initialization
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FunctionIdent = FIdent LowerCaseIdent
+data Initialization = Uninitialized | Initialized Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data MethodType = FType ParameterList ValueType
+data MethodIdent = MethodIdentifier LowerCaseIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ParameterList = ParamList [ValueDeclProper]
+data MethodType = MethodTypeSignature ParamList ObjectType
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data ParamList = ParameterList [ObjectDeclProper]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionDecl
-    = OverrideFunctionDecl FunctionIdent MethodType FunctionBody
-    | PublicFunctionDecl FunctionIdent MethodType FunctionBody
-    | PrivateFunctionDecl FunctionIdent MethodType FunctionBody
+    = FunctionDeclaration OverrideModifier VisibilityModifier MethodIdent MethodType FunctionBody
+  deriving (C.Eq, C.Ord, C.Show, C.Read)
+
+data OverrideModifier = MNonOverriding | MOverride
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionBody
@@ -101,13 +104,8 @@ data WithValues
     = WithValuesAbsent | WithValuesPresent ValuesSection
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ASBody = ASBodyEmpty | ASBodyFilled [ActionDecl]
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
-
 data ActionDecl
-    = OverrideActionDecl FunctionIdent MethodType ActionBody
-    | PublicActionDecl FunctionIdent MethodType ActionBody
-    | PrivateActionDecl FunctionIdent MethodType ActionBody
+    = ActionDeclaration OverrideModifier VisibilityModifier MethodIdent MethodType ActionBody
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ActionBody
@@ -116,21 +114,20 @@ data ActionBody
 
 data Expr
     = ELiteral Literal
-    | ELocalValue ValueIdent
-    | EGetExpr GetExpr
-    | EDoExpr DoExpr
+    | ELocalValue ObjectIdent
+    | EGetExpression GetExpr
+    | EDoExpression DoExpr
+    | EConstructorCall CtorCall
     | ELambdaFunction LambdaFunction
     | ELambdaAction LambdaAction
-    | ELocalFunctionCall FunctionCall
-    | ELocalActionCall ActionCall
-    | ECtorCall ConstructorCall
     | EImperativeControlFlow ImperativeControlFlow
     | EFunctionalControlFlow FunctionalControlFlow
-    | ELocalValueDecl LocalValueDecl
+    | ELocalValueDeclaration LocalValueDecl
     | EUnaryNot Expr
     | EUnaryMinus Expr
     | EMultiply Expr Expr
     | EDivide Expr Expr
+    | EModulo Expr Expr
     | EAdd Expr Expr
     | ESubtract Expr Expr
     | EConcatenate Expr Expr
@@ -152,73 +149,77 @@ data Boolean = BTrue | BFalse
 data Void = VPass
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data LocalValueDecl = LocalVDecl ValueDecl
+data LocalValueDecl = LocalValueDeclaration ObjectDecl
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data LambdaFunction
-    = LambdaFunctionOneLine ParameterList Expr
-    | LambdaFunctionMultiLine ParameterList Expr
+    = LambdaFunctionOneLine ParamList Expr
+    | LambdaFunctionMultiLine ParamList Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data LambdaAction
-    = LambdaActionOneLine ParameterList Expr
-    | LambdaActionMultiLine ParameterList [Expr]
+    = LambdaActionOneLine ParamList Expr
+    | LambdaActionMultiLine ParamList [Expr]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ArgumentList
-    = ArgListAbsent | ArgListPresent [FunctionArgument]
+data ArgList
+    = ArgumentListAbsent | ArgumentListPresent [FunctionArg]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FunctionArgument = FunctionArg Expr
+data FunctionArg = FunctionArgument Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FunctionCall = FCall FunctionIdent ArgumentList
+data FunctionCall = CallFunction MethodIdent ArgList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ActionCall = ACall FunctionIdent ArgumentList
+data ActionCall = CallAction MethodIdent ArgList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ConstructorCall = CCall ClassIdent ArgumentList
+data CtorCall = CallConstructor ClassIdent ArgList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data GetExpr
-    = GetExprInstance ValueIdent FunctionCall
-    | GetExprStatic ClassIdent FunctionCall
-    | GetExprChain GetExpr FunctionCall
+    = GetExpressionInstance ObjectIdent FunctionCall
+    | GetExpressionStatic ClassIdent FunctionCall
+    | GetExpressionChain GetExpr FunctionCall
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data DoExpr
-    = DoExprInstance ValueIdent ActionCall
-    | DoExprStatic ClassIdent ActionCall
-    | DoExprChain GetExpr ActionCall
+    = DoExpressionInstance ObjectIdent ActionCall
+    | DoExpressionStatic ClassIdent ActionCall
+    | DoExpressionChain GetExpr ActionCall
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ImperativeControlFlow
     = IWhile Expr [Expr]
-    | IForeach ValueDecl Expr [Expr]
+    | IForeach ObjectDecl Expr [Expr]
     | IIf Expr [Expr] OptionalElseBranch
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data OptionalElseBranch = ElsePresent [Expr] | ElseAbsent
+data OptionalElseBranch
+    = IElsePresent [Expr]
+    | IElseIf Expr [Expr] OptionalElseBranch
+    | IElseAbsent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionalControlFlow
-    = FIfThenElse Expr ThenBranch ElseBranch | FMatch Expr [MatchCase]
+    = FIfThenElse Expr ThenBranch ElseBranch
+    | FMatchCase Expr [MatchCase]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ThenBranch = ThenOneLine Expr | ThenMultiLine Expr
+data ThenBranch = FThenOneLine Expr | FThenMultiLine Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ElseBranch
-    = ElseOneLine Expr
-    | ElseMultiLine Expr
-    | ElseIf Expr ThenBranch ElseBranch
+    = FElseOneLine Expr
+    | FElseMultiLine Expr
+    | FElseIf Expr ThenBranch ElseBranch
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data MatchCase = Case Pattern Expr
+data MatchCase = FCase Pattern Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Pattern = TypePattern ClassIdent
+data Pattern = FTypePattern ClassIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data RelationalOperator
@@ -233,8 +234,8 @@ data RelationalOperator
 data BooleanOperator = BAnd | BOr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-instance C.Show ValueIdent where
-    show (VIdent (LowerCaseIdent ident)) = C.show ident
+instance C.Show ObjectIdent where
+    show (ObjectIdentifier (LowerCaseIdent identifier)) = C.show identifier
 
 instance C.Show ClassIdent where
-    show (CIdent (UpperCaseIdent ident)) = C.show ident
+    show (ClassIdentifier (UpperCaseIdent identifier)) = C.show identifier
