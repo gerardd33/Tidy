@@ -7,6 +7,7 @@ read -p "This may override manual changes in parser files. Are you sure you want
 if [ "${RESPONSE}" = "y" ]; then
     bnfc --haskell -d -m "${WORKING_DIR}"/Tidy.cf -o "${WORKING_DIR}" -p "Parser"
 
+    rm -rf "${WORKING_DIR}"/Tidy/*
     rm -f "${WORKING_DIR}"/Makefile
     cp -r "${WORKING_DIR}"/Parser/* "${WORKING_DIR}"/
     rm -rf "${WORKING_DIR}"/Parser "${WORKING_DIR}"/Tidy/Test.hs
