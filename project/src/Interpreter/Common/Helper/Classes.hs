@@ -4,9 +4,10 @@ import qualified Data.List                         as List
 import qualified Data.Map                          as Map
 import           Data.Maybe
 
-import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
+
+import           Interpreter.Common.Helper.Objects
 
 
 hasMainAction :: ClassDecl -> Bool

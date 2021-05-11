@@ -31,6 +31,7 @@ library
       Interpreter.Entrypoint.Runtime
       Interpreter.Entrypoint.Static
       Interpreter.Eval.Expressions
+      Interpreter.Eval.Methods
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

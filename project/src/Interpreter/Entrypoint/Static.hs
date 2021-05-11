@@ -3,10 +3,12 @@ module Interpreter.Entrypoint.Static (interpret) where
 import           Data.Maybe
 
 import           Interpreter.Common.Types
-import           Interpreter.Common.Debug
-import           Interpreter.Entrypoint.Runtime
-import           Interpreter.Common.Helper.Classes
 import           Parser.Tidy.Abs
+
+import           Interpreter.Common.Debug
+import           Interpreter.Common.Helper.Classes
+import           Interpreter.Entrypoint.Runtime
+
 
 
 -- TODO static type checking before evaluation

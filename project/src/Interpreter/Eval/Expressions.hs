@@ -7,18 +7,19 @@ import qualified Data.Map                          as Map
 import           Data.Maybe
 import           Data.Tuple
 
-import           Interpreter.Common.Helper.Classes
-import           Interpreter.Common.Helper.Methods
-import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Helper.Classes
+import           Interpreter.Common.Helper.Methods
+import           Interpreter.Common.Helper.Objects
 
-evalExprList :: [Expr] -> StateMonad Result
-evalExprList [expr] = evalExpr expr
-evalExprList (expr:exprs) = do
+
+evaluateExpressionList :: [Expr] -> StateMonad Result
+evaluateExpressionList [expr] = evalExpr expr
+evaluateExpressionList (expr:exprs) = do
     (_, env) <- evalExpr expr
-    local (const env) (evalExprList exprs)
+    local (const env) (evaluateExpressionList exprs)
 
 evalExpr :: Expr -> StateMonad Result
 evalExpr (ELiteral literal) = returnPure $ evalLiteral literal
@@ -52,15 +53,15 @@ evalExpr (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) 
 evalExpr (EImperativeControlFlow (IWhile predicate body)) = do
     (predicateValue, _) <- evalExpr predicate
     if isValueTrue predicateValue
-    then evalExprList body >> evalExpr (EImperativeControlFlow (IWhile predicate body))
+    then evaluateExpressionList body >> evalExpr (EImperativeControlFlow (IWhile predicate body))
     else returnPass
 
 evalExpr (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
     (predicateValue, _) <- evalExpr predicate
-    if isValueTrue predicateValue then evalExprList body
+    if isValueTrue predicateValue then evaluateExpressionList body
     else case optionalElseBranch of
         IElseAbsent       -> returnPass
-        IElsePresent body -> evalExprList body
+        IElsePresent body -> evaluateExpressionList body
 
 evalExpr (EGetExpression (GetExpressionInstance objectIdentifier methodCall)) = do
     object <- getValue objectIdentifier
@@ -243,8 +244,8 @@ isValueTrue (SingleValueObject (BoolValue BTrue))  = True
 isValueTrue (SingleValueObject (BoolValue BFalse)) = False
 -- TODO exception in other cases
 
-buildInitialEnv :: ClassEnv -> Env
-buildInitialEnv classEnv = (Map.empty, classEnv)
+buildInitialEnvironment :: ClassEnv -> Env
+buildInitialEnvironment classEnv = (Map.empty, classEnv)
 
 buildInitialState :: RTState
 buildInitialState = (Map.empty, 0)
@@ -316,14 +317,6 @@ buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
 
 
 -- TODO refactor and move somewhere else
-
--- TODO passing parameters and other context information
-evalAction :: ActionDecl -> StateMonad Result
-evalAction action = evalActionBody (getActionBody action)
-
-evalActionBody :: ActionBody -> StateMonad Result
-evalActionBody (ActionBodyOneLine expr)    = evalExprList [expr]
-evalActionBody (ActionBodyMultiLine exprs) = evalExprList exprs
 
 getValueList :: ObjectType -> StateMonad [ObjectIdent]
 getValueList (ObjectTypeClass className _) = do

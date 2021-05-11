@@ -1,12 +1,21 @@
 module Interpreter.Common.Helper.Methods where
 
-import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
+
+import           Interpreter.Common.Helper.Objects
 
 
 getActionBody :: ActionDecl -> ActionBody
 getActionBody (ActionDeclaration _ _ _ _ actionBody) = actionBody
+
+
+
+
+
+
+
+
 
 argsToExprList :: ArgList -> [Expr]
 argsToExprList ArgumentListAbsent         = []
