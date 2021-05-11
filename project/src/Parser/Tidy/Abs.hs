@@ -63,7 +63,7 @@ data ObjectType
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data GenericParameter
-    = GenericPrameterAbsent | GenericParameterPresent [ClassIdent]
+    = GenericParameterAbsent | GenericParameterPresent [ClassIdent]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ObjectDecl

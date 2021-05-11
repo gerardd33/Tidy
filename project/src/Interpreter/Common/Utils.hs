@@ -18,4 +18,4 @@ debugLog mode message = ifDebug mode $ putStrLn ("DEBUG: " ++ message) >> putStr
 
 
 classIdent :: String -> ClassIdent
-classIdent identifier = CIdent (UpperCaseIdent identifier)
+classIdent identifier = ClassIdentifier (UpperCaseIdent identifier)

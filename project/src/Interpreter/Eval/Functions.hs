@@ -5,26 +5,22 @@ import           Interpreter.Eval.ValueDeclarations
 import           Parser.Tidy.Abs
 
 
-argsToExprList :: ArgumentList -> [Expr]
-argsToExprList ArgListAbsent         = []
-argsToExprList (ArgListPresent args) = map argToExpr args
+argsToExprList :: ArgList -> [Expr]
+argsToExprList ArgumentListAbsent         = []
+argsToExprList (ArgumentListPresent args) = map argToExpr args
 
-argToExpr :: FunctionArgument -> Expr
-argToExpr (FunctionArg expr) = expr
+argToExpr :: FunctionArg -> Expr
+argToExpr (FunctionArgument expr) = expr
 
-getFunctionName :: FunctionDecl -> FunctionIdent
-getFunctionName (OverrideFunctionDecl identifier _ _) = identifier
-getFunctionName (PublicFunctionDecl identifier _ _)   = identifier
-getFunctionName (PrivateFunctionDecl identifier _ _)  = identifier
+getFunctionName :: FunctionDecl -> MethodIdent
+getFunctionName (FunctionDeclaration _ _ functionName _ _) = functionName
 
 getFunctionType :: FunctionDecl -> MethodType
-getFunctionType (OverrideFunctionDecl _ methodType _) = methodType
-getFunctionType (PublicFunctionDecl _ methodType _)   = methodType
-getFunctionType (PrivateFunctionDecl _ methodType _)  = methodType
+getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
 
-getMethodParamsList :: MethodType -> [ValueIdent]
-getMethodParamsList (FType (ParamList valueDecls) _) =
-    map (getValueName . PublicValueDecl) valueDecls
+getMethodParamsList :: MethodType -> [ObjectIdent]
+getMethodParamsList (MethodTypeSignature (ParameterList valueDecls) _) =
+    map (getObjectName . ObjectDeclaration MPublic) valueDecls
 
-functionToValueIdent :: FunctionIdent -> ValueIdent
-functionToValueIdent (FIdent ident) = VIdent ident
+functionToObjectIdent :: MethodIdent -> ObjectIdent
+functionToObjectIdent (MethodIdentifier ident) = ObjectIdentifier ident

@@ -68,7 +68,7 @@ transObjectType x = case x of
   Parser.Tidy.Abs.ObjectTypeAction methodtype -> failure x
 transGenericParameter :: Parser.Tidy.Abs.GenericParameter -> Result
 transGenericParameter x = case x of
-  Parser.Tidy.Abs.GenericPrameterAbsent -> failure x
+  Parser.Tidy.Abs.GenericParameterAbsent -> failure x
   Parser.Tidy.Abs.GenericParameterPresent classidents -> failure x
 transObjectDecl :: Parser.Tidy.Abs.ObjectDecl -> Result
 transObjectDecl x = case x of

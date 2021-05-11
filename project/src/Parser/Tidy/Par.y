@@ -154,7 +154,7 @@ ObjectType : ClassIdent GenericParameter { Parser.Tidy.Abs.ObjectTypeClass $1 $2
            | 'do' MethodType { Parser.Tidy.Abs.ObjectTypeAction $2 }
 
 GenericParameter :: { Parser.Tidy.Abs.GenericParameter }
-GenericParameter : {- empty -} { Parser.Tidy.Abs.GenericPrameterAbsent }
+GenericParameter : {- empty -} { Parser.Tidy.Abs.GenericParameterAbsent }
                  | '[' ListClassIdent ']' { Parser.Tidy.Abs.GenericParameterPresent $2 }
 
 ListObjectDecl :: { [Parser.Tidy.Abs.ObjectDecl] }

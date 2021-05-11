@@ -5,25 +5,20 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
-isInitialized :: ValueDecl -> Bool
-isInitialized (PublicValueDecl (InitializedValue _ _ _))  = True
-isInitialized (PrivateValueDecl (InitializedValue _ _ _)) = True
-isInitialized _                                           = False
+isInitialized :: ObjectDecl -> Bool
+isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _)))  = True
+isInitialized _                                                                    = False
 
-toNameTypePair :: ValueDecl -> (ValueIdent, ValueType)
-toNameTypePair (PublicValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
-toNameTypePair (PrivateValueDecl (UninitializedValue valueIdent valueType)) = (valueIdent, valueType)
+toNameTypePair :: ObjectDecl -> (ObjectIdent, ObjectType)
+toNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier objectType _))
+    = (objectIdentifier, objectType)
 
-getValueName :: ValueDecl -> ValueIdent
-getValueName (PublicValueDecl (UninitializedValue name _))  = name
-getValueName (PublicValueDecl (InitializedValue name _ _))  = name
-getValueName (PrivateValueDecl (UninitializedValue name _)) = name
-getValueName (PrivateValueDecl (InitializedValue name _ _)) = name
+getObjectName :: ObjectDecl -> ObjectIdent
+getObjectName (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ _)) = objectIdentifier
 
-getNameExprPair :: ValueDecl -> (ValueIdent, Expr)
-getNameExprPair (PublicValueDecl (InitializedValue name _ expr))  = (name, expr)
-getNameExprPair (PrivateValueDecl (InitializedValue name _ expr)) = (name, expr)
+toNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
+toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ (Initialized expression))) =
+    (objectIdentifier, expression)
 
-getProperValueDecl :: ValueDecl -> ValueDeclProper
-getProperValueDecl (PublicValueDecl declProper)  = declProper
-getProperValueDecl (PrivateValueDecl declProper) = declProper
+getProperObjectDecl :: ObjectDecl -> ObjectDeclProper
+getProperObjectDecl (ObjectDeclaration _ properDeclaration) = properDeclaration

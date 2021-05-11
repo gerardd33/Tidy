@@ -179,7 +179,7 @@ instance Print Parser.Tidy.Abs.ObjectType where
 
 instance Print Parser.Tidy.Abs.GenericParameter where
   prt i e = case e of
-    Parser.Tidy.Abs.GenericPrameterAbsent -> prPrec i 0 (concatD [])
+    Parser.Tidy.Abs.GenericParameterAbsent -> prPrec i 0 (concatD [])
     Parser.Tidy.Abs.GenericParameterPresent classidents -> prPrec i 0 (concatD [doc (showString "["), prt 0 classidents, doc (showString "]")])
 
 instance Print [Parser.Tidy.Abs.ObjectDecl] where

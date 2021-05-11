@@ -14,20 +14,20 @@ type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
 type RTState = (Map.Map Location Value, Location)
 
 type Env = (LocalEnv, ClassEnv)
-type LocalEnv = Map.Map ValueIdent Location
+type LocalEnv = Map.Map ObjectIdent Location
 type ClassEnv = Map.Map ClassIdent ClassDecl
 
 type Result = (Value, Env)
 type Location = Integer
 
 -- TODO better printing (custom show instance)
-data Value = RegularObject ValueType ObjectEnv | SingleValueObject SingleValue
+data Value = RegularObject ObjectType ObjectEnv | SingleValueObject SingleValue
     deriving (Eq, Show)
 
 data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
     deriving (Eq, Show)
 
-type ValueEnv = Map.Map ValueIdent Value
+type ValueEnv = Map.Map ObjectIdent Value
 
 data SingleValue = IntValue Integer
     | BoolValue Boolean

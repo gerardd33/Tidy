@@ -63,7 +63,7 @@ ObjectTypeClass. ObjectType ::=  ClassIdent GenericParameter ;
 ObjectTypeFunction. ObjectType ::= "get" MethodType ;
 ObjectTypeAction. ObjectType ::= "do" MethodType ;
 
-GenericPrameterAbsent. GenericParameter ::= ;
+GenericParameterAbsent. GenericParameter ::= ;
 GenericParameterPresent. GenericParameter ::= "[" [ClassIdent] "]" ; 
 
 separator ObjectDecl "" ;

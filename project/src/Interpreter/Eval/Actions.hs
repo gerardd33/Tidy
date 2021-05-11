@@ -6,9 +6,7 @@ import           Parser.Tidy.Abs
 
 
 getActionBody :: ActionDecl -> ActionBody
-getActionBody (OverrideActionDecl _ _ actionBody) = actionBody
-getActionBody (PublicActionDecl _ _ actionBody)   = actionBody
-getActionBody (PrivateActionDecl _ _ actionBody)  = actionBody
+getActionBody (ActionDeclaration _ _ _ _ actionBody) = actionBody
 
 -- TODO passing parameters and other context information
 evalAction :: ActionDecl -> StateMonad Result
