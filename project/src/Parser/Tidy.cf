@@ -59,7 +59,6 @@ ActionsPresent. ActionsSection ::= "actions:" "{" [ActionDecl] "}" ;
 -- OBJECTS -----------------------------
 
 ObjectIdentifier. ObjectIdent ::= LowerCaseIdent ;
-
 ObjectTypeClass. ObjectType ::=  ClassIdent GenericParameter ;
 ObjectTypeFunction. ObjectType ::= "get" MethodType ;
 ObjectTypeAction. ObjectType ::= "do" MethodType ;
@@ -83,9 +82,8 @@ Initialized. Initialization ::= "=" Expr ;
 -- FUNCTIONS --------------------------
 
 MethodIdentifier. MethodIdent ::= LowerCaseIdent ;
-MethodTypeSignature. MethodType ::= ParameterList "->" ObjectType;
-
-ParamList. ParameterList ::= "(" [ObjectDeclProper] ")" ;
+MethodTypeSignature. MethodType ::= ParamList "->" ObjectType;
+ParameterList. ParamList ::= "(" [ObjectDeclProper] ")" ;
 
 separator FunctionDecl "" ;
 FunctionDeclaration. FunctionDecl ::= OverrideModifier VisibilityModifier MethodIdent ":" MethodType "=" FunctionBody ;
@@ -102,7 +100,7 @@ WithValuesPresent. WithValues ::= "with" ValuesSection ;
 
 -- ACTIONS ----------------------------
 
-separator ActionDecl "" ; 
+separator ActionDecl "" ;
 ActionDeclaration. ActionDecl ::= OverrideModifier VisibilityModifier MethodIdent ":" MethodType "=" ActionBody ;
 
 ActionBodyOneLine. ActionBody ::= Expr ;
@@ -117,20 +115,20 @@ coercions Expr 10 ;
 ELiteral. Expr10 ::= Literal ;
 ELocalValue. Expr10 ::= ObjectIdent ;
 
-EGetExpr. Expr9 ::= GetExpr ;
-EDoExpr. Expr9 ::= DoExpr ;
+EGetExpression. Expr9 ::= GetExpr ;
+EDoExpression. Expr9 ::= DoExpr ;
 
 ELambdaFunction. Expr8 ::= LambdaFunction ;
 ELambdaAction. Expr8 ::= LambdaAction ;
 
 ELocalFunctionCall. Expr7 ::= "local" FunctionCall ;
 ELocalActionCall. Expr7 ::= "local" ActionCall ;
-ECtorCall. Expr7 ::= ConstructorCall ;
+EConstructorCall. Expr7 ::= CtorCall ;
 
 EImperativeControlFlow. Expr6 ::= ImperativeControlFlow ;
 EFunctionalControlFlow. Expr6 ::= FunctionalControlFlow ;
 
-ELocalObjectDecl. Expr5 ::= LocalObjectDecl ;
+ELocalValueDeclaration. Expr5 ::= LocalValueDecl ;
 
 EUnaryNot. Expr4 ::= "not" Expr5 ;
 EUnaryMinus. Expr4 ::= "-" Expr5 ;
@@ -160,45 +158,45 @@ BFalse. Boolean ::= "False" ;
 VPass. Void ::= "Pass" ;
 
 
--- LOCAL VALUE DECLARATIONS ------------------
+-- LOCAL VALUES ------------------
 
-LocalVDecl. LocalObjectDecl ::= "value" ObjectDecl ;
+LocalValueDeclaration. LocalValueDecl ::= "value" ObjectDecl ;
 
 
 -- LAMBDAS -----------------------------------
 
-LambdaFunctionOneLine. LambdaFunction ::= "get" ParameterList "->" Expr ";" ;
-LambdaFunctionMultiLine. LambdaFunction ::= "get" ParameterList "->" "{" Expr "}" ;
+LambdaFunctionOneLine. LambdaFunction ::= "get" ParamList "->" Expr ";" ;
+LambdaFunctionMultiLine. LambdaFunction ::= "get" ParamList "->" "{" Expr "}" ;
 
-LambdaActionOneLine. LambdaAction ::= "do" ParameterList "->" Expr ";" ;
-LambdaActionMultiLine. LambdaAction ::= "do" ParameterList "->" "{" [Expr] "}" ;
+LambdaActionOneLine. LambdaAction ::= "do" ParamList "->" Expr ";" ;
+LambdaActionMultiLine. LambdaAction ::= "do" ParamList "->" "{" [Expr] "}" ;
 
 
 -- FUNCTION AND CONSTRUCTOR CALLS --------------
 
-ArgListAbsent. ArgumentList ::= ;
-ArgListPresent. ArgumentList ::= "(" [FunctionArgument] ")" ;
+ArgumentListAbsent. ArgList ::= ;
+ArgumentListPresent. ArgList ::= "(" [FunctionArg] ")" ;
 
-separator FunctionArgument "," ;
-FunctionArg. FunctionArgument ::= Expr ;
+separator FunctionArg "," ;
+FunctionArgument. FunctionArg ::= Expr ;
 
-FCall. FunctionCall ::= "." MethodIdent ArgumentList ;
-ACall. ActionCall ::= "#" MethodIdent ArgumentList ;
-CCall. ConstructorCall ::= ClassIdent ArgumentList ;
+CallFunction. FunctionCall ::= "." MethodIdent ArgList ;
+CallAction. ActionCall ::= "#" MethodIdent ArgList ;
+CallConstructor. CtorCall ::= ClassIdent ArgList ;
 
 
 -- GET EXPRESSIONS ----------------------------
 
-GetExprInstance. GetExpr ::= ObjectIdent FunctionCall ;
-GetExprStatic. GetExpr ::= ClassIdent FunctionCall ;
-GetExprChain. GetExpr ::= GetExpr FunctionCall ;
+GetExpressionInstance. GetExpr ::= ObjectIdent FunctionCall ;
+GetExpressionStatic. GetExpr ::= ClassIdent FunctionCall ;
+GetExpressionChain. GetExpr ::= GetExpr FunctionCall ;
 
 
 -- DO EXPRESSIONS ----------------------------
 
-DoExprInstance. DoExpr ::= ObjectIdent ActionCall ;
-DoExprStatic. DoExpr ::= ClassIdent ActionCall ;
-DoExprChain. DoExpr ::= GetExpr ActionCall ;
+DoExpressionInstance. DoExpr ::= ObjectIdent ActionCall ;
+DoExpressionStatic. DoExpr ::= ClassIdent ActionCall ;
+DoExpressionChain. DoExpr ::= GetExpr ActionCall ;
 
 
 -- IMPERATIVE CONTROL FLOW -------------------
@@ -207,26 +205,27 @@ IWhile. ImperativeControlFlow ::= "while" "(" Expr ")" "{" [Expr] "}" ;
 IForeach. ImperativeControlFlow ::= "for" "(" ObjectDecl "in" Expr ")" "{" [Expr] "}" ;
 IIf. ImperativeControlFlow ::= "if" "(" Expr ")" "{" [Expr] "}" OptionalElseBranch ;
 
-ElsePresent. OptionalElseBranch ::= "else" "{" [Expr] "}" ;
-ElseAbsent. OptionalElseBranch ::= ;
+IElsePresent. OptionalElseBranch ::= "else" "{" [Expr] "}" ;
+IElseIf. OptionalElseBranch ::= "elif" "(" Expr ")" "{" [Expr] "}" OptionalElseBranch ;
+IElseAbsent. OptionalElseBranch ::= ;
 
 
 -- FUNCTIONAL CONTROL FLOW -------------------
 
 FIfThenElse. FunctionalControlFlow ::= "if" "(" Expr ")" ThenBranch ElseBranch ;
 
-ThenOneLine. ThenBranch ::= "then" Expr ";" ;
-ThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
-ElseOneLine. ElseBranch ::= "else" Expr ";" ;
-ElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
-ElseIf. ElseBranch ::= "elif" "(" Expr ")" ThenBranch ElseBranch ;
+FThenOneLine. ThenBranch ::= "then" Expr ";" ;
+FThenMultiLine. ThenBranch ::= "then" "{" Expr "}" ;
+FElseOneLine. ElseBranch ::= "else" Expr ";" ;
+FElseMultiLine. ElseBranch ::= "else" "{" Expr "}" ;
+FElseIf. ElseBranch ::= "elif" "(" Expr ")" ThenBranch ElseBranch ;
 
-FMatch. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
+FMatchCase. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
 
 separator MatchCase "" ;
-Case. MatchCase ::= "case" Pattern "->" Expr ;
+FCase. MatchCase ::= "case" Pattern "->" Expr ;
 
-TypePattern. Pattern ::= ClassIdent ; 
+FTypePattern. Pattern ::= ClassIdent ; 
 
 
 -- RELATIONAL OPERATORS ----------------------
