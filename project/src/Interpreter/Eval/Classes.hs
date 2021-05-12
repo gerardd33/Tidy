@@ -11,18 +11,18 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Types
+import           Interpreter.Eval.Utils
 
 
 getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
 getMemberFunction (ObjectTypeClass classIdent _) functionIdent = do
-    (_, classEnv) <- ask
-    let functions = getFunctionDecls $ classEnv Map.! classIdent
+    classDecl <- getClassDecl classIdent
+    let functions = getFunctionDecls classDecl
     return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdent) functions
 
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasGetter objectType functionIdent = do
-    (_, classEnv) <- ask
-    let classDecl = classEnv Map.! classFromObjectType objectType
+    classDecl <- getClassDecl $ classFromObjectType objectType
     let attributeIdentifier = methodToObjectIdentifier functionIdent
     let attributes = getValues classDecl ++ getVariables classDecl
     return $ attributeIdentifier `elem` attributes

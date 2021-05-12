@@ -171,10 +171,10 @@ LambdaActionMultiLine. LambdaAction ::= "do" ParamList "->" "{" [Expr] "}" ;
 -- FUNCTION AND CONSTRUCTOR CALLS -------------
 
 ArgumentListAbsent. ArgList ::= ;
-ArgumentListPresent. ArgList ::= "(" [FunctionArg] ")" ;
+ArgumentListPresent. ArgList ::= "(" [MethodArg] ")" ;
 
-separator FunctionArg "," ;
-FunctionArgument. FunctionArg ::= Expr ;
+separator MethodArg "," ;
+MethodArgument. MethodArg ::= Expr ;
 
 CallFunction. FunctionCall ::= "." MethodIdent ArgList ;
 CallAction. ActionCall ::= "#" MethodIdent ArgList ;

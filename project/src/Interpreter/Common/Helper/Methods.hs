@@ -15,6 +15,12 @@ getActionBody (ActionDeclaration _ _ _ _ actionBody) = actionBody
 getFunctionIdentifier :: FunctionDecl -> MethodIdent
 getFunctionIdentifier (FunctionDeclaration _ _ functionIdent _ _) = functionIdent
 
+argsToExpressionList :: ArgList -> [Expr]
+argsToExpressionList ArgumentListAbsent         = []
+argsToExpressionList (ArgumentListPresent args) = map argToExpression args
+
+argToExpression :: MethodArg -> Expr
+argToExpression (MethodArgument expr) = expr
 
 
 
@@ -23,12 +29,6 @@ getFunctionIdentifier (FunctionDeclaration _ _ functionIdent _ _) = functionIden
 
 
 
-argsToExprList :: ArgList -> [Expr]
-argsToExprList ArgumentListAbsent         = []
-argsToExprList (ArgumentListPresent args) = map argToExpr args
-
-argToExpr :: FunctionArg -> Expr
-argToExpr (FunctionArgument expr) = expr
 
 getFunctionType :: FunctionDecl -> MethodType
 getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType

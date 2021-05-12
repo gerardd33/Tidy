@@ -53,7 +53,6 @@ evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression metho
     liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    (_, classEnv) <- ask
     singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
@@ -142,9 +141,8 @@ evaluateGetExpressionOnObject object (CallFunction functionIdent argumentList) =
 
 evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
 evaluateConstructorCall classIdent argList = do
-    (localEnv, classEnv) <- ask
+    classDecl <- getClassDecl classIdent
     evaluatedArgs <- evaluateArgumentList argList
-    let classDecl = classEnv Map.! classIdent
     let objectType = ObjectTypeClass classIdent GenericParameterAbsent
     initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
@@ -202,8 +200,7 @@ buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
 
 evaluateArgumentList :: ArgList -> StateMonad [Object]
 evaluateArgumentList argList = do
-    env <- ask
-    evalResults <- mapM evaluateExpression (argsToExprList argList)
+    evalResults <- mapM evaluateExpression $ argsToExpressionList argList
     return $ map fst evalResults
 
 
@@ -221,13 +218,12 @@ executeDeclarations (decl:decls) = do
 
 getValueList :: ObjectType -> StateMonad [ObjectIdent]
 getValueList (ObjectTypeClass classIdent _) = do
-    (_, classEnv) <- ask
-    return $ getValues $ classEnv Map.! classIdent
+    classDecl <- getClassDecl classIdent
+    return $ getValues classDecl
 
 buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
 buildObjectEnv objectType args initializedAttributes = do
-    (_, classEnv) <- ask
-    let classDecl = classEnv Map.! classFromObjectType objectType
+    classDecl <- getClassDecl $ classFromObjectType objectType
     let ctorParamsList = getCtorParamsList classDecl
     let attributesFromCtor = Map.fromList $ zip ctorParamsList args
     let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor

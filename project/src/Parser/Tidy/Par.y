@@ -302,15 +302,15 @@ LambdaAction : 'do' ParamList '->' Expr ';' { Parser.Tidy.Abs.LambdaActionOneLin
 
 ArgList :: { Parser.Tidy.Abs.ArgList }
 ArgList : {- empty -} { Parser.Tidy.Abs.ArgumentListAbsent }
-        | '(' ListFunctionArg ')' { Parser.Tidy.Abs.ArgumentListPresent $2 }
+        | '(' ListMethodArg ')' { Parser.Tidy.Abs.ArgumentListPresent $2 }
 
-ListFunctionArg :: { [Parser.Tidy.Abs.FunctionArg] }
-ListFunctionArg : {- empty -} { [] }
-                | FunctionArg { (:[]) $1 }
-                | FunctionArg ',' ListFunctionArg { (:) $1 $3 }
+ListMethodArg :: { [Parser.Tidy.Abs.MethodArg] }
+ListMethodArg : {- empty -} { [] }
+                | MethodArg { (:[]) $1 }
+                | MethodArg ',' ListMethodArg { (:) $1 $3 }
 
-FunctionArg :: { Parser.Tidy.Abs.FunctionArg }
-FunctionArg : Expr { Parser.Tidy.Abs.FunctionArgument $1 }
+MethodArg :: { Parser.Tidy.Abs.MethodArg }
+MethodArg : Expr { Parser.Tidy.Abs.MethodArgument $1 }
 
 FunctionCall :: { Parser.Tidy.Abs.FunctionCall }
 FunctionCall : '.' MethodIdent ArgList { Parser.Tidy.Abs.CallFunction $2 $3 }

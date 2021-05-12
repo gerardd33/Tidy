@@ -171,11 +171,11 @@ All other symbols are terminals.
   | //LambdaAction// | -> | ``do`` //ParamList// ``->`` //Expr// ``;``
   |  |  **|**  | ``do`` //ParamList// ``->`` ``{`` //[Expr]// ``}``
   | //ArgList// | -> | **eps**
-  |  |  **|**  | ``(`` //[FunctionArg]// ``)``
-  | //[FunctionArg]// | -> | **eps**
-  |  |  **|**  | //FunctionArg//
-  |  |  **|**  | //FunctionArg// ``,`` //[FunctionArg]//
-  | //FunctionArg// | -> | //Expr//
+  |  |  **|**  | ``(`` //[MethodArg]// ``)``
+  | //[MethodArg]// | -> | **eps**
+  |  |  **|**  | //MethodArg//
+  |  |  **|**  | //MethodArg// ``,`` //[MethodArg]//
+  | //MethodArg// | -> | //Expr//
   | //FunctionCall// | -> | ``.`` //MethodIdent// //ArgList//
   | //ActionCall// | -> | ``#`` //MethodIdent// //ArgList//
   | //CtorCall// | -> | //ClassIdent// //ArgList//

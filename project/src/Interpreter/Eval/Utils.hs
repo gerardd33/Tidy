@@ -1,6 +1,7 @@
 module Interpreter.Eval.Utils where
 
 import           Control.Monad.Reader
+import qualified Data.Map                        as Map
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -21,3 +22,8 @@ liftPure calculation = do
 
 returnPass :: StateMonad Result
 returnPass = liftPure $ return pass
+
+getClassDecl :: ClassIdent -> StateMonad ClassDecl
+getClassDecl classIdent = do
+    (_, classEnv) <- ask
+    return $ classEnv Map.! classIdent

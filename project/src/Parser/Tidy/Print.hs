@@ -323,14 +323,14 @@ instance Print Parser.Tidy.Abs.LambdaAction where
 instance Print Parser.Tidy.Abs.ArgList where
   prt i e = case e of
     Parser.Tidy.Abs.ArgumentListAbsent -> prPrec i 0 (concatD [])
-    Parser.Tidy.Abs.ArgumentListPresent functionargs -> prPrec i 0 (concatD [doc (showString "("), prt 0 functionargs, doc (showString ")")])
+    Parser.Tidy.Abs.ArgumentListPresent methodargs -> prPrec i 0 (concatD [doc (showString "("), prt 0 methodargs, doc (showString ")")])
 
-instance Print [Parser.Tidy.Abs.FunctionArg] where
+instance Print [Parser.Tidy.Abs.MethodArg] where
   prt = prtList
 
-instance Print Parser.Tidy.Abs.FunctionArg where
+instance Print Parser.Tidy.Abs.MethodArg where
   prt i e = case e of
-    Parser.Tidy.Abs.FunctionArgument expr -> prPrec i 0 (concatD [prt 0 expr])
+    Parser.Tidy.Abs.MethodArgument expr -> prPrec i 0 (concatD [prt 0 expr])
   prtList _ [] = concatD []
   prtList _ [x] = concatD [prt 0 x]
   prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]

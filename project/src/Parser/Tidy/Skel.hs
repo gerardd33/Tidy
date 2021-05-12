@@ -165,10 +165,10 @@ transLambdaAction x = case x of
 transArgList :: Parser.Tidy.Abs.ArgList -> Result
 transArgList x = case x of
   Parser.Tidy.Abs.ArgumentListAbsent -> failure x
-  Parser.Tidy.Abs.ArgumentListPresent functionargs -> failure x
-transFunctionArg :: Parser.Tidy.Abs.FunctionArg -> Result
-transFunctionArg x = case x of
-  Parser.Tidy.Abs.FunctionArgument expr -> failure x
+  Parser.Tidy.Abs.ArgumentListPresent methodargs -> failure x
+transMethodArg :: Parser.Tidy.Abs.MethodArg -> Result
+transMethodArg x = case x of
+  Parser.Tidy.Abs.MethodArgument expr -> failure x
 transFunctionCall :: Parser.Tidy.Abs.FunctionCall -> Result
 transFunctionCall x = case x of
   Parser.Tidy.Abs.CallFunction methodident arglist -> failure x

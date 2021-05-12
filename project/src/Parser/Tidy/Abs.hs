@@ -163,10 +163,10 @@ data LambdaAction
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ArgList
-    = ArgumentListAbsent | ArgumentListPresent [FunctionArg]
+    = ArgumentListAbsent | ArgumentListPresent [MethodArg]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data FunctionArg = FunctionArgument Expr
+data MethodArg = MethodArgument Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data FunctionCall = CallFunction MethodIdent ArgList
