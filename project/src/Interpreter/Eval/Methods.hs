@@ -4,7 +4,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Helper.Methods
-import           Interpreter.Eval.Expressions
+import           Interpreter.Eval.Expressions.Evaluate
 
 
 -- TODO passing parameters and other context information

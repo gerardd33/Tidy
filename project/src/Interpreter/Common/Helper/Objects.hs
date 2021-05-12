@@ -4,6 +4,13 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
+
+
+
+
+
+
+
 isInitialized :: ObjectDecl -> Bool
 isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _)))  = True
 isInitialized _                                                                    = False
@@ -22,22 +29,22 @@ toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ 
 getProperObjectDecl :: ObjectDecl -> ObjectDeclProper
 getProperObjectDecl (ObjectDeclaration _ properDeclaration) = properDeclaration
 
-newSingleValueObject :: SingleValue -> Value
-newSingleValueObject = SingleValueObject
+newBuiltinObjectObject :: BuiltinObject -> Object
+newBuiltinObjectObject = BuiltinObjectObject
 
-pass :: Value
-pass = newSingleValueObject VoidValue
-
-getObjectType :: Value -> ObjectType
-getObjectType (SingleValueObject object)  = valueTypeForSingleValueObject object
+getObjectType :: Object -> ObjectType
+getObjectType (BuiltinObjectObject object)  = valueTypeForBuiltinObjectObject object
 getObjectType (RegularObject valueType _) = valueType
 
-valueTypeForSingleValueObject :: SingleValue -> ObjectType
-valueTypeForSingleValueObject (IntValue _)    = valueTypeFromClassName "Int"
-valueTypeForSingleValueObject (BoolValue _)   = valueTypeFromClassName "Bool"
-valueTypeForSingleValueObject (CharValue _)   = valueTypeFromClassName "Char"
-valueTypeForSingleValueObject (StringValue _) = valueTypeFromClassName "String"
-valueTypeForSingleValueObject VoidValue       = valueTypeFromClassName "Void"
+valueTypeForBuiltinObjectObject :: BuiltinObject -> ObjectType
+valueTypeForBuiltinObjectObject (IntObject _)    = valueTypeFromClassName "Int"
+valueTypeForBuiltinObjectObject (BoolObject _)   = valueTypeFromClassName "Bool"
+valueTypeForBuiltinObjectObject (CharObject _)   = valueTypeFromClassName "Char"
+valueTypeForBuiltinObjectObject (StringObject _) = valueTypeFromClassName "String"
+valueTypeForBuiltinObjectObject VoidObject       = valueTypeFromClassName "Void"
 
 valueTypeFromClassName :: String -> ObjectType
 valueTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
+
+pass :: Object
+pass = newBuiltinObjectObject VoidObject

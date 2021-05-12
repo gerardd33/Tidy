@@ -13,16 +13,18 @@ import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
-import           Interpreter.Eval.Expressions
 import           Interpreter.Eval.Methods
 
+-- TODO remove or change
+import           Interpreter.Eval.Expressions.Entrypoint
 
--- TODO handle debug better
-runtime :: Mode -> ClassEnv -> ClassDecl -> IO (Either RuntimeException Value)
+
+-- TODO handle debugging in a better way
+runtime :: Mode -> ClassEnv -> ClassDecl -> IO (Either RuntimeException Object)
 runtime mode classEnv mainClass = runExceptT $ evalStateT
     (runReaderT (runtimeBody mode mainClass) (buildInitialEnvironment classEnv)) buildInitialState
 
-runtimeBody :: Mode -> ClassDecl -> StateMonad Value
+runtimeBody :: Mode -> ClassDecl -> StateMonad Object
 runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
     (_, classEnv) <- ask
