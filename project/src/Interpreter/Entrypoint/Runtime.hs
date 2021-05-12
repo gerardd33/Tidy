@@ -13,10 +13,8 @@ import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
-import           Interpreter.Eval.Methods
-
--- TODO remove or change
 import           Interpreter.Eval.Expressions.Evaluate
+import           Interpreter.Eval.LocalEnvironment
 
 
 -- TODO handle debugging in a better way

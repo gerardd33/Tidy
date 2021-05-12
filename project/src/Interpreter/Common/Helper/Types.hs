@@ -19,3 +19,6 @@ isTrue :: Object -> Bool
 isTrue (BuiltinObject (BoolObject BTrue))  = True
 isTrue (BuiltinObject (BoolObject BFalse)) = False
 -- TODO exception in other cases
+
+methodToObjectIdentifier :: MethodIdent -> ObjectIdent
+methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident

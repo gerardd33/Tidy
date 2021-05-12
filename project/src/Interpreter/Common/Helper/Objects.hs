@@ -7,6 +7,19 @@ import           Parser.Tidy.Abs
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 
+getLocalObjectType :: Object -> ObjectType
+getLocalObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
+getLocalObjectType (RegularObject objectType _) = objectType
+
+objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
+objectTypeForBuiltinObject (IntObject _)    = objectTypeFromClassName "Int"
+objectTypeForBuiltinObject (BoolObject _)   = objectTypeFromClassName "Bool"
+objectTypeForBuiltinObject (CharObject _)   = objectTypeFromClassName "Char"
+objectTypeForBuiltinObject (StringObject _) = objectTypeFromClassName "String"
+objectTypeForBuiltinObject VoidObject       = objectTypeFromClassName "Void"
+
+objectTypeFromClassName :: String -> ObjectType
+objectTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
 
 
 
@@ -16,26 +29,15 @@ isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _))
 isInitialized _                                                                    = False
 
 toNameTypePair :: ObjectDecl -> (ObjectIdent, ObjectType)
-toNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier objectType _))
-    = (objectIdentifier, objectType)
+toNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent objectType _))
+    = (objectIdent, objectType)
 
 getLocalValueName :: ObjectDecl -> ObjectIdent
-getLocalValueName (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ _)) = objectIdentifier
+getLocalValueName (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ _)) = objectIdent
 
 toNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
-toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ (Initialized expression))) =
-    (objectIdentifier, expression)
+toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Initialized expr))) =
+    (objectIdent, expr)
 
-getLocalValueType :: Object -> ObjectType
-getLocalValueType (BuiltinObject object)      = valueTypeForBuiltinObject object
-getLocalValueType (RegularObject valueType _) = valueType
 
-valueTypeForBuiltinObject :: BuiltinObject -> ObjectType
-valueTypeForBuiltinObject (IntObject _)    = valueTypeFromClassName "Int"
-valueTypeForBuiltinObject (BoolObject _)   = valueTypeFromClassName "Bool"
-valueTypeForBuiltinObject (CharObject _)   = valueTypeFromClassName "Char"
-valueTypeForBuiltinObject (StringObject _) = valueTypeFromClassName "String"
-valueTypeForBuiltinObject VoidObject       = valueTypeFromClassName "Void"
 
-valueTypeFromClassName :: String -> ObjectType
-valueTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent

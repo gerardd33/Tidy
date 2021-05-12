@@ -13,9 +13,11 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
+import           Interpreter.Eval.Classes
 import           Interpreter.Eval.Expressions.Miscellaneous
 import           Interpreter.Eval.Expressions.Operators
 import           Interpreter.Eval.LocalEnvironment
+import           Interpreter.Eval.Methods
 import           Interpreter.Eval.Utils
 
 
@@ -47,21 +49,19 @@ evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch els
     then evaluateThenBranch thenBranch
     else evaluateElseBranch elseBranch
 
+evaluateExpression (EGetExpression (GetExpressionInstance objectIdent methodCall)) = do
+    object <- getLocalValue objectIdent
+    liftPure $ evaluateGetExpressionOnObject object methodCall
 
-
-
-evaluateExpression (EGetExpression (GetExpressionInstance objectIdentifier methodCall)) = do
-    object <- getLocalValue objectIdentifier
-    evaluateGetExprOnObject object methodCall
-
-evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpr methodCall)) = do
-    (prefixValue, _) <- evaluateExpression $ EGetExpression prefixGetExpr
-    evaluateGetExprOnObject prefixValue methodCall
+evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression methodCall)) = do
+    (prefixObject, _) <- evaluateExpression $ EGetExpression prefixGetExpression
+    liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
     (_, classEnv) <- ask
     singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
-    evaluateGetExprOnObject singletonObject methodCall
+    liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
+
 
 evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) = do
     (localEnv, classEnv) <- ask
@@ -94,6 +94,23 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
 
 
 -- PURELY FUNCTIONAL EXPRESSIONS --
+evaluateFunction :: FunctionDecl -> StateMonad Object
+evaluateFunction = evaluateFunctionBody . getFunctionBody
+
+evaluateFunctionBody :: FunctionBody -> StateMonad Object
+evaluateFunctionBody (FunctionBodyOneLine expr) = returnPure $ evaluateExpression expr
+evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case withValues of
+    WithValuesPresent (ValuesPresent values) -> do let declarations = map getProperDeclaration values
+                                                   (_, localEnv) <-  executeDeclarations declarations
+                                                   local (const localEnv) $ evaluateExpression expr
+    _ -> evaluateExpression expr
+
+evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
+evaluateMemberFunction object functionIdentifier evaluatedArgs = do
+    function <- getMemberFunction (getLocalObjectType object) functionIdentifier
+    (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
+    local (const functionLocalEnv) $ evaluateFunction function
+
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
     (value1, _) <- evaluateExpression expr1
@@ -131,12 +148,31 @@ evaluateElseBranch (FElseMultiLine expr) = returnPure $ evaluateExpression expr
 evaluateElseBranch (FElseIf predicate thenBranch elseBranch) =
     returnPure $ evaluateExpression $ EFunctionalControlFlow $ FIfThenElse predicate thenBranch elseBranch
 
+evaluateGetExpressionOnObject :: Object -> FunctionCall -> StateMonad Object
+evaluateGetExpressionOnObject object (CallFunction functionIdentifier argumentList) = do
+    originalEnv <- ask
+    evaluatedArgs <- evaluateArgumentList argumentList
+    takeGetter <- hasGetter (getLocalObjectType object) functionIdentifier
+    if takeGetter && null evaluatedArgs
+    then evaluateGetter object functionIdentifier
+    else evaluateMemberFunction object functionIdentifier evaluatedArgs
+
+
+
 
 -- EXPRESSIONS WITH SIDE EFFECTS --
+-- TODO passing parameters and other context information
+evaluateAction :: ActionDecl -> StateMonad Result
+evaluateAction = evaluateActionBody . getActionBody
+
+evaluateActionBody :: ActionBody -> StateMonad Result
+evaluateActionBody (ActionBodyOneLine expr)    = evaluateExpressionList [expr]
+evaluateActionBody (ActionBodyMultiLine exprs) = evaluateExpressionList exprs
+
 declareLocalValue :: ObjectDeclProper -> StateMonad Result
-declareLocalValue (ObjectDeclarationProper objectName objectType (Initialized expr)) = do
+declareLocalValue (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
     (initializationValue, _) <- evaluateExpression expr
-    addLocalValue objectName initializationValue
+    addLocalValue objectIdent initializationValue
 
 
 
@@ -150,102 +186,15 @@ declareLocalValue (ObjectDeclarationProper objectName objectType (Initialized ex
 
 
 
-
-evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
-evaluateAttributeExpressions attributeList = do
-    let (names, exprs) = unzip attributeList
-    evalResults <- mapM evaluateExpression exprs
-    return $ zip names (map fst evalResults)
-
-
-evaluateFunctionBody :: FunctionBody -> StateMonad Result
-evaluateFunctionBody (FunctionBodyOneLine expr)                    = evaluateExpression expr
-evaluateFunctionBody (FunctionBodyMultiLine expr WithValuesAbsent) = evaluateExpression expr
-evaluateFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent ValuesAbsent)) = evaluateExpression expr
-evaluateFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent (ValuesPresent valueDecls))) = do
-    originalEnv <- ask
-    let decls = map getProperDeclaration valueDecls
-    (_, localEnv) <-  executeDeclarations decls
-    (result, _) <- local (const localEnv) (evaluateExpression expr)
-    return (result, originalEnv)
-
-evaluateArgumentList :: ArgList -> StateMonad [Object]
-evaluateArgumentList argList = do
-    env <- ask
-    evalResults <- mapM evaluateExpression (argsToExprList argList)
-    return $ map fst evalResults
-
-addArgumentsToEnv :: FunctionDecl -> [Object] -> StateMonad Result
-addArgumentsToEnv function evaluatedArgs = do
-    (localEnv, classEnv) <- ask
-    let methodParamsList = getMethodParamsList $ getFunctionType function
-    let decls = zip methodParamsList evaluatedArgs
-    (_, newEnv) <- executeObjectAdditions decls
-    return (pass, newEnv)
-
-evaluateFunction :: FunctionDecl -> StateMonad Result
-evaluateFunction (FunctionDeclaration _ _ _ _ body) = evaluateFunctionBody body
-
-
-evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Result
-evaluateMemberFunction object functionIdentifier evaluatedArgs = do
-    function <- getMemberFunction (getLocalValueType object) functionIdentifier
-    (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
-    local (const functionLocalEnv) (evaluateFunction function)
-
-evaluateGetter :: Object -> MethodIdent -> StateMonad Result
-evaluateGetter (RegularObject _ objectEnv) functionIdentifier = do
-    let attribute = functionToObjectIdent functionIdentifier
-    if attribute `Map.member` values objectEnv
-    then returnObject $ values objectEnv Map.! attribute
-    else returnObject $ variables objectEnv Map.! attribute
--- TODO throw if single value object
-
-executeDeclarations :: [ObjectDeclProper] -> StateMonad Result
-executeDeclarations [] = returnPass
-executeDeclarations (decl:decls) = do
-    (_, env) <- declareLocalValue decl
-    local (const env) $ executeDeclarations decls
-
-evaluateGetExprOnObject :: Object -> FunctionCall -> StateMonad Result
-evaluateGetExprOnObject object (CallFunction functionIdentifier argList) = do
-    originalEnv <- ask
-    evaluatedArgs <- evaluateArgumentList argList
-    takeGetter <- hasGetter (getLocalValueType object) functionIdentifier
-    (result, _) <- if null evaluatedArgs && takeGetter
-                 then evaluateGetter object functionIdentifier
-                 else evaluateMemberFunction object functionIdentifier evaluatedArgs
-    return (result, originalEnv)
-
-
-
-buildInitialEnvironment :: ClassEnv -> Env
-buildInitialEnvironment classEnv = (Map.empty, classEnv)
-
-buildInitialState :: RTState
-buildInitialState = (Map.empty, 0)
 
 buildInitialLocalEnv :: ClassEnv -> StateMonad Result
 buildInitialLocalEnv classEnv = do
     let singletonClasses = Map.toList $ Map.filter isSingletonClass classEnv
     let (classNames, classDecls) = unzip singletonClasses
-    let objectNames = map singletonInstanceIdentifier classNames
+    let objectIdents = map singletonInstanceIdentifier classNames
     singletonObjects <- mapM buildSingletonClassInstance classDecls
-    (_, newEnv) <- executeObjectAdditions $ zip objectNames singletonObjects
+    (_, newEnv) <- executeObjectAdditions $ zip objectIdents singletonObjects
     return (pass, newEnv)
-
-setObject :: ObjectIdent -> Object -> StateMonad Result
-setObject identifier value = do
-    location <- getLocation identifier
-    (state, nextLocation) <- get
-    put (Map.insert location value state, nextLocation)
-    returnPass
-
-executeObjectAdditions :: [(ObjectIdent, Object)] -> StateMonad Result
-executeObjectAdditions [] = returnPass
-executeObjectAdditions (addition:additions) = do
-    (_, env) <- uncurry addLocalValue addition
-    local (const env) $ executeObjectAdditions additions
 
 buildSingletonClassInstance :: ClassDecl -> StateMonad Object
 buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
@@ -258,6 +207,23 @@ buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
 
 
 
+evaluateArgumentList :: ArgList -> StateMonad [Object]
+evaluateArgumentList argList = do
+    env <- ask
+    evalResults <- mapM evaluateExpression (argsToExprList argList)
+    return $ map fst evalResults
+
+
+
+
+executeDeclarations :: [ObjectDeclProper] -> StateMonad Result
+executeDeclarations [] = returnPass
+executeDeclarations (decl:decls) = do
+    (_, env) <- declareLocalValue decl
+    local (const env) $ executeDeclarations decls
+
+
+
 -- TODO refactor and move somewhere else
 
 getValueList :: ObjectType -> StateMonad [ObjectIdent]
@@ -265,27 +231,21 @@ getValueList (ObjectTypeClass className _) = do
     (_, classEnv) <- ask
     return $ getValues $ classEnv Map.! className
 
-getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
-getMemberFunction (ObjectTypeClass className _) functionIdentifier = do
-    (_, classEnv) <- ask
-    let functions = getFunctionDecls $ classEnv Map.! className
-    return $ fromJust $ List.find (\f -> getFunctionName f == functionIdentifier) functions
-
-hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
-hasGetter objectType functionIdentifier = do
-    (_, classEnv) <- ask
-    let classDecl = classEnv Map.! classIdentFromType objectType
-    let attributeIdentifier = functionToObjectIdent functionIdentifier
-    let attributes = getValues classDecl ++ getVariables classDecl
-    return $ attributeIdentifier `elem` attributes
-
 buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
 buildObjectEnv objectType args initializedAttributes = do
     (_, classEnv) <- ask
-    let classDecl = classEnv Map.! classIdentFromType objectType
+    let classDecl = classEnv Map.! classFromObjectType objectType
     let ctorParamsList = getCtorParamsList classDecl
     let attributesFromCtor = Map.fromList $ zip ctorParamsList args
     let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
     objectValueList <- getValueList objectType
     let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
     return $ ObjectEnv values variables
+
+
+
+evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
+evaluateAttributeExpressions attributeList = do
+    let (names, exprs) = unzip attributeList
+    evalResults <- mapM evaluateExpression exprs
+    return $ zip names (map fst evalResults)

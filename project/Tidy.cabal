@@ -31,6 +31,7 @@ library
       Interpreter.Common.Types
       Interpreter.Entrypoint.Runtime
       Interpreter.Entrypoint.Static
+      Interpreter.Eval.Classes
       Interpreter.Eval.Expressions.Evaluate
       Interpreter.Eval.Expressions.Miscellaneous
       Interpreter.Eval.Expressions.Operators

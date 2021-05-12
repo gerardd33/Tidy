@@ -19,11 +19,26 @@ getMainAction (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsPresent a
 getMainAction _ = Nothing
 
 loadClasses :: [ClassDecl] -> ClassEnv
-loadClasses declarations = Map.fromList $ map evaluateClassDeclaration declarations
+loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
+
+singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
+singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
+    ObjectIdentifier (LowerCaseIdent ("__singleton_" ++ classIdent))
+
+classFromObjectType :: ObjectType -> ClassIdent
+classFromObjectType (ObjectTypeClass classIdent _) = classIdent
+
+
+
+
+
+
+
+
 
 -- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
-evaluateClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
-evaluateClassDeclaration declaration = case declaration of
+loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
+loadClassDeclaration declaration = case declaration of
     (ClassDeclaration _ _ identifier _ _)  -> (identifier, declaration)
 
 -- TODO here print NoMainActionError and terminate if list empty, once I have monads adapted for static checking
@@ -55,8 +70,7 @@ getCtorParamsList classDecl = uninitializedValues ++ uninitializedVariables
     where uninitializedValues = map getLocalValueName $ filter (not . isInitialized) (getValueDecls classDecl)
           uninitializedVariables = map getLocalValueName $ filter (not . isInitialized) (getVariableDecls classDecl)
 
-classIdentFromType :: ObjectType -> ClassIdent
-classIdentFromType (ObjectTypeClass classIdent _) = classIdent
+
 
 getInitializedAttributeList :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributeList classDecl = initializedValues ++ initializedVariables
@@ -71,7 +85,3 @@ getFunctionDecls _ = []
 isSingletonClass :: ClassDecl -> Bool
 isSingletonClass (ClassDeclaration _ MSingleton _ _ _) = True
 isSingletonClass _                                     = False
-
-singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
-singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent name)) =
-    ObjectIdentifier (LowerCaseIdent ("_singleton_" ++ name))

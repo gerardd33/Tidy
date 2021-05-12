@@ -15,13 +15,9 @@ returnPure calculation = do
 
 liftPure :: StateMonad Object -> StateMonad Result
 liftPure calculation = do
-    value <- calculation
-    returnObject value
-
-returnObject :: Object -> StateMonad Result
-returnObject value = do
     env <- ask
+    value <- calculation
     return (value, env)
 
 returnPass :: StateMonad Result
-returnPass = returnObject pass
+returnPass = liftPure $ return pass
