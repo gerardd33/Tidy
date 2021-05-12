@@ -4,8 +4,8 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
-
-
+getProperDeclaration :: ObjectDecl -> ObjectDeclProper
+getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 
 
 
@@ -19,22 +19,19 @@ toNameTypePair :: ObjectDecl -> (ObjectIdent, ObjectType)
 toNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier objectType _))
     = (objectIdentifier, objectType)
 
-getObjectName :: ObjectDecl -> ObjectIdent
-getObjectName (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ _)) = objectIdentifier
+getLocalValueName :: ObjectDecl -> ObjectIdent
+getLocalValueName (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ _)) = objectIdentifier
 
 toNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
 toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ (Initialized expression))) =
     (objectIdentifier, expression)
 
-getProperObjectDecl :: ObjectDecl -> ObjectDeclProper
-getProperObjectDecl (ObjectDeclaration _ properDeclaration) = properDeclaration
-
 newBuiltinObject :: BuiltinObject -> Object
 newBuiltinObject = BuiltinObject
 
-getObjectType :: Object -> ObjectType
-getObjectType (BuiltinObject object)      = valueTypeForBuiltinObject object
-getObjectType (RegularObject valueType _) = valueType
+getLocalValueType :: Object -> ObjectType
+getLocalValueType (BuiltinObject object)      = valueTypeForBuiltinObject object
+getLocalValueType (RegularObject valueType _) = valueType
 
 valueTypeForBuiltinObject :: BuiltinObject -> ObjectType
 valueTypeForBuiltinObject (IntObject _)    = valueTypeFromClassName "Int"

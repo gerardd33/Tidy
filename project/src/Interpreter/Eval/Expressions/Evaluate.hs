@@ -12,6 +12,7 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
+import           Interpreter.Eval.Environment
 import           Interpreter.Eval.Expressions.Miscellaneous
 import           Interpreter.Eval.Utils
 
@@ -22,35 +23,35 @@ evaluateExpressionList (expr:exprs) = do
     (_, env) <- evaluateExpression expr
     local (const env) (evaluateExpressionList exprs)
 
-
 evaluateExpression :: Expr -> StateMonad Result
-evaluateExpression (ELiteral literal) = returnPure $ evalLiteral literal
-evaluateExpression (ELocalValue identifier) = returnPure $ getObject identifier
-evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration (ObjectDeclaration _ declProper))) =
-    declareObject declProper
-evaluateExpression (EAdd expr1 expr2) = evalBinaryOperator expr1 expr2 evalAddition
-evaluateExpression (ESubtract expr1 expr2) = evalBinaryOperator expr1 expr2 evalSubtraction
-evaluateExpression (EMultiply expr1 expr2) = evalBinaryOperator expr1 expr2 evalMultiplication
-evaluateExpression (EDivide expr1 expr2) = evalBinaryOperator expr1 expr2 evalMultiplication
-evaluateExpression (EConcatenate expr1 expr2) = evalBinaryOperator expr1 expr2 evalConcatenation
-evaluateExpression (EUnaryNot expr) = evalUnaryOperator expr evalUnaryNot
-evaluateExpression (EUnaryMinus expr) = evalUnaryOperator expr evalUnaryMinus
-evaluateExpression (ERelationalOperator expr1 operator expr2) = evalRelationalOperator expr1 expr2 operator
-evaluateExpression (EBooleanOperator expr1 operator expr2) = evalBooleanOperator expr1 expr2 operator
+evaluateExpression (ELiteral literal) = returnPure $ evaluateLiteral literal
+evaluateExpression (ELocalValue identifier) = returnPure $ getLocalValue identifier
+evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
+    declareLocalValue $ getProperDeclaration declaration
+
+evaluateExpression (EAdd expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateAddition
+evaluateExpression (ESubtract expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateSubtraction
+evaluateExpression (EMultiply expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EDivide expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EConcatenate expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateConcatenation
+evaluateExpression (EUnaryNot expr) = evaluateUnaryOperator expr evaluateUnaryNot
+evaluateExpression (EUnaryMinus expr) = evaluateUnaryOperator expr evaluateUnaryMinus
+evaluateExpression (ERelationalOperator expr1 operator expr2) = evaluateRelationalOperator expr1 expr2 operator
+evaluateExpression (EBooleanOperator expr1 operator expr2) = evaluateBooleanOperator expr1 expr2 operator
 
 evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) = do
     (localEnv, classEnv) <- ask
-    evaluatedArgs <- evalArgumentList argList
+    evaluatedArgs <- evaluateArgumentList argList
     let classDecl = classEnv Map.! classIdentifier
     let objectType = ObjectTypeClass classIdentifier GenericParameterAbsent
-    initializedAttributes <- evalAttributeExpressions (getInitializedAttributeList classDecl)
+    initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
     let object = RegularObject objectType objectEnv
     return (object, (localEnv, classEnv))
 
 evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
     (predicateValue, _) <- evaluateExpression predicate
-    if isObjectTrue predicateValue then evalThenBranch thenBranch else evalElseBranch elseBranch
+    if isObjectTrue predicateValue then evaluateThenBranch thenBranch else evaluateElseBranch elseBranch
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = do
     (predicateValue, _) <- evaluateExpression predicate
@@ -67,123 +68,123 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
 -- TODO elif
 
 evaluateExpression (EGetExpression (GetExpressionInstance objectIdentifier methodCall)) = do
-    object <- getObject objectIdentifier
-    evalGetExprOnObject object methodCall
+    object <- getLocalValue objectIdentifier
+    evaluateGetExprOnObject object methodCall
 
 evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpr methodCall)) = do
     (prefixValue, _) <- evaluateExpression $ EGetExpression prefixGetExpr
-    evalGetExprOnObject prefixValue methodCall
+    evaluateGetExprOnObject prefixValue methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
     (_, classEnv) <- ask
-    singletonObject <- getObject $ singletonInstanceIdentifier singletonClass
-    evalGetExprOnObject singletonObject methodCall
+    singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
+    evaluateGetExprOnObject singletonObject methodCall
 
 
 
 
 
-evalBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Result
-evalBinaryOperator expr1 expr2 evaluator = do
+evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Result
+evaluateBinaryOperator expr1 expr2 evaluator = do
     (v1, _) <- evaluateExpression expr1
     (v2, _) <- evaluateExpression expr2
     returnPure $ evaluator v1 v2
 
-evalUnaryOperator :: Expr -> (Object -> StateMonad Object) -> StateMonad Result
-evalUnaryOperator expr evaluator = do
+evaluateUnaryOperator :: Expr -> (Object -> StateMonad Object) -> StateMonad Result
+evaluateUnaryOperator expr evaluator = do
     (value, _) <- evaluateExpression expr
     returnPure $ evaluator value
 
-evalAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
-evalAttributeExpressions attributeList = do
+evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
+evaluateAttributeExpressions attributeList = do
     let (names, exprs) = unzip attributeList
     evalResults <- mapM evaluateExpression exprs
     return $ zip names (map fst evalResults)
 
-evalThenBranch :: ThenBranch -> StateMonad Result
-evalThenBranch (FThenOneLine expr)   = evalThenBranch (FThenMultiLine expr)
-evalThenBranch (FThenMultiLine expr) = evaluateExpression expr
+evaluateThenBranch :: ThenBranch -> StateMonad Result
+evaluateThenBranch (FThenOneLine expr)   = evaluateThenBranch (FThenMultiLine expr)
+evaluateThenBranch (FThenMultiLine expr) = evaluateExpression expr
 
-evalElseBranch :: ElseBranch -> StateMonad Result
-evalElseBranch (FElseOneLine expr) = evalElseBranch (FElseMultiLine expr)
-evalElseBranch (FElseIf expr thenBranch elseBranch) =
+evaluateElseBranch :: ElseBranch -> StateMonad Result
+evaluateElseBranch (FElseOneLine expr) = evaluateElseBranch (FElseMultiLine expr)
+evaluateElseBranch (FElseIf expr thenBranch elseBranch) =
     evaluateExpression (EFunctionalControlFlow (FIfThenElse expr thenBranch elseBranch))
-evalElseBranch (FElseMultiLine expr) = evaluateExpression expr
+evaluateElseBranch (FElseMultiLine expr) = evaluateExpression expr
 
 
-evalFunctionBody :: FunctionBody -> StateMonad Result
-evalFunctionBody (FunctionBodyOneLine expr)                    = evaluateExpression expr
-evalFunctionBody (FunctionBodyMultiLine expr WithValuesAbsent) = evaluateExpression expr
-evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent ValuesAbsent)) = evaluateExpression expr
-evalFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent (ValuesPresent valueDecls))) = do
+evaluateFunctionBody :: FunctionBody -> StateMonad Result
+evaluateFunctionBody (FunctionBodyOneLine expr)                    = evaluateExpression expr
+evaluateFunctionBody (FunctionBodyMultiLine expr WithValuesAbsent) = evaluateExpression expr
+evaluateFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent ValuesAbsent)) = evaluateExpression expr
+evaluateFunctionBody (FunctionBodyMultiLine expr (WithValuesPresent (ValuesPresent valueDecls))) = do
     originalEnv <- ask
-    let decls = map getProperObjectDecl valueDecls
+    let decls = map getProperDeclaration valueDecls
     (_, localEnv) <-  executeDeclarations decls
     (result, _) <- local (const localEnv) (evaluateExpression expr)
     return (result, originalEnv)
 
-evalArgumentList :: ArgList -> StateMonad [Object]
-evalArgumentList argList = do
+evaluateArgumentList :: ArgList -> StateMonad [Object]
+evaluateArgumentList argList = do
     env <- ask
     evalResults <- mapM evaluateExpression (argsToExprList argList)
     return $ map fst evalResults
 
-evalAddition :: Object -> Object -> StateMonad Object
-evalAddition (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
+evaluateAddition :: Object -> Object -> StateMonad Object
+evaluateAddition (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
     return (newBuiltinObject $ IntObject $ v1 + v2)
 
-evalSubtraction :: Object -> Object -> StateMonad Object
-evalSubtraction (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
+evaluateSubtraction :: Object -> Object -> StateMonad Object
+evaluateSubtraction (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
     return (newBuiltinObject $ IntObject $ v1 - v2)
 
-evalMultiplication :: Object -> Object -> StateMonad Object
-evalMultiplication (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
+evaluateMultiplication :: Object -> Object -> StateMonad Object
+evaluateMultiplication (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
     return (newBuiltinObject $ IntObject $ v1 * v2)
 
 -- TODO throw if division by zero
-evalDivision :: Object -> Object -> StateMonad Object
-evalDivision (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
+evaluateDivision :: Object -> Object -> StateMonad Object
+evaluateDivision (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
     return (newBuiltinObject $ IntObject $ v1 `div` v2)
 
-evalConcatenation :: Object -> Object -> StateMonad Object
-evalConcatenation (BuiltinObject (StringObject v1)) (BuiltinObject (StringObject v2)) =
+evaluateConcatenation :: Object -> Object -> StateMonad Object
+evaluateConcatenation (BuiltinObject (StringObject v1)) (BuiltinObject (StringObject v2)) =
     return (newBuiltinObject $ StringObject $ v1 ++ v2)
 
-evalUnaryNot :: Object -> StateMonad Object
-evalUnaryNot (BuiltinObject (BoolObject BTrue)) = return (newBuiltinObject $ BoolObject BFalse)
-evalUnaryNot (BuiltinObject (BoolObject BFalse)) = return (newBuiltinObject $ BoolObject BTrue)
+evaluateUnaryNot :: Object -> StateMonad Object
+evaluateUnaryNot (BuiltinObject (BoolObject BTrue)) = return (newBuiltinObject $ BoolObject BFalse)
+evaluateUnaryNot (BuiltinObject (BoolObject BFalse)) = return (newBuiltinObject $ BoolObject BTrue)
 
-evalUnaryMinus :: Object -> StateMonad Object
-evalUnaryMinus (BuiltinObject (IntObject value)) = return (newBuiltinObject $ IntObject $ -value)
+evaluateUnaryMinus :: Object -> StateMonad Object
+evaluateUnaryMinus (BuiltinObject (IntObject value)) = return (newBuiltinObject $ IntObject $ -value)
 
-evalRelationalOperator :: Expr -> Expr -> RelationalOperator -> StateMonad Result
-evalRelationalOperator expr1 expr2 RLess = evalBinaryOperator expr1 expr2 (evalRelational (<))
-evalRelationalOperator expr1 expr2 RLessEqual = evalBinaryOperator expr1 expr2 (evalRelational (<=))
-evalRelationalOperator expr1 expr2 RGreater = evalBinaryOperator expr1 expr2 (evalRelational (>))
-evalRelationalOperator expr1 expr2 RGreaterEqual = evalBinaryOperator expr1 expr2 (evalRelational (>=))
-evalRelationalOperator expr1 expr2 REqual = evalBinaryOperator expr1 expr2 evalEquality
-evalRelationalOperator expr1 expr2 RNotEqual = evalBinaryOperator expr1 expr2 evalNonEquality
+evaluateRelationalOperator :: Expr -> Expr -> RelationalOperator -> StateMonad Result
+evaluateRelationalOperator expr1 expr2 RLess = evaluateBinaryOperator expr1 expr2 (evaluateRelational (<))
+evaluateRelationalOperator expr1 expr2 RLessEqual = evaluateBinaryOperator expr1 expr2 (evaluateRelational (<=))
+evaluateRelationalOperator expr1 expr2 RGreater = evaluateBinaryOperator expr1 expr2 (evaluateRelational (>))
+evaluateRelationalOperator expr1 expr2 RGreaterEqual = evaluateBinaryOperator expr1 expr2 (evaluateRelational (>=))
+evaluateRelationalOperator expr1 expr2 REqual = evaluateBinaryOperator expr1 expr2 evaluateEquality
+evaluateRelationalOperator expr1 expr2 RNotEqual = evaluateBinaryOperator expr1 expr2 evaluateNonEquality
 
-evalRelational :: (Integer -> Integer -> Bool) -> Object -> Object -> StateMonad Object
-evalRelational operator (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
+evaluateRelational :: (Integer -> Integer -> Bool) -> Object -> Object -> StateMonad Object
+evaluateRelational operator (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
     return (newBuiltinObject $ BoolObject $ toBoolean $ operator v1 v2)
 
-evalBooleanOperator expr1 expr2 BAnd = evalBinaryOperator expr1 expr2 evalBooleanAnd
-evalBooleanOperator expr1 expr2 BOr = evalBinaryOperator expr1 expr2 evalBooleanOr
+evaluateBooleanOperator expr1 expr2 BAnd = evaluateBinaryOperator expr1 expr2 evaluateBooleanAnd
+evaluateBooleanOperator expr1 expr2 BOr = evaluateBinaryOperator expr1 expr2 evaluateBooleanOr
 
-evalBooleanAnd :: Object -> Object -> StateMonad Object
-evalBooleanAnd (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
+evaluateBooleanAnd :: Object -> Object -> StateMonad Object
+evaluateBooleanAnd (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
     return (newBuiltinObject $ BoolObject $ toBoolean $ fromBoolean v1 && fromBoolean v2)
 
-evalBooleanOr :: Object -> Object -> StateMonad Object
-evalBooleanOr (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
+evaluateBooleanOr :: Object -> Object -> StateMonad Object
+evaluateBooleanOr (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
     return (newBuiltinObject $ BoolObject $ toBoolean $ fromBoolean v1 || fromBoolean v2)
 
-evalEquality :: Object -> Object -> StateMonad Object
-evalEquality v1 v2 = return (newBuiltinObject $ BoolObject $ toBoolean $ v1 == v2)
+evaluateEquality :: Object -> Object -> StateMonad Object
+evaluateEquality v1 v2 = return (newBuiltinObject $ BoolObject $ toBoolean $ v1 == v2)
 
-evalNonEquality :: Object -> Object -> StateMonad Object
-evalNonEquality v1 v2 = return (newBuiltinObject $ BoolObject $ toBoolean $ v1 /= v2)
+evaluateNonEquality :: Object -> Object -> StateMonad Object
+evaluateNonEquality v1 v2 = return (newBuiltinObject $ BoolObject $ toBoolean $ v1 /= v2)
 
 addArgumentsToEnv :: FunctionDecl -> [Object] -> StateMonad Result
 addArgumentsToEnv function evaluatedArgs = do
@@ -193,18 +194,18 @@ addArgumentsToEnv function evaluatedArgs = do
     (_, newEnv) <- executeObjectAdditions decls
     return (pass, newEnv)
 
-evalFunction :: FunctionDecl -> StateMonad Result
-evalFunction (FunctionDeclaration _ _ _ _ body) = evalFunctionBody body
+evaluateFunction :: FunctionDecl -> StateMonad Result
+evaluateFunction (FunctionDeclaration _ _ _ _ body) = evaluateFunctionBody body
 
 
-evalMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Result
-evalMemberFunction object functionIdentifier evaluatedArgs = do
-    function <- getMemberFunction (getObjectType object) functionIdentifier
+evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Result
+evaluateMemberFunction object functionIdentifier evaluatedArgs = do
+    function <- getMemberFunction (getLocalValueType object) functionIdentifier
     (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
-    local (const functionLocalEnv) (evalFunction function)
+    local (const functionLocalEnv) (evaluateFunction function)
 
-evalGetter :: Object -> MethodIdent -> StateMonad Result
-evalGetter (RegularObject _ objectEnv) functionIdentifier = do
+evaluateGetter :: Object -> MethodIdent -> StateMonad Result
+evaluateGetter (RegularObject _ objectEnv) functionIdentifier = do
     let attribute = functionToObjectIdent functionIdentifier
     if attribute `Map.member` values objectEnv
     then returnObject $ values objectEnv Map.! attribute
@@ -214,22 +215,22 @@ evalGetter (RegularObject _ objectEnv) functionIdentifier = do
 executeDeclarations :: [ObjectDeclProper] -> StateMonad Result
 executeDeclarations [] = returnPass
 executeDeclarations (decl:decls) = do
-    (_, env) <- declareObject decl
+    (_, env) <- declareLocalValue decl
     local (const env) $ executeDeclarations decls
 
-declareObject :: ObjectDeclProper -> StateMonad Result
-declareObject (ObjectDeclarationProper identifier valueType (Initialized expression)) = do
+declareLocalValue :: ObjectDeclProper -> StateMonad Result
+declareLocalValue (ObjectDeclarationProper identifier valueType (Initialized expression)) = do
     (initializationObject, _) <- evaluateExpression expression
     addObject identifier initializationObject
 
-evalGetExprOnObject :: Object -> FunctionCall -> StateMonad Result
-evalGetExprOnObject object (CallFunction functionIdentifier argList) = do
+evaluateGetExprOnObject :: Object -> FunctionCall -> StateMonad Result
+evaluateGetExprOnObject object (CallFunction functionIdentifier argList) = do
     originalEnv <- ask
-    evaluatedArgs <- evalArgumentList argList
-    takeGetter <- hasGetter (getObjectType object) functionIdentifier
+    evaluatedArgs <- evaluateArgumentList argList
+    takeGetter <- hasGetter (getLocalValueType object) functionIdentifier
     (result, _) <- if null evaluatedArgs && takeGetter
-                 then evalGetter object functionIdentifier
-                 else evalMemberFunction object functionIdentifier evaluatedArgs
+                 then evaluateGetter object functionIdentifier
+                 else evaluateMemberFunction object functionIdentifier evaluatedArgs
     return (result, originalEnv)
 
 toBoolean :: Bool -> Boolean
@@ -260,17 +261,6 @@ buildInitialLocalEnv classEnv = do
     (_, newEnv) <- executeObjectAdditions $ zip objectNames singletonObjects
     return (pass, newEnv)
 
-getLocation :: ObjectIdent -> StateMonad Location
-getLocation identifier = do
-    (localEnv, _) <- ask
-    return $ fromJust $ Map.lookup identifier localEnv
-
-getObject :: ObjectIdent -> StateMonad Object
-getObject identifier = do
-    location <- getLocation identifier
-    (state, _) <- get
-    return $ fromJust $ Map.lookup location state
-
 setObject :: ObjectIdent -> Object -> StateMonad Result
 setObject identifier value = do
     location <- getLocation identifier
@@ -296,7 +286,7 @@ buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
     (localEnv, classEnv) <- ask
     let classDecl = classEnv Map.! classIdentifier
     let objectType = ObjectTypeClass classIdentifier GenericParameterAbsent
-    initializedAttributes <- evalAttributeExpressions (getInitializedAttributeList classDecl)
+    initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
     objectEnv <- buildObjectEnv objectType [] initializedAttributes
     return $ RegularObject objectType objectEnv
 

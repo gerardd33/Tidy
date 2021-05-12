@@ -32,7 +32,7 @@ getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
 
 getMethodParamsList :: MethodType -> [ObjectIdent]
 getMethodParamsList (MethodTypeSignature (ParameterList valueDecls) _) =
-    map (getObjectName . ObjectDeclaration MPublic) valueDecls
+    map (getLocalValueName . ObjectDeclaration MPublic) valueDecls
 
 functionToObjectIdent :: MethodIdent -> ObjectIdent
 functionToObjectIdent (MethodIdentifier ident) = ObjectIdentifier ident

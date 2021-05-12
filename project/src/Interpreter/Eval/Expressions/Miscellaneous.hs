@@ -6,18 +6,9 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Helper.Objects
 
 
-evalLiteral :: Literal -> StateMonad Object
-evalLiteral (LInt int)       = return (newBuiltinObject (IntObject int))
-evalLiteral (LBool bool)     = return (newBuiltinObject (BoolObject bool))
-evalLiteral (LChar char)     = return (newBuiltinObject (CharObject char))
-evalLiteral (LString string) = return (newBuiltinObject (StringObject string))
-evalLiteral (LVoid void)     = return (newBuiltinObject VoidObject)
-
-
-
-
-
-
-
-
-
+evaluateLiteral :: Literal -> StateMonad Object
+evaluateLiteral (LInt int)       = return $ newBuiltinObject $ IntObject int
+evaluateLiteral (LBool bool)     = return $ newBuiltinObject $ BoolObject bool
+evaluateLiteral (LChar char)     = return $ newBuiltinObject $ CharObject char
+evaluateLiteral (LString string) = return $ newBuiltinObject $ StringObject string
+evaluateLiteral (LVoid void)     = return $ newBuiltinObject VoidObject

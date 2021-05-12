@@ -19,11 +19,11 @@ getMainAction (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsPresent a
 getMainAction _ = Nothing
 
 loadClasses :: [ClassDecl] -> ClassEnv
-loadClasses declarations = Map.fromList $ map evalClassDeclaration declarations
+loadClasses declarations = Map.fromList $ map evaluateClassDeclaration declarations
 
 -- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
-evalClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
-evalClassDeclaration declaration = case declaration of
+evaluateClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
+evaluateClassDeclaration declaration = case declaration of
     (ClassDeclaration _ _ identifier _ _)  -> (identifier, declaration)
 
 -- TODO here print NoMainActionError and terminate if list empty, once I have monads adapted for static checking
@@ -35,10 +35,10 @@ isActionMain (ActionDeclaration _ _ (MethodIdentifier (LowerCaseIdent "main")) _
 isActionMain _                                                                        = False
 
 getValues :: ClassDecl -> [ObjectIdent]
-getValues classDecl = map getObjectName (getValueDecls classDecl)
+getValues classDecl = map getLocalValueName (getValueDecls classDecl)
 
 getVariables :: ClassDecl -> [ObjectIdent]
-getVariables classDecl = map getObjectName (getVariableDecls classDecl)
+getVariables classDecl = map getLocalValueName (getVariableDecls classDecl)
 
 getValueDecls :: ClassDecl -> [ObjectDecl]
 getValueDecls (ClassDeclaration _ _ _ _ (ClassBodyFilled (ValuesPresent valueDecls) _ _ _)) =
@@ -52,8 +52,8 @@ getVariableDecls _ = []
 
 getCtorParamsList :: ClassDecl -> [ObjectIdent]
 getCtorParamsList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map getObjectName $ filter (not . isInitialized) (getValueDecls classDecl)
-          uninitializedVariables = map getObjectName $ filter (not . isInitialized) (getVariableDecls classDecl)
+    where uninitializedValues = map getLocalValueName $ filter (not . isInitialized) (getValueDecls classDecl)
+          uninitializedVariables = map getLocalValueName $ filter (not . isInitialized) (getVariableDecls classDecl)
 
 classIdentFromType :: ObjectType -> ClassIdent
 classIdentFromType (ObjectTypeClass classIdent _) = classIdent
