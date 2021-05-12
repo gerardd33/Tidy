@@ -12,15 +12,14 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Helper.Classes
-import           Interpreter.Common.Helper.Methods
-import           Interpreter.Eval.Expressions.Evaluate
-import           Interpreter.Eval.LocalEnvironment
+import           Interpreter.Entrypoint.Initialization
+import           Interpreter.Eval.Expressions.Evaluation
 
 
 -- TODO handle debugging in a better way
 runtime :: Mode -> ClassEnv -> ClassDecl -> IO (Either RuntimeException Object)
 runtime mode classEnv mainClass = runExceptT $ evalStateT
-    (runReaderT (runtimeBody mode mainClass) (buildInitialEnvironment classEnv)) buildInitialState
+    (runReaderT (runtimeBody mode mainClass) (initialEnvironment classEnv)) initialState
 
 runtimeBody :: Mode -> ClassDecl -> StateMonad Object
 runtimeBody mode mainClass = do

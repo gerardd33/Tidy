@@ -14,9 +14,9 @@ import           Interpreter.Common.Helper.Types
 
 
 getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
-getMemberFunction (ObjectTypeClass className _) functionIdentifier = do
+getMemberFunction (ObjectTypeClass classIdent _) functionIdentifier = do
     (_, classEnv) <- ask
-    let functions = getFunctionDecls $ classEnv Map.! className
+    let functions = getFunctionDecls $ classEnv Map.! classIdent
     return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdentifier) functions
 
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool

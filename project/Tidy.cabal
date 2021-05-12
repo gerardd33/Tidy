@@ -29,10 +29,11 @@ library
       Interpreter.Common.Helper.Objects
       Interpreter.Common.Helper.Types
       Interpreter.Common.Types
+      Interpreter.Entrypoint.Initialization
       Interpreter.Entrypoint.Runtime
       Interpreter.Entrypoint.Static
       Interpreter.Eval.Classes
-      Interpreter.Eval.Expressions.Evaluate
+      Interpreter.Eval.Expressions.Evaluation
       Interpreter.Eval.Expressions.Miscellaneous
       Interpreter.Eval.Expressions.Operators
       Interpreter.Eval.LocalEnvironment

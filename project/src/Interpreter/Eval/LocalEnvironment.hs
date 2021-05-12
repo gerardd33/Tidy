@@ -5,10 +5,11 @@ import           Control.Monad.State
 import qualified Data.Map                        as Map
 import           Data.Maybe
 
-import           Interpreter.Common.Helper.Types
 import           Interpreter.Common.Types
-import           Interpreter.Eval.Utils
 import           Parser.Tidy.Abs
+
+import           Interpreter.Common.Helper.Types
+import           Interpreter.Eval.Utils
 
 
 getLocation :: ObjectIdent -> StateMonad Location
@@ -34,11 +35,7 @@ addLocalValue objectIdent object = do
 
 
 
-buildInitialEnvironment :: ClassEnv -> Env
-buildInitialEnvironment classEnv = (Map.empty, classEnv)
 
-buildInitialState :: RTState
-buildInitialState = (Map.empty, 0)
 
 setObject :: ObjectIdent -> Object -> StateMonad Result
 setObject identifier value = do

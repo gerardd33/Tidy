@@ -1,4 +1,4 @@
-module Interpreter.Eval.Expressions.Evaluate where
+module Interpreter.Eval.Expressions.Evaluation where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
@@ -63,6 +63,9 @@ evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCal
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
 
+
+
+
 evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) = do
     (localEnv, classEnv) <- ask
     evaluatedArgs <- evaluateArgumentList argList
@@ -74,9 +77,10 @@ evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) 
     return (object, (localEnv, classEnv))
 
 
+
 -- EXPRESSIONS WITH SIDE EFFECTS --
 evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
-    declareLocalValue $ getProperDeclaration declaration
+    evaluateLocalValueDeclaration $ getProperDeclaration declaration
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = do
     (predicateValue, _) <- evaluateExpression predicate
@@ -93,7 +97,7 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
 -- TODO elif
 
 
--- PURELY FUNCTIONAL EXPRESSIONS --
+-- PURELY FUNCTIONAL EXPRESSIONS -- IMPLEMENTATIONS --
 evaluateFunction :: FunctionDecl -> StateMonad Object
 evaluateFunction = evaluateFunctionBody . getFunctionBody
 
@@ -160,7 +164,7 @@ evaluateGetExpressionOnObject object (CallFunction functionIdentifier argumentLi
 
 
 
--- EXPRESSIONS WITH SIDE EFFECTS --
+-- EXPRESSIONS WITH SIDE EFFECTS -- IMPLEMENTATIONS --
 -- TODO passing parameters and other context information
 evaluateAction :: ActionDecl -> StateMonad Result
 evaluateAction = evaluateActionBody . getActionBody
@@ -169,8 +173,8 @@ evaluateActionBody :: ActionBody -> StateMonad Result
 evaluateActionBody (ActionBodyOneLine expr)    = evaluateExpressionList [expr]
 evaluateActionBody (ActionBodyMultiLine exprs) = evaluateExpressionList exprs
 
-declareLocalValue :: ObjectDeclProper -> StateMonad Result
-declareLocalValue (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
+evaluateLocalValueDeclaration :: ObjectDeclProper -> StateMonad Result
+evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
     (initializationValue, _) <- evaluateExpression expr
     addLocalValue objectIdent initializationValue
 
@@ -187,14 +191,8 @@ declareLocalValue (ObjectDeclarationProper objectIdent objectType (Initialized e
 
 
 
-buildInitialLocalEnv :: ClassEnv -> StateMonad Result
-buildInitialLocalEnv classEnv = do
-    let singletonClasses = Map.toList $ Map.filter isSingletonClass classEnv
-    let (classNames, classDecls) = unzip singletonClasses
-    let objectIdents = map singletonInstanceIdentifier classNames
-    singletonObjects <- mapM buildSingletonClassInstance classDecls
-    (_, newEnv) <- executeObjectAdditions $ zip objectIdents singletonObjects
-    return (pass, newEnv)
+
+
 
 buildSingletonClassInstance :: ClassDecl -> StateMonad Object
 buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
@@ -204,7 +202,6 @@ buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
     initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
     objectEnv <- buildObjectEnv objectType [] initializedAttributes
     return $ RegularObject objectType objectEnv
-
 
 
 evaluateArgumentList :: ArgList -> StateMonad [Object]
@@ -219,7 +216,7 @@ evaluateArgumentList argList = do
 executeDeclarations :: [ObjectDeclProper] -> StateMonad Result
 executeDeclarations [] = returnPass
 executeDeclarations (decl:decls) = do
-    (_, env) <- declareLocalValue decl
+    (_, env) <- evaluateLocalValueDeclaration decl
     local (const env) $ executeDeclarations decls
 
 
@@ -227,9 +224,9 @@ executeDeclarations (decl:decls) = do
 -- TODO refactor and move somewhere else
 
 getValueList :: ObjectType -> StateMonad [ObjectIdent]
-getValueList (ObjectTypeClass className _) = do
+getValueList (ObjectTypeClass classIdent _) = do
     (_, classEnv) <- ask
-    return $ getValues $ classEnv Map.! className
+    return $ getValues $ classEnv Map.! classIdent
 
 buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
 buildObjectEnv objectType args initializedAttributes = do
