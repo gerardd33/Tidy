@@ -4,6 +4,9 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
+pass :: Object
+pass = BuiltinObject VoidObject
+
 toBoolean :: Bool -> Boolean
 toBoolean True  = BTrue
 toBoolean False = BFalse

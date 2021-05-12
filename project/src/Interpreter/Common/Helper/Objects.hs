@@ -39,6 +39,3 @@ valueTypeForBuiltinObject VoidObject       = valueTypeFromClassName "Void"
 
 valueTypeFromClassName :: String -> ObjectType
 valueTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
-
-pass :: Object
-pass = BuiltinObject VoidObject

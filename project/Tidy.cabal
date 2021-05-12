@@ -31,10 +31,10 @@ library
       Interpreter.Common.Types
       Interpreter.Entrypoint.Runtime
       Interpreter.Entrypoint.Static
-      Interpreter.Eval.Environment
       Interpreter.Eval.Expressions.Evaluate
       Interpreter.Eval.Expressions.Miscellaneous
       Interpreter.Eval.Expressions.Operators
+      Interpreter.Eval.LocalEnvironment
       Interpreter.Eval.Methods
       Interpreter.Eval.Utils
       Parser.Tidy.Abs

@@ -13,9 +13,9 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
-import           Interpreter.Eval.Environment
 import           Interpreter.Eval.Expressions.Miscellaneous
 import           Interpreter.Eval.Expressions.Operators
+import           Interpreter.Eval.LocalEnvironment
 import           Interpreter.Eval.Utils
 
 
@@ -26,21 +26,42 @@ evaluateExpressionList (expr:exprs) = do
     local (const env) (evaluateExpressionList exprs)
 
 evaluateExpression :: Expr -> StateMonad Result
-evaluateExpression (ELiteral literal) = returnPure $ evaluateLiteral literal
-evaluateExpression (ELocalValue identifier) = returnPure $ getLocalValue identifier
-evaluateExpression (EAdd expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateAddition
-evaluateExpression (ESubtract expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateSubtraction
-evaluateExpression (EMultiply expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
-evaluateExpression (EDivide expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
-evaluateExpression (EModulo expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateModulo
-evaluateExpression (EConcatenate expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateConcatenation
-evaluateExpression (EUnaryNot expr) = returnPure $ evaluateUnaryOperator expr evaluateUnaryNot
-evaluateExpression (EUnaryMinus expr) = returnPure $ evaluateUnaryOperator expr evaluateUnaryMinus
-evaluateExpression (ERelationalOperator expr1 operator expr2) = returnPure $ evaluateRelationalOperator expr1 expr2 operator
-evaluateExpression (EBooleanOperator expr1 operator expr2) = returnPure $ evaluateBooleanOperator expr1 expr2 operator
 
-evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
-    declareLocalValue $ getProperDeclaration declaration
+-- PURELY FUNCTIONAL EXPRESSIONS --
+evaluateExpression (ELiteral literal) = liftPure $ evaluateLiteral literal
+evaluateExpression (ELocalValue identifier) = liftPure $ getLocalValue identifier
+evaluateExpression (EAdd expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateAddition
+evaluateExpression (ESubtract expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateSubtraction
+evaluateExpression (EMultiply expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EDivide expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EModulo expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateModulo
+evaluateExpression (EConcatenate expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateConcatenation
+evaluateExpression (EUnaryNot expr) = liftPure $ evaluateUnaryOperator expr evaluateUnaryNot
+evaluateExpression (EUnaryMinus expr) = liftPure $ evaluateUnaryOperator expr evaluateUnaryMinus
+evaluateExpression (ERelationalOperator expr1 operator expr2) = liftPure $ evaluateRelationalOperator expr1 expr2 operator
+evaluateExpression (EBooleanOperator expr1 operator expr2) = liftPure $ evaluateBooleanOperator expr1 expr2 operator
+
+evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
+    (predicateValue, _) <- evaluateExpression predicate
+    liftPure $ if isTrue predicateValue
+    then evaluateThenBranch thenBranch
+    else evaluateElseBranch elseBranch
+
+
+
+
+evaluateExpression (EGetExpression (GetExpressionInstance objectIdentifier methodCall)) = do
+    object <- getLocalValue objectIdentifier
+    evaluateGetExprOnObject object methodCall
+
+evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpr methodCall)) = do
+    (prefixValue, _) <- evaluateExpression $ EGetExpression prefixGetExpr
+    evaluateGetExprOnObject prefixValue methodCall
+
+evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
+    (_, classEnv) <- ask
+    singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
+    evaluateGetExprOnObject singletonObject methodCall
 
 evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) = do
     (localEnv, classEnv) <- ask
@@ -52,9 +73,10 @@ evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) 
     let object = RegularObject objectType objectEnv
     return (object, (localEnv, classEnv))
 
-evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
-    (predicateValue, _) <- evaluateExpression predicate
-    if isTrue predicateValue then evaluateThenBranch thenBranch else evaluateElseBranch elseBranch
+
+-- EXPRESSIONS WITH SIDE EFFECTS --
+evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
+    declareLocalValue $ getProperDeclaration declaration
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = do
     (predicateValue, _) <- evaluateExpression predicate
@@ -70,22 +92,8 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
         IElsePresent body -> evaluateExpressionList body
 -- TODO elif
 
-evaluateExpression (EGetExpression (GetExpressionInstance objectIdentifier methodCall)) = do
-    object <- getLocalValue objectIdentifier
-    evaluateGetExprOnObject object methodCall
 
-evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpr methodCall)) = do
-    (prefixValue, _) <- evaluateExpression $ EGetExpression prefixGetExpr
-    evaluateGetExprOnObject prefixValue methodCall
-
-evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    (_, classEnv) <- ask
-    singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
-    evaluateGetExprOnObject singletonObject methodCall
-
-
-
-
+-- PURELY FUNCTIONAL EXPRESSIONS --
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
     (value1, _) <- evaluateExpression expr1
@@ -113,13 +121,22 @@ evaluateBooleanOperator expr1 expr2 operator = do
                                      BOr  -> evaluateBooleanOr
     evaluateBinaryOperator expr1 expr2 evaluator
 
+evaluateThenBranch :: ThenBranch -> StateMonad Object
+evaluateThenBranch (FThenOneLine expr)   = returnPure $ evaluateExpression expr
+evaluateThenBranch (FThenMultiLine expr) = returnPure $ evaluateExpression expr
+
+evaluateElseBranch :: ElseBranch -> StateMonad Object
+evaluateElseBranch (FElseOneLine expr) = returnPure $ evaluateExpression expr
+evaluateElseBranch (FElseMultiLine expr) = returnPure $ evaluateExpression expr
+evaluateElseBranch (FElseIf predicate thenBranch elseBranch) =
+    returnPure $ evaluateExpression $ EFunctionalControlFlow $ FIfThenElse predicate thenBranch elseBranch
 
 
-
-
-
-
-
+-- EXPRESSIONS WITH SIDE EFFECTS --
+declareLocalValue :: ObjectDeclProper -> StateMonad Result
+declareLocalValue (ObjectDeclarationProper objectName objectType (Initialized expr)) = do
+    (initializationValue, _) <- evaluateExpression expr
+    addLocalValue objectName initializationValue
 
 
 
@@ -139,16 +156,6 @@ evaluateAttributeExpressions attributeList = do
     let (names, exprs) = unzip attributeList
     evalResults <- mapM evaluateExpression exprs
     return $ zip names (map fst evalResults)
-
-evaluateThenBranch :: ThenBranch -> StateMonad Result
-evaluateThenBranch (FThenOneLine expr)   = evaluateThenBranch (FThenMultiLine expr)
-evaluateThenBranch (FThenMultiLine expr) = evaluateExpression expr
-
-evaluateElseBranch :: ElseBranch -> StateMonad Result
-evaluateElseBranch (FElseOneLine expr) = evaluateElseBranch (FElseMultiLine expr)
-evaluateElseBranch (FElseIf expr thenBranch elseBranch) =
-    evaluateExpression (EFunctionalControlFlow (FIfThenElse expr thenBranch elseBranch))
-evaluateElseBranch (FElseMultiLine expr) = evaluateExpression expr
 
 
 evaluateFunctionBody :: FunctionBody -> StateMonad Result
@@ -200,11 +207,6 @@ executeDeclarations (decl:decls) = do
     (_, env) <- declareLocalValue decl
     local (const env) $ executeDeclarations decls
 
-declareLocalValue :: ObjectDeclProper -> StateMonad Result
-declareLocalValue (ObjectDeclarationProper identifier valueType (Initialized expression)) = do
-    (initializationObject, _) <- evaluateExpression expression
-    addObject identifier initializationObject
-
 evaluateGetExprOnObject :: Object -> FunctionCall -> StateMonad Result
 evaluateGetExprOnObject object (CallFunction functionIdentifier argList) = do
     originalEnv <- ask
@@ -239,17 +241,10 @@ setObject identifier value = do
     put (Map.insert location value state, nextLocation)
     returnPass
 
-addObject :: ObjectIdent -> Object -> StateMonad Result
-addObject identifier value = do
-    (localEnv, classEnv) <- ask
-    (state, nextLocation) <- get
-    put (Map.insert nextLocation value state, nextLocation + 1)
-    return (pass, (Map.insert identifier nextLocation localEnv, classEnv))
-
 executeObjectAdditions :: [(ObjectIdent, Object)] -> StateMonad Result
 executeObjectAdditions [] = returnPass
 executeObjectAdditions (addition:additions) = do
-    (_, env) <- uncurry addObject addition
+    (_, env) <- uncurry addLocalValue addition
     local (const env) $ executeObjectAdditions additions
 
 buildSingletonClassInstance :: ClassDecl -> StateMonad Object
