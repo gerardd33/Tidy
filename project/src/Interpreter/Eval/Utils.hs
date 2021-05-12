@@ -1,12 +1,12 @@
 module Interpreter.Eval.Utils where
 
 import           Control.Monad.Reader
-import qualified Data.Map                        as Map
+import qualified Data.Map                          as Map
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Types
+import           Interpreter.Common.Helper.Objects
 
 
 returnPure :: StateMonad Result -> StateMonad Object

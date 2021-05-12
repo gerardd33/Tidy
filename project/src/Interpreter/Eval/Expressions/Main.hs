@@ -1,4 +1,4 @@
-module Interpreter.Eval.Expressions.Evaluation where
+module Interpreter.Eval.Expressions.Main where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
@@ -13,11 +13,10 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
-import           Interpreter.Eval.Classes
-import           Interpreter.Eval.Expressions.Miscellaneous
-import           Interpreter.Eval.Expressions.Operators
+import           Interpreter.Eval.Expressions.Simple
 import           Interpreter.Eval.LocalEnvironment
 import           Interpreter.Eval.Methods
+import           Interpreter.Eval.Objects
 import           Interpreter.Eval.Utils
 
 
@@ -69,14 +68,14 @@ evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWh
 
 
 -- PURELY FUNCTIONAL EXPRESSIONS --
-evaluateFunction :: FunctionDecl -> StateMonad Object
-evaluateFunction = evaluateFunctionBody . getFunctionBody
+evaluateFunctionInArgEnv :: FunctionDecl -> StateMonad Object
+evaluateFunctionInArgEnv = evaluateFunctionBody . getFunctionBody
 
 evaluateFunctionBody :: FunctionBody -> StateMonad Object
 evaluateFunctionBody (FunctionBodyOneLine expr) = returnPure $ evaluateExpression expr
 evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case withValues of
     WithValuesPresent (ValuesPresent values) -> do let declarations = map getProperDeclaration values
-                                                   (_, localEnv) <-  executeDeclarations declarations
+                                                   (_, localEnv) <-  evaluateLocalValueDeclarations declarations
                                                    local (const localEnv) $ evaluateExpression expr
     _ -> evaluateExpression expr
 
@@ -84,7 +83,7 @@ evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
 evaluateMemberFunction object functionIdent evaluatedArgs = do
     function <- getMemberFunction (getLocalObjectType object) functionIdent
     (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
-    local (const functionLocalEnv) $ evaluateFunction function
+    local (const functionLocalEnv) $ evaluateFunctionInArgEnv function
 
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
@@ -141,18 +140,32 @@ evaluateGetExpressionOnObject object (CallFunction functionIdent argumentList) =
 
 evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
 evaluateConstructorCall classIdent argList = do
+    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
     classDecl <- getClassDecl classIdent
     evaluatedArgs <- evaluateArgumentList argList
-    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
-    initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
+    initializedAttributes <- evaluateAttributeExpressions $ getInitializedAttributes classDecl
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
     return $ RegularObject objectType objectEnv
+
+evaluateArgumentList :: ArgList -> StateMonad [Object]
+evaluateArgumentList argList = do
+    evalResults <- mapM evaluateExpression $ argsToExpressionList argList
+    return $ map fst evalResults
+
+evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
+evaluateAttributeExpressions attributeList = do
+    let (names, exprs) = unzip attributeList
+    evalResults <- mapM evaluateExpression exprs
+    return $ zip names (map fst evalResults)
+
+evaluateInitializedAttributes :: ClassDecl -> StateMonad [(ObjectIdent, Object)]
+evaluateInitializedAttributes classDecl = evaluateAttributeExpressions $ getInitializedAttributes classDecl
 
 
 -- EXPRESSIONS WITH SIDE EFFECTS --
 -- TODO passing parameters and other context information
-evaluateAction :: ActionDecl -> StateMonad Result
-evaluateAction = evaluateActionBody . getActionBody
+evaluateActionInArgEnv :: ActionDecl -> StateMonad Result
+evaluateActionInArgEnv = evaluateActionBody . getActionBody
 
 evaluateActionBody :: ActionBody -> StateMonad Result
 evaluateActionBody (ActionBodyOneLine expr)    = evaluateExpressionList [expr]
@@ -179,62 +192,8 @@ evaluateWhile predicate body  = do
     then evaluateExpressionList body >> evaluateWhile predicate body
     else returnPass
 
-
-
-
-
-
-
-
-
-
-buildSingletonClassInstance :: ClassDecl -> StateMonad Object
-buildSingletonClassInstance (ClassDeclaration _ _ classIdentifier _ _) = do
-    (localEnv, classEnv) <- ask
-    let classDecl = classEnv Map.! classIdentifier
-    let objectType = ObjectTypeClass classIdentifier GenericParameterAbsent
-    initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
-    objectEnv <- buildObjectEnv objectType [] initializedAttributes
-    return $ RegularObject objectType objectEnv
-
-
-evaluateArgumentList :: ArgList -> StateMonad [Object]
-evaluateArgumentList argList = do
-    evalResults <- mapM evaluateExpression $ argsToExpressionList argList
-    return $ map fst evalResults
-
-
-
-
-executeDeclarations :: [ObjectDeclProper] -> StateMonad Result
-executeDeclarations [] = returnPass
-executeDeclarations (decl:decls) = do
+evaluateLocalValueDeclarations :: [ObjectDeclProper] -> StateMonad Result
+evaluateLocalValueDeclarations [] = returnPass
+evaluateLocalValueDeclarations (decl:decls) = do
     (_, env) <- evaluateLocalValueDeclaration decl
-    local (const env) $ executeDeclarations decls
-
-
-
--- TODO refactor and move somewhere else
-
-getValueList :: ObjectType -> StateMonad [ObjectIdent]
-getValueList (ObjectTypeClass classIdent _) = do
-    classDecl <- getClassDecl classIdent
-    return $ getValues classDecl
-
-buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
-buildObjectEnv objectType args initializedAttributes = do
-    classDecl <- getClassDecl $ classFromObjectType objectType
-    let ctorParamsList = getCtorParamsList classDecl
-    let attributesFromCtor = Map.fromList $ zip ctorParamsList args
-    let attributes = Map.union (Map.fromList initializedAttributes) attributesFromCtor
-    objectValueList <- getValueList objectType
-    let (values, variables) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
-    return $ ObjectEnv values variables
-
-
-
-evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
-evaluateAttributeExpressions attributeList = do
-    let (names, exprs) = unzip attributeList
-    evalResults <- mapM evaluateExpression exprs
-    return $ zip names (map fst evalResults)
+    local (const env) $ evaluateLocalValueDeclarations decls

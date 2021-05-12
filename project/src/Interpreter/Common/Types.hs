@@ -13,12 +13,11 @@ import           Interpreter.Common.Errors
 
 type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
 type RTState = (Map.Map Location Object, Location)
+type Result = (Object, Env)
 
 type Env = (LocalEnv, ClassEnv)
 type LocalEnv = Map.Map ObjectIdent Location
 type ClassEnv = Map.Map ClassIdent ClassDecl
-
-type Result = (Object, Env)
 type Location = Integer
 
 data Object = RegularObject ObjectType ObjectEnv | BuiltinObject BuiltinObject
@@ -27,6 +26,7 @@ data Object = RegularObject ObjectType ObjectEnv | BuiltinObject BuiltinObject
 data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
     deriving (Eq, Show)
 
+-- TODO change Object to Location, adapt evaluations
 type ValueEnv = Map.Map ObjectIdent Object
 
 data BuiltinObject

@@ -24,7 +24,6 @@ library
       Interpreter.Common.Debug
       Interpreter.Common.Errors
       Interpreter.Common.Helper.Classes
-      Interpreter.Common.Helper.Expressions
       Interpreter.Common.Helper.Methods
       Interpreter.Common.Helper.Objects
       Interpreter.Common.Helper.Types
@@ -32,12 +31,11 @@ library
       Interpreter.Entrypoint.Initialization
       Interpreter.Entrypoint.Runtime
       Interpreter.Entrypoint.Static
-      Interpreter.Eval.Classes
-      Interpreter.Eval.Expressions.Evaluation
-      Interpreter.Eval.Expressions.Miscellaneous
-      Interpreter.Eval.Expressions.Operators
+      Interpreter.Eval.Expressions.Main
+      Interpreter.Eval.Expressions.Simple
       Interpreter.Eval.LocalEnvironment
       Interpreter.Eval.Methods
+      Interpreter.Eval.Objects
       Interpreter.Eval.Utils
       Parser.Tidy.Abs
       Parser.Tidy.ErrM

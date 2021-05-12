@@ -1,10 +1,17 @@
-module Interpreter.Eval.Expressions.Operators where
+module Interpreter.Eval.Expressions.Simple where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Helper.Types
 
+
+evaluateLiteral :: Literal -> StateMonad Object
+evaluateLiteral (LInt int)       = return $ BuiltinObject $ IntObject int
+evaluateLiteral (LBool bool)     = return $ BuiltinObject $ BoolObject bool
+evaluateLiteral (LChar char)     = return $ BuiltinObject $ CharObject char
+evaluateLiteral (LString string) = return $ BuiltinObject $ StringObject string
+evaluateLiteral (LVoid void)     = return $ BuiltinObject VoidObject
 
 evaluateAddition :: Object -> Object -> StateMonad Object
 evaluateAddition (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =

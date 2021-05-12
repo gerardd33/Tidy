@@ -13,7 +13,7 @@ import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Entrypoint.Initialization
-import           Interpreter.Eval.Expressions.Evaluation
+import           Interpreter.Eval.Expressions.Main
 
 
 -- TODO handle debugging in a better way
@@ -26,5 +26,6 @@ runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
     (_, classEnv) <- ask
     (_, initialEnv) <- buildInitialLocalEnv classEnv
-    result <- local (const initialEnv) $ evaluateAction $ fromJust $ getMainAction mainClass
+    -- TODO should call evaluateMemberAction
+    result <- local (const initialEnv) $ evaluateActionInArgEnv $ fromJust $ getMainAction mainClass
     return $ fst result

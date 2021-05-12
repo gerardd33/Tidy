@@ -15,25 +15,22 @@ getActionBody (ActionDeclaration _ _ _ _ actionBody) = actionBody
 getFunctionIdentifier :: FunctionDecl -> MethodIdent
 getFunctionIdentifier (FunctionDeclaration _ _ functionIdent _ _) = functionIdent
 
+getActionIdentifier :: ActionDecl -> MethodIdent
+getActionIdentifier (ActionDeclaration _ _ actionIdent _ _) = actionIdent
+
+getFunctionType :: FunctionDecl -> MethodType
+getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
+
+getMethodParamList :: MethodType -> [ObjectIdent]
+getMethodParamList (MethodTypeSignature (ParameterList valueDeclarations) _) =
+    map (objectNameFromDeclaration . ObjectDeclaration MPublic) valueDeclarations
+
+isActionMain :: ActionDecl -> Bool
+isActionMain actionDecl = getActionIdentifier actionDecl == MethodIdentifier (LowerCaseIdent "main")
+
 argsToExpressionList :: ArgList -> [Expr]
 argsToExpressionList ArgumentListAbsent         = []
 argsToExpressionList (ArgumentListPresent args) = map argToExpression args
 
 argToExpression :: MethodArg -> Expr
 argToExpression (MethodArgument expr) = expr
-
-
-
-
-
-
-
-
-
-getFunctionType :: FunctionDecl -> MethodType
-getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
-
-getMethodParamsList :: MethodType -> [ObjectIdent]
-getMethodParamsList (MethodTypeSignature (ParameterList valueDecls) _) =
-    map (getLocalValueName . ObjectDeclaration MPublic) valueDecls
-

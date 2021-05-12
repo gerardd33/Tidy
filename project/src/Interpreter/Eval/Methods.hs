@@ -7,7 +7,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Helper.Methods
-import           Interpreter.Common.Helper.Types
+import           Interpreter.Common.Helper.Objects
 import           Interpreter.Eval.LocalEnvironment
 
 
@@ -22,9 +22,7 @@ evaluateGetter (RegularObject _ objectEnv) functionIdent = do
 addArgumentsToEnv :: FunctionDecl -> [Object] -> StateMonad Result
 addArgumentsToEnv function evaluatedArgs = do
     (localEnv, classEnv) <- ask
-    let methodParamsList = getMethodParamsList $ getFunctionType function
-    let decls = zip methodParamsList evaluatedArgs
-    (_, newEnv) <- executeObjectAdditions decls
+    let methodParamList = getMethodParamList $ getFunctionType function
+    let decls = zip methodParamList evaluatedArgs
+    (_, newEnv) <- addLocalValues decls
     return (pass, newEnv)
-
-

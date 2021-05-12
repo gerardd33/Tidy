@@ -2,13 +2,13 @@ module Interpreter.Eval.LocalEnvironment where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                        as Map
+import qualified Data.Map                          as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Types
+import           Interpreter.Common.Helper.Objects
 import           Interpreter.Eval.Utils
 
 
@@ -30,22 +30,8 @@ addLocalValue objectIdent object = do
     put (Map.insert nextLocation object state, nextLocation + 1)
     return (pass, (Map.insert objectIdent nextLocation localEnv, classEnv))
 
-
-
-
-
-
-
-
-setObject :: ObjectIdent -> Object -> StateMonad Result
-setObject identifier value = do
-    location <- getLocation identifier
-    (state, nextLocation) <- get
-    put (Map.insert location value state, nextLocation)
-    returnPass
-
-executeObjectAdditions :: [(ObjectIdent, Object)] -> StateMonad Result
-executeObjectAdditions [] = returnPass
-executeObjectAdditions (addition:additions) = do
+addLocalValues :: [(ObjectIdent, Object)] -> StateMonad Result
+addLocalValues [] = returnPass
+addLocalValues (addition:additions) = do
     (_, env) <- uncurry addLocalValue addition
-    local (const env) $ executeObjectAdditions additions
+    local (const env) $ addLocalValues additions

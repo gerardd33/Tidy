@@ -7,8 +7,44 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 
+
+getClassIdentifier :: ClassDecl -> ClassIdent
+getClassIdentifier (ClassDeclaration _ _ classIdent _ _) = classIdent
+
+getClassType :: ClassDecl -> ClassTypeModifier
+getClassType (ClassDeclaration _ classType _ _ _) = classType
+
+getValueDeclarations :: ClassDecl -> [ObjectDecl]
+getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled (ValuesPresent valueDeclarations) _ _ _)) =
+    valueDeclarations
+getValueDeclarations _ = []
+
+getVariableDeclarations :: ClassDecl -> [ObjectDecl]
+getVariableDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ (VariablesPresent variableDeclarations) _ _)) =
+    variableDeclarations
+getVariableDeclarations _ = []
+
+getFunctionDeclarations :: ClassDecl -> [FunctionDecl]
+getFunctionDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ (FunctionsPresent functionDeclarations) _)) =
+    functionDeclarations
+getFunctionDeclarations _ = []
+
+getActionDeclarations :: ClassDecl -> [ActionDecl]
+getActionDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsPresent actionDeclarations))) =
+    actionDeclarations
+getActionDeclarations _ = []
+
+getValueNames :: ClassDecl -> [ObjectIdent]
+getValueNames classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
+
+getVariableNames :: ClassDecl -> [ObjectIdent]
+getVariableNames classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
+
+classFromObjectType :: ObjectType -> ClassIdent
+classFromObjectType (ObjectTypeClass classIdent _) = classIdent
 
 hasMainAction :: ClassDecl -> Bool
 hasMainAction = isJust . getMainAction
@@ -18,70 +54,33 @@ getMainAction (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsPresent a
     List.find isActionMain actions
 getMainAction _ = Nothing
 
-loadClasses :: [ClassDecl] -> ClassEnv
-loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
-
 singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
 singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
-    ObjectIdentifier (LowerCaseIdent ("__singleton_" ++ classIdent))
+    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
 
-classFromObjectType :: ObjectType -> ClassIdent
-classFromObjectType (ObjectTypeClass classIdent _) = classIdent
-
-
-
-
-
-
-
-
+classIdentifierFromName :: String -> ClassIdent
+classIdentifierFromName identifier = ClassIdentifier (UpperCaseIdent identifier)
 
 -- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 loadClassDeclaration declaration = case declaration of
-    (ClassDeclaration _ _ identifier _ _)  -> (identifier, declaration)
+    ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
 
--- TODO here print NoMainActionError and terminate if list empty, once I have monads adapted for static checking
+loadClasses :: [ClassDecl] -> ClassEnv
+loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
+
+-- TODO here throw NoMainActionError and terminate if filtered list empty, or return Maybe and throw later
 findMainClass :: [ClassDecl] -> ClassDecl
 findMainClass = head . filter hasMainAction
 
-isActionMain :: ActionDecl -> Bool
-isActionMain (ActionDeclaration _ _ (MethodIdentifier (LowerCaseIdent "main")) _ _)   = True
-isActionMain _                                                                        = False
+getConstructorParamList :: ClassDecl -> [ObjectIdent]
+getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariables
+    where uninitializedValues = map objectNameFromDeclaration $ filter (not . isInitialized) $
+            getValueDeclarations classDecl
+          uninitializedVariables = map objectNameFromDeclaration $ filter (not . isInitialized) $
+            getVariableDeclarations classDecl
 
-getValues :: ClassDecl -> [ObjectIdent]
-getValues classDecl = map getLocalValueName (getValueDecls classDecl)
-
-getVariables :: ClassDecl -> [ObjectIdent]
-getVariables classDecl = map getLocalValueName (getVariableDecls classDecl)
-
-getValueDecls :: ClassDecl -> [ObjectDecl]
-getValueDecls (ClassDeclaration _ _ _ _ (ClassBodyFilled (ValuesPresent valueDecls) _ _ _)) =
-    valueDecls
-getValueDecls _ = []
-
-getVariableDecls :: ClassDecl -> [ObjectDecl]
-getVariableDecls (ClassDeclaration _ _ _ _ (ClassBodyFilled _ (VariablesPresent variableDecls) _ _)) =
-    variableDecls
-getVariableDecls _ = []
-
-getCtorParamsList :: ClassDecl -> [ObjectIdent]
-getCtorParamsList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map getLocalValueName $ filter (not . isInitialized) (getValueDecls classDecl)
-          uninitializedVariables = map getLocalValueName $ filter (not . isInitialized) (getVariableDecls classDecl)
-
-
-
-getInitializedAttributeList :: ClassDecl -> [(ObjectIdent, Expr)]
-getInitializedAttributeList classDecl = initializedValues ++ initializedVariables
-    where initializedValues = map toNameExprPair $ filter isInitialized (getValueDecls classDecl)
-          initializedVariables = map toNameExprPair $ filter isInitialized (getVariableDecls classDecl)
-
-getFunctionDecls :: ClassDecl -> [FunctionDecl]
-getFunctionDecls (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ (FunctionsPresent functionDecls) _)) =
-    functionDecls
-getFunctionDecls _ = []
-
-isSingletonClass :: ClassDecl -> Bool
-isSingletonClass (ClassDeclaration _ MSingleton _ _ _) = True
-isSingletonClass _                                     = False
+getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
+getInitializedAttributes classDecl = initializedValues ++ initializedVariables
+    where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
+          initializedVariables = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
