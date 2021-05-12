@@ -29,22 +29,22 @@ toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ 
 getProperObjectDecl :: ObjectDecl -> ObjectDeclProper
 getProperObjectDecl (ObjectDeclaration _ properDeclaration) = properDeclaration
 
-newBuiltinObjectObject :: BuiltinObject -> Object
-newBuiltinObjectObject = BuiltinObjectObject
+newBuiltinObject :: BuiltinObject -> Object
+newBuiltinObject = BuiltinObject
 
 getObjectType :: Object -> ObjectType
-getObjectType (BuiltinObjectObject object)  = valueTypeForBuiltinObjectObject object
+getObjectType (BuiltinObject object)      = valueTypeForBuiltinObject object
 getObjectType (RegularObject valueType _) = valueType
 
-valueTypeForBuiltinObjectObject :: BuiltinObject -> ObjectType
-valueTypeForBuiltinObjectObject (IntObject _)    = valueTypeFromClassName "Int"
-valueTypeForBuiltinObjectObject (BoolObject _)   = valueTypeFromClassName "Bool"
-valueTypeForBuiltinObjectObject (CharObject _)   = valueTypeFromClassName "Char"
-valueTypeForBuiltinObjectObject (StringObject _) = valueTypeFromClassName "String"
-valueTypeForBuiltinObjectObject VoidObject       = valueTypeFromClassName "Void"
+valueTypeForBuiltinObject :: BuiltinObject -> ObjectType
+valueTypeForBuiltinObject (IntObject _)    = valueTypeFromClassName "Int"
+valueTypeForBuiltinObject (BoolObject _)   = valueTypeFromClassName "Bool"
+valueTypeForBuiltinObject (CharObject _)   = valueTypeFromClassName "Char"
+valueTypeForBuiltinObject (StringObject _) = valueTypeFromClassName "String"
+valueTypeForBuiltinObject VoidObject       = valueTypeFromClassName "Void"
 
 valueTypeFromClassName :: String -> ObjectType
 valueTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
 
 pass :: Object
-pass = newBuiltinObjectObject VoidObject
+pass = newBuiltinObject VoidObject

@@ -16,7 +16,7 @@ import           Interpreter.Common.Helper.Methods
 import           Interpreter.Eval.Methods
 
 -- TODO remove or change
-import           Interpreter.Eval.Expressions.Entrypoint
+import           Interpreter.Eval.Expressions.Evaluate
 
 
 -- TODO handle debugging in a better way

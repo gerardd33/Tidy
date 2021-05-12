@@ -21,7 +21,7 @@ type ClassEnv = Map.Map ClassIdent ClassDecl
 type Result = (Object, Env)
 type Location = Integer
 
-data Object = RegularObject ObjectType ObjectEnv | BuiltinObjectObject BuiltinObject
+data Object = RegularObject ObjectType ObjectEnv | BuiltinObject BuiltinObject
     deriving (Eq, Show)
 
 data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
@@ -33,6 +33,6 @@ data BuiltinObject
     = IntObject Integer
     | BoolObject Boolean
     | CharObject Char
-    | StringObject [Char]
+    | StringObject String
     | VoidObject
     deriving (Eq, Show)
