@@ -13,8 +13,8 @@ import           Interpreter.Eval.LocalEnvironment
 
 -- TODO handle builtin objects
 evaluateGetter :: Object -> MethodIdent -> StateMonad Object
-evaluateGetter (RegularObject _ objectEnv) functionIdentifier = do
-    let attribute = methodToObjectIdentifier functionIdentifier
+evaluateGetter (RegularObject _ objectEnv) functionIdent = do
+    let attribute = methodToObjectIdentifier functionIdent
     if attribute `Map.member` values objectEnv
     then return $ values objectEnv Map.! attribute
     else return $ variables objectEnv Map.! attribute

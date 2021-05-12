@@ -14,15 +14,15 @@ import           Interpreter.Common.Helper.Types
 
 
 getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
-getMemberFunction (ObjectTypeClass classIdent _) functionIdentifier = do
+getMemberFunction (ObjectTypeClass classIdent _) functionIdent = do
     (_, classEnv) <- ask
     let functions = getFunctionDecls $ classEnv Map.! classIdent
-    return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdentifier) functions
+    return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdent) functions
 
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
-hasGetter objectType functionIdentifier = do
+hasGetter objectType functionIdent = do
     (_, classEnv) <- ask
     let classDecl = classEnv Map.! classFromObjectType objectType
-    let attributeIdentifier = methodToObjectIdentifier functionIdentifier
+    let attributeIdentifier = methodToObjectIdentifier functionIdent
     let attributes = getValues classDecl ++ getVariables classDecl
     return $ attributeIdentifier `elem` attributes

@@ -28,8 +28,6 @@ evaluateExpressionList (expr:exprs) = do
     local (const env) (evaluateExpressionList exprs)
 
 evaluateExpression :: Expr -> StateMonad Result
-
--- PURELY FUNCTIONAL EXPRESSIONS --
 evaluateExpression (ELiteral literal) = liftPure $ evaluateLiteral literal
 evaluateExpression (ELocalValue identifier) = liftPure $ getLocalValue identifier
 evaluateExpression (EAdd expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateAddition
@@ -43,11 +41,8 @@ evaluateExpression (EUnaryMinus expr) = liftPure $ evaluateUnaryOperator expr ev
 evaluateExpression (ERelationalOperator expr1 operator expr2) = liftPure $ evaluateRelationalOperator expr1 expr2 operator
 evaluateExpression (EBooleanOperator expr1 operator expr2) = liftPure $ evaluateBooleanOperator expr1 expr2 operator
 
-evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
-    (predicateValue, _) <- evaluateExpression predicate
-    liftPure $ if isTrue predicateValue
-    then evaluateThenBranch thenBranch
-    else evaluateElseBranch elseBranch
+evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) =
+    liftPure $ evaluateFunctionalIfThenElse predicate thenBranch elseBranch
 
 evaluateExpression (EGetExpression (GetExpressionInstance objectIdent methodCall)) = do
     object <- getLocalValue objectIdent
@@ -62,42 +57,19 @@ evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCal
     singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
+evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
+    liftPure $ evaluateConstructorCall classIdent argList
 
-
-
-
-evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) = do
-    (localEnv, classEnv) <- ask
-    evaluatedArgs <- evaluateArgumentList argList
-    let classDecl = classEnv Map.! classIdentifier
-    let objectType = ObjectTypeClass classIdentifier GenericParameterAbsent
-    initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
-    objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
-    let object = RegularObject objectType objectEnv
-    return (object, (localEnv, classEnv))
-
-
-
--- EXPRESSIONS WITH SIDE EFFECTS --
 evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
     evaluateLocalValueDeclaration $ getProperDeclaration declaration
 
-evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = do
-    (predicateValue, _) <- evaluateExpression predicate
-    if isTrue predicateValue
-    then evaluateExpressionList body >> evaluateExpression (EImperativeControlFlow (IWhile predicate body))
-    else returnPass
+evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranch)) =
+    evaluateImperativeIf predicate body optionalElseBranch
 
-evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
-    (predicateValue, _) <- evaluateExpression predicate
-    if isTrue predicateValue then evaluateExpressionList body
-    else case optionalElseBranch of
-        IElseAbsent       -> returnPass
-        IElsePresent body -> evaluateExpressionList body
--- TODO elif
+evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWhile predicate body
 
 
--- PURELY FUNCTIONAL EXPRESSIONS -- IMPLEMENTATIONS --
+-- PURELY FUNCTIONAL EXPRESSIONS --
 evaluateFunction :: FunctionDecl -> StateMonad Object
 evaluateFunction = evaluateFunctionBody . getFunctionBody
 
@@ -110,8 +82,8 @@ evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case
     _ -> evaluateExpression expr
 
 evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
-evaluateMemberFunction object functionIdentifier evaluatedArgs = do
-    function <- getMemberFunction (getLocalObjectType object) functionIdentifier
+evaluateMemberFunction object functionIdent evaluatedArgs = do
+    function <- getMemberFunction (getLocalObjectType object) functionIdent
     (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
     local (const functionLocalEnv) $ evaluateFunction function
 
@@ -142,6 +114,13 @@ evaluateBooleanOperator expr1 expr2 operator = do
                                      BOr  -> evaluateBooleanOr
     evaluateBinaryOperator expr1 expr2 evaluator
 
+evaluateFunctionalIfThenElse :: Expr -> ThenBranch -> ElseBranch -> StateMonad Object
+evaluateFunctionalIfThenElse predicate thenBranch elseBranch = do
+   (predicateValue, _) <- evaluateExpression predicate
+   if isTrue predicateValue
+   then evaluateThenBranch thenBranch
+   else evaluateElseBranch elseBranch
+
 evaluateThenBranch :: ThenBranch -> StateMonad Object
 evaluateThenBranch (FThenOneLine expr)   = returnPure $ evaluateExpression expr
 evaluateThenBranch (FThenMultiLine expr) = returnPure $ evaluateExpression expr
@@ -153,18 +132,26 @@ evaluateElseBranch (FElseIf predicate thenBranch elseBranch) =
     returnPure $ evaluateExpression $ EFunctionalControlFlow $ FIfThenElse predicate thenBranch elseBranch
 
 evaluateGetExpressionOnObject :: Object -> FunctionCall -> StateMonad Object
-evaluateGetExpressionOnObject object (CallFunction functionIdentifier argumentList) = do
+evaluateGetExpressionOnObject object (CallFunction functionIdent argumentList) = do
     originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argumentList
-    takeGetter <- hasGetter (getLocalObjectType object) functionIdentifier
+    takeGetter <- hasGetter (getLocalObjectType object) functionIdent
     if takeGetter && null evaluatedArgs
-    then evaluateGetter object functionIdentifier
-    else evaluateMemberFunction object functionIdentifier evaluatedArgs
+    then evaluateGetter object functionIdent
+    else evaluateMemberFunction object functionIdent evaluatedArgs
+
+evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
+evaluateConstructorCall classIdent argList = do
+    (localEnv, classEnv) <- ask
+    evaluatedArgs <- evaluateArgumentList argList
+    let classDecl = classEnv Map.! classIdent
+    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
+    initializedAttributes <- evaluateAttributeExpressions (getInitializedAttributeList classDecl)
+    objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
+    return $ RegularObject objectType objectEnv
 
 
-
-
--- EXPRESSIONS WITH SIDE EFFECTS -- IMPLEMENTATIONS --
+-- EXPRESSIONS WITH SIDE EFFECTS --
 -- TODO passing parameters and other context information
 evaluateAction :: ActionDecl -> StateMonad Result
 evaluateAction = evaluateActionBody . getActionBody
@@ -178,12 +165,21 @@ evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType (I
     (initializationValue, _) <- evaluateExpression expr
     addLocalValue objectIdent initializationValue
 
+evaluateImperativeIf :: Expr -> [Expr] -> OptionalElseBranch -> StateMonad Result
+evaluateImperativeIf predicate body optionalElseBranch = do
+    (predicateValue, _) <- evaluateExpression predicate
+    if isTrue predicateValue then evaluateExpressionList body
+    else case optionalElseBranch of
+        IElseAbsent       -> returnPass
+        IElsePresent body -> evaluateExpressionList body
+        IElseIf predicate body optionalElseBranch -> evaluateImperativeIf predicate body optionalElseBranch
 
-
-
-
-
-
+evaluateWhile :: Expr -> [Expr] -> StateMonad Result
+evaluateWhile predicate body  = do
+    (predicateValue, _) <- evaluateExpression predicate
+    if isTrue predicateValue
+    then evaluateExpressionList body >> evaluateWhile predicate body
+    else returnPass
 
 
 
