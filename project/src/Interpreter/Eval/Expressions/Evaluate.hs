@@ -26,18 +26,18 @@ evaluateExpressionList (expr:exprs) = do
 evaluateExpression :: Expr -> StateMonad Result
 evaluateExpression (ELiteral literal) = returnPure $ evaluateLiteral literal
 evaluateExpression (ELocalValue identifier) = returnPure $ getLocalValue identifier
+evaluateExpression (EAdd expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateAddition
+evaluateExpression (ESubtract expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateSubtraction
+evaluateExpression (EMultiply expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EDivide expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EConcatenate expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateConcatenation
+evaluateExpression (EUnaryNot expr) = returnPure $ evaluateUnaryOperator expr evaluateUnaryNot
+evaluateExpression (EUnaryMinus expr) = returnPure $ evaluateUnaryOperator expr evaluateUnaryMinus
+evaluateExpression (ERelationalOperator expr1 operator expr2) = returnPure $ evaluateRelationalOperator expr1 expr2 operator
+evaluateExpression (EBooleanOperator expr1 operator expr2) = returnPure $ evaluateBooleanOperator expr1 expr2 operator
+
 evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
     declareLocalValue $ getProperDeclaration declaration
-
-evaluateExpression (EAdd expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateAddition
-evaluateExpression (ESubtract expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateSubtraction
-evaluateExpression (EMultiply expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateMultiplication
-evaluateExpression (EDivide expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateMultiplication
-evaluateExpression (EConcatenate expr1 expr2) = evaluateBinaryOperator expr1 expr2 evaluateConcatenation
-evaluateExpression (EUnaryNot expr) = evaluateUnaryOperator expr evaluateUnaryNot
-evaluateExpression (EUnaryMinus expr) = evaluateUnaryOperator expr evaluateUnaryMinus
-evaluateExpression (ERelationalOperator expr1 operator expr2) = evaluateRelationalOperator expr1 expr2 operator
-evaluateExpression (EBooleanOperator expr1 operator expr2) = evaluateBooleanOperator expr1 expr2 operator
 
 evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) = do
     (localEnv, classEnv) <- ask
@@ -83,17 +83,35 @@ evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCal
 
 
 
-
-evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Result
+evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
-    (v1, _) <- evaluateExpression expr1
-    (v2, _) <- evaluateExpression expr2
-    returnPure $ evaluator v1 v2
+    (value1, _) <- evaluateExpression expr1
+    (value2, _) <- evaluateExpression expr2
+    evaluator value1 value2
 
-evaluateUnaryOperator :: Expr -> (Object -> StateMonad Object) -> StateMonad Result
+evaluateUnaryOperator :: Expr -> (Object -> StateMonad Object) -> StateMonad Object
 evaluateUnaryOperator expr evaluator = do
     (value, _) <- evaluateExpression expr
-    returnPure $ evaluator value
+    evaluator value
+
+evaluateRelationalOperator :: Expr -> Expr -> RelationalOperator -> StateMonad Object
+evaluateRelationalOperator expr1 expr2 operator = do
+    let evaluator = case operator of RLess         -> evaluateRelational (<)
+                                     RLessEqual    -> evaluateRelational (<=)
+                                     RGreater      -> evaluateRelational (>)
+                                     RGreaterEqual -> evaluateRelational (>=)
+                                     REqual        -> evaluateEquality
+                                     RNotEqual     -> evaluateNonEquality
+    evaluateBinaryOperator expr1 expr2 evaluator
+
+evaluateBooleanOperator :: Expr -> Expr -> BooleanOperator -> StateMonad Object
+evaluateBooleanOperator expr1 expr2 operator = do
+    let evaluator = case operator of BAnd -> evaluateBooleanAnd
+                                     BOr  -> evaluateBooleanOr
+    evaluateBinaryOperator expr1 expr2 evaluator
+
+
+
 
 evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
 evaluateAttributeExpressions attributeList = do
@@ -157,20 +175,9 @@ evaluateUnaryNot (BuiltinObject (BoolObject BFalse)) = return (newBuiltinObject 
 evaluateUnaryMinus :: Object -> StateMonad Object
 evaluateUnaryMinus (BuiltinObject (IntObject value)) = return (newBuiltinObject $ IntObject $ -value)
 
-evaluateRelationalOperator :: Expr -> Expr -> RelationalOperator -> StateMonad Result
-evaluateRelationalOperator expr1 expr2 RLess = evaluateBinaryOperator expr1 expr2 (evaluateRelational (<))
-evaluateRelationalOperator expr1 expr2 RLessEqual = evaluateBinaryOperator expr1 expr2 (evaluateRelational (<=))
-evaluateRelationalOperator expr1 expr2 RGreater = evaluateBinaryOperator expr1 expr2 (evaluateRelational (>))
-evaluateRelationalOperator expr1 expr2 RGreaterEqual = evaluateBinaryOperator expr1 expr2 (evaluateRelational (>=))
-evaluateRelationalOperator expr1 expr2 REqual = evaluateBinaryOperator expr1 expr2 evaluateEquality
-evaluateRelationalOperator expr1 expr2 RNotEqual = evaluateBinaryOperator expr1 expr2 evaluateNonEquality
-
 evaluateRelational :: (Integer -> Integer -> Bool) -> Object -> Object -> StateMonad Object
 evaluateRelational operator (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
     return (newBuiltinObject $ BoolObject $ toBoolean $ operator v1 v2)
-
-evaluateBooleanOperator expr1 expr2 BAnd = evaluateBinaryOperator expr1 expr2 evaluateBooleanAnd
-evaluateBooleanOperator expr1 expr2 BOr = evaluateBinaryOperator expr1 expr2 evaluateBooleanOr
 
 evaluateBooleanAnd :: Object -> Object -> StateMonad Object
 evaluateBooleanAnd (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
