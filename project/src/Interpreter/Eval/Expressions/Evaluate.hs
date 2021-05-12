@@ -12,8 +12,10 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
+import           Interpreter.Common.Helper.Types
 import           Interpreter.Eval.Environment
 import           Interpreter.Eval.Expressions.Miscellaneous
+import           Interpreter.Eval.Expressions.Operators
 import           Interpreter.Eval.Utils
 
 
@@ -30,6 +32,7 @@ evaluateExpression (EAdd expr1 expr2) = returnPure $ evaluateBinaryOperator expr
 evaluateExpression (ESubtract expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateSubtraction
 evaluateExpression (EMultiply expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
 evaluateExpression (EDivide expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
+evaluateExpression (EModulo expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateModulo
 evaluateExpression (EConcatenate expr1 expr2) = returnPure $ evaluateBinaryOperator expr1 expr2 evaluateConcatenation
 evaluateExpression (EUnaryNot expr) = returnPure $ evaluateUnaryOperator expr evaluateUnaryNot
 evaluateExpression (EUnaryMinus expr) = returnPure $ evaluateUnaryOperator expr evaluateUnaryMinus
@@ -51,17 +54,17 @@ evaluateExpression (EConstructorCall (CallConstructor classIdentifier argList)) 
 
 evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch elseBranch)) = do
     (predicateValue, _) <- evaluateExpression predicate
-    if isObjectTrue predicateValue then evaluateThenBranch thenBranch else evaluateElseBranch elseBranch
+    if isTrue predicateValue then evaluateThenBranch thenBranch else evaluateElseBranch elseBranch
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = do
     (predicateValue, _) <- evaluateExpression predicate
-    if isObjectTrue predicateValue
+    if isTrue predicateValue
     then evaluateExpressionList body >> evaluateExpression (EImperativeControlFlow (IWhile predicate body))
     else returnPass
 
 evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranch)) = do
     (predicateValue, _) <- evaluateExpression predicate
-    if isObjectTrue predicateValue then evaluateExpressionList body
+    if isTrue predicateValue then evaluateExpressionList body
     else case optionalElseBranch of
         IElseAbsent       -> returnPass
         IElsePresent body -> evaluateExpressionList body
@@ -113,6 +116,24 @@ evaluateBooleanOperator expr1 expr2 operator = do
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 evaluateAttributeExpressions :: [(ObjectIdent, Expr)] -> StateMonad [(ObjectIdent, Object)]
 evaluateAttributeExpressions attributeList = do
     let (names, exprs) = unzip attributeList
@@ -146,52 +167,6 @@ evaluateArgumentList argList = do
     env <- ask
     evalResults <- mapM evaluateExpression (argsToExprList argList)
     return $ map fst evalResults
-
-evaluateAddition :: Object -> Object -> StateMonad Object
-evaluateAddition (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
-    return (newBuiltinObject $ IntObject $ v1 + v2)
-
-evaluateSubtraction :: Object -> Object -> StateMonad Object
-evaluateSubtraction (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
-    return (newBuiltinObject $ IntObject $ v1 - v2)
-
-evaluateMultiplication :: Object -> Object -> StateMonad Object
-evaluateMultiplication (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
-    return (newBuiltinObject $ IntObject $ v1 * v2)
-
--- TODO throw if division by zero
-evaluateDivision :: Object -> Object -> StateMonad Object
-evaluateDivision (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
-    return (newBuiltinObject $ IntObject $ v1 `div` v2)
-
-evaluateConcatenation :: Object -> Object -> StateMonad Object
-evaluateConcatenation (BuiltinObject (StringObject v1)) (BuiltinObject (StringObject v2)) =
-    return (newBuiltinObject $ StringObject $ v1 ++ v2)
-
-evaluateUnaryNot :: Object -> StateMonad Object
-evaluateUnaryNot (BuiltinObject (BoolObject BTrue)) = return (newBuiltinObject $ BoolObject BFalse)
-evaluateUnaryNot (BuiltinObject (BoolObject BFalse)) = return (newBuiltinObject $ BoolObject BTrue)
-
-evaluateUnaryMinus :: Object -> StateMonad Object
-evaluateUnaryMinus (BuiltinObject (IntObject value)) = return (newBuiltinObject $ IntObject $ -value)
-
-evaluateRelational :: (Integer -> Integer -> Bool) -> Object -> Object -> StateMonad Object
-evaluateRelational operator (BuiltinObject (IntObject v1)) (BuiltinObject (IntObject v2)) =
-    return (newBuiltinObject $ BoolObject $ toBoolean $ operator v1 v2)
-
-evaluateBooleanAnd :: Object -> Object -> StateMonad Object
-evaluateBooleanAnd (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
-    return (newBuiltinObject $ BoolObject $ toBoolean $ fromBoolean v1 && fromBoolean v2)
-
-evaluateBooleanOr :: Object -> Object -> StateMonad Object
-evaluateBooleanOr (BuiltinObject (BoolObject v1)) (BuiltinObject (BoolObject v2)) =
-    return (newBuiltinObject $ BoolObject $ toBoolean $ fromBoolean v1 || fromBoolean v2)
-
-evaluateEquality :: Object -> Object -> StateMonad Object
-evaluateEquality v1 v2 = return (newBuiltinObject $ BoolObject $ toBoolean $ v1 == v2)
-
-evaluateNonEquality :: Object -> Object -> StateMonad Object
-evaluateNonEquality v1 v2 = return (newBuiltinObject $ BoolObject $ toBoolean $ v1 /= v2)
 
 addArgumentsToEnv :: FunctionDecl -> [Object] -> StateMonad Result
 addArgumentsToEnv function evaluatedArgs = do
@@ -240,18 +215,7 @@ evaluateGetExprOnObject object (CallFunction functionIdentifier argList) = do
                  else evaluateMemberFunction object functionIdentifier evaluatedArgs
     return (result, originalEnv)
 
-toBoolean :: Bool -> Boolean
-toBoolean True  = BTrue
-toBoolean False = BFalse
 
-fromBoolean :: Boolean -> Bool
-fromBoolean BTrue  = True
-fromBoolean BFalse = False
-
-isObjectTrue :: Object -> Bool
-isObjectTrue (BuiltinObject (BoolObject BTrue))  = True
-isObjectTrue (BuiltinObject (BoolObject BFalse)) = False
--- TODO exception in other cases
 
 buildInitialEnvironment :: ClassEnv -> Env
 buildInitialEnvironment classEnv = (Map.empty, classEnv)

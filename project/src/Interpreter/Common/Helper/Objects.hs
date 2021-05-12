@@ -26,9 +26,6 @@ toNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
 toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdentifier _ (Initialized expression))) =
     (objectIdentifier, expression)
 
-newBuiltinObject :: BuiltinObject -> Object
-newBuiltinObject = BuiltinObject
-
 getLocalValueType :: Object -> ObjectType
 getLocalValueType (BuiltinObject object)      = valueTypeForBuiltinObject object
 getLocalValueType (RegularObject valueType _) = valueType
@@ -44,4 +41,4 @@ valueTypeFromClassName :: String -> ObjectType
 valueTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
 
 pass :: Object
-pass = newBuiltinObject VoidObject
+pass = BuiltinObject VoidObject

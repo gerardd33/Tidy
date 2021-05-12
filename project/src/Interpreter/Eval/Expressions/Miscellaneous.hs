@@ -7,8 +7,8 @@ import           Interpreter.Common.Helper.Objects
 
 
 evaluateLiteral :: Literal -> StateMonad Object
-evaluateLiteral (LInt int)       = return $ newBuiltinObject $ IntObject int
-evaluateLiteral (LBool bool)     = return $ newBuiltinObject $ BoolObject bool
-evaluateLiteral (LChar char)     = return $ newBuiltinObject $ CharObject char
-evaluateLiteral (LString string) = return $ newBuiltinObject $ StringObject string
-evaluateLiteral (LVoid void)     = return $ newBuiltinObject VoidObject
+evaluateLiteral (LInt int)       = return $ BuiltinObject $ IntObject int
+evaluateLiteral (LBool bool)     = return $ BuiltinObject $ BoolObject bool
+evaluateLiteral (LChar char)     = return $ BuiltinObject $ CharObject char
+evaluateLiteral (LString string) = return $ BuiltinObject $ StringObject string
+evaluateLiteral (LVoid void)     = return $ BuiltinObject VoidObject
