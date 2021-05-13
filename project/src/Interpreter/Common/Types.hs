@@ -5,33 +5,33 @@ import           Control.Monad.Reader
 import           Control.Monad.State
 import qualified Data.Map                  as Map
 
-import           Interpreter.Common.Errors
-import           Interpreter.Common.Utils
 import           Parser.Tidy.Abs
+
+import           Interpreter.Common.Debug
+import           Interpreter.Common.Errors
 
 
 type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
-type RTState = (Map.Map Location Value, Location)
+type RTState = (Map.Map Location Object, Location)
+type Result = (Object, Env)
 
 type Env = (LocalEnv, ClassEnv)
-type LocalEnv = Map.Map ValueIdent Location
+type LocalEnv = Map.Map ObjectIdent Location
 type ClassEnv = Map.Map ClassIdent ClassDecl
-
-type Result = (Value, Env)
 type Location = Integer
 
--- TODO better printing (custom show instance)
-data Value = RegularObject ValueType ObjectEnv | SingleValueObject SingleValue
+data Object = RegularObject ObjectType ObjectEnv | BuiltinObject BuiltinObject
     deriving (Eq, Show)
 
-data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
+data ObjectEnv = ObjectEnv { values :: AttributeEnv, variables :: AttributeEnv }
     deriving (Eq, Show)
 
-type ValueEnv = Map.Map ValueIdent Value
+type AttributeEnv = Map.Map ObjectIdent Location
 
-data SingleValue = IntValue Integer
-    | BoolValue Boolean
-    | CharValue Char
-    | StringValue [Char]
-    | VoidValue
+data BuiltinObject
+    = IntObject Integer
+    | BoolObject Boolean
+    | CharObject Char
+    | StringObject String
+    | VoidObject
     deriving (Eq, Show)

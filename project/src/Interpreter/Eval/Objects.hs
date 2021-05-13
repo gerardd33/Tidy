@@ -1,31 +1,63 @@
 module Interpreter.Eval.Objects where
 
 import           Control.Monad.Reader
-import qualified Data.Map                 as Map
+import qualified Data.List                         as List
+import qualified Data.Map                          as Map
+import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Helper.Classes
+import           Interpreter.Common.Helper.Methods
+import           Interpreter.Common.Helper.Objects
+import           Interpreter.Common.Helper.Types
+import           Interpreter.Eval.Environments
+import           Interpreter.Eval.Utils
 
-newSingleValueObject :: SingleValue -> Value
-newSingleValueObject = SingleValueObject
 
-newRegularObject :: ValueType -> ObjectEnv -> StateMonad Value
-newRegularObject objectType objectEnv = return $ RegularObject objectType objectEnv
+getValueList :: ObjectType -> StateMonad [ObjectIdent]
+getValueList (ObjectTypeClass classIdent _) = do
+    classDecl <- getClassDecl classIdent
+    return $ getValueNames classDecl
 
-pass :: Value
-pass = newSingleValueObject VoidValue
+getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
+getMemberFunction (ObjectTypeClass classIdent _) functionIdent = do
+    classDecl <- getClassDecl classIdent
+    let functions = getFunctionDeclarations classDecl
+    return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdent) functions
 
-getObjectType :: Value -> ValueType
-getObjectType (SingleValueObject object)  = valueTypeForSingleValueObject object
-getObjectType (RegularObject valueType _) = valueType
+hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
+hasGetter objectType functionIdent = do
+    classDecl <- getClassDecl $ classFromObjectType objectType
+    let attributeIdentifier = methodToObjectIdentifier functionIdent
+    let attributes = getValueNames classDecl ++ getVariableNames classDecl
+    return $ attributeIdentifier `elem` attributes
 
-valueTypeForSingleValueObject :: SingleValue -> ValueType
-valueTypeForSingleValueObject (IntValue _)    = valueTypeFromClassName "Int"
-valueTypeForSingleValueObject (BoolValue _)   = valueTypeFromClassName "Bool"
-valueTypeForSingleValueObject (CharValue _)   = valueTypeFromClassName "Char"
-valueTypeForSingleValueObject (StringValue _) = valueTypeFromClassName "String"
-valueTypeForSingleValueObject VoidValue       = valueTypeFromClassName "Void"
+buildSingletonClassInstance :: ClassIdent -> [(ObjectIdent, Object)] -> StateMonad Object
+buildSingletonClassInstance classIdent initializedAttributes = do
+    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
+    objectEnv <- buildObjectEnv objectType [] initializedAttributes
+    return $ RegularObject objectType objectEnv
 
-valueTypeFromClassName :: String -> ValueType
-valueTypeFromClassName name = ValueTypeClass (CIdent (UpperCaseIdent name))
+buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
+buildObjectEnv objectType constructorArgs initializedAttributes = do
+    attributes <- getAttributeMap objectType constructorArgs initializedAttributes
+    objectValueList <- getValueList objectType
+    let (valuesMap, variablesMap) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    valuesEnv <- buildAttributeEnv valuesMap
+    variablesEnv <- buildAttributeEnv variablesMap
+    return $ ObjectEnv valuesEnv variablesEnv
+
+getAttributeMap :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad (Map.Map ObjectIdent Object)
+getAttributeMap objectType constructorArgs initializedAttributes = do
+    classDecl <- getClassDecl $ classFromObjectType objectType
+    let constructorParamList = getConstructorParamList classDecl
+    let attributesFromConstructor = Map.fromList $ zip constructorParamList constructorArgs
+    return $ Map.union (Map.fromList initializedAttributes) attributesFromConstructor
+
+buildAttributeEnv :: Map.Map ObjectIdent Object -> StateMonad AttributeEnv
+buildAttributeEnv attributeMap = do
+    let (attributeNames, attributeObjects) = unzip $ Map.toList attributeMap
+    attributeLocations <- mapM allocateObject attributeObjects
+    return $ Map.fromList $ zip attributeNames attributeLocations
