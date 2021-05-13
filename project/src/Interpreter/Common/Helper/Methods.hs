@@ -21,6 +21,9 @@ getActionIdentifier (ActionDeclaration _ _ actionIdent _ _) = actionIdent
 getFunctionType :: FunctionDecl -> MethodType
 getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
 
+getActionType :: ActionDecl -> MethodType
+getActionType (ActionDeclaration _ _ _ actionType _) = actionType
+
 getMethodParamList :: MethodType -> [ObjectIdent]
 getMethodParamList (MethodTypeSignature (ParameterList valueDeclarations) _) =
     map (objectNameFromDeclaration . ObjectDeclaration MPublic) valueDeclarations

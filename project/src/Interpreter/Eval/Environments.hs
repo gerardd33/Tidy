@@ -23,6 +23,12 @@ retrieveObject location = do
     (state, _) <- get
     return $ fromJust $ Map.lookup location state
 
+setObject :: Location -> Object -> StateMonad Result
+setObject location newValue = do
+    (state, nextLocation) <- get
+    put (Map.insert location newValue state, nextLocation)
+    returnPass
+
 addLocalValue :: ObjectIdent -> Object -> StateMonad Result
 addLocalValue objectIdent object = do
     location <- allocateObject object

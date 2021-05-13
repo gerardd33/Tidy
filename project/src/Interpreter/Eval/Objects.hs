@@ -27,12 +27,26 @@ getMemberFunction (ObjectTypeClass classIdent _) functionIdent = do
     let functions = getFunctionDeclarations classDecl
     return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdent) functions
 
+getMemberAction :: ObjectType -> MethodIdent -> StateMonad ActionDecl
+getMemberAction (ObjectTypeClass classIdent _) actionIdent = do
+    classDecl <- getClassDecl classIdent
+    let actions = getActionDeclarations classDecl
+    return $ fromJust $ List.find (\f -> getActionIdentifier f == actionIdent) actions
+
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
-hasGetter objectType functionIdent = do
+hasGetter objectType getterIdent = do
     classDecl <- getClassDecl $ classFromObjectType objectType
-    let attributeIdentifier = methodToObjectIdentifier functionIdent
-    let attributes = getValueNames classDecl ++ getVariableNames classDecl
-    return $ attributeIdentifier `elem` attributes
+    hasAttributeIn objectType getterIdent $ getValueNames classDecl ++ getVariableNames classDecl
+
+hasSetter :: ObjectType -> MethodIdent -> StateMonad Bool
+hasSetter objectType setterIdent = do
+    classDecl <- getClassDecl $ classFromObjectType objectType
+    hasAttributeIn objectType setterIdent $ getVariableNames classDecl
+
+hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> StateMonad Bool
+hasAttributeIn objectType methodIdent attributeNames = do
+    let attributeIdentifier = methodToObjectIdentifier methodIdent
+    return $ attributeIdentifier `elem` attributeNames
 
 buildSingletonClassInstance :: ClassIdent -> [(ObjectIdent, Object)] -> StateMonad Object
 buildSingletonClassInstance classIdent initializedAttributes = do

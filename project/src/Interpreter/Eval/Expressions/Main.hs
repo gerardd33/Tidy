@@ -58,6 +58,18 @@ evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCal
 evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
     liftPure $ evaluateConstructorCall classIdent argList
 
+evaluateExpression (EDoExpression (DoExpressionInstance objectIdent methodCall)) = do
+    object <- getLocalValue objectIdent
+    evaluateDoExpressionOnObject object methodCall
+
+evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodCall)) = do
+    (prefixObject, _) <- evaluateExpression $ EGetExpression prefixGetExpression
+    evaluateDoExpressionOnObject prefixObject methodCall
+
+evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)) = do
+    singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
+    evaluateDoExpressionOnObject singletonObject methodCall
+
 evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
     evaluateLocalValueDeclaration $ getProperDeclaration declaration
 
@@ -82,8 +94,14 @@ evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case
 evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
 evaluateMemberFunction object functionIdent evaluatedArgs = do
     function <- getMemberFunction (getLocalObjectType object) functionIdent
-    (_, functionLocalEnv) <- addArgumentsToEnv function evaluatedArgs
+    (_, functionLocalEnv) <- addArgumentsToEnv (getFunctionType function) evaluatedArgs
     local (const functionLocalEnv) $ evaluateFunctionInArgEnv function
+
+evaluateMemberAction :: Object -> MethodIdent -> [Object] -> StateMonad Result
+evaluateMemberAction object actionIdent evaluatedArgs = do
+    action <- getMemberAction (getLocalObjectType object) actionIdent
+    (_, actionLocalEnv) <- addArgumentsToEnv (getActionType action) evaluatedArgs
+    local (const actionLocalEnv) $ evaluateActionInArgEnv action
 
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
@@ -137,6 +155,15 @@ evaluateGetExpressionOnObject object (CallFunction functionIdent argumentList) =
     if takeGetter && null evaluatedArgs
     then evaluateGetter object functionIdent
     else evaluateMemberFunction object functionIdent evaluatedArgs
+
+evaluateDoExpressionOnObject :: Object -> ActionCall -> StateMonad Result
+evaluateDoExpressionOnObject object (CallAction actionIdent argumentList) = do
+    originalEnv <- ask
+    evaluatedArgs <- evaluateArgumentList argumentList
+    takeSetter <- hasSetter (getLocalObjectType object) actionIdent
+    if takeSetter && length evaluatedArgs == 1
+    then evaluateSetter object actionIdent $ head evaluatedArgs
+    else evaluateMemberAction object actionIdent evaluatedArgs
 
 evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
 evaluateConstructorCall classIdent argList = do

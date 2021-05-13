@@ -19,10 +19,17 @@ evaluateGetter (RegularObject _ objectEnv) functionIdent = do
     then retrieveObject $ values objectEnv Map.! attribute
     else retrieveObject $ variables objectEnv Map.! attribute
 
-addArgumentsToEnv :: FunctionDecl -> [Object] -> StateMonad Result
-addArgumentsToEnv function evaluatedArgs = do
+evaluateSetter :: Object -> MethodIdent -> Object -> StateMonad Result
+evaluateSetter (RegularObject _ objectEnv) actionIdent newValue = do
+    let attribute = methodToObjectIdentifier actionIdent
+    if attribute `Map.member` values objectEnv
+    then setObject (values objectEnv Map.! attribute) newValue
+    else setObject (variables objectEnv Map.! attribute) newValue
+
+addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
+addArgumentsToEnv methodType evaluatedArgs = do
     (localEnv, classEnv) <- ask
-    let methodParamList = getMethodParamList $ getFunctionType function
+    let methodParamList = getMethodParamList methodType
     let decls = zip methodParamList evaluatedArgs
     (_, newEnv) <- addLocalValues decls
     return (pass, newEnv)

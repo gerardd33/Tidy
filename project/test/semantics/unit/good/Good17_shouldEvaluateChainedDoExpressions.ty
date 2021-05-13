@@ -1,0 +1,54 @@
+mutable class Student {
+    
+    values: {
+        firstName: String;
+        lastName: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: String;
+    }
+}
+
+immutable class Grades {
+    
+    values: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+        summary: Summary;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
+        }
+    }
+}
+
+mutable class Summary {
+
+    variables: {
+        finalMark: String;
+        description: String;
+    }
+}
+
+singleton class AttributeGetters {
+    
+    actions: {
+        main: () -> Student = {
+            value student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
+                Summary("Passed", "Score: 312/400")), 20, "BS1");
+            value sumOfGrades: Int = student.grades.grade1 + student.grades.grade2 + student.grades.grade3 + student.grades.grade4;
+            
+            student.grades.summary#description("Score: 350/400")
+            student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description
+            // Should return "Passed. Score: 350/400"
+        }
+    }
+}
