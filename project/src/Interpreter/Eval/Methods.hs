@@ -8,7 +8,7 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
-import           Interpreter.Eval.LocalEnvironment
+import           Interpreter.Eval.Environments
 
 
 -- TODO handle builtin objects

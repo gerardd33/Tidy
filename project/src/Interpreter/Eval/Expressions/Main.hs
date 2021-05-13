@@ -2,8 +2,8 @@ module Interpreter.Eval.Expressions.Main where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.List                                  as List
-import qualified Data.Map                                   as Map
+import qualified Data.List                           as List
+import qualified Data.Map                            as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -13,8 +13,8 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
+import           Interpreter.Eval.Environments
 import           Interpreter.Eval.Expressions.Simple
-import           Interpreter.Eval.LocalEnvironment
 import           Interpreter.Eval.Methods
 import           Interpreter.Eval.Objects
 import           Interpreter.Eval.Utils

@@ -31,9 +31,9 @@ library
       Interpreter.Entrypoint.Initialization
       Interpreter.Entrypoint.Runtime
       Interpreter.Entrypoint.Static
+      Interpreter.Eval.Environments
       Interpreter.Eval.Expressions.Main
       Interpreter.Eval.Expressions.Simple
-      Interpreter.Eval.LocalEnvironment
       Interpreter.Eval.Methods
       Interpreter.Eval.Objects
       Interpreter.Eval.Utils

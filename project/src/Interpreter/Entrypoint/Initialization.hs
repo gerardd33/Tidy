@@ -9,7 +9,7 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Eval.Expressions.Main
-import           Interpreter.Eval.LocalEnvironment
+import           Interpreter.Eval.Environments
 import           Interpreter.Eval.Objects
 
 
