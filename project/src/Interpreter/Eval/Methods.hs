@@ -16,8 +16,8 @@ evaluateGetter :: Object -> MethodIdent -> StateMonad Object
 evaluateGetter (RegularObject _ objectEnv) functionIdent = do
     let attribute = methodToObjectIdentifier functionIdent
     if attribute `Map.member` values objectEnv
-    then return $ values objectEnv Map.! attribute
-    else return $ variables objectEnv Map.! attribute
+    then retrieveObject $ values objectEnv Map.! attribute
+    else retrieveObject $ variables objectEnv Map.! attribute
 
 addArgumentsToEnv :: FunctionDecl -> [Object] -> StateMonad Result
 addArgumentsToEnv function evaluatedArgs = do

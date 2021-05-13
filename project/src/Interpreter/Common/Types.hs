@@ -23,11 +23,10 @@ type Location = Integer
 data Object = RegularObject ObjectType ObjectEnv | BuiltinObject BuiltinObject
     deriving (Eq, Show)
 
-data ObjectEnv = ObjectEnv { values :: ValueEnv, variables :: ValueEnv }
+data ObjectEnv = ObjectEnv { values :: AttributeEnv, variables :: AttributeEnv }
     deriving (Eq, Show)
 
--- TODO change Object to Location, adapt evaluations
-type ValueEnv = Map.Map ObjectIdent Object
+type AttributeEnv = Map.Map ObjectIdent Location
 
 data BuiltinObject
     = IntObject Integer
