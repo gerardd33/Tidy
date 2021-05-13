@@ -8,7 +8,7 @@ singleton class SimpleMain {
         main: () -> Int = {
             4
             value x: Int = 5;
-            x
+            x // Should return 5
         }
     }
 }

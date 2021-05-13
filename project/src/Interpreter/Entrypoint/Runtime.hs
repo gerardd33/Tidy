@@ -28,4 +28,6 @@ runtimeBody mode mainClass = do
     (_, initialEnv) <- buildInitialLocalEnv classEnv
     -- TODO should call evaluateMemberAction
     result <- local (const initialEnv) $ evaluateActionInArgEnv $ fromJust $ getMainAction mainClass
+    state <- get
+    liftIO $ debugPrint mode "Final state" state
     return $ fst result

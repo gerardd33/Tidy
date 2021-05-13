@@ -1,4 +1,6 @@
 mutable class PhoneMessageReceiver extends MessageReceiver {
+
+    // Doesn't need to evaluate properly, only find the main action properly in a complex source file.
     
     values: {
         messageReceived: String = "You got a new message!";
