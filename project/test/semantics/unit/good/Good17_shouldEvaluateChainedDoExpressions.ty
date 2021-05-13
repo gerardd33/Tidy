@@ -38,7 +38,7 @@ mutable class Summary {
     }
 }
 
-singleton class AttributeGetters {
+singleton class DoExpressions {
     
     actions: {
         main: () -> Student = {

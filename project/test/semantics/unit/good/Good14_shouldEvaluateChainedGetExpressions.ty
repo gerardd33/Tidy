@@ -38,7 +38,7 @@ immutable class Summary {
     }
 }
 
-singleton class AttributeGetters {
+singleton class GetExpressions {
     
     actions: {
         main: () -> Student = {

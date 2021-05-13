@@ -83,4 +83,4 @@ getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariable
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables
     where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
-          initializedVariables = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
+          initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl

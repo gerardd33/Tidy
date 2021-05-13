@@ -29,7 +29,7 @@ immutable class Grades {
     }
 }
 
-singleton class AttributeGetters {
+singleton class GetExpressions {
     
     actions: {
         main: () -> Student = {
