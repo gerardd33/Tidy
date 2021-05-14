@@ -1,4 +1,4 @@
-module Interpreter.Common.Helper.Classes where
+module Interpreter.Common.Utils.Classes where
 
 import qualified Data.List                         as List
 import qualified Data.Map                          as Map
@@ -7,8 +7,8 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Methods
-import           Interpreter.Common.Helper.Objects
+import           Interpreter.Common.Utils.Methods
+import           Interpreter.Common.Utils.Objects
 
 
 getClassIdentifier :: ClassDecl -> ClassIdent

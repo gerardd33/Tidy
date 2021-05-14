@@ -23,19 +23,21 @@ library
   exposed-modules:
       Interpreter.Common.Debug
       Interpreter.Common.Errors
-      Interpreter.Common.Helper.Classes
-      Interpreter.Common.Helper.Methods
-      Interpreter.Common.Helper.Objects
-      Interpreter.Common.Helper.Types
       Interpreter.Common.Types
-      Interpreter.Entrypoint.Runtime
-      Interpreter.Entrypoint.Static
-      Interpreter.Evaluation.Environments
-      Interpreter.Evaluation.Expressions
-      Interpreter.Evaluation.Methods
-      Interpreter.Evaluation.Objects
-      Interpreter.Evaluation.Operators
-      Interpreter.Evaluation.Utils
+      Interpreter.Common.Utils.Classes
+      Interpreter.Common.Utils.Environments
+      Interpreter.Common.Utils.Methods
+      Interpreter.Common.Utils.Objects
+      Interpreter.Common.Utils.Types
+      Interpreter.Runtime.Classes
+      Interpreter.Runtime.Entrypoint
+      Interpreter.Runtime.Environments
+      Interpreter.Runtime.Expressions
+      Interpreter.Runtime.Methods
+      Interpreter.Runtime.Objects
+      Interpreter.Runtime.Operators
+      Interpreter.Runtime.Types
+      Interpreter.Static.Entrypoint
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

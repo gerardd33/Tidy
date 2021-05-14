@@ -1,4 +1,4 @@
-module Interpreter.Evaluation.Expressions where
+module Interpreter.Runtime.Expressions where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
@@ -9,15 +9,16 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Classes
-import           Interpreter.Common.Helper.Methods
-import           Interpreter.Common.Helper.Objects
-import           Interpreter.Common.Helper.Types
-import           Interpreter.Evaluation.Environments
-import           Interpreter.Evaluation.Methods
-import           Interpreter.Evaluation.Objects
-import           Interpreter.Evaluation.Operators
-import           Interpreter.Evaluation.Utils
+import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Methods
+import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
+import           Interpreter.Runtime.Environments
+import           Interpreter.Runtime.Methods
+import           Interpreter.Runtime.Classes
+import           Interpreter.Runtime.Objects
+import           Interpreter.Runtime.Operators
+import           Interpreter.Runtime.Types
 
 
 evaluateExpressionList :: [Expr] -> StateMonad Result
@@ -29,7 +30,7 @@ evaluateExpressionList (expr:exprs) = do
 
 evaluateExpression :: Expr -> StateMonad Result
 evaluateExpression (ELiteral literal) = liftPure $ evaluateLiteral literal
-evaluateExpression (ELocalValue identifier) = liftPure $ getLocalAttribute identifier
+evaluateExpression (ELocalValue identifier) = liftPure $ getLocalObject identifier
 evaluateExpression (EAdd expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateAddition
 evaluateExpression (ESubtract expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateSubtraction
 evaluateExpression (EMultiply expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
@@ -45,7 +46,7 @@ evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch els
     liftPure $ evaluateFunctionalIfThenElse predicate thenBranch elseBranch
 
 evaluateExpression (EGetExpression (GetExpressionInstance objectIdent methodCall)) = do
-    object <- getLocalAttribute objectIdent
+    object <- getLocalObject objectIdent
     liftPure $ evaluateGetExpressionOnObject object methodCall
 
 evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression methodCall)) = do
@@ -53,14 +54,14 @@ evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression metho
     liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalAttribute $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdentifier singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
 evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
     liftPure $ evaluateConstructorCall classIdent argList
 
 evaluateExpression (EDoExpression (DoExpressionInstance objectIdent methodCall)) = do
-    object <- getLocalAttribute objectIdent
+    object <- getLocalObject objectIdent
     evaluateDoExpressionOnObject object methodCall
 
 evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodCall)) = do
@@ -68,7 +69,7 @@ evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodC
     evaluateDoExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalAttribute $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdentifier singletonClass
     evaluateDoExpressionOnObject singletonObject methodCall
 
 evaluateExpression (ELocalDeclaration (LocalValueDeclaration declaration)) =

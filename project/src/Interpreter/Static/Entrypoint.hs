@@ -1,4 +1,4 @@
-module Interpreter.Entrypoint.Static (interpret) where
+module Interpreter.Static.Entrypoint (interpret) where
 
 import           Data.Maybe
 
@@ -6,9 +6,8 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Debug
-import           Interpreter.Common.Helper.Classes
-import           Interpreter.Entrypoint.Runtime
-
+import           Interpreter.Common.Utils.Classes
+import           Interpreter.Runtime.Entrypoint
 
 
 -- TODO static type checking before evaluation

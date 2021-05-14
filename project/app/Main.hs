@@ -7,7 +7,7 @@ import           System.Exit                   (exitFailure)
 import           System.IO
 
 import           Interpreter.Common.Debug
-import           Interpreter.Entrypoint.Static (interpret)
+import           Interpreter.Static.Entrypoint (interpret)
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex               (Token)
 import           Parser.Tidy.Par               (myLexer, pProgram)

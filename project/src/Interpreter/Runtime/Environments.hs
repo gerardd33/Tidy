@@ -1,33 +1,19 @@
-module Interpreter.Evaluation.Environments where
+module Interpreter.Runtime.Environments where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                          as Map
+import qualified Data.Map                               as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Classes
-import           Interpreter.Common.Helper.Methods
-import           Interpreter.Common.Helper.Objects
-import           Interpreter.Evaluation.Utils
+import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Environments
+import           Interpreter.Common.Utils.Methods
+import           Interpreter.Common.Utils.Objects
+import           Interpreter.Runtime.Types
 
-
-initialEnvironment :: ClassEnv -> Env
-initialEnvironment classEnv = (newLocalObject emptyObjectEnv, emptyThisObject, classEnv)
-
-initialState :: RTState
-initialState = (Map.empty, 0)
-
-newLocalObject :: ObjectEnv -> Object
-newLocalObject = RegularObject localObjectType
-
-emptyThisObject :: Object
-emptyThisObject = RegularObject (objectTypeFromClassName "__this") emptyObjectEnv
-
-emptyObjectEnv :: ObjectEnv
-emptyObjectEnv = ObjectEnv Map.empty Map.empty
 
 allocateObject :: Object -> StateMonad Location
 allocateObject object = do
@@ -46,25 +32,25 @@ setObject location newValue = do
     put (Map.insert location newValue state, nextLocation)
     returnPass
 
-addLocalAttributeLocation :: ObjectIdent -> Location -> StateMonad Result
-addLocalAttributeLocation attributeIdent newLocation = do
-    (localRef, thisRef, classEnv) <- ask
+addLocalObjectLocation :: ObjectIdent -> Location -> StateMonad Result
+addLocalObjectLocation attributeIdent newLocation = do
+    (localRef, classEnv) <- ask
     let newValues = Map.insert attributeIdent newLocation (getValues localRef)
-    let newLocalRef = newLocalObject $ ObjectEnv newValues (getVariables localRef)
-    return (pass, (newLocalRef, thisRef, classEnv))
+    let newLocalRef = newLocalReference $ ObjectEnv newValues (getVariables localRef)
+    return (pass, (newLocalRef, classEnv))
 
 addLocalValue :: ObjectIdent -> Object -> StateMonad Result
 addLocalValue objectIdent object = do
     location <- allocateObject object
-    addLocalAttributeLocation objectIdent location
+    addLocalObjectLocation objectIdent location
 
 addLocalVariable :: ObjectIdent -> Object -> StateMonad Result
 addLocalVariable objectIdent object = do
     location <- allocateObject object
-    (localRef, thisRef, classEnv) <- ask
+    (localRef, classEnv) <- ask
     let newVariables = Map.insert objectIdent location (getVariables localRef)
-    let newLocalRef = newLocalObject $ ObjectEnv (getValues localRef) newVariables
-    return (pass, (newLocalRef, thisRef, classEnv))
+    let newLocalRef = newLocalReference $ ObjectEnv (getValues localRef) newVariables
+    return (pass, (newLocalRef, classEnv))
 
 addLocalValues :: [(ObjectIdent, Object)] -> StateMonad Result
 addLocalValues [] = returnPass
@@ -72,15 +58,15 @@ addLocalValues (addition:additions) = do
     (_, env) <- uncurry addLocalValue addition
     local (const env) $ addLocalValues additions
 
-getLocalAttribute :: ObjectIdent -> StateMonad Object
-getLocalAttribute objectIdent = do
-    (object, _) <- getLocalAttributeWithLocation objectIdent
+getLocalObject :: ObjectIdent -> StateMonad Object
+getLocalObject objectIdent = do
+    (object, _) <- getLocalObjectWithLocation objectIdent
     return object
 
-getLocalAttributeWithLocation :: ObjectIdent -> StateMonad (Object, Location)
-getLocalAttributeWithLocation objectIdent = do
-    (localRef, _, _) <- ask
-    if objectIdent == localObjectIdentifier then return (localRef, -1)
+getLocalObjectWithLocation :: ObjectIdent -> StateMonad (Object, Location)
+getLocalObjectWithLocation objectIdent = do
+    (localRef, _) <- ask
+    if objectIdent == localReferenceIdentifier then return (localRef, -1)
     else getAttributeWithLocation localRef objectIdent
 
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
@@ -92,8 +78,8 @@ addArgumentsToEnv methodType evaluatedArgs = do
 
 setThisReference :: Object -> StateMonad Result
 setThisReference newThisObject = do
-     (localRef, _, _) <- ask
-     addLocalValue thisObjectIdentifier newThisObject
+     (localRef, _) <- ask
+     addLocalValue thisReferenceIdentifier newThisObject
 
 getAttribute :: Object -> ObjectIdent -> StateMonad Object
 getAttribute object attributeIdent = do
@@ -119,10 +105,10 @@ buildAttributeEnv attributeMap = do
 
 getLocalValueNames :: StateMonad [ObjectIdent]
 getLocalValueNames = do
-    (localRef, _, _) <- ask
+    (localRef, _) <- ask
     return $ Map.keys $ getValues localRef
 
 getLocalVariableNames :: StateMonad [ObjectIdent]
 getLocalVariableNames = do
-    (localRef, _, _) <- ask
+    (localRef, _) <- ask
     return $ Map.keys $ getVariables localRef

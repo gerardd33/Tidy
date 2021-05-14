@@ -1,9 +1,9 @@
-module Interpreter.Entrypoint.Runtime where
+module Interpreter.Runtime.Entrypoint where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                            as Map
+import qualified Data.Map                              as Map
 import           Data.Maybe
 import           Data.Tuple
 
@@ -12,13 +12,12 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
-import           Interpreter.Common.Helper.Classes
-import           Interpreter.Common.Helper.Objects
-import           Interpreter.Evaluation.Environments
-import           Interpreter.Evaluation.Expressions
-import           Interpreter.Evaluation.Objects
-
-import qualified Data.Map
+import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Environments
+import           Interpreter.Common.Utils.Objects
+import           Interpreter.Runtime.Environments
+import           Interpreter.Runtime.Expressions
+import           Interpreter.Runtime.Objects
 
 
 -- TODO handle debugging in a better way
@@ -29,10 +28,10 @@ runtime mode classEnv mainClass = runExceptT $ evalStateT
 runtimeBody :: Mode -> ClassDecl -> StateMonad Object
 runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
-    (_, _, classEnv) <- ask
-    (_, initialEnvWithLocal) <- buildInitialLocalObject classEnv
+    (_, classEnv) <- ask
+    (_, initialEnvWithLocal) <- buildInitialLocalReference classEnv
     let mainClassInstanceIdent = singletonInstanceIdentifier $ getClassIdentifier mainClass
-    mainClassInstance <- local (const initialEnvWithLocal) $ getLocalAttribute mainClassInstanceIdent
+    mainClassInstance <- local (const initialEnvWithLocal) $ getLocalObject mainClassInstanceIdent
     liftIO $ print mainClassInstance
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
     -- TODO should call evaluateMemberAction, currently discards args, take logic from ctor call
@@ -41,8 +40,8 @@ runtimeBody mode mainClass = do
     liftIO $ debugPrint mode "Final state" state
     return $ fst result
 
-buildInitialLocalObject :: ClassEnv -> StateMonad Result
-buildInitialLocalObject classEnv = do
+buildInitialLocalReference :: ClassEnv -> StateMonad Result
+buildInitialLocalReference classEnv = do
     let singletonClasses = Map.toList $ Map.filter ((==MSingleton) . getClassType) classEnv
     let (singletonsIdents, singletonsDeclarations) = unzip singletonClasses
     singletonsAttributes <- mapM evaluateInitializedAttributes singletonsDeclarations

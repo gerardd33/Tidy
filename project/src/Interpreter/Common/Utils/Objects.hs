@@ -1,4 +1,4 @@
-module Interpreter.Common.Helper.Objects where
+module Interpreter.Common.Utils.Objects where
 
 import qualified Data.Map                 as Map
 
@@ -9,17 +9,14 @@ import           Parser.Tidy.Abs
 pass :: Object
 pass = BuiltinObject VoidObject
 
-localObjectType :: ObjectType
-localObjectType = objectTypeFromClassName "__local"
+localReferenceType :: ObjectType
+localReferenceType = objectTypeFromClassName "__local"
 
-thisObjectType :: ObjectType
-thisObjectType = objectTypeFromClassName "__this"
+localReferenceIdentifier :: ObjectIdent
+localReferenceIdentifier = objectIdentifierFromName "local"
 
-localObjectIdentifier :: ObjectIdent
-localObjectIdentifier = objectIdentifierFromName "local"
-
-thisObjectIdentifier :: ObjectIdent
-thisObjectIdentifier = objectIdentifierFromName "this"
+thisReferenceIdentifier :: ObjectIdent
+thisReferenceIdentifier = objectIdentifierFromName "this"
 
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration

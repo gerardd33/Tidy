@@ -1,9 +1,9 @@
-module Interpreter.Common.Helper.Methods where
+module Interpreter.Common.Utils.Methods where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Objects
+import           Interpreter.Common.Utils.Objects
 
 
 getFunctionBody :: FunctionDecl -> FunctionBody

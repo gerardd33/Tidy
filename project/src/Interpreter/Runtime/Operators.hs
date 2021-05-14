@@ -1,9 +1,9 @@
-module Interpreter.Evaluation.Operators where
+module Interpreter.Runtime.Operators where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Types
+import           Interpreter.Common.Utils.Types
 
 
 evaluateLiteral :: Literal -> StateMonad Object
