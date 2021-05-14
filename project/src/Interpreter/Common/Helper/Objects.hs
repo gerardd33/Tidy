@@ -12,12 +12,21 @@ pass = BuiltinObject VoidObject
 localObjectType :: ObjectType
 localObjectType = objectTypeFromClassName "__local"
 
+thisObjectType :: ObjectType
+thisObjectType = objectTypeFromClassName "__this"
+
+localObjectIdentifier :: ObjectIdent
+localObjectIdentifier = objectIdentifierFromName "local"
+
+thisObjectIdentifier :: ObjectIdent
+thisObjectIdentifier = objectIdentifierFromName "this"
+
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 
-getLocalAttributeType :: Object -> ObjectType
-getLocalAttributeType (BuiltinObject object)       = objectTypeForBuiltinObject object
-getLocalAttributeType (RegularObject objectType _) = objectType
+getObjectType :: Object -> ObjectType
+getObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
+getObjectType (RegularObject objectType _) = objectType
 
 getValues :: Object -> Map.Map ObjectIdent Location
 getValues (RegularObject _ (ObjectEnv values _)) = values

@@ -80,7 +80,7 @@ getLocalAttribute objectIdent = do
 getLocalAttributeWithLocation :: ObjectIdent -> StateMonad (Object, Location)
 getLocalAttributeWithLocation objectIdent = do
     (localRef, _, _) <- ask
-    if objectIdent == objectIdentifierFromName "local" then return (localRef, -1)
+    if objectIdent == localObjectIdentifier then return (localRef, -1)
     else getAttributeWithLocation localRef objectIdent
 
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
@@ -93,7 +93,7 @@ addArgumentsToEnv methodType evaluatedArgs = do
 setThisReference :: Object -> StateMonad Result
 setThisReference newThisObject = do
      (localRef, _, _) <- ask
-     addLocalValue (objectIdentifierFromName "this") newThisObject
+     addLocalValue thisObjectIdentifier newThisObject
 
 getAttribute :: Object -> ObjectIdent -> StateMonad Object
 getAttribute object attributeIdent = do

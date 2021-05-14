@@ -3,7 +3,7 @@ module Interpreter.Entrypoint.Runtime where
 import           Control.Monad.Except
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                          as Map
+import qualified Data.Map                            as Map
 import           Data.Maybe
 import           Data.Tuple
 
@@ -33,6 +33,7 @@ runtimeBody mode mainClass = do
     (_, initialEnvWithLocal) <- buildInitialLocalObject classEnv
     let mainClassInstanceIdent = singletonInstanceIdentifier $ getClassIdentifier mainClass
     mainClassInstance <- local (const initialEnvWithLocal) $ getLocalAttribute mainClassInstanceIdent
+    liftIO $ print mainClassInstance
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
     -- TODO should call evaluateMemberAction, currently discards args, take logic from ctor call
     result <- local (const initialEnvWithThis) $ evaluateActionInEnv $ fromJust $ getMainAction mainClass

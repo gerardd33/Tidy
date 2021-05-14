@@ -3,22 +3,24 @@ mutable class Counter {
     variables: {
         count: Int = 0;
     }
+    
+    actions: {
+        advanceCounter: (counter: Counter, limit: Int) -> Void = {
+            this#count(this.count + 1)
+            if (this.count < limit) {
+                this#advanceCounter(counter, limit)
+            }
+        }
+    }
 }
 
 singleton class WhileTest {
     
     actions: {
-        advanceCounter: (counter: Counter, limit: Int) -> Void = {
-            counter#count(counter.count + 1)
-            if (counter != limit) {
-                this#advanceCounter(counter, limit)
-            }
-        }
-        
         main: () -> Int = {
             val counter: Counter = Counter;
-            this.advanceCounter(counter, 10)
+            counter#advanceCounter(counter, 10)
             counter.count
-        }1
+        }
     }
 }
