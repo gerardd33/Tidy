@@ -1,8 +1,10 @@
 module Interpreter.Runtime.Operators where
 
+import           Control.Monad.Except
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Types
 
 
@@ -25,10 +27,10 @@ evaluateMultiplication :: Object -> Object -> StateMonad Object
 evaluateMultiplication (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
     return $ BuiltinObject $ IntObject $ value1 * value2
 
--- TODO throw if division by zero
 evaluateDivision :: Object -> Object -> StateMonad Object
 evaluateDivision (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
-    return $ BuiltinObject $ IntObject $ value1 `div` value2
+    if value2 == 0 then throwError DivideByZeroException
+    else return $ BuiltinObject $ IntObject $ value1 `div` value2
 
 evaluateModulo :: Object -> Object -> StateMonad Object
 evaluateModulo (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =

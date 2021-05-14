@@ -6,6 +6,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Debug
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Runtime.Entrypoint
 
@@ -18,7 +19,8 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     let mainClass = findMainClass classDeclarations
     debugPrint mode "Main action" $ fromJust $ getMainAction mainClass
     result <- runtime mode classEnv mainClass
-    debugPrint mode "Result" result
+    case result of Left error -> exitWithError $ show error
+                   Right returnValue -> debugPrint mode "Return value" returnValue
 
 
 -- TODO further things to check statically:

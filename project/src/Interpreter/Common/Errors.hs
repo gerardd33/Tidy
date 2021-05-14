@@ -1,13 +1,21 @@
 module Interpreter.Common.Errors where
 
+import           System.Exit (exitFailure)
+import           System.IO
+
 
 -- TODO other exceptions
--- TODO rename OtherException to RuntimeException if possible
 -- TODO better printing (custom show instance)
-data RuntimeException = DivideByZeroException
-    | OtherException
+data RuntimeException
+    = DivideByZeroException
+    | RuntimeException String
     deriving (Show)
 
-data CompilationError = NoMainMethodError
-    | OtherError
+data CompilationError
+    = NoMainMethodError
+    | CompilationError String
     deriving (Show)
+
+
+exitWithError :: String -> IO ()
+exitWithError error = hPutStrLn stderr ("Error: " ++ error) >> exitFailure
