@@ -21,6 +21,7 @@ import           Interpreter.Eval.Utils
 
 
 evaluateExpressionList :: [Expr] -> StateMonad Result
+evaluateExpressionList [] = returnPass
 evaluateExpressionList [expr] = evaluateExpression expr
 evaluateExpressionList (expr:exprs) = do
     (_, env) <- evaluateExpression expr
@@ -28,7 +29,7 @@ evaluateExpressionList (expr:exprs) = do
 
 evaluateExpression :: Expr -> StateMonad Result
 evaluateExpression (ELiteral literal) = liftPure $ evaluateLiteral literal
-evaluateExpression (ELocalValue identifier) = liftPure $ getLocalValue identifier
+evaluateExpression (ELocalValue identifier) = liftPure $ getLocalAttribute identifier
 evaluateExpression (EAdd expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateAddition
 evaluateExpression (ESubtract expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateSubtraction
 evaluateExpression (EMultiply expr1 expr2) = liftPure $ evaluateBinaryOperator expr1 expr2 evaluateMultiplication
@@ -44,7 +45,7 @@ evaluateExpression (EFunctionalControlFlow (FIfThenElse predicate thenBranch els
     liftPure $ evaluateFunctionalIfThenElse predicate thenBranch elseBranch
 
 evaluateExpression (EGetExpression (GetExpressionInstance objectIdent methodCall)) = do
-    object <- getLocalValue objectIdent
+    object <- getLocalAttribute objectIdent
     liftPure $ evaluateGetExpressionOnObject object methodCall
 
 evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression methodCall)) = do
@@ -52,14 +53,14 @@ evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression metho
     liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalAttribute $ singletonInstanceIdentifier singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
 evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
     liftPure $ evaluateConstructorCall classIdent argList
 
 evaluateExpression (EDoExpression (DoExpressionInstance objectIdent methodCall)) = do
-    object <- getLocalValue objectIdent
+    object <- getLocalAttribute objectIdent
     evaluateDoExpressionOnObject object methodCall
 
 evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodCall)) = do
@@ -67,11 +68,14 @@ evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodC
     evaluateDoExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalAttribute $ singletonInstanceIdentifier singletonClass
     evaluateDoExpressionOnObject singletonObject methodCall
 
 evaluateExpression (ELocalDeclaration (LocalValueDeclaration declaration)) =
     evaluateLocalValueDeclaration $ getProperDeclaration declaration
+
+evaluateExpression (ELocalDeclaration (LocalVariableDeclaration declaration)) =
+    evaluateLocalVariableDeclaration $ getProperDeclaration declaration
 
 evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranch)) =
     evaluateImperativeIf predicate body optionalElseBranch
@@ -80,28 +84,28 @@ evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWh
 
 
 -- PURELY FUNCTIONAL EXPRESSIONS --
-evaluateFunctionInArgEnv :: FunctionDecl -> StateMonad Object
-evaluateFunctionInArgEnv = evaluateFunctionBody . getFunctionBody
+evaluateFunctionInEnv :: FunctionDecl -> StateMonad Object
+evaluateFunctionInEnv = evaluateFunctionBody . getFunctionBody
 
 evaluateFunctionBody :: FunctionBody -> StateMonad Object
 evaluateFunctionBody (FunctionBodyOneLine expr) = returnPure $ evaluateExpression expr
 evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case withValues of
     WithValuesPresent (ValuesPresent values) -> do let declarations = map getProperDeclaration values
-                                                   (_, localEnv) <-  evaluateLocalValueDeclarations declarations
-                                                   local (const localEnv) $ evaluateExpression expr
+                                                   (_, methodEnv) <-  evaluateLocalValueDeclarations declarations
+                                                   local (const methodEnv) $ evaluateExpression expr
     _ -> evaluateExpression expr
 
 evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
 evaluateMemberFunction object functionIdent evaluatedArgs = do
     function <- getMemberFunction (getLocalObjectType object) functionIdent
-    (_, functionLocalEnv) <- addArgumentsToEnv (getFunctionType function) evaluatedArgs
-    local (const functionLocalEnv) $ evaluateFunctionInArgEnv function
+    (_, functionMethodEnv) <- addArgumentsToEnv (getFunctionType function) evaluatedArgs
+    local (const functionMethodEnv) $ evaluateFunctionInEnv function
 
 evaluateMemberAction :: Object -> MethodIdent -> [Object] -> StateMonad Result
 evaluateMemberAction object actionIdent evaluatedArgs = do
     action <- getMemberAction (getLocalObjectType object) actionIdent
-    (_, actionLocalEnv) <- addArgumentsToEnv (getActionType action) evaluatedArgs
-    local (const actionLocalEnv) $ evaluateActionInArgEnv action
+    (_, actionMethodEnv) <- addArgumentsToEnv (getActionType action) evaluatedArgs
+    local (const actionMethodEnv) $ evaluateActionInEnv action
 
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
@@ -191,8 +195,8 @@ evaluateInitializedAttributes classDecl = evaluateAttributeExpressions $ getInit
 
 -- EXPRESSIONS WITH SIDE EFFECTS --
 -- TODO passing parameters and other context information
-evaluateActionInArgEnv :: ActionDecl -> StateMonad Result
-evaluateActionInArgEnv = evaluateActionBody . getActionBody
+evaluateActionInEnv :: ActionDecl -> StateMonad Result
+evaluateActionInEnv = evaluateActionBody . getActionBody
 
 evaluateActionBody :: ActionBody -> StateMonad Result
 evaluateActionBody (ActionBodyOneLine expr)    = evaluateExpressionList [expr]
@@ -202,6 +206,17 @@ evaluateLocalValueDeclaration :: ObjectDeclProper -> StateMonad Result
 evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
     (initializationValue, _) <- evaluateExpression expr
     addLocalValue objectIdent initializationValue
+
+evaluateLocalVariableDeclaration :: ObjectDeclProper -> StateMonad Result
+evaluateLocalVariableDeclaration (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
+    (initializationValue, _) <- evaluateExpression expr
+    addLocalVariable objectIdent initializationValue
+
+evaluateLocalValueDeclarations :: [ObjectDeclProper] -> StateMonad Result
+evaluateLocalValueDeclarations [] = returnPass
+evaluateLocalValueDeclarations (decl:decls) = do
+    (_, env) <- evaluateLocalValueDeclaration decl
+    local (const env) $ evaluateLocalValueDeclarations decls
 
 evaluateImperativeIf :: Expr -> [Expr] -> OptionalElseBranch -> StateMonad Result
 evaluateImperativeIf predicate body optionalElseBranch = do
@@ -218,9 +233,3 @@ evaluateWhile predicate body  = do
     if isTrue predicateValue
     then evaluateExpressionList body >> evaluateWhile predicate body
     else returnPass
-
-evaluateLocalValueDeclarations :: [ObjectDeclProper] -> StateMonad Result
-evaluateLocalValueDeclarations [] = returnPass
-evaluateLocalValueDeclarations (decl:decls) = do
-    (_, env) <- evaluateLocalValueDeclaration decl
-    local (const env) $ evaluateLocalValueDeclarations decls

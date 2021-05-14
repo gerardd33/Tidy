@@ -37,11 +37,11 @@ getActionDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsP
     actionDeclarations
 getActionDeclarations _ = []
 
-getValueNames :: ClassDecl -> [ObjectIdent]
-getValueNames classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
+valueNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+valueNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
 
-getVariableNames :: ClassDecl -> [ObjectIdent]
-getVariableNames classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
+variableNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+variableNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
 
 classFromObjectType :: ObjectType -> ClassIdent
 classFromObjectType (ObjectTypeClass classIdent _) = classIdent

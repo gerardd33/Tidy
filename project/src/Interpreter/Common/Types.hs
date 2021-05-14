@@ -15,8 +15,7 @@ type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
 type RTState = (Map.Map Location Object, Location)
 type Result = (Object, Env)
 
-type Env = (LocalEnv, ClassEnv)
-type LocalEnv = Map.Map ObjectIdent Location
+type Env = (Object, Object, ClassEnv)
 type ClassEnv = Map.Map ClassIdent ClassDecl
 type Location = Integer
 

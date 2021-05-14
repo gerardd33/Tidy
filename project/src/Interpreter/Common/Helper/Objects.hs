@@ -1,5 +1,7 @@
 module Interpreter.Common.Helper.Objects where
 
+import qualified Data.Map                 as Map
+
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
@@ -13,6 +15,14 @@ getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 getLocalObjectType :: Object -> ObjectType
 getLocalObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
 getLocalObjectType (RegularObject objectType _) = objectType
+
+getValues :: Object -> Map.Map ObjectIdent Location
+getValues (RegularObject _ (ObjectEnv values _)) = values
+getValues _                                      = Map.empty
+
+getVariables :: Object -> Map.Map ObjectIdent Location
+getVariables (RegularObject _ (ObjectEnv _ variables)) = variables
+getVariables _                                         = Map.empty
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
 objectTypeForBuiltinObject (IntObject _)    = objectTypeFromClassName "Int"

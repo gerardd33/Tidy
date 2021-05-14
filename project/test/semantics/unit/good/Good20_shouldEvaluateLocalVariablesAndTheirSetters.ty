@@ -1,0 +1,16 @@
+singleton class LocalVariables {
+    
+    actions: {
+        main: () -> Int = {
+            var count: Int = 0;
+            var result: Int = 1;
+            
+            /*while (count < 10) {
+                local#count(count + 11)
+                local#result(result * 2)
+            }*/
+            
+            result
+        }
+    }
+}

@@ -25,5 +25,5 @@ returnPass = liftPure $ return pass
 
 getClassDecl :: ClassIdent -> StateMonad ClassDecl
 getClassDecl classIdent = do
-    (_, classEnv) <- ask
+    (_, _, classEnv) <- ask
     return $ classEnv Map.! classIdent
