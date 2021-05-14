@@ -34,7 +34,7 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
         override receive: (message: Message) -> Bool = {    
             System#printLine(this.messageReceived)
             
-            value response: String = this.parseMessage(message);
+            val response: String = this.parseMessage(message);
             System#printLine(response)
             
             if (response != this.messageInvalid) {

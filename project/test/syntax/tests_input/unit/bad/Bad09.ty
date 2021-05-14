@@ -2,7 +2,7 @@ singleton class RandomGenerator {
     
     functions: {
         generate: () -> Int = {
-            nextInt()
+            .nextInt
         }
     }
 }

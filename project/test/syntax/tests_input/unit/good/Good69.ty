@@ -2,20 +2,20 @@ singleton class ImperativeIfs {
     
     actions: {
         main: () -> String = {
-            value val1: Int = 3 * 3;
-            value val2: Int = 5 * 4;
-            value string0: String = "Zero";
-            value string1: String = "One";
-            value string2: String = "Two";
-            value string3: String = "More";
+            val val1: Int = 3 * 3;
+            val val2: Int = 5 * 4;
+            val string0: String = "Zero";
+            val string1: String = "One";
+            val string2: String = "Two";
+            val string3: String = "More";
             
-            value val3: Int = if (val1 > val2) then 1; else 2;;
+            val val3: Int = if (val1 > val2) then 1; else 2;;
             if (val3 == 0) {
                 string0
             } elif (val3 == 1) {
                     string1
             } elif (val3 == 2) {
-                value string22: String = "New two"; 
+                val string22: String = "New two"; 
                 if (val1 < 4) {
                     string22 ++ " and less"
                 } elif (val1 < 10) {

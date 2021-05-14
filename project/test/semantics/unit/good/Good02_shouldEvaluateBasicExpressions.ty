@@ -7,7 +7,7 @@ singleton class SimpleMain {
     actions: {
         main: () -> Int = {
             4
-            value x: Int = 5;
+            val x: Int = 5;
             x // Should return 5
         }
     }

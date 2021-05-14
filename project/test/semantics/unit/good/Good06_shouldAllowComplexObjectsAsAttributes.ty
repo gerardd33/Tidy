@@ -32,7 +32,7 @@ singleton class ObjectsAsValues {
     
     actions: {
         main: () -> Student = {
-            value student: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
+            val student: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
             student
         }
     }

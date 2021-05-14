@@ -15,8 +15,7 @@ singleton class ObjectsAsValues {
     
     actions: {
         main: () -> Student = {
-            value student: Student = Student("Diana Frost", 20, 2);
-            student
+            Student("Diana Frost", 20, 2)
         }
     }
 }

@@ -8,7 +8,7 @@ singleton class Action {
                 intermediateValue * 2
             };
             
-            var newVariable: Int = generate#call;
+            var newVariable: Int = generate#do;
             Actions.something.something.somethingElse#doSomething(newVariable)
             
             local#newVariable(4)

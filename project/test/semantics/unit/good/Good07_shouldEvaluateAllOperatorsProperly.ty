@@ -2,13 +2,13 @@ singleton class Operators {
     
     actions: {
         main: () -> Bool = {
-            value val1: Int = 3 * 3;
-            value val2: Int = 5 * 4;
-            value string1: String = "Something";
-            value string2: String = "Some";
-            value string3: String = string2 ++ "thing";
-            value pred1: Bool = not (val1 > 6 and val1 <= 9); // False
-            value pred2: Bool = (-val2 >= -15) or (string1 == string3); // True
+            val val1: Int = 3 * 3;
+            val val2: Int = 5 * 4;
+            val string1: String = "Something";
+            val string2: String = "Some";
+            val string3: String = string2 ++ "thing";
+            val pred1: Bool = not (val1 > 6 and val1 <= 9); // False
+            val pred2: Bool = (-val2 >= -15) or (string1 == string3); // True
             pred1 or pred2 // True
         }
     }

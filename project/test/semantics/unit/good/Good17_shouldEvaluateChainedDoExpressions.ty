@@ -42,9 +42,9 @@ singleton class DoExpressions {
     
     actions: {
         main: () -> Student = {
-            value student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
+            val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
                 Summary("Passed", "Score: 312/400")), 20, "BS1");
-            value sumOfGrades: Int = student.grades.grade1 + student.grades.grade2 + student.grades.grade3 + student.grades.grade4;
+            val sumOfGrades: Int = student.grades.grade1 + student.grades.grade2 + student.grades.grade3 + student.grades.grade4;
             
             student.grades.summary#description("Score: 350/400")
             student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description

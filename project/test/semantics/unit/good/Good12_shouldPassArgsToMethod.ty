@@ -18,7 +18,7 @@ singleton class Methods {
     
     actions: {
         main: () -> Int = {
-            value worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
+            val worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
             worker.differenceShifted(5, 9) // 14
         }
     }

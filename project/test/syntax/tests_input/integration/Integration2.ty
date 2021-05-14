@@ -4,7 +4,7 @@ singleton class ClassAdder {
             if (not this.classes.contains(newClass)) {
                 this#classes(this.classes.add(newClass))
             }
-        value totalClasses: Int = this.classes.size;
+        val totalClasses: Int = this.classes.size;
         totalClasses
         }
     }

@@ -25,7 +25,7 @@ mutable class Student {
     actions: {
         changePassword: (newPassword: String) -> Void = {
             Logger#log("Changing password for user " ++ this)
-            value hashedPassword: String = PasswordUtils.hash(newPassword)
+            val hashedPassword: String = PasswordUtils.hash(newPassword);
             this#passwordHash(hashedPassword)
         }
     

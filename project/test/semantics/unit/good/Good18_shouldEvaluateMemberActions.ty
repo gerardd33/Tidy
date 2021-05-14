@@ -51,7 +51,7 @@ singleton class DoExpressions {
     
     actions: {
         main: () -> Student = {
-            value student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
+            val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
                 Summary("Passed", "Score: 312/400")), 20, "BS1");
             
             SummaryDescriptionModifier#modifyDescription(student.grades.summary, "Score: 350/400")
