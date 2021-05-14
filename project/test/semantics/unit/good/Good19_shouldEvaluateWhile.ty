@@ -14,7 +14,7 @@ singleton class WhileTest {
                 counter#count(counter.count + 1)
             }
             
-            counter.count
+            counter.count // 10
         }
     }
 }

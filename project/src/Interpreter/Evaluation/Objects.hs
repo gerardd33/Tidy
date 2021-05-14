@@ -1,4 +1,4 @@
-module Interpreter.Eval.Objects where
+module Interpreter.Evaluation.Objects where
 
 import           Control.Monad.Reader
 import qualified Data.List                         as List
@@ -12,8 +12,8 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
-import           Interpreter.Eval.Environments
-import           Interpreter.Eval.Utils
+import           Interpreter.Evaluation.Environments
+import           Interpreter.Evaluation.Utils
 
 
 getValueNames :: ObjectType -> StateMonad [ObjectIdent]

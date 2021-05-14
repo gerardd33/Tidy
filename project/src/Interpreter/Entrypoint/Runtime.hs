@@ -14,9 +14,11 @@ import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Objects
-import           Interpreter.Eval.Environments
-import           Interpreter.Eval.Expressions.Main
-import           Interpreter.Eval.Objects
+import           Interpreter.Evaluation.Environments
+import           Interpreter.Evaluation.Expressions
+import           Interpreter.Evaluation.Objects
+
+import qualified Data.Map
 
 
 -- TODO handle debugging in a better way
@@ -29,7 +31,8 @@ runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
     (_, _, classEnv) <- ask
     (_, initialEnvWithLocal) <- buildInitialLocalObject classEnv
-    mainClassInstance <- getLocalAttribute $ singletonInstanceIdentifier $ getClassIdentifier mainClass
+    let mainClassInstanceIdent = singletonInstanceIdentifier $ getClassIdentifier mainClass
+    mainClassInstance <- local (const initialEnvWithLocal) $ getLocalAttribute mainClassInstanceIdent
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
     -- TODO should call evaluateMemberAction, currently discards args, take logic from ctor call
     result <- local (const initialEnvWithThis) $ evaluateActionInEnv $ fromJust $ getMainAction mainClass

@@ -19,6 +19,6 @@ singleton class WhileTest {
             val counter: Counter = Counter;
             this.advanceCounter(counter, 10)
             counter.count
-        }
+        }1
     }
 }

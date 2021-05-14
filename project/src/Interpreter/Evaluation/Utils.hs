@@ -1,4 +1,4 @@
-module Interpreter.Eval.Utils where
+module Interpreter.Evaluation.Utils where
 
 import           Control.Monad.Reader
 import qualified Data.Map                          as Map

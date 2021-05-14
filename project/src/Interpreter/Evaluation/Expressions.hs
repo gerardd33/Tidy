@@ -1,9 +1,9 @@
-module Interpreter.Eval.Expressions.Main where
+module Interpreter.Evaluation.Expressions where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.List                           as List
-import qualified Data.Map                            as Map
+import qualified Data.List                                    as List
+import qualified Data.Map                                     as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -13,11 +13,11 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
-import           Interpreter.Eval.Environments
-import           Interpreter.Eval.Expressions.Simple
-import           Interpreter.Eval.Methods
-import           Interpreter.Eval.Objects
-import           Interpreter.Eval.Utils
+import           Interpreter.Evaluation.Environments
+import           Interpreter.Evaluation.Operators
+import           Interpreter.Evaluation.Methods
+import           Interpreter.Evaluation.Objects
+import           Interpreter.Evaluation.Utils
 
 
 evaluateExpressionList :: [Expr] -> StateMonad Result
@@ -98,13 +98,15 @@ evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case
 evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
 evaluateMemberFunction object functionIdent evaluatedArgs = do
     function <- getMemberFunction (getLocalAttributeType object) functionIdent
-    (_, functionMethodEnv) <- addArgumentsToEnv (getFunctionType function) evaluatedArgs
-    local (const functionMethodEnv) $ evaluateFunctionInEnv function
+    (_, newEnv) <- setThisReference object
+    (_, methodLocalEnv) <- local (const newEnv) $ addArgumentsToEnv (getFunctionType function) evaluatedArgs
+    local (const methodLocalEnv) $ evaluateFunctionInEnv function
 
 evaluateMemberAction :: Object -> MethodIdent -> [Object] -> StateMonad Result
 evaluateMemberAction object actionIdent evaluatedArgs = do
     action <- getMemberAction (getLocalAttributeType object) actionIdent
-    (_, actionMethodEnv) <- addArgumentsToEnv (getActionType action) evaluatedArgs
+    (_, newEnv) <- setThisReference object
+    (_, actionMethodEnv) <- local (const newEnv) $ addArgumentsToEnv (getActionType action) evaluatedArgs
     local (const actionMethodEnv) $ evaluateActionInEnv action
 
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object

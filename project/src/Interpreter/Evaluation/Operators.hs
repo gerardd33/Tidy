@@ -1,4 +1,4 @@
-module Interpreter.Eval.Expressions.Simple where
+module Interpreter.Evaluation.Operators where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs

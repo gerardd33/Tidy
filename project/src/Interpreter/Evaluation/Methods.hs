@@ -1,4 +1,4 @@
-module Interpreter.Eval.Methods where
+module Interpreter.Evaluation.Methods where
 
 import           Control.Monad.Reader
 import qualified Data.Map                          as Map
@@ -7,7 +7,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Helper.Objects
-import           Interpreter.Eval.Environments
+import           Interpreter.Evaluation.Environments
 
 
 evaluateGetter :: Object -> MethodIdent -> StateMonad Object

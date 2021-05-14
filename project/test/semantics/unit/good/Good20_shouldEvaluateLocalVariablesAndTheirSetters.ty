@@ -10,7 +10,7 @@ singleton class LocalVariables {
                 local#result(result * 2)
             }
             
-            result
+            result // 1024
         }
     }
 }

@@ -10,7 +10,7 @@ pass :: Object
 pass = BuiltinObject VoidObject
 
 localObjectType :: ObjectType
-localObjectType = objectTypeFromClassName "local"
+localObjectType = objectTypeFromClassName "__local"
 
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
@@ -57,3 +57,10 @@ toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Init
 
 methodToObjectIdentifier :: MethodIdent -> ObjectIdent
 methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
+
+-- TODO handle builtin objects
+getAttributeLocation :: Object -> ObjectIdent -> Location
+getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
+    if attributeIdent `Map.member` values objectEnv
+    then values objectEnv Map.! attributeIdent
+    else variables objectEnv Map.! attributeIdent
