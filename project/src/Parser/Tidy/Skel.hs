@@ -126,7 +126,7 @@ transExpr x = case x of
   Parser.Tidy.Abs.ELambdaAction lambdaaction -> failure x
   Parser.Tidy.Abs.EImperativeControlFlow imperativecontrolflow -> failure x
   Parser.Tidy.Abs.EFunctionalControlFlow functionalcontrolflow -> failure x
-  Parser.Tidy.Abs.ELocalValueDeclaration localvaluedecl -> failure x
+  Parser.Tidy.Abs.ELocalDeclaration localdecl -> failure x
   Parser.Tidy.Abs.EUnaryNot expr -> failure x
   Parser.Tidy.Abs.EUnaryMinus expr -> failure x
   Parser.Tidy.Abs.EMultiply expr1 expr2 -> failure x
@@ -151,9 +151,10 @@ transBoolean x = case x of
 transVoid :: Parser.Tidy.Abs.Void -> Result
 transVoid x = case x of
   Parser.Tidy.Abs.VPass -> failure x
-transLocalValueDecl :: Parser.Tidy.Abs.LocalValueDecl -> Result
-transLocalValueDecl x = case x of
+transLocalDecl :: Parser.Tidy.Abs.LocalDecl -> Result
+transLocalDecl x = case x of
   Parser.Tidy.Abs.LocalValueDeclaration objectdecl -> failure x
+  Parser.Tidy.Abs.LocalVariableDeclaration objectdecl -> failure x
 transLambdaFunction :: Parser.Tidy.Abs.LambdaFunction -> Result
 transLambdaFunction x = case x of
   Parser.Tidy.Abs.LambdaFunctionOneLine paramlist expr -> failure x

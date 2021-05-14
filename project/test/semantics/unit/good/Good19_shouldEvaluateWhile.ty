@@ -1,0 +1,20 @@
+mutable class Counter {
+    
+    variables: {
+        count: Int = 0;
+    }
+}
+
+singleton class WhileTest {
+    
+    actions: {
+        main: () -> Int = {
+            val counter: Counter = Counter;
+            while (counter.count < 10) {
+                counter#count(counter.count + 1)
+            }
+            
+            counter.count // 10
+        }
+    }
+}

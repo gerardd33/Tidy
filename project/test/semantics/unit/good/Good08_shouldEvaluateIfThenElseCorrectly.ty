@@ -2,14 +2,14 @@ singleton class IfThenElse {
     
     actions: {
         main: () -> String = {
-            value val1: Int = 3 * 3;
-            value val2: Int = 5 * 4;
-            value string0: String = "Zero";
-            value string1: String = "One";
-            value string2: String = "Two";
-            value string3: String = "More";
+            val val1: Int = 3 * 3;
+            val val2: Int = 5 * 4;
+            val string0: String = "Zero";
+            val string1: String = "One";
+            val string2: String = "Two";
+            val string3: String = "More";
             
-            value val3: Int = if (val1 > val2) then 1; else 2;;
+            val val3: Int = if (val1 > val2) then 1; else 2;;
             if (val3 == 0) then {
                 string0
             } elif (val3 == 1) then {

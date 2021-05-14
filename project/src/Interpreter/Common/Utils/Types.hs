@@ -1,4 +1,4 @@
-module Interpreter.Common.Helper.Types where
+module Interpreter.Common.Utils.Types where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs

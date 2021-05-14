@@ -9,8 +9,7 @@ singleton class ObjectsAsValues {
     
     actions: {
         main: () -> Student = {
-            value student: Student = Student;
-            student
+            Student
         }
     }
 }

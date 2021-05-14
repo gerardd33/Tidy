@@ -1,4 +1,4 @@
-module Interpreter.Common.Helper.Classes where
+module Interpreter.Common.Utils.Classes where
 
 import qualified Data.List                         as List
 import qualified Data.Map                          as Map
@@ -7,8 +7,8 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Methods
-import           Interpreter.Common.Helper.Objects
+import           Interpreter.Common.Utils.Methods
+import           Interpreter.Common.Utils.Objects
 
 
 getClassIdentifier :: ClassDecl -> ClassIdent
@@ -37,11 +37,11 @@ getActionDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsP
     actionDeclarations
 getActionDeclarations _ = []
 
-getValueNames :: ClassDecl -> [ObjectIdent]
-getValueNames classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
+valueNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+valueNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
 
-getVariableNames :: ClassDecl -> [ObjectIdent]
-getVariableNames classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
+variableNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+variableNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
 
 classFromObjectType :: ObjectType -> ClassIdent
 classFromObjectType (ObjectTypeClass classIdent _) = classIdent
@@ -59,7 +59,7 @@ singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
     ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
 
 classIdentifierFromName :: String -> ClassIdent
-classIdentifierFromName identifier = ClassIdentifier (UpperCaseIdent identifier)
+classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
 
 -- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
@@ -83,4 +83,4 @@ getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariable
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables
     where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
-          initializedVariables = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
+          initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl

@@ -1,0 +1,18 @@
+singleton class Action {
+
+    actions: {
+        action: () -> Void = {
+            val generate: do () -> Int = do () -> {
+                val intermediateValue: Int = 4 + this.produce(5);
+                System#printLine(produced)
+                intermediateValue * 2
+            };
+            
+            var newVariable: Int = generate#do;
+            Actions.something.something.somethingElse#doSomething(newVariable)
+            
+            local#newVariable(4)
+            newVariable
+        }
+    }
+}

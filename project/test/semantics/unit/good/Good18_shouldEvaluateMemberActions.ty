@@ -1,0 +1,62 @@
+mutable class Student {
+    
+    values: {
+        firstName: String;
+        lastName: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: String;
+    }
+}
+
+immutable class Grades {
+    
+    values: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+        summary: Summary;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
+        }
+    }
+}
+
+mutable class Summary {
+
+    variables: {
+        finalMark: String;
+        description: String;
+    }
+}
+
+singleton class SummaryDescriptionModifier {
+    
+    actions: {
+        modifyDescription: (summary: Summary, newContent: String) -> Void = {
+            summary#description(newContent)
+        }
+    }
+}
+
+singleton class DoExpressions {
+    
+    actions: {
+        main: () -> Student = {
+            val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
+                Summary("Passed", "Score: 312/400")), 20, "BS1");
+            
+            SummaryDescriptionModifier#modifyDescription(student.grades.summary, "Score: 350/400")
+            student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description
+            // Should return "Passed. Score: 350/400"
+        }
+    }
+}

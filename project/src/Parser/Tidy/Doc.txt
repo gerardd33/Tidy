@@ -44,7 +44,7 @@ The reserved words used in Tidy are the following:
   | ``get`` | ``if`` | ``immutable`` | ``in``
   | ``match`` | ``mutable`` | ``not`` | ``or``
   | ``override`` | ``private`` | ``singleton`` | ``then``
-  | ``value`` | ``while`` | ``with`` |
+  | ``val`` | ``var`` | ``while`` | ``with``
 
 The symbols used in Tidy are the following:
   | , | { | } | values:
@@ -142,7 +142,7 @@ All other symbols are terminals.
   |  |  **|**  | ``not`` //Expr5//
   |  |  **|**  | ``-`` //Expr5//
   | //Expr5// | -> | //Expr6//
-  |  |  **|**  | //LocalValueDecl//
+  |  |  **|**  | //LocalDecl//
   | //Expr6// | -> | //Expr7//
   |  |  **|**  | //ImperativeControlFlow//
   |  |  **|**  | //FunctionalControlFlow//
@@ -165,7 +165,8 @@ All other symbols are terminals.
   | //Boolean// | -> | ``True``
   |  |  **|**  | ``False``
   | //Void// | -> | ``Pass``
-  | //LocalValueDecl// | -> | ``value`` //ObjectDecl//
+  | //LocalDecl// | -> | ``val`` //ObjectDecl//
+  |  |  **|**  | ``var`` //ObjectDecl//
   | //LambdaFunction// | -> | ``get`` //ParamList// ``->`` //Expr// ``;``
   |  |  **|**  | ``get`` //ParamList// ``->`` ``{`` //Expr// ``}``
   | //LambdaAction// | -> | ``do`` //ParamList// ``->`` //Expr// ``;``

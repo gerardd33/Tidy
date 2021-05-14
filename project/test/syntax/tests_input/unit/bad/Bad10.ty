@@ -1,9 +1,9 @@
 singleton class RandomGenerator { 
     
     functions: {
-        generate: () -> Int = {
-            nextInt()
-        }
+        generate: () -> Int = 
+            this.nextInt
+            3
         
         nextInt: () -> Int = 37732
     }

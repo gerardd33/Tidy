@@ -19,7 +19,7 @@ singleton class Methods {
     
     actions: {
         main: () -> Int = {
-            value worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
+            val worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
             worker.someDummyFunction() // 44
         }
     }

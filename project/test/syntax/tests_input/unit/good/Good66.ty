@@ -1,14 +1,10 @@
-singleton class Utils {
-    
-    functions: {
-        convert: (x: Int) -> Int = {
-            if (x > 10) then {
-                3
-            } elif (x > 8) then {
-                7
-            } else {
-                9
-            }
+singleton class Action {
+
+    actions: {
+        action: () -> Void = {
+            var newVariable: Int = 3;
+            local#newVariable(4)
+            Actions.something.something.somethingElse#doSomething(newVariable)
         }
     }
 }

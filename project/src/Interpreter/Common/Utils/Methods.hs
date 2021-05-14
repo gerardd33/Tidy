@@ -1,9 +1,9 @@
-module Interpreter.Common.Helper.Methods where
+module Interpreter.Common.Utils.Methods where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Helper.Objects
+import           Interpreter.Common.Utils.Objects
 
 
 getFunctionBody :: FunctionDecl -> FunctionBody
@@ -20,6 +20,9 @@ getActionIdentifier (ActionDeclaration _ _ actionIdent _ _) = actionIdent
 
 getFunctionType :: FunctionDecl -> MethodType
 getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
+
+getActionType :: ActionDecl -> MethodType
+getActionType (ActionDeclaration _ _ _ actionType _) = actionType
 
 getMethodParamList :: MethodType -> [ObjectIdent]
 getMethodParamList (MethodTypeSignature (ParameterList valueDeclarations) _) =

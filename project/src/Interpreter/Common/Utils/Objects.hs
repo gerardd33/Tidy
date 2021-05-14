@@ -1,4 +1,6 @@
-module Interpreter.Common.Helper.Objects where
+module Interpreter.Common.Utils.Objects where
+
+import qualified Data.Map                 as Map
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -7,12 +9,29 @@ import           Parser.Tidy.Abs
 pass :: Object
 pass = BuiltinObject VoidObject
 
+localReferenceType :: ObjectType
+localReferenceType = objectTypeFromClassName "__local"
+
+localReferenceIdentifier :: ObjectIdent
+localReferenceIdentifier = objectIdentifierFromName "local"
+
+thisReferenceIdentifier :: ObjectIdent
+thisReferenceIdentifier = objectIdentifierFromName "this"
+
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 
-getLocalObjectType :: Object -> ObjectType
-getLocalObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
-getLocalObjectType (RegularObject objectType _) = objectType
+getObjectType :: Object -> ObjectType
+getObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
+getObjectType (RegularObject objectType _) = objectType
+
+getValues :: Object -> Map.Map ObjectIdent Location
+getValues (RegularObject _ (ObjectEnv values _)) = values
+getValues _                                      = Map.empty
+
+getVariables :: Object -> Map.Map ObjectIdent Location
+getVariables (RegularObject _ (ObjectEnv _ variables)) = variables
+getVariables _                                         = Map.empty
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
 objectTypeForBuiltinObject (IntObject _)    = objectTypeFromClassName "Int"
@@ -26,6 +45,9 @@ objectNameFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper objectId
 
 objectTypeFromClassName :: String -> ObjectType
 objectTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
+
+objectIdentifierFromName :: String -> ObjectIdent
+objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
 
 isInitialized :: ObjectDecl -> Bool
 isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _)))  = True
@@ -41,3 +63,10 @@ toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Init
 
 methodToObjectIdentifier :: MethodIdent -> ObjectIdent
 methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
+
+-- TODO handle builtin objects
+getAttributeLocation :: Object -> ObjectIdent -> Location
+getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
+    if attributeIdent `Map.member` values objectEnv
+    then values objectEnv Map.! attributeIdent
+    else variables objectEnv Map.! attributeIdent

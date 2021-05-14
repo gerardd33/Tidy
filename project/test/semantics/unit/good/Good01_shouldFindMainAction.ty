@@ -1,4 +1,6 @@
 mutable class PhoneMessageReceiver extends MessageReceiver {
+
+    // Doesn't need to evaluate properly, only find the main action properly in a complex source file.
     
     values: {
         messageReceived: String = "You got a new message!";
@@ -37,7 +39,7 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
         override receive: (message: Message) -> Bool = {    
             System#printLine(this.messageReceived)
             
-            value response: String = this.parseMessage(message);
+            val response: String = this.parseMessage(message);
             System#printLine(response)
             
             if (response != this.messageInvalid) {
@@ -56,13 +58,13 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
         
         // a bit more artificial example to show how some more advanced features work
         override transformMessages: (messageTransformer: do (complete: Bool) -> Void) -> Void = {
-            value handleMessage: do (message: Message) -> Void = do (message: Message) -> {
+            val handleMessage: do (message: Message) -> Void = do (message: Message) -> {
                 System#printLine("Transforming message " ++ message)
-                message#transform(local#messageTransformer(False))
+                message#transform(messageTransformer#call(False))
             };
             
             for (message: Message; in this.messages) {
-                local#handleMessage(message)
+                handleMessage#call(message)
             }
         }
     }
@@ -87,7 +89,7 @@ singleton class MessageReceiverExecutor extends Executor {
         main: () -> Void = {
             System#printLine("The main action is here!")
             System#printLine("It does a lot of interesting things")
-            value receiver: PhoneMessageReceiver = PhoneMessageReceiver(List());
+            val receiver: PhoneMessageReceiver = PhoneMessageReceiver(List());
             receiver#receive(Message("some message"))
         }
         

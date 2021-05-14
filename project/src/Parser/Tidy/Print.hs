@@ -275,7 +275,7 @@ instance Print Parser.Tidy.Abs.Expr where
     Parser.Tidy.Abs.ELambdaAction lambdaaction -> prPrec i 7 (concatD [prt 0 lambdaaction])
     Parser.Tidy.Abs.EImperativeControlFlow imperativecontrolflow -> prPrec i 6 (concatD [prt 0 imperativecontrolflow])
     Parser.Tidy.Abs.EFunctionalControlFlow functionalcontrolflow -> prPrec i 6 (concatD [prt 0 functionalcontrolflow])
-    Parser.Tidy.Abs.ELocalValueDeclaration localvaluedecl -> prPrec i 5 (concatD [prt 0 localvaluedecl])
+    Parser.Tidy.Abs.ELocalDeclaration localdecl -> prPrec i 5 (concatD [prt 0 localdecl])
     Parser.Tidy.Abs.EUnaryNot expr -> prPrec i 4 (concatD [doc (showString "not"), prt 5 expr])
     Parser.Tidy.Abs.EUnaryMinus expr -> prPrec i 4 (concatD [doc (showString "-"), prt 5 expr])
     Parser.Tidy.Abs.EMultiply expr1 expr2 -> prPrec i 3 (concatD [prt 3 expr1, doc (showString "*"), prt 4 expr2])
@@ -306,9 +306,10 @@ instance Print Parser.Tidy.Abs.Void where
   prt i e = case e of
     Parser.Tidy.Abs.VPass -> prPrec i 0 (concatD [doc (showString "Pass")])
 
-instance Print Parser.Tidy.Abs.LocalValueDecl where
+instance Print Parser.Tidy.Abs.LocalDecl where
   prt i e = case e of
-    Parser.Tidy.Abs.LocalValueDeclaration objectdecl -> prPrec i 0 (concatD [doc (showString "value"), prt 0 objectdecl])
+    Parser.Tidy.Abs.LocalValueDeclaration objectdecl -> prPrec i 0 (concatD [doc (showString "val"), prt 0 objectdecl])
+    Parser.Tidy.Abs.LocalVariableDeclaration objectdecl -> prPrec i 0 (concatD [doc (showString "var"), prt 0 objectdecl])
 
 instance Print Parser.Tidy.Abs.LambdaFunction where
   prt i e = case e of
