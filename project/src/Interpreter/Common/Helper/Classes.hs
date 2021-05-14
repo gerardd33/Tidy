@@ -59,7 +59,7 @@ singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
     ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
 
 classIdentifierFromName :: String -> ClassIdent
-classIdentifierFromName identifier = ClassIdentifier (UpperCaseIdent identifier)
+classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
 
 -- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)

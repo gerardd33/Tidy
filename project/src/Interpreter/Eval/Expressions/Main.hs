@@ -97,13 +97,13 @@ evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case
 
 evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
 evaluateMemberFunction object functionIdent evaluatedArgs = do
-    function <- getMemberFunction (getLocalObjectType object) functionIdent
+    function <- getMemberFunction (getLocalAttributeType object) functionIdent
     (_, functionMethodEnv) <- addArgumentsToEnv (getFunctionType function) evaluatedArgs
     local (const functionMethodEnv) $ evaluateFunctionInEnv function
 
 evaluateMemberAction :: Object -> MethodIdent -> [Object] -> StateMonad Result
 evaluateMemberAction object actionIdent evaluatedArgs = do
-    action <- getMemberAction (getLocalObjectType object) actionIdent
+    action <- getMemberAction (getLocalAttributeType object) actionIdent
     (_, actionMethodEnv) <- addArgumentsToEnv (getActionType action) evaluatedArgs
     local (const actionMethodEnv) $ evaluateActionInEnv action
 
@@ -155,7 +155,7 @@ evaluateGetExpressionOnObject :: Object -> FunctionCall -> StateMonad Object
 evaluateGetExpressionOnObject object (CallFunction functionIdent argumentList) = do
     originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argumentList
-    takeGetter <- hasGetter (getLocalObjectType object) functionIdent
+    takeGetter <- hasGetter (getLocalAttributeType object) functionIdent
     if takeGetter && null evaluatedArgs
     then evaluateGetter object functionIdent
     else evaluateMemberFunction object functionIdent evaluatedArgs
@@ -164,7 +164,7 @@ evaluateDoExpressionOnObject :: Object -> ActionCall -> StateMonad Result
 evaluateDoExpressionOnObject object (CallAction actionIdent argumentList) = do
     originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argumentList
-    takeSetter <- hasSetter (getLocalObjectType object) actionIdent
+    takeSetter <- hasSetter (getLocalAttributeType object) actionIdent
     if takeSetter && length evaluatedArgs == 1
     then evaluateSetter object actionIdent $ head evaluatedArgs
     else evaluateMemberAction object actionIdent evaluatedArgs

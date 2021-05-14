@@ -11,7 +11,6 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
-import           Interpreter.Eval.Objects
 import           Interpreter.Eval.Utils
 
 
@@ -22,10 +21,10 @@ initialState :: RTState
 initialState = (Map.empty, 0)
 
 newLocalObject :: ObjectEnv -> Object
-newLocalObject = RegularObject (objectTypeFromClassName "__local")
+newLocalObject = RegularObject localObjectType
 
 emptyThisObject :: Object
-emptyThisObject = RegularObject (objectTypeFromClassName "__this") emptyObjectEnv
+emptyThisObject = RegularObject (objectTypeFromClassName "this") emptyObjectEnv
 
 emptyObjectEnv :: ObjectEnv
 emptyObjectEnv = ObjectEnv Map.empty Map.empty
@@ -70,7 +69,8 @@ addLocalValues (addition:additions) = do
 getLocalAttribute :: ObjectIdent -> StateMonad Object
 getLocalAttribute objectIdent = do
     (localRef, _, _) <- ask
-    getAttribute localRef objectIdent
+    if objectIdent == objectIdentifierFromName "local" then return localRef
+    else getAttribute localRef objectIdent
 
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
 addArgumentsToEnv methodType evaluatedArgs = do
@@ -97,23 +97,18 @@ setAttribute (RegularObject _ objectEnv) attributeIdent newValue = do
     then setObject (values objectEnv Map.! attributeIdent) newValue
     else setObject (variables objectEnv Map.! attributeIdent) newValue
 
-buildSingletonClassInstance :: ClassIdent -> [(ObjectIdent, Object)] -> StateMonad Object
-buildSingletonClassInstance classIdent initializedAttributes = do
-    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
-    objectEnv <- buildObjectEnv objectType [] initializedAttributes
-    return $ RegularObject objectType objectEnv
-
-buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
-buildObjectEnv objectType constructorArgs initializedAttributes = do
-    attributes <- getAttributeMap objectType constructorArgs initializedAttributes
-    objectValueList <- getValueNames objectType
-    let (valuesMap, variablesMap) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
-    valuesEnv <- buildAttributeEnv valuesMap
-    variablesEnv <- buildAttributeEnv variablesMap
-    return $ ObjectEnv valuesEnv variablesEnv
-
 buildAttributeEnv :: Map.Map ObjectIdent Object -> StateMonad AttributeEnv
 buildAttributeEnv attributeMap = do
     let (attributeNames, attributeObjects) = unzip $ Map.toList attributeMap
     attributeLocations <- mapM allocateObject attributeObjects
     return $ Map.fromList $ zip attributeNames attributeLocations
+
+getLocalValueNames :: StateMonad [ObjectIdent]
+getLocalValueNames = do
+    (localRef, _, _) <- ask
+    return $ Map.keys $ getValues localRef
+
+getLocalVariableNames :: StateMonad [ObjectIdent]
+getLocalVariableNames = do
+    (localRef, _, _) <- ask
+    return $ Map.keys $ getVariables localRef

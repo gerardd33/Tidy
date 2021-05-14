@@ -16,6 +16,7 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Eval.Environments
 import           Interpreter.Eval.Expressions.Main
+import           Interpreter.Eval.Objects
 
 
 -- TODO handle debugging in a better way

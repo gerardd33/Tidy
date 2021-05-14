@@ -5,10 +5,10 @@ singleton class LocalVariables {
             var count: Int = 0;
             var result: Int = 1;
             
-            /*while (count < 10) {
-                local#count(count + 11)
+            while (count < 10) {
+                local#count(count + 1)
                 local#result(result * 2)
-            }*/
+            }
             
             result
         }

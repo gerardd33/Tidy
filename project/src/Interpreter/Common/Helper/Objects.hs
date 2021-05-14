@@ -9,12 +9,15 @@ import           Parser.Tidy.Abs
 pass :: Object
 pass = BuiltinObject VoidObject
 
+localObjectType :: ObjectType
+localObjectType = objectTypeFromClassName "local"
+
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 
-getLocalObjectType :: Object -> ObjectType
-getLocalObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
-getLocalObjectType (RegularObject objectType _) = objectType
+getLocalAttributeType :: Object -> ObjectType
+getLocalAttributeType (BuiltinObject object)       = objectTypeForBuiltinObject object
+getLocalAttributeType (RegularObject objectType _) = objectType
 
 getValues :: Object -> Map.Map ObjectIdent Location
 getValues (RegularObject _ (ObjectEnv values _)) = values
@@ -36,6 +39,9 @@ objectNameFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper objectId
 
 objectTypeFromClassName :: String -> ObjectType
 objectTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
+
+objectIdentifierFromName :: String -> ObjectIdent
+objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
 
 isInitialized :: ObjectDecl -> Bool
 isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _)))  = True

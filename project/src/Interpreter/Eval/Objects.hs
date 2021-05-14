@@ -12,6 +12,7 @@ import           Interpreter.Common.Helper.Classes
 import           Interpreter.Common.Helper.Methods
 import           Interpreter.Common.Helper.Objects
 import           Interpreter.Common.Helper.Types
+import           Interpreter.Eval.Environments
 import           Interpreter.Eval.Utils
 
 
@@ -35,13 +36,20 @@ getMemberAction (ObjectTypeClass classIdent _) actionIdent = do
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasGetter objectType getterIdent = do
     classDecl <- getClassDecl $ classFromObjectType objectType
-    let attributeNames = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
+    localValueNames <- getLocalValueNames
+    localVariableNames <- getLocalVariableNames
+    let localAttributes = localValueNames ++ localVariableNames
+    let classAttributes = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
+    let attributeNames = if objectType == localObjectType then localAttributes else classAttributes
     hasAttributeIn objectType getterIdent attributeNames
 
 hasSetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasSetter objectType setterIdent = do
     classDecl <- getClassDecl $ classFromObjectType objectType
-    hasAttributeIn objectType setterIdent $ variableNamesFromDeclaration classDecl
+    localVariables <- getLocalVariableNames
+    let classVariables = variableNamesFromDeclaration classDecl
+    let variableNames = if objectType == localObjectType then localVariables else classVariables
+    hasAttributeIn objectType setterIdent variableNames
 
 hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> StateMonad Bool
 hasAttributeIn objectType methodIdent attributeNames = do
@@ -54,3 +62,18 @@ getAttributeMap objectType constructorArgs initializedAttributes = do
     let constructorParamList = getConstructorParamList classDecl
     let attributesFromConstructor = Map.fromList $ zip constructorParamList constructorArgs
     return $ Map.union (Map.fromList initializedAttributes) attributesFromConstructor
+
+buildSingletonClassInstance :: ClassIdent -> [(ObjectIdent, Object)] -> StateMonad Object
+buildSingletonClassInstance classIdent initializedAttributes = do
+    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
+    objectEnv <- buildObjectEnv objectType [] initializedAttributes
+    return $ RegularObject objectType objectEnv
+
+buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
+buildObjectEnv objectType constructorArgs initializedAttributes = do
+    attributes <- getAttributeMap objectType constructorArgs initializedAttributes
+    objectValueList <- getValueNames objectType
+    let (valuesMap, variablesMap) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    valuesEnv <- buildAttributeEnv valuesMap
+    variablesEnv <- buildAttributeEnv variablesMap
+    return $ ObjectEnv valuesEnv variablesEnv
