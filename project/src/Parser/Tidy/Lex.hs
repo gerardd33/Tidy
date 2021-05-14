@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP,MagicHash #-}
-{-# LINE 3 "./Tidy/Lex.x" #-}
+{-# LINE 3 "project/src/Parser/Tidy/Lex.x" #-}
 
 {-# OPTIONS -fno-warn-incomplete-patterns #-}
 {-# OPTIONS_GHC -w #-}
@@ -158,7 +158,7 @@ alex_actions = array (0 :: Int, 28)
   , (0,alex_action_9)
   ]
 
-{-# LINE 50 "./Tidy/Lex.x" #-}
+{-# LINE 50 "project/src/Parser/Tidy/Lex.x" #-}
 
 
 tok :: (Posn -> String -> Token) -> (Posn -> String -> Token)
@@ -227,7 +227,7 @@ eitherResIdent tv s = treeFind resWords
                               | s == a = t
 
 resWords :: BTree
-resWords = b "and" 29 (b ";" 15 (b "++" 8 (b "(" 4 (b "#" 2 (b "!=" 1 N N) (b "%" 3 N N)) (b "*" 6 (b ")" 5 N N) (b "+" 7 N N))) (b "." 12 (b "-" 10 (b "," 9 N N) (b "->" 11 N N)) (b ":" 14 (b "/" 13 N N) N))) (b "False" 22 (b "==" 19 (b "<=" 17 (b "<" 16 N N) (b "=" 18 N N)) (b ">=" 21 (b ">" 20 N N) N)) (b "]" 26 (b "True" 24 (b "Pass" 23 N N) (b "[" 25 N N)) (b "actions:" 28 (b "abstract" 27 N N) N)))) (b "mutable" 43 (b "for" 36 (b "elif" 33 (b "class" 31 (b "case" 30 N N) (b "do" 32 N N)) (b "extends" 35 (b "else" 34 N N) N)) (b "immutable" 40 (b "get" 38 (b "functions:" 37 N N) (b "if" 39 N N)) (b "match" 42 (b "in" 41 N N) N))) (b "value" 50 (b "private" 47 (b "or" 45 (b "not" 44 N N) (b "override" 46 N N)) (b "then" 49 (b "singleton" 48 N N) N)) (b "with" 54 (b "variables:" 52 (b "values:" 51 N N) (b "while" 53 N N)) (b "}" 56 (b "{" 55 N N) N))))
+resWords = b "and" 29 (b ";" 15 (b "++" 8 (b "(" 4 (b "#" 2 (b "!=" 1 N N) (b "%" 3 N N)) (b "*" 6 (b ")" 5 N N) (b "+" 7 N N))) (b "." 12 (b "-" 10 (b "," 9 N N) (b "->" 11 N N)) (b ":" 14 (b "/" 13 N N) N))) (b "False" 22 (b "==" 19 (b "<=" 17 (b "<" 16 N N) (b "=" 18 N N)) (b ">=" 21 (b ">" 20 N N) N)) (b "]" 26 (b "True" 24 (b "Pass" 23 N N) (b "[" 25 N N)) (b "actions:" 28 (b "abstract" 27 N N) N)))) (b "not" 44 (b "functions:" 37 (b "elif" 33 (b "class" 31 (b "case" 30 N N) (b "do" 32 N N)) (b "extends" 35 (b "else" 34 N N) (b "for" 36 N N))) (b "in" 41 (b "if" 39 (b "get" 38 N N) (b "immutable" 40 N N)) (b "mutable" 43 (b "match" 42 N N) N))) (b "values:" 51 (b "singleton" 48 (b "override" 46 (b "or" 45 N N) (b "private" 47 N N)) (b "val" 50 (b "then" 49 N N) N)) (b "with" 55 (b "variables:" 53 (b "var" 52 N N) (b "while" 54 N N)) (b "}" 57 (b "{" 56 N N) N))))
    where b s n = let bs = s
                  in  B bs (TS bs n)
 

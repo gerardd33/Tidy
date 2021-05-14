@@ -64,13 +64,14 @@ import Parser.Tidy.Lex
   'private' { PT _ (TS _ 47) }
   'singleton' { PT _ (TS _ 48) }
   'then' { PT _ (TS _ 49) }
-  'value' { PT _ (TS _ 50) }
+  'val' { PT _ (TS _ 50) }
   'values:' { PT _ (TS _ 51) }
-  'variables:' { PT _ (TS _ 52) }
-  'while' { PT _ (TS _ 53) }
-  'with' { PT _ (TS _ 54) }
-  '{' { PT _ (TS _ 55) }
-  '}' { PT _ (TS _ 56) }
+  'var' { PT _ (TS _ 52) }
+  'variables:' { PT _ (TS _ 53) }
+  'while' { PT _ (TS _ 54) }
+  'with' { PT _ (TS _ 55) }
+  '{' { PT _ (TS _ 56) }
+  '}' { PT _ (TS _ 57) }
   L_charac { PT _ (TC $$) }
   L_integ  { PT _ (TI $$) }
   L_quoted { PT _ (TL $$) }
@@ -249,7 +250,7 @@ Expr4 : Expr5 { $1 }
 
 Expr5 :: { Parser.Tidy.Abs.Expr }
 Expr5 : Expr6 { $1 }
-      | LocalValueDecl { Parser.Tidy.Abs.ELocalValueDeclaration $1 }
+      | LocalDecl { Parser.Tidy.Abs.ELocalDeclaration $1 }
 
 Expr6 :: { Parser.Tidy.Abs.Expr }
 Expr6 : Expr7 { $1 }
@@ -289,8 +290,9 @@ Boolean : 'True' { Parser.Tidy.Abs.BTrue }
 Void :: { Parser.Tidy.Abs.Void }
 Void : 'Pass' { Parser.Tidy.Abs.VPass }
 
-LocalValueDecl :: { Parser.Tidy.Abs.LocalValueDecl }
-LocalValueDecl : 'value' ObjectDecl { Parser.Tidy.Abs.LocalValueDeclaration $2 }
+LocalDecl :: { Parser.Tidy.Abs.LocalDecl }
+LocalDecl : 'val' ObjectDecl { Parser.Tidy.Abs.LocalValueDeclaration $2 }
+          | 'var' ObjectDecl { Parser.Tidy.Abs.LocalVariableDeclaration $2 }
 
 LambdaFunction :: { Parser.Tidy.Abs.LambdaFunction }
 LambdaFunction : 'get' ParamList '->' Expr ';' { Parser.Tidy.Abs.LambdaFunctionOneLine $2 $4 }
@@ -306,8 +308,8 @@ ArgList : {- empty -} { Parser.Tidy.Abs.ArgumentListAbsent }
 
 ListMethodArg :: { [Parser.Tidy.Abs.MethodArg] }
 ListMethodArg : {- empty -} { [] }
-                | MethodArg { (:[]) $1 }
-                | MethodArg ',' ListMethodArg { (:) $1 $3 }
+              | MethodArg { (:[]) $1 }
+              | MethodArg ',' ListMethodArg { (:) $1 $3 }
 
 MethodArg :: { Parser.Tidy.Abs.MethodArg }
 MethodArg : Expr { Parser.Tidy.Abs.MethodArgument $1 }

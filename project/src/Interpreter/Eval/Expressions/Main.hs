@@ -70,7 +70,7 @@ evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)
     singletonObject <- getLocalValue $ singletonInstanceIdentifier singletonClass
     evaluateDoExpressionOnObject singletonObject methodCall
 
-evaluateExpression (ELocalValueDeclaration (LocalValueDeclaration declaration)) =
+evaluateExpression (ELocalDeclaration (LocalValueDeclaration declaration)) =
     evaluateLocalValueDeclaration $ getProperDeclaration declaration
 
 evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranch)) =

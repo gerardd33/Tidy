@@ -123,7 +123,7 @@ ELambdaAction. Expr7 ::= LambdaAction ;
 EImperativeControlFlow. Expr6 ::= ImperativeControlFlow ;
 EFunctionalControlFlow. Expr6 ::= FunctionalControlFlow ;
 
-ELocalValueDeclaration. Expr5 ::= LocalValueDecl ;
+ELocalDeclaration. Expr5 ::= LocalDecl ;
 
 EUnaryNot. Expr4 ::= "not" Expr5 ;
 EUnaryMinus. Expr4 ::= "-" Expr5 ;
@@ -154,9 +154,10 @@ BFalse. Boolean ::= "False" ;
 VPass. Void ::= "Pass" ;
 
 
--- LOCAL VALUES -------------------------------
+-- LOCAL DECLARATIONS -------------------------
 
-LocalValueDeclaration. LocalValueDecl ::= "value" ObjectDecl ;
+LocalValueDeclaration. LocalDecl ::= "val" ObjectDecl ;
+LocalVariableDeclaration. LocalDecl ::= "var" ObjectDecl ;
 
 
 -- LAMBDAS ------------------------------------

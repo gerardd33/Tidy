@@ -122,7 +122,7 @@ data Expr
     | ELambdaAction LambdaAction
     | EImperativeControlFlow ImperativeControlFlow
     | EFunctionalControlFlow FunctionalControlFlow
-    | ELocalValueDeclaration LocalValueDecl
+    | ELocalDeclaration LocalDecl
     | EUnaryNot Expr
     | EUnaryMinus Expr
     | EMultiply Expr Expr
@@ -149,7 +149,9 @@ data Boolean = BTrue | BFalse
 data Void = VPass
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data LocalValueDecl = LocalValueDeclaration ObjectDecl
+data LocalDecl
+    = LocalValueDeclaration ObjectDecl
+    | LocalVariableDeclaration ObjectDecl
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data LambdaFunction
@@ -162,8 +164,7 @@ data LambdaAction
     | LambdaActionMultiLine ParamList [Expr]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data ArgList
-    = ArgumentListAbsent | ArgumentListPresent [MethodArg]
+data ArgList = ArgumentListAbsent | ArgumentListPresent [MethodArg]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data MethodArg = MethodArgument Expr
