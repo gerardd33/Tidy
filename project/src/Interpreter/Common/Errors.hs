@@ -16,7 +16,7 @@ data CompilationError
     | UnexpectedTypeError String String String
     | ForbiddenSectionError String String String
     | UninitializedError String
-    | DuplicateAttributeError String
+    | DuplicateDeclarationError String String
     | ObjectNotInScopeError String
     | CompilationError String
 
@@ -32,9 +32,11 @@ instance Show CompilationError where
         "\nExpected: " ++ expected ++ ". Actual: " ++ actual ++ ".\nIn expression:\n" ++ context
     show (ForbiddenSectionError classType classIdent section) = "ForbiddenSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
-    show (UninitializedError name) = "UninitializedError: Object " ++ name ++ " must be initialized."
-    show (DuplicateAttributeError name) = "DuplicateAttributeError: Attribute " ++ name ++ " already exists."
-    show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++ " is not in scope."
+    show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."
+    show (DuplicateDeclarationError name context) = "DuplicateDeclarationError: Object " ++ show name ++
+        " is declared twice in " ++ show context ++ "."
+    show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++
+        " is not declared in this scope."
     show (CompilationError message) = "CompilationError: " ++ message
 
 

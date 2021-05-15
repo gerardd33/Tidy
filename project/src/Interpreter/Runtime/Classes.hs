@@ -25,7 +25,7 @@ hasGetter objectType getterIdent = do
     localValueNames <- getLocalValueNames
     localVariableNames <- getLocalVariableNames
     let localObjects = localValueNames ++ localVariableNames
-    let classAttributes = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
+    let classAttributes = attributeNamesFromDeclaration classDecl
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
     return $ hasAttributeIn objectType getterIdent attributeNames
 

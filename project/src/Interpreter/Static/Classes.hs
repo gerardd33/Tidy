@@ -2,11 +2,13 @@ module Interpreter.Static.Classes where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
+import           Data.List                        as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Environments
 import           Interpreter.Static.Expressions
@@ -18,8 +20,9 @@ checkClasses declarations = mapM_ checkClass declarations >> returnVoid
 
 checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
+    assertNoDeclarationRepetitions (attributeNamesFromDeclaration classDecl)
+        $ showContext $ getClassIdentifier classDecl
     checkProperSections classDecl
-    -- TODO more verification later
 
 checkProperSections :: ClassDecl -> StaticCheckMonad ObjectType
 checkProperSections (ClassDeclaration _ classType classIdent _ classBody) = do
@@ -52,7 +55,7 @@ checkClassBody classType (ClassBodyFilled values variables functions actions) = 
 
 checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad ObjectType
 checkValuesSection _ ValuesAbsent = returnVoid
-checkValuesSection shouldInitialize (ValuesPresent declarations) =
+checkValuesSection shouldInitialize (ValuesPresent declarations) = do
     mapM_ (checkValueDeclaration shouldInitialize) declarations >> returnVoid
 
 checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad ObjectType
@@ -61,3 +64,10 @@ checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = 
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
              Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnVoid
              Initialized expr -> checkExpression expr >>= assertTypesMatch (showContext objectDeclProper) objectType
+
+assertNoDeclarationRepetitions :: [ObjectIdent] -> String -> StaticCheckMonad ObjectType
+assertNoDeclarationRepetitions idents context = do
+    let duplicates = idents List.\\ nub idents
+    unless (null duplicates) $ throwError $ DuplicateDeclarationError
+        (showContext $ head duplicates) context
+    returnVoid

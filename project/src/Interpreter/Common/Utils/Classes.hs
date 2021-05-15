@@ -1,7 +1,7 @@
 module Interpreter.Common.Utils.Classes where
 
-import qualified Data.List                         as List
-import qualified Data.Map                          as Map
+import qualified Data.List                        as List
+import qualified Data.Map                         as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -42,6 +42,9 @@ valueNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getValueDe
 
 variableNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
 variableNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
+
+attributeNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+attributeNamesFromDeclaration classDecl = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
 
 classFromObjectType :: ObjectType -> ClassIdent
 classFromObjectType (ObjectTypeClass classIdent _) = classIdent
