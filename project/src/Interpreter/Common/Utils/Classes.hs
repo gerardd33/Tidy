@@ -61,7 +61,6 @@ singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
 classIdentifierFromName :: String -> ClassIdent
 classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
 
--- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 loadClassDeclaration declaration = case declaration of
     ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
@@ -69,9 +68,8 @@ loadClassDeclaration declaration = case declaration of
 loadClasses :: [ClassDecl] -> ClassEnv
 loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
 
--- TODO here throw NoMainActionError and terminate if filtered list empty, or return Maybe and throw later
-findMainClass :: [ClassDecl] -> ClassDecl
-findMainClass = head . filter hasMainAction
+findMainClass :: [ClassDecl] -> Maybe ClassDecl
+findMainClass = List.find hasMainAction
 
 getConstructorParamList :: ClassDecl -> [ObjectIdent]
 getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariables

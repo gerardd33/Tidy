@@ -37,7 +37,9 @@ library
       Interpreter.Runtime.Objects
       Interpreter.Runtime.Operators
       Interpreter.Runtime.Types
+      Interpreter.Static.Classes
       Interpreter.Static.Entrypoint
+      Interpreter.Static.Types
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

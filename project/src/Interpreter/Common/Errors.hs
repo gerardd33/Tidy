@@ -4,15 +4,15 @@ import           System.Exit
 import           System.IO
 
 
--- TODO other exceptions
--- TODO better printing (custom show instance)
+-- TODO later some useful info as to where they happened
 data RuntimeException
     = DivideByZeroException
     | RuntimeException String
 
 data CompilationError
-    = NoMainMethodError
+    = NoMainActionError
     | UnexpectedTypeError String String
+    | ForbiddenSectionError String String
     | CompilationError String
 
 
@@ -21,9 +21,11 @@ instance Show RuntimeException where
     show (RuntimeException message) = "RuntimeException: " ++ message
 
 instance Show CompilationError where
-    show NoMainMethodError = "NoMainMethodError: No class contains a method named main."
+    show NoMainActionError = "NoMainActionError: No singleton class with action named main exists."
     show (UnexpectedTypeError expected actual) = "UnexpectedTypeError: Types do not match." ++
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual
+    show (ForbiddenSectionError classType section) = "ForbiddenSectionError: " ++ classType ++
+        " class must not contain section " ++ section ++ "."
     show (CompilationError message) = "CompilationError: " ++ message
 
 

@@ -1,0 +1,45 @@
+mutable class SomeMutableClass {
+
+    values: {
+        someValue: Int = 3;
+    }
+    
+    variables: {
+        someVariable: Int = 1;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+}
+
+immutable class SomeImmutableClass {
+    
+    values: {
+        someValue: Int = 3;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+    
+     actions: {
+        someAction: () -> Int = 20
+    }
+}
+
+singleton class SomeSingletonClass {
+    
+    values: {
+        someValue: Int = 3;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+    
+     actions: {
+        someAction: () -> Int = 20
+        main: () -> Void = pass
+    }
+}

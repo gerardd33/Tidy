@@ -19,3 +19,6 @@ newLocalReference = RegularObject localReferenceType
 
 emptyObjectEnv :: ObjectEnv
 emptyObjectEnv = ObjectEnv Map.empty Map.empty
+
+initialStaticCheckEnvironment :: ClassEnv -> StaticCheckEnv
+initialStaticCheckEnvironment classEnv = (objectTypeForBuiltinObject VoidObject, Map.empty, classEnv)
