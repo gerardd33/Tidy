@@ -21,24 +21,25 @@ checkClass classDecl = do
     -- TODO more verification later
 
 checkProperSections :: ClassDecl -> StaticCheckMonad ObjectType
-checkProperSections (ClassDeclaration _ classType _ _ classBody) = do
+checkProperSections (ClassDeclaration _ classType classIdent _ classBody) = do
     case classType of
         MMutable -> returnVoid
-        MSingleton -> assertVariablesAbsent classType classBody
-        MImmutable -> assertVariablesAbsent classType classBody >> assertActionsAbsent classType classBody
+        MSingleton -> assertVariablesAbsent classIdent classType classBody
+        MImmutable -> assertVariablesAbsent classIdent classType classBody >>
+            assertActionsAbsent classIdent classType classBody
     checkClassBody classType classBody
 
-assertVariablesAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
-assertVariablesAbsent _ ClassBodyEmpty                          = returnVoid
-assertVariablesAbsent _ (ClassBodyFilled _ VariablesAbsent _ _) = returnVoid
-assertVariablesAbsent classType _                               =
-    throwError $ ForbiddenSectionError (tail $ show classType) "variables"
+assertVariablesAbsent :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+assertVariablesAbsent _ _ ClassBodyEmpty                          = returnVoid
+assertVariablesAbsent _ _ (ClassBodyFilled _ VariablesAbsent _ _) = returnVoid
+assertVariablesAbsent classIdent classType _                      =
+    throwError $ ForbiddenSectionError (tail $ show classType) (showContext classIdent) "variables"
 
-assertActionsAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
-assertActionsAbsent _ ClassBodyEmpty                          = returnVoid
-assertActionsAbsent _ (ClassBodyFilled _ _ _ ActionsAbsent) = returnVoid
-assertActionsAbsent classType _                               =
-    throwError $ ForbiddenSectionError (tail $ show classType) "actions"
+assertActionsAbsent :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+assertActionsAbsent _ _ ClassBodyEmpty                          = returnVoid
+assertActionsAbsent _ _ (ClassBodyFilled _ _ _ ActionsAbsent)   = returnVoid
+assertActionsAbsent classIdent classType _                      =
+    throwError $ ForbiddenSectionError (tail $ show classType) (showContext classIdent) "actions"
 
 checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 checkClassBody _ ClassBodyEmpty = returnVoid
@@ -58,4 +59,4 @@ checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = 
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
              Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnVoid
-             Initialized expr -> returnVoid -- TODO checks
+             Initialized expr -> returnVoid

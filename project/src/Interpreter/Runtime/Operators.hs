@@ -15,29 +15,29 @@ evaluateLiteral (LChar char)     = return $ BuiltinObject $ CharObject char
 evaluateLiteral (LString string) = return $ BuiltinObject $ StringObject string
 evaluateLiteral (LVoid void)     = return $ BuiltinObject VoidObject
 
-evaluateAddition :: Object -> Object -> StateMonad Object
-evaluateAddition (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
+evaluateAddition :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateAddition (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ _ =
     return $ BuiltinObject $ IntObject $ value1 + value2
 
-evaluateSubtraction :: Object -> Object -> StateMonad Object
-evaluateSubtraction (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
+evaluateSubtraction :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateSubtraction (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ _ =
     return $ BuiltinObject $ IntObject $ value1 - value2
 
-evaluateMultiplication :: Object -> Object -> StateMonad Object
-evaluateMultiplication (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
+evaluateMultiplication :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateMultiplication (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ _ =
     return $ BuiltinObject $ IntObject $ value1 * value2
 
-evaluateDivision :: Object -> Object -> StateMonad Object
-evaluateDivision (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
-    if value2 == 0 then throwError DivideByZeroException
+evaluateDivision :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateDivision (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ expr2 =
+    if value2 == 0 then throwError $ DivideByZeroException $ showContext expr2
     else return $ BuiltinObject $ IntObject $ value1 `div` value2
 
-evaluateModulo :: Object -> Object -> StateMonad Object
-evaluateModulo (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
+evaluateModulo :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateModulo (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ _ =
     return $ BuiltinObject $ IntObject $ value1 `mod` value2
 
-evaluateConcatenation :: Object -> Object -> StateMonad Object
-evaluateConcatenation (BuiltinObject (StringObject value1)) (BuiltinObject (StringObject value2)) =
+evaluateConcatenation :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateConcatenation (BuiltinObject (StringObject value1)) (BuiltinObject (StringObject value2)) _ _ =
     return $ BuiltinObject $ StringObject $ value1 ++ value2
 
 evaluateUnaryNot :: Object -> StateMonad Object
@@ -47,20 +47,20 @@ evaluateUnaryNot (BuiltinObject (BoolObject BFalse)) = return $ BuiltinObject $ 
 evaluateUnaryMinus :: Object -> StateMonad Object
 evaluateUnaryMinus (BuiltinObject (IntObject value)) = return $ BuiltinObject $ IntObject $ -value
 
-evaluateRelational :: (Integer -> Integer -> Bool) -> Object -> Object -> StateMonad Object
-evaluateRelational operator (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) =
+evaluateRelational :: (Integer -> Integer -> Bool) -> Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateRelational operator (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ _ =
     return $ BuiltinObject $ BoolObject $ toBoolean $ operator value1 value2
 
-evaluateBooleanAnd :: Object -> Object -> StateMonad Object
-evaluateBooleanAnd (BuiltinObject (BoolObject value1)) (BuiltinObject (BoolObject value2)) =
+evaluateBooleanAnd :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateBooleanAnd (BuiltinObject (BoolObject value1)) (BuiltinObject (BoolObject value2)) _ _ =
     return $ BuiltinObject $ BoolObject $ toBoolean $ fromBoolean value1 && fromBoolean value2
 
-evaluateBooleanOr :: Object -> Object -> StateMonad Object
-evaluateBooleanOr (BuiltinObject (BoolObject value1)) (BuiltinObject (BoolObject value2)) =
+evaluateBooleanOr :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateBooleanOr (BuiltinObject (BoolObject value1)) (BuiltinObject (BoolObject value2)) _ _ =
     return $ BuiltinObject $ BoolObject $ toBoolean $ fromBoolean value1 || fromBoolean value2
 
-evaluateEquality :: Object -> Object -> StateMonad Object
-evaluateEquality value1 value2 = return $ BuiltinObject $ BoolObject $ toBoolean $ value1 == value2
+evaluateEquality :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateEquality value1 value2 _ _ = return $ BuiltinObject $ BoolObject $ toBoolean $ value1 == value2
 
-evaluateNonEquality :: Object -> Object -> StateMonad Object
-evaluateNonEquality value1 value2 = return $ BuiltinObject $ BoolObject $ toBoolean $ value1 /= value2
+evaluateNonEquality :: Object -> Object -> Expr -> Expr -> StateMonad Object
+evaluateNonEquality value1 value2 _ _ = return $ BuiltinObject $ BoolObject $ toBoolean $ value1 /= value2

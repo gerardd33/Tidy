@@ -4,7 +4,8 @@ singleton class BinaryOperators {
         main: () -> Int = {
             val y: Int = 4 + (-6); // -2
             val x: Int = 1 + y; // 0
-            24 - (2 * x + y) / (x + 1) // x + 1 == 0, exception
+            24 - (2 * x + y) / (x + 1) 
+            // x + 1 == 0, exception
         }
     }
 }

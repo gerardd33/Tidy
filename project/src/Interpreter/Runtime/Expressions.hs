@@ -1,5 +1,9 @@
 module Interpreter.Runtime.Expressions where
 
+
+import           Interpreter.Common.Errors
+import Control.Monad.Except
+
 import           Control.Monad.Reader
 import           Control.Monad.State
 import qualified Data.List                           as List
@@ -110,11 +114,11 @@ evaluateMemberAction object actionIdent evaluatedArgs = do
     (_, actionMethodEnv) <- local (const newEnv) $ addArgumentsToEnv (getActionType action) evaluatedArgs
     local (const actionMethodEnv) $ evaluateActionInEnv action
 
-evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> StateMonad Object) -> StateMonad Object
+evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> Expr -> Expr -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
     (value1, _) <- evaluateExpression expr1
     (value2, _) <- evaluateExpression expr2
-    evaluator value1 value2
+    evaluator value1 value2 expr1 expr2
 
 evaluateUnaryOperator :: Expr -> (Object -> StateMonad Object) -> StateMonad Object
 evaluateUnaryOperator expr evaluator = do
