@@ -9,6 +9,9 @@ import           Parser.Tidy.Abs
 pass :: Object
 pass = BuiltinObject VoidObject
 
+passStatic :: StaticObject
+passStatic = StaticBuiltinObject VoidObject
+
 localReferenceType :: ObjectType
 localReferenceType = objectTypeFromClassName "__local"
 

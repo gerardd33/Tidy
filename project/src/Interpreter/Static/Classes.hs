@@ -10,54 +10,54 @@ import           Interpreter.Common.Errors
 import           Interpreter.Static.Types
 
 
-checkClasses :: [ClassDecl] -> StaticCheckMonad StaticCheckEnv
-checkClasses classDeclarations = mapM_ checkClass classDeclarations >> returnSuccessful
+checkClasses :: [ClassDecl] -> StaticCheckMonad StaticObject
+checkClasses classDeclarations = mapM_ checkClass classDeclarations >> returnPureStatic returnPassStatic
 
-checkClass :: ClassDecl -> StaticCheckMonad StaticCheckEnv
+checkClass :: ClassDecl -> StaticCheckMonad StaticResult
 checkClass classDecl = do
     checkProperSections classDecl
 
-checkProperSections :: ClassDecl -> StaticCheckMonad StaticCheckEnv
+checkProperSections :: ClassDecl -> StaticCheckMonad StaticResult
 checkProperSections (ClassDeclaration _ classType _ _ classBody) = do
     case classType of
-        MMutable -> returnSuccessful
+        MMutable -> returnPassStatic
         MSingleton -> assertVariablesAbsent classType classBody
         MImmutable -> assertVariablesAbsent classType classBody >> assertActionsAbsent classType classBody
     checkClassBody classType classBody
 
-assertVariablesAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticCheckEnv
-assertVariablesAbsent _ ClassBodyEmpty                          = returnSuccessful
-assertVariablesAbsent _ (ClassBodyFilled _ VariablesAbsent _ _) = returnSuccessful
+assertVariablesAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticResult
+assertVariablesAbsent _ ClassBodyEmpty                          = returnPassStatic
+assertVariablesAbsent _ (ClassBodyFilled _ VariablesAbsent _ _) = returnPassStatic
 assertVariablesAbsent classType _                               =
     throwError $ ForbiddenSectionError (tail $ show classType) "variables"
 
-assertActionsAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticCheckEnv
-assertActionsAbsent _ ClassBodyEmpty                          = returnSuccessful
-assertActionsAbsent _ (ClassBodyFilled _ _ _ ActionsAbsent) = returnSuccessful
+assertActionsAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticResult
+assertActionsAbsent _ ClassBodyEmpty                          = returnPassStatic
+assertActionsAbsent _ (ClassBodyFilled _ _ _ ActionsAbsent) = returnPassStatic
 assertActionsAbsent classType _                               =
     throwError $ ForbiddenSectionError (tail $ show classType) "actions"
 
-checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticCheckEnv
-checkClassBody _ ClassBodyEmpty = returnSuccessful
+checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticResult
+checkClassBody _ ClassBodyEmpty = returnPassStatic
 checkClassBody classType (ClassBodyFilled values variables functions actions) = do
     checkValuesSection (classType == MSingleton) values
 --     checkVariablesSection variables
 --     checkFunctionsSections functions
 --     checkActionsSection actions
 
-checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad StaticCheckEnv
-checkValuesSection _ ValuesAbsent = returnSuccessful
+checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad StaticResult
+checkValuesSection _ ValuesAbsent = returnPassStatic
 checkValuesSection shouldInitialize (ValuesPresent declarations) = checkValueDeclarations shouldInitialize declarations
 
-checkValueDeclarations :: Bool -> [ObjectDecl] -> StaticCheckMonad StaticCheckEnv
-checkValueDeclarations shouldInitialize [] = returnSuccessful
+checkValueDeclarations :: Bool -> [ObjectDecl] -> StaticCheckMonad StaticResult
+checkValueDeclarations shouldInitialize [] = returnPassStatic
 checkValueDeclarations shouldInitialize (decl:decls) = do
-    env <- checkValueDeclaration shouldInitialize decl
+    (_, env) <- checkValueDeclaration shouldInitialize decl
     local (const env) $ checkValueDeclarations shouldInitialize decls
 
-checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad StaticCheckEnv
+checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad StaticResult
 checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
-             Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnSuccessful
-             Initialized expr -> returnSuccessful -- TODO checks
+             Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnPassStatic
+             Initialized expr -> returnPassStatic -- TODO checks

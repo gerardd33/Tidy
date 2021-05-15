@@ -25,12 +25,12 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     debugPrint mode "Main action" $ getMainAction $ fromJust mainClass
     staticCheckResult <- checkStatically mode classEnv classDeclarations
     case staticCheckResult of Left error -> exitWithError $ show error
-                              Right _ -> return ()
+                              Right _    -> return ()
     result <- runtime mode classEnv $ fromJust mainClass
     case result of Left error -> exitWithError $ show error
                    Right returnValue -> debugPrint mode "Return value" returnValue
 
 
-checkStatically :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError StaticCheckEnv)
+checkStatically :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError StaticObject)
 checkStatically mode classEnv classDeclarations = runExceptT
-    $ runReaderT (checkClasses classDeclarations) (initialStaticCheckEnvironment classEnv)
+    $ runReaderT (checkClasses classDeclarations) (initialStaticEnvironment classEnv)
