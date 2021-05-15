@@ -49,20 +49,25 @@ checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 checkClassBody _ ClassBodyEmpty = returnVoid
 checkClassBody classType (ClassBodyFilled values variables functions actions) = do
     checkValuesSection (classType == MSingleton) values
---     checkVariablesSection variables
+    checkVariablesSection False variables
 --     checkFunctionsSections functions
 --     checkActionsSection actions
 
 checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad ObjectType
 checkValuesSection _ ValuesAbsent = returnVoid
 checkValuesSection shouldInitialize (ValuesPresent declarations) = do
-    mapM_ (checkValueDeclaration shouldInitialize) declarations >> returnVoid
+    mapM_ (checkObjectDeclaration shouldInitialize) declarations >> returnVoid
 
-checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad ObjectType
-checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
+checkVariablesSection :: Bool -> VariablesSection -> StaticCheckMonad ObjectType
+checkVariablesSection _ VariablesAbsent = returnVoid
+checkVariablesSection shouldInitialize (VariablesPresent declarations) = do
+    mapM_ (checkObjectDeclaration shouldInitialize) declarations >> returnVoid
+
+checkObjectDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad ObjectType
+checkObjectDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
-             Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnVoid
+             Uninitialized -> when shouldInitialize (throwError $ UninitializedError $ show objectIdent) >> returnVoid
              Initialized expr -> checkExpression expr >>= assertTypesMatch (showContext objectDeclProper) objectType
 
 assertNoDeclarationRepetitions :: [ObjectIdent] -> String -> StaticCheckMonad ObjectType

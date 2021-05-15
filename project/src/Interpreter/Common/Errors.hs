@@ -20,7 +20,6 @@ data CompilationError
     | ObjectNotInScopeError String
     | CompilationError String
 
-
 instance Show RuntimeException where
     show (DivideByZeroException context) = "DivideByZeroException: Attempted division by zero.\n" ++
         "Divisor expression evaluating to 0:\n" ++ context
@@ -29,7 +28,7 @@ instance Show RuntimeException where
 instance Show CompilationError where
     show NoMainActionError = "NoMainActionError: No singleton class with action named main exists."
     show (UnexpectedTypeError expected actual context) = "UnexpectedTypeError: Types do not match." ++
-        "\nExpected: " ++ expected ++ ". Actual: " ++ actual ++ ".\nIn expression:\n" ++ context
+        "\nExpected: " ++ expected ++ "\nActual: " ++ actual ++ "\nIn expression:\n" ++ context
     show (ForbiddenSectionError classType classIdent section) = "ForbiddenSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."

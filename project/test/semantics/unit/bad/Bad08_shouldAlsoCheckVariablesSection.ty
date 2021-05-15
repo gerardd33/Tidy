@@ -1,0 +1,30 @@
+mutable class SomeMutableClass {
+
+    values: {
+        value1: Int = 1;
+        value2: String;
+        value3: Char = 'c';
+        value4: Void = Pass;
+        value5: String = "ddd";
+        value6: String = "Alright";
+    }
+    
+    variables: {
+        variable1: Int = 3;
+        variable2: String = "OK";
+        variable3: Bool = True;
+        variable4: Char = "d"; // UnexpectedTypeException
+        variable5: Int = 3;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}
