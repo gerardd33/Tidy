@@ -6,5 +6,5 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 
-returnChecked :: StaticCheckMonad StaticCheckEnv
-returnChecked = ask
+returnSuccessful :: StaticCheckMonad StaticCheckEnv
+returnSuccessful = ask

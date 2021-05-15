@@ -13,6 +13,7 @@ data CompilationError
     = NoMainActionError
     | UnexpectedTypeError String String
     | ForbiddenSectionError String String
+    | UninitializedValueError String
     | CompilationError String
 
 
@@ -27,6 +28,7 @@ instance Show CompilationError where
     show (ForbiddenSectionError classType section) = "ForbiddenSectionError: " ++ classType ++
         " class must not contain section " ++ section ++ "."
     show (CompilationError message) = "CompilationError: " ++ message
+    show (UninitializedValueError name) = "UninitializedValueError: Value " ++ name ++ " must be initialized."
 
 
 exitWithError :: String -> IO ()

@@ -2,6 +2,8 @@ mutable class SomeMutableClass {
 
     values: {
         someValue: Int = 3;
+        someOtherValue: Int;
+        anotherValue: Int = 5;
     }
     
     variables: {
@@ -17,15 +19,12 @@ immutable class SomeImmutableClass {
     
     values: {
         someValue: Int = 3;
+        someOtherValue: Int;
+        anotherValue: Int = 5;
     }
     
     functions: {
         someFunction: () -> Int = 339
-    }
-    
-    // immutable class must not have an actions section
-     actions: {
-        someAction: () -> Int = 20
     }
 }
 
@@ -33,6 +32,8 @@ singleton class SomeSingletonClass {
     
     values: {
         someValue: Int = 3;
+        someOtherValue: Int; // singleton class attributes should be initialized
+        anotherValue: Int = 5;
     }
     
     functions: {

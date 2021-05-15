@@ -36,6 +36,6 @@ data BuiltinObject
     deriving (Eq, Show)
 
 
-type TypeEnv = Map.Map String ObjectType
+type TypeEnv = Map.Map ObjectIdent ObjectType
 type StaticCheckEnv = (ObjectType, TypeEnv, ClassEnv) -- (methodReturnType, typeEnv, classEnv)
 type StaticCheckMonad = ReaderT StaticCheckEnv (ExceptT CompilationError IO)
