@@ -59,5 +59,5 @@ checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad StaticCheckEnv
 checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
-             Uninitialized -> when shouldInitialize (throwError (UninitializedValueError (show objectIdent))) >> returnSuccessful
-             Initialized expr -> returnSuccessful -- TODO check if types match, check if not a duplicate etc.
+             Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnSuccessful
+             Initialized expr -> returnSuccessful -- TODO checks

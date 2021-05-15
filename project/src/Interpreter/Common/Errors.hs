@@ -13,7 +13,8 @@ data CompilationError
     = NoMainActionError
     | UnexpectedTypeError String String
     | ForbiddenSectionError String String
-    | UninitializedValueError String
+    | UninitializedError String
+    | DuplicateAttributeError String
     | CompilationError String
 
 
@@ -27,8 +28,9 @@ instance Show CompilationError where
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual
     show (ForbiddenSectionError classType section) = "ForbiddenSectionError: " ++ classType ++
         " class must not contain section " ++ section ++ "."
+    show (UninitializedError name) = "UninitializedError: Object " ++ name ++ " must be initialized."
+    show (DuplicateAttributeError name) = "DuplicateAttributeError: Attribute " ++ name ++ " already exists."
     show (CompilationError message) = "CompilationError: " ++ message
-    show (UninitializedValueError name) = "UninitializedValueError: Value " ++ name ++ " must be initialized."
 
 
 exitWithError :: String -> IO ()

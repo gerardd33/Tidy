@@ -82,3 +82,7 @@ getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables
     where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
           initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl
+
+hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> Bool
+hasAttributeIn objectType methodIdent attributeNames = attributeIdentifier `elem` attributeNames
+    where attributeIdentifier = methodToObjectIdentifier methodIdent

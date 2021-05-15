@@ -1,13 +1,15 @@
 mutable class SomeMutableClass {
 
     values: {
-        someValue: Int = 3;
         someOtherValue: Int;
+        someAttribute: Int = 3;
         anotherValue: Int = 5;
     }
     
     variables: {
         someVariable: Int = 1;
+        someAttribute: Int; // should throw DuplicateAttributeError
+        anotherAttribute: Int = 5;
     }
     
     functions: {
@@ -32,7 +34,7 @@ singleton class SomeSingletonClass {
     
     values: {
         someValue: Int = 3;
-        someOtherValue: Int; // singleton class attributes should be initialized
+        someOtherValue: Int = 2;
         anotherValue: Int = 5;
     }
     
@@ -42,6 +44,6 @@ singleton class SomeSingletonClass {
     
      actions: {
         someAction: () -> Int = 20
-        main: () -> Void = pass
+        main: () -> Void = Pass
     }
 }

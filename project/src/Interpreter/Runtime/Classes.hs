@@ -1,8 +1,8 @@
 module Interpreter.Runtime.Classes where
 
 import           Control.Monad.Reader
-import qualified Data.List                           as List
-import qualified Data.Map                            as Map
+import qualified Data.List                        as List
+import qualified Data.Map                         as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -27,7 +27,7 @@ hasGetter objectType getterIdent = do
     let localObjects = localValueNames ++ localVariableNames
     let classAttributes = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
-    hasAttributeIn objectType getterIdent attributeNames
+    return $ hasAttributeIn objectType getterIdent attributeNames
 
 hasSetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasSetter objectType setterIdent = do
@@ -35,7 +35,7 @@ hasSetter objectType setterIdent = do
     localVariables <- getLocalVariableNames
     let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
-    hasAttributeIn objectType setterIdent variableNames
+    return $ hasAttributeIn objectType setterIdent variableNames
 
 getValueNames :: ObjectType -> StateMonad [ObjectIdent]
 getValueNames (ObjectTypeClass classIdent _) = do
@@ -53,8 +53,3 @@ getMemberAction (ObjectTypeClass classIdent _) actionIdent = do
     classDecl <- getClassDecl classIdent
     let actions = getActionDeclarations classDecl
     return $ fromJust $ List.find (\f -> getActionIdentifier f == actionIdent) actions
-
-hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> StateMonad Bool
-hasAttributeIn objectType methodIdent attributeNames = do
-    let attributeIdentifier = methodToObjectIdentifier methodIdent
-    return $ attributeIdentifier `elem` attributeNames
