@@ -10,9 +10,9 @@ import           Interpreter.Common.Utils.Environments
 import           Interpreter.Common.Utils.Objects
 
 
--- addLocalValueStatic :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
--- addLocalValueStatic attributeIdent newObject = do
---     (localRef, classEnv) <- ask
---     let newValues = Map.insert attributeIdent newObject (getValuesStatic localRef)
---     let newLocalRef = newStaticLocalEnv $ StaticObjectEnv newValues (getVariablesStatic localRef)
---     return (passStatic, (newLocalRef, classEnv))
+registerLocalObjectType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
+registerLocalObjectType objectIdent objectType = do
+    (localEnv, classEnv) <- ask
+    let newValues = Map.insert objectIdent objectType (valueTypes localEnv)
+    let newLocalEnv = StaticLocalEnv newValues (variableTypes localEnv)
+    return (voidType, (newLocalEnv, classEnv))

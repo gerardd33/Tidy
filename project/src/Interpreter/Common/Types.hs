@@ -40,7 +40,7 @@ type StaticCheckMonad = ReaderT StaticEnv (ExceptT CompilationError IO)
 type StaticEnv = (StaticLocalEnv, ClassEnv)
 type StaticResult = (ObjectType, StaticEnv)
 
-data StaticLocalEnv = StaticLocalEnv { valuesStatic :: StaticAttributeEnv, variablesStatic :: StaticAttributeEnv }
+data StaticLocalEnv = StaticLocalEnv { valueTypes :: StaticAttributeEnv, variableTypes :: StaticAttributeEnv }
     deriving (Eq, Show)
 
 type StaticAttributeEnv = Map.Map ObjectIdent ObjectType

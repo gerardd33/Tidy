@@ -12,10 +12,10 @@ initialEnvironment :: ClassEnv -> Env
 initialEnvironment classEnv = (newLocalReference emptyObjectEnv, classEnv)
 
 initialStaticEnvironment :: ClassEnv -> StaticEnv
-initialStaticEnvironment classEnv = (newStaticLocalEnv, classEnv)
+initialStaticEnvironment classEnv = (emptyStaticLocalEnv, classEnv)
 
-newStaticLocalEnv :: StaticLocalEnv
-newStaticLocalEnv = StaticLocalEnv Map.empty Map.empty
+emptyStaticLocalEnv :: StaticLocalEnv
+emptyStaticLocalEnv = StaticLocalEnv Map.empty Map.empty
 
 initialState :: RTState
 initialState = (Map.empty, 0)
