@@ -2,7 +2,6 @@ module Interpreter.Static.Classes where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import           Data.List                        as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -12,6 +11,8 @@ import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Environments
 import           Interpreter.Static.Expressions
+import           Interpreter.Static.Methods
+import           Interpreter.Static.Objects
 import           Interpreter.Static.Types
 
 
@@ -62,17 +63,3 @@ checkVariablesSection :: Bool -> VariablesSection -> StaticCheckMonad ObjectType
 checkVariablesSection _ VariablesAbsent = returnVoid
 checkVariablesSection shouldInitialize (VariablesPresent declarations) = do
     mapM_ (checkObjectDeclaration shouldInitialize) declarations >> returnVoid
-
-checkObjectDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad ObjectType
-checkObjectDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
-    case objectDeclProper of
-        ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
-             Uninitialized -> when shouldInitialize (throwError $ UninitializedError $ show objectIdent) >> returnVoid
-             Initialized expr -> checkExpression expr >>= assertTypesMatch (showContext objectDeclProper) objectType
-
-assertNoDeclarationRepetitions :: [ObjectIdent] -> String -> StaticCheckMonad ObjectType
-assertNoDeclarationRepetitions idents context = do
-    let duplicates = idents List.\\ nub idents
-    unless (null duplicates) $ throwError $ DuplicateDeclarationError
-        (showContext $ head duplicates) context
-    returnVoid

@@ -42,6 +42,8 @@ library
       Interpreter.Static.Entrypoint
       Interpreter.Static.Environments
       Interpreter.Static.Expressions
+      Interpreter.Static.Methods
+      Interpreter.Static.Objects
       Interpreter.Static.Operators
       Interpreter.Static.Types
       Parser.Tidy.Abs
