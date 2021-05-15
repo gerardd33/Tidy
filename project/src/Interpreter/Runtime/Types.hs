@@ -1,12 +1,12 @@
 module Interpreter.Runtime.Types where
 
 import           Control.Monad.Reader
-import qualified Data.Map                          as Map
+import qualified Data.Map                         as Map
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
-import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Builtin
 
 
 returnPure :: StateMonad Result -> StateMonad Object

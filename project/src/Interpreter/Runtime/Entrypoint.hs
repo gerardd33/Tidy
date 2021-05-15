@@ -12,9 +12,9 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Environments
-import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Environments
 import           Interpreter.Runtime.Expressions
 import           Interpreter.Runtime.Objects

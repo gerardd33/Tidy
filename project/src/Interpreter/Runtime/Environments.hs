@@ -2,12 +2,13 @@ module Interpreter.Runtime.Environments where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                               as Map
+import qualified Data.Map                              as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Environments
 import           Interpreter.Common.Utils.Methods

@@ -13,10 +13,11 @@ data RuntimeException
 
 data CompilationError
     = NoMainActionError
-    | UnexpectedTypeError String String
+    | UnexpectedTypeError String String String
     | ForbiddenSectionError String String String
     | UninitializedError String
     | DuplicateAttributeError String
+    | ObjectNotInScopeError String
     | CompilationError String
 
 
@@ -27,12 +28,13 @@ instance Show RuntimeException where
 
 instance Show CompilationError where
     show NoMainActionError = "NoMainActionError: No singleton class with action named main exists."
-    show (UnexpectedTypeError expected actual) = "UnexpectedTypeError: Types do not match." ++
-        "\nExpected: " ++ expected ++ "\nActual: " ++ actual
+    show (UnexpectedTypeError expected actual context) = "UnexpectedTypeError: Types do not match." ++
+        "\nExpected: " ++ expected ++ ". Actual: " ++ actual ++ ".\nIn expression:\n" ++ context
     show (ForbiddenSectionError classType classIdent section) = "ForbiddenSectionError: " ++ classType ++
-        " class " ++ classIdent ++ " must not contain section " ++ section ++ "."
+        " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ name ++ " must be initialized."
     show (DuplicateAttributeError name) = "DuplicateAttributeError: Attribute " ++ name ++ " already exists."
+    show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++ " is not in scope."
     show (CompilationError message) = "CompilationError: " ++ message
 
 

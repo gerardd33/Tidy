@@ -9,6 +9,7 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Environments
+import           Interpreter.Static.Expressions
 import           Interpreter.Static.Types
 
 
@@ -59,4 +60,4 @@ checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = 
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
              Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnVoid
-             Initialized expr -> returnVoid
+             Initialized expr -> checkExpression expr >>= assertTypesMatch (showContext objectDeclProper) objectType

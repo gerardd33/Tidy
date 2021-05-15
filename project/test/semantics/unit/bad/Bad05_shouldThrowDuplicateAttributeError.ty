@@ -8,7 +8,7 @@ mutable class SomeMutableClass {
     
     variables: {
         someVariable: Int = 1;
-        someAttribute: Int; // should throw DuplicateAttributeError
+        someAttribute: Int; // DuplicateAttributeError
         anotherAttribute: Int = 5;
     }
     
