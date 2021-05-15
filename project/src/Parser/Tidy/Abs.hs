@@ -6,7 +6,7 @@
 module Parser.Tidy.Abs where
 
 import Prelude (Char, Double, Integer, String)
-import qualified Prelude as C (Eq, Ord, Show, Read, show)
+import qualified Prelude as C (Eq, Ord, Show, Read, show, (++))
 import qualified Data.String
 
 newtype UpperCaseIdent = UpperCaseIdent String
@@ -60,7 +60,7 @@ data ObjectType
     = ObjectTypeClass ClassIdent GenericParameter
     | ObjectTypeFunction MethodType
     | ObjectTypeAction MethodType
-  deriving (C.Eq, C.Ord, C.Show, C.Read)
+  deriving (C.Eq, C.Ord, C.Read)
 
 data GenericParameter
     = GenericParameterAbsent | GenericParameterPresent [ClassIdent]
@@ -240,3 +240,12 @@ instance C.Show ObjectIdent where
 
 instance C.Show ClassIdent where
     show (ClassIdentifier (UpperCaseIdent identifier)) = C.show identifier
+
+instance C.Show ObjectType where
+    show (ObjectTypeClass classIdent GenericParameterAbsent) = C.show classIdent
+    show (ObjectTypeClass classIdent (GenericParameterPresent genericParams))
+        = C.show classIdent C.++ C.show genericParams
+    show (ObjectTypeFunction methodType) = C.show methodType
+    show (ObjectTypeAction methodType) = C.show methodType
+
+-- TODO add instance for lambda types when properly supported in the interpreter

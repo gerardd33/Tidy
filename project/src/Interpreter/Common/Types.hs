@@ -15,7 +15,7 @@ type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
 type RTState = (Map.Map Location Object, Location)
 type Result = (Object, Env)
 
-type Env = (Object, ClassEnv)
+type Env = (Object, ClassEnv) -- (localReference, classEnv)
 type ClassEnv = Map.Map ClassIdent ClassDecl
 type Location = Integer
 
@@ -34,3 +34,8 @@ data BuiltinObject
     | StringObject String
     | VoidObject
     deriving (Eq, Show)
+
+
+type TypeEnv = Map.Map String ObjectType
+type StaticCheckEnv = (TypeEnv, ObjectType) -- (typeEnv, methodReturnType)
+type StaticCheckMonad = ReaderT StaticCheckEnv (ExceptT CompilationError IO)

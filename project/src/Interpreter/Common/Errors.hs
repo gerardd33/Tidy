@@ -1,6 +1,6 @@
 module Interpreter.Common.Errors where
 
-import           System.Exit (exitFailure)
+import           System.Exit
 import           System.IO
 
 
@@ -9,12 +9,22 @@ import           System.IO
 data RuntimeException
     = DivideByZeroException
     | RuntimeException String
-    deriving (Show)
 
 data CompilationError
     = NoMainMethodError
+    | UnexpectedTypeError String String
     | CompilationError String
-    deriving (Show)
+
+
+instance Show RuntimeException where
+    show DivideByZeroException = "DivideByZeroException: Attempted division by zero."
+    show (RuntimeException message) = "RuntimeException: " ++ message
+
+instance Show CompilationError where
+    show NoMainMethodError = "NoMainMethodError: No class contains a method named main."
+    show (UnexpectedTypeError expected actual) = "UnexpectedTypeError: Types do not match." ++
+        "\nExpected: " ++ expected ++ "\nActual: " ++ actual
+    show (CompilationError message) = "CompilationError: " ++ message
 
 
 exitWithError :: String -> IO ()
