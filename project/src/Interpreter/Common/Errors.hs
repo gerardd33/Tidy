@@ -32,8 +32,8 @@ instance Show CompilationError where
     show (ForbiddenSectionError classType classIdent section) = "ForbiddenSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."
-    show (DuplicateDeclarationError name context) = "DuplicateDeclarationError: Object " ++ show name ++
-        " is declared twice in " ++ show context ++ "."
+    show (DuplicateDeclarationError name context) = "DuplicateDeclarationError: Object or method with name "
+        ++ show name ++ " is declared more than once in " ++ show context ++ "."
     show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++
         " is not declared in this scope."
     show (CompilationError message) = "CompilationError: " ++ message

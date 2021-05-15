@@ -26,7 +26,7 @@ getActionType (ActionDeclaration _ _ _ actionType _) = actionType
 
 getMethodParamList :: MethodType -> [ObjectIdent]
 getMethodParamList (MethodTypeSignature (ParameterList valueDeclarations) _) =
-    map (objectNameFromDeclaration . ObjectDeclaration MPublic) valueDeclarations
+    map (getObjectIdentifier . ObjectDeclaration MPublic) valueDeclarations
 
 isActionMain :: ActionDecl -> Bool
 isActionMain actionDecl = getActionIdentifier actionDecl == MethodIdentifier (LowerCaseIdent "main")

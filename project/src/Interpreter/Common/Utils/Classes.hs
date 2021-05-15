@@ -37,14 +37,23 @@ getActionDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsP
     actionDeclarations
 getActionDeclarations _ = []
 
-valueNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
-valueNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
-
-variableNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
-variableNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
-
 attributeNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
 attributeNamesFromDeclaration classDecl = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
+
+methodNamesFromDeclaration :: ClassDecl -> [MethodIdent]
+methodNamesFromDeclaration classDecl = functionNamesFromDeclaration classDecl ++ actionNamesFromDeclaration classDecl
+
+valueNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+valueNamesFromDeclaration classDecl = map getObjectIdentifier $ getValueDeclarations classDecl
+
+variableNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+variableNamesFromDeclaration classDecl = map getObjectIdentifier $ getVariableDeclarations classDecl
+
+functionNamesFromDeclaration :: ClassDecl -> [MethodIdent]
+functionNamesFromDeclaration classDecl =  map getFunctionIdentifier $ getFunctionDeclarations classDecl
+
+actionNamesFromDeclaration :: ClassDecl -> [MethodIdent]
+actionNamesFromDeclaration classDecl = map getActionIdentifier $ getActionDeclarations classDecl
 
 classFromObjectType :: ObjectType -> ClassIdent
 classFromObjectType (ObjectTypeClass classIdent _) = classIdent
@@ -76,9 +85,9 @@ findMainClass = List.find hasMainAction
 
 getConstructorParamList :: ClassDecl -> [ObjectIdent]
 getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map objectNameFromDeclaration $ filter (not . isInitialized) $
+    where uninitializedValues = map getObjectIdentifier $ filter (not . isInitialized) $
             getValueDeclarations classDecl
-          uninitializedVariables = map objectNameFromDeclaration $ filter (not . isInitialized) $
+          uninitializedVariables = map getObjectIdentifier $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]

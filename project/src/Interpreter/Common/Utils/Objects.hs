@@ -32,8 +32,8 @@ getVariables :: Object -> Map.Map ObjectIdent Location
 getVariables (RegularObject _ (ObjectEnv _ variables)) = variables
 getVariables _                                         = Map.empty
 
-objectNameFromDeclaration :: ObjectDecl -> ObjectIdent
-objectNameFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ _)) = objectIdent
+getObjectIdentifier :: ObjectDecl -> ObjectIdent
+getObjectIdentifier (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ _)) = objectIdent
 
 objectIdentifierFromName :: String -> ObjectIdent
 objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
@@ -52,6 +52,9 @@ toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Init
 
 methodToObjectIdentifier :: MethodIdent -> ObjectIdent
 methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
+
+objectToMethodIdentifier :: ObjectIdent -> MethodIdent
+objectToMethodIdentifier (ObjectIdentifier ident) = MethodIdentifier ident
 
 -- TODO handle builtin objects
 getAttributeLocation :: Object -> ObjectIdent -> Location
