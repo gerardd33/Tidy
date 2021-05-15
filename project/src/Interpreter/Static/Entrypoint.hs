@@ -31,6 +31,6 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
                    Right returnValue -> debugPrint mode "Return value" returnValue
 
 
-checkStatically :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError StaticObject)
+checkStatically :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
 checkStatically mode classEnv classDeclarations = runExceptT
     $ runReaderT (checkClasses classDeclarations) (initialStaticEnvironment classEnv)

@@ -8,16 +8,16 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Utils.Objects
 
 
-returnPureStatic :: StaticCheckMonad StaticResult -> StaticCheckMonad StaticObject
+returnPureStatic :: StaticCheckMonad StaticResult -> StaticCheckMonad ObjectType
 returnPureStatic calculation = do
-    (value, _) <- calculation
-    return value
+    (returnType, _) <- calculation
+    return returnType
 
-liftPureStatic :: StaticCheckMonad StaticObject -> StaticCheckMonad StaticResult
+liftPureStatic :: StaticCheckMonad ObjectType -> StaticCheckMonad StaticResult
 liftPureStatic calculation = do
     env <- ask
-    value <- calculation
-    return (value, env)
+    returnType <- calculation
+    return (returnType, env)
 
 returnPassStatic :: StaticCheckMonad StaticResult
-returnPassStatic = liftPureStatic $ return passStatic
+returnPassStatic = liftPureStatic $ return voidType

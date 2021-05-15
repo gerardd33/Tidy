@@ -12,12 +12,13 @@ import           Interpreter.Static.Environments
 import           Interpreter.Static.Types
 
 
-checkClasses :: [ClassDecl] -> StaticCheckMonad StaticObject
+checkClasses :: [ClassDecl] -> StaticCheckMonad ObjectType
 checkClasses classDeclarations = mapM_ checkClass classDeclarations >> returnPureStatic returnPassStatic
 
 checkClass :: ClassDecl -> StaticCheckMonad StaticResult
 checkClass classDecl = do
     checkProperSections classDecl
+    -- TODO more verification later
 
 checkProperSections :: ClassDecl -> StaticCheckMonad StaticResult
 checkProperSections (ClassDeclaration _ classType _ _ classBody) = do

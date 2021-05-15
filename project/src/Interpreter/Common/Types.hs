@@ -37,13 +37,10 @@ data BuiltinObject
 
 
 type StaticCheckMonad = ReaderT StaticEnv (ExceptT CompilationError IO)
-type StaticEnv = (StaticObject, ClassEnv) -- (localReference, classEnv)
-type StaticResult = (StaticObject, StaticEnv)
+type StaticEnv = (StaticLocalEnv, ClassEnv)
+type StaticResult = (ObjectType, StaticEnv)
 
-data StaticObject = StaticRegularObject ObjectType StaticObjectEnv | StaticBuiltinObject BuiltinObject
+data StaticLocalEnv = StaticLocalEnv { valuesStatic :: StaticAttributeEnv, variablesStatic :: StaticAttributeEnv }
     deriving (Eq, Show)
 
-data StaticObjectEnv = StaticObjectEnv { valuesStatic :: StaticAttributeEnv, variablesStatic :: StaticAttributeEnv }
-    deriving (Eq, Show)
-
-type StaticAttributeEnv = Map.Map ObjectIdent StaticObject
+type StaticAttributeEnv = Map.Map ObjectIdent ObjectType

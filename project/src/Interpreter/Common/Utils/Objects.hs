@@ -9,9 +9,6 @@ import           Parser.Tidy.Abs
 pass :: Object
 pass = BuiltinObject VoidObject
 
-passStatic :: StaticObject
-passStatic = StaticBuiltinObject VoidObject
-
 localReferenceType :: ObjectType
 localReferenceType = objectTypeFromClassName "__local"
 
@@ -32,17 +29,9 @@ getValues :: Object -> Map.Map ObjectIdent Location
 getValues (RegularObject _ (ObjectEnv values _)) = values
 getValues _                                      = Map.empty
 
-getValuesStatic :: StaticObject -> Map.Map ObjectIdent StaticObject
-getValuesStatic (StaticRegularObject _ (StaticObjectEnv values _)) = values
-getValuesStatic _                                                  = Map.empty
-
 getVariables :: Object -> Map.Map ObjectIdent Location
 getVariables (RegularObject _ (ObjectEnv _ variables)) = variables
 getVariables _                                         = Map.empty
-
-getVariablesStatic :: StaticObject -> Map.Map ObjectIdent StaticObject
-getVariablesStatic (StaticRegularObject _ (StaticObjectEnv _ variables)) = variables
-getVariablesStatic _                                                     = Map.empty
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
 objectTypeForBuiltinObject (IntObject _)    = objectTypeFromClassName "Int"
@@ -50,6 +39,9 @@ objectTypeForBuiltinObject (BoolObject _)   = objectTypeFromClassName "Bool"
 objectTypeForBuiltinObject (CharObject _)   = objectTypeFromClassName "Char"
 objectTypeForBuiltinObject (StringObject _) = objectTypeFromClassName "String"
 objectTypeForBuiltinObject VoidObject       = objectTypeFromClassName "Void"
+
+voidType :: ObjectType
+voidType = objectTypeForBuiltinObject VoidObject
 
 objectNameFromDeclaration :: ObjectDecl -> ObjectIdent
 objectNameFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ _)) = objectIdent

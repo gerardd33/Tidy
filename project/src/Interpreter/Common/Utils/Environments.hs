@@ -12,7 +12,10 @@ initialEnvironment :: ClassEnv -> Env
 initialEnvironment classEnv = (newLocalReference emptyObjectEnv, classEnv)
 
 initialStaticEnvironment :: ClassEnv -> StaticEnv
-initialStaticEnvironment classEnv = (newStaticLocalReference emptyStaticObjectEnv, classEnv)
+initialStaticEnvironment classEnv = (newStaticLocalEnv, classEnv)
+
+newStaticLocalEnv :: StaticLocalEnv
+newStaticLocalEnv = StaticLocalEnv Map.empty Map.empty
 
 initialState :: RTState
 initialState = (Map.empty, 0)
@@ -20,11 +23,5 @@ initialState = (Map.empty, 0)
 newLocalReference :: ObjectEnv -> Object
 newLocalReference = RegularObject localReferenceType
 
-newStaticLocalReference :: StaticObjectEnv -> StaticObject
-newStaticLocalReference = StaticRegularObject localReferenceType
-
 emptyObjectEnv :: ObjectEnv
 emptyObjectEnv = ObjectEnv Map.empty Map.empty
-
-emptyStaticObjectEnv :: StaticObjectEnv
-emptyStaticObjectEnv = StaticObjectEnv Map.empty Map.empty
