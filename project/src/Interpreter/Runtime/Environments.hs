@@ -32,8 +32,8 @@ setObject location newValue = do
     put (Map.insert location newValue state, nextLocation)
     returnPass
 
-addLocalObjectLocation :: ObjectIdent -> Location -> StateMonad Result
-addLocalObjectLocation attributeIdent newLocation = do
+addLocalObjectAtLocation :: ObjectIdent -> Location -> StateMonad Result
+addLocalObjectAtLocation attributeIdent newLocation = do
     (localRef, classEnv) <- ask
     let newValues = Map.insert attributeIdent newLocation (getValues localRef)
     let newLocalRef = newLocalReference $ ObjectEnv newValues (getVariables localRef)
@@ -42,7 +42,7 @@ addLocalObjectLocation attributeIdent newLocation = do
 addLocalValue :: ObjectIdent -> Object -> StateMonad Result
 addLocalValue objectIdent object = do
     location <- allocateObject object
-    addLocalObjectLocation objectIdent location
+    addLocalObjectAtLocation objectIdent location
 
 addLocalVariable :: ObjectIdent -> Object -> StateMonad Result
 addLocalVariable objectIdent object = do

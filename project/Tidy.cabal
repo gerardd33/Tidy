@@ -39,6 +39,7 @@ library
       Interpreter.Runtime.Types
       Interpreter.Static.Classes
       Interpreter.Static.Entrypoint
+      Interpreter.Static.Environments
       Interpreter.Static.Types
       Parser.Tidy.Abs
       Parser.Tidy.ErrM

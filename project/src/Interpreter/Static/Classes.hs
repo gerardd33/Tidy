@@ -7,6 +7,8 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Objects
+import           Interpreter.Static.Environments
 import           Interpreter.Static.Types
 
 

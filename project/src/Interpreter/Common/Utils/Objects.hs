@@ -32,9 +32,17 @@ getValues :: Object -> Map.Map ObjectIdent Location
 getValues (RegularObject _ (ObjectEnv values _)) = values
 getValues _                                      = Map.empty
 
+getValuesStatic :: StaticObject -> Map.Map ObjectIdent StaticObject
+getValuesStatic (StaticRegularObject _ (StaticObjectEnv values _)) = values
+getValuesStatic _                                                  = Map.empty
+
 getVariables :: Object -> Map.Map ObjectIdent Location
 getVariables (RegularObject _ (ObjectEnv _ variables)) = variables
 getVariables _                                         = Map.empty
+
+getVariablesStatic :: StaticObject -> Map.Map ObjectIdent StaticObject
+getVariablesStatic (StaticRegularObject _ (StaticObjectEnv _ variables)) = variables
+getVariablesStatic _                                                     = Map.empty
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
 objectTypeForBuiltinObject (IntObject _)    = objectTypeFromClassName "Int"
