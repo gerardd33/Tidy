@@ -13,54 +13,49 @@ import           Interpreter.Static.Types
 
 
 checkClasses :: [ClassDecl] -> StaticCheckMonad ObjectType
-checkClasses classDeclarations = mapM_ checkClass classDeclarations >> returnPureStatic returnPassStatic
+checkClasses declarations = mapM_ checkClass declarations >> returnVoid
 
-checkClass :: ClassDecl -> StaticCheckMonad StaticResult
+checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
     checkProperSections classDecl
     -- TODO more verification later
 
-checkProperSections :: ClassDecl -> StaticCheckMonad StaticResult
+checkProperSections :: ClassDecl -> StaticCheckMonad ObjectType
 checkProperSections (ClassDeclaration _ classType _ _ classBody) = do
     case classType of
-        MMutable -> returnPassStatic
+        MMutable -> returnVoid
         MSingleton -> assertVariablesAbsent classType classBody
         MImmutable -> assertVariablesAbsent classType classBody >> assertActionsAbsent classType classBody
     checkClassBody classType classBody
 
-assertVariablesAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticResult
-assertVariablesAbsent _ ClassBodyEmpty                          = returnPassStatic
-assertVariablesAbsent _ (ClassBodyFilled _ VariablesAbsent _ _) = returnPassStatic
+assertVariablesAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+assertVariablesAbsent _ ClassBodyEmpty                          = returnVoid
+assertVariablesAbsent _ (ClassBodyFilled _ VariablesAbsent _ _) = returnVoid
 assertVariablesAbsent classType _                               =
     throwError $ ForbiddenSectionError (tail $ show classType) "variables"
 
-assertActionsAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticResult
-assertActionsAbsent _ ClassBodyEmpty                          = returnPassStatic
-assertActionsAbsent _ (ClassBodyFilled _ _ _ ActionsAbsent) = returnPassStatic
+assertActionsAbsent :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+assertActionsAbsent _ ClassBodyEmpty                          = returnVoid
+assertActionsAbsent _ (ClassBodyFilled _ _ _ ActionsAbsent) = returnVoid
 assertActionsAbsent classType _                               =
     throwError $ ForbiddenSectionError (tail $ show classType) "actions"
 
-checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad StaticResult
-checkClassBody _ ClassBodyEmpty = returnPassStatic
+checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+checkClassBody _ ClassBodyEmpty = returnVoid
 checkClassBody classType (ClassBodyFilled values variables functions actions) = do
     checkValuesSection (classType == MSingleton) values
 --     checkVariablesSection variables
 --     checkFunctionsSections functions
 --     checkActionsSection actions
 
-checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad StaticResult
-checkValuesSection _ ValuesAbsent = returnPassStatic
-checkValuesSection shouldInitialize (ValuesPresent declarations) = checkValueDeclarations shouldInitialize declarations
+checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad ObjectType
+checkValuesSection _ ValuesAbsent = returnVoid
+checkValuesSection shouldInitialize (ValuesPresent declarations) =
+    mapM_ (checkValueDeclaration shouldInitialize) declarations >> returnVoid
 
-checkValueDeclarations :: Bool -> [ObjectDecl] -> StaticCheckMonad StaticResult
-checkValueDeclarations shouldInitialize [] = returnPassStatic
-checkValueDeclarations shouldInitialize (decl:decls) = do
-    (_, env) <- checkValueDeclaration shouldInitialize decl
-    local (const env) $ checkValueDeclarations shouldInitialize decls
-
-checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad StaticResult
+checkValueDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad ObjectType
 checkValueDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
-             Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnPassStatic
-             Initialized expr -> returnPassStatic -- TODO checks
+             Uninitialized -> when shouldInitialize (throwError (UninitializedError (show objectIdent))) >> returnVoid
+             Initialized expr -> returnVoid -- TODO checks

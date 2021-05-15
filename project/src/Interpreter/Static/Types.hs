@@ -19,5 +19,5 @@ liftPureStatic calculation = do
     returnType <- calculation
     return (returnType, env)
 
-returnPassStatic :: StaticCheckMonad StaticResult
-returnPassStatic = liftPureStatic $ return voidType
+returnVoid :: StaticCheckMonad ObjectType
+returnVoid = return voidType
