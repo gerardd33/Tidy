@@ -35,6 +35,15 @@ getMethodParamDeclarations (MethodTypeSignature (ParameterList paramDeclarations
 getMethodReturnType :: MethodType -> ObjectType
 getMethodReturnType (MethodTypeSignature _ returnType) = returnType
 
+getFunctionWithValuesNames :: FunctionBody -> [ObjectIdent]
+getFunctionWithValuesNames functionBody = map (getObjectIdentifier . publicDeclarationFromProper) declarations
+    where declarations = getFunctionWithValuesDeclarations functionBody
+
+getFunctionWithValuesDeclarations :: FunctionBody -> [ObjectDeclProper]
+getFunctionWithValuesDeclarations (FunctionBodyMultiLine _ (WithValuesPresent (ValuesPresent declarations))) =
+    map getProperDeclaration declarations
+getFunctionWithValuesDeclarations _ = []
+
 isActionMain :: ActionDecl -> Bool
 isActionMain actionDecl = getActionIdentifier actionDecl == MethodIdentifier (LowerCaseIdent "main")
 

@@ -2,7 +2,7 @@ module Interpreter.Static.Methods where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import           Data.List                            as List
+import           Data.List                        as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -29,14 +29,15 @@ checkFunctionsSection (FunctionsPresent declarations) = do
 
 checkFunctionDeclaration :: FunctionDecl -> StaticCheckMonad ObjectType
 checkFunctionDeclaration (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
+    let paramNames = map objectToMethodIdentifier $ getMethodParamNames functionType
+    let withValuesNames = map objectToMethodIdentifier $ getFunctionWithValuesNames functionBody
+    assertNoDeclarationRepetitions (showMethodContext functionIdent functionType) $ paramNames ++ withValuesNames
     (_, env) <- checkMethodParams functionIdent functionType
     local (const env) $ checkFunctionBody functionIdent functionType functionBody
     returnVoid
 
 checkMethodParams :: MethodIdent -> MethodType -> StaticCheckMonad StaticResult
 checkMethodParams methodIdent methodType = do
-    let paramNames = map objectToMethodIdentifier $ getMethodParamNames methodType
-    assertNoDeclarationRepetitions (showMethodContext methodIdent methodType) paramNames
     let paramDeclarations = map publicDeclarationFromProper $ getMethodParamDeclarations methodType
     checkObjectDeclarations UninitializedRequired paramDeclarations
 
