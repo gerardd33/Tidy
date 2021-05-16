@@ -27,3 +27,7 @@ isExpressionPure (EBooleanOperator _ _ _)    = True
 isExpressionPure (EDoExpression _)           = False
 isExpressionPure (ELocalDeclaration _)       = False
 isExpressionPure (EImperativeControlFlow _)  = False
+
+getThenBranchExpression :: ThenBranch -> Expr
+getThenBranchExpression (FThenOneLine expr) = expr
+getThenBranchExpression (FThenMultiLine expr) = expr

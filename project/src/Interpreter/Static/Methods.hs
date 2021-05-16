@@ -11,7 +11,6 @@ import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Expressions
-import           Interpreter.Static.Objects
 import           Interpreter.Static.Types
 
 

@@ -8,6 +8,7 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
+import           Interpreter.Common.Utils.Expressions
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Environments
 import           Interpreter.Static.Operators
@@ -37,6 +38,8 @@ checkExpression context (ERelationalOperator expr1 _ expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkRelationalOperator
 checkExpression context (EBooleanOperator expr1 operator expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkBooleanOperator
+checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
+    liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
 checkExpression _ _ = liftPureStatic $ return intType
@@ -57,6 +60,29 @@ checkUnaryOperator context expr expectedType = do
     (actualType, _) <- checkExpression context expr
     assertTypesMatch (showComplexContext expr context) expectedType actualType
     return expectedType
+
+checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
+checkFunctionalIf context predicateExpr thenBranch elseBranch = do
+    checkFunctionalIfPredicate context predicateExpr
+    let thenExpr = getThenBranchExpression thenBranch
+    let thenContext = showComplexContext thenExpr context
+    assertPureExpression thenContext thenExpr
+    (thenType, _) <- checkExpression thenContext thenExpr
+    (elseType, _) <- case elseBranch of
+        FElseOneLine elseExpr -> checkExpression (showComplexContext elseExpr context) elseExpr
+        FElseMultiLine elseExpr -> checkExpression (showComplexContext elseExpr context) elseExpr
+        FElseIf elsePredicateExpr elseThenBranch elseElseBranch -> liftPureStatic $
+            checkFunctionalIf (showContext elseBranch) elsePredicateExpr elseThenBranch elseElseBranch
+    assertTypesMatch context thenType elseType
+    return thenType
+
+checkFunctionalIfPredicate :: String -> Expr -> StaticCheckMonad ObjectType
+checkFunctionalIfPredicate context predicateExpr = do
+    let predicateContext = showComplexContext predicateExpr context
+    assertPureExpression predicateContext predicateExpr
+    (predicateType, _) <- checkExpression predicateContext predicateExpr
+    assertTypesMatch predicateContext boolType predicateType
+
 
 checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
 checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid

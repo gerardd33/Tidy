@@ -42,11 +42,11 @@ instance Show CompilationError where
     show (IllegalInitializationError name) = "IllegalInitializationError: Object " ++ show name ++
         " must not be initialized."
     show (DuplicateDeclarationError name context) = "DuplicateDeclarationError: Object or method with name "
-        ++ show name ++ " is declared more than once in " ++ show context ++ "."
+        ++ show name ++ " is declared more than once in \"" ++ context ++ "\"."
     show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++
         " is not declared in this scope."
-    show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions inside " ++ show context ++
-        " must be purely functional.\nExpression with side effects:\n" ++ expr
+    show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions inside \"" ++ context ++
+        "\" must be purely functional.\nExpression with side effects:\n" ++ expr
     show (EmptyMethodBodyError context) = "EmptyMethodBodyError: Body of method " ++ show context ++
         "must contain at least one proper expression. If you only need a filler, return Pass."
     show (CompilationError message) = "CompilationError: " ++ message

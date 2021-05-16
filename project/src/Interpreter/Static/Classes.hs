@@ -12,7 +12,6 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Environments
 import           Interpreter.Static.Expressions
 import           Interpreter.Static.Methods
-import           Interpreter.Static.Objects
 import           Interpreter.Static.Types
 
 
