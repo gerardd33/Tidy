@@ -15,8 +15,15 @@ checkLiteral (LChar char)     = return charType
 checkLiteral (LString string) = return stringType
 checkLiteral (LVoid void)     = return voidType
 
-checkAddition :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
-checkAddition context type1 type2 expr1 expr2 = do
-    assertTypesMatch (showComplexContext expr1 context) type1 intType
-    assertTypesMatch (showComplexContext expr2 context) type2 intType
+checkIntegerOperator :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
+checkIntegerOperator context type1 type2 expr1 expr2 = do
+    assertTypesMatch (showComplexContext expr1 context) intType type1
+    assertTypesMatch (showComplexContext expr2 context) intType type2
     return intType
+
+-- TODO later add lists
+checkConcatenation :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
+checkConcatenation context type1 type2 expr1 expr2 = do
+    assertTypesMatch (showComplexContext expr1 context) stringType type1
+    assertTypesMatch (showComplexContext expr2 context) stringType type2
+    return stringType

@@ -1,0 +1,39 @@
+mutable class SomeMutableClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        badAction: (arg1: Int, arg2: String, arg3: Int) -> Int = {
+            val sum1: Int = arg1 + arg3;
+            val sum2: Int = sum1 + sum1 * arg3 - sum1 * sum1 + arg1 / arg3;
+            val sum3: Int = sum1 * arg3 + ((arg3 - arg2) * sum1 * arg2) % arg2;
+            // in sum3: UnexpectedTypeError (arg2: String instead of Int)
+            sum1 + sum2
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}

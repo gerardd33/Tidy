@@ -18,17 +18,17 @@ checkExpression :: String -> Expr -> StaticCheckMonad StaticResult
 checkExpression _ (ELiteral literal)       = liftPureStatic $ checkLiteral literal
 checkExpression _ (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
 checkExpression context (EAdd expr1 expr2) =
-    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkAddition
--- checkExpression context (ESubtract expr1 expr2) =
---     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkSubtraction
--- checkExpression context (EMultiply expr1 expr2) =
---     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkMultiplication
--- checkExpression context (EDivide expr1 expr2) =
---     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkDivision
--- checkExpression context (EModulo expr1 expr2) =
---     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkModulo
--- checkExpression context (EConcatenate expr1 expr2) =
---     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkConcatenation
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
+checkExpression context (ESubtract expr1 expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
+checkExpression context (EMultiply expr1 expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
+checkExpression context (EDivide expr1 expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
+checkExpression context (EModulo expr1 expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
+checkExpression context (EConcatenate expr1 expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkConcatenation
 -- checkExpression context (EUnaryNot expr) =
 --     liftPureStatic $ evaluateUnaryOperator context expr checkUnaryNot
 -- checkExpression context (EUnaryMinus expr) =

@@ -1,0 +1,38 @@
+mutable class SomeMutableClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        badAction: (arg1: Bool, arg2: String, arg3: String) -> Int = {
+            val number: Int = 8 * 2;
+            val word: String = arg2 ++ "..." ++ arg3 ++ arg3 ++ arg1 ++ arg2 ++ arg3; 
+            // UnexpectedTypeError (arg1: Bool instead of String)
+            number
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}
