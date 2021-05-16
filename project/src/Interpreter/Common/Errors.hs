@@ -20,8 +20,10 @@ data CompilationError
     | IllegalInitializationError String
     | DuplicateDeclarationError String String
     | ObjectNotInScopeError String
+    | ClassNotInScopeError String
     | IllegalSideEffectsError String String
     | BodyEmptyError String
+    | ConstructorArgumentListInvalidError String String String
     | CompilationError String
 
 instance Show RuntimeException where
@@ -45,10 +47,15 @@ instance Show CompilationError where
         ++ show name ++ " is declared more than once in \"" ++ context ++ "\"."
     show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++
         " is not declared in this scope."
+    show (ClassNotInScopeError name) = "ClassNotInScopeError: Class " ++ show name ++
+        " is not declared in this scope."
     show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions inside \"" ++ context ++
         "\" must be purely functional.\nExpression with side effects:\n" ++ expr
     show (BodyEmptyError context) = "BodyEmptyError: Body of \"" ++ context ++
         "\" must contain at least one proper expression. If you only need a filler, return Pass."
+    show (ConstructorArgumentListInvalidError context expected actual) =
+        "ConstructorArgumentListInvalidError: Constructor called with invalid argument types.\nExpected: " ++
+        expected ++ "\nActual: " ++ actual ++ "\nIn constructor call: " ++ context
     show (CompilationError message) = "CompilationError: " ++ message
 
 

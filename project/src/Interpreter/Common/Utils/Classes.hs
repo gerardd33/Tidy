@@ -83,12 +83,18 @@ loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
 findMainClass :: [ClassDecl] -> Maybe ClassDecl
 findMainClass = List.find hasMainAction
 
-getConstructorParamList :: ClassDecl -> [ObjectIdent]
-getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map getObjectIdentifier $ filter (not . isInitialized) $
+getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
+getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
+    where uninitializedValues = map toNameTypePair $ filter (not . isInitialized) $
             getValueDeclarations classDecl
-          uninitializedVariables = map getObjectIdentifier $ filter (not . isInitialized) $
+          uninitializedVariables = map toNameTypePair $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
+
+getConstructorParamNames :: ClassDecl -> [ObjectIdent]
+getConstructorParamNames classDecl = map fst $ getConstructorParamSignatures classDecl
+
+getConstructorParamTypes :: ClassDecl -> [ObjectType]
+getConstructorParamTypes classDecl = map snd $ getConstructorParamSignatures classDecl
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables

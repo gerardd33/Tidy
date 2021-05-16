@@ -2,13 +2,16 @@ module Interpreter.Static.Expressions where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
+import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
+import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Expressions
+import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Environments
 import           Interpreter.Static.Operators
@@ -45,6 +48,8 @@ checkExpression context (ERelationalOperator expr1 _ expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkRelationalOperator
 checkExpression context (EBooleanOperator expr1 operator expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkBooleanOperator
+checkExpression context (EConstructorCall (CallConstructor classIdent argList)) =
+    liftPureStatic $ checkConstructorCall context classIdent argList
 checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
     liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
@@ -71,6 +76,26 @@ checkUnaryOperator context expr expectedType = do
     (actualType, _) <- checkExpression context expr
     assertTypesMatch (showComplexContext expr context) expectedType actualType
     return expectedType
+
+checkConstructorCall :: String -> ClassIdent -> ArgList -> StaticCheckMonad ObjectType
+checkConstructorCall context classIdent ArgumentListAbsent =
+    checkConstructorCall context classIdent (ArgumentListPresent [])
+checkConstructorCall context classIdent (ArgumentListPresent args) = do
+    classDecl <- getClassDeclStatic classIdent
+    when (isNothing classDecl) $ throwError $ ClassNotInScopeError $ showContext classIdent
+    argTypes <- checkArgumentList context args
+    let paramTypes = getConstructorParamTypes $ fromJust classDecl
+    when (argTypes /= paramTypes) $ throwError $
+        ConstructorArgumentListInvalidError (showContext classIdent ++ "(" ++ showContext args ++ ")")
+            (showContext paramTypes) (showContext argTypes)
+    return $ ObjectTypeClass classIdent GenericParameterAbsent
+
+checkArgumentList :: String -> [MethodArg] -> StaticCheckMonad [ObjectType]
+checkArgumentList context argList = do
+    let argExpressions = argsToExpressionList $ ArgumentListPresent argList
+    mapM_ (assertPureExpression context) argExpressions
+    checkResults <- mapM (checkExpression context) argExpressions
+    return $ map fst checkResults
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do

@@ -13,6 +13,11 @@ import           Interpreter.Common.Utils.Environments
 import           Interpreter.Common.Utils.Objects
 
 
+getClassDeclStatic :: ClassIdent -> StaticCheckMonad (Maybe ClassDecl)
+getClassDeclStatic classIdent = do
+    (_, classEnv) <- ask
+    return $ Map.lookup classIdent classEnv
+
 registerLocalObjectType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
 registerLocalObjectType objectIdent objectType = do
     (localEnv, classEnv) <- ask
