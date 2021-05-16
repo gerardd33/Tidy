@@ -14,12 +14,12 @@ import           Interpreter.Static.Operators
 import           Interpreter.Static.Types
 
 
-checkExpression :: Expr -> StaticCheckMonad StaticResult
-checkExpression (ELiteral literal)       = liftPureStatic $ checkLiteral literal
-checkExpression (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
+checkExpression :: String -> Expr -> StaticCheckMonad StaticResult
+checkExpression _ (ELiteral literal)       = liftPureStatic $ checkLiteral literal
+checkExpression _ (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
 -- TODO finish implementing
-checkExpression (ELocalDeclaration _) = liftPureStatic returnVoid
-checkExpression _ = liftPureStatic $ return intType
+checkExpression _ (ELocalDeclaration _) = liftPureStatic returnVoid
+checkExpression _ _ = liftPureStatic $ return intType
 
 assertPureExpression :: String -> Expr -> StaticCheckMonad ObjectType
 assertPureExpression context expr = do

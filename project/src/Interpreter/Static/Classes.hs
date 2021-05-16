@@ -53,4 +53,4 @@ checkClassBody classType (ClassBodyFilled values variables functions actions) = 
     checkValuesSection (if classType == MSingleton then InitializedRequired else NoneRequired) values
     checkVariablesSection NoneRequired variables
     checkFunctionsSection functions
---     checkActionsSection actions
+    checkActionsSection actions

@@ -30,7 +30,7 @@ evaluateExpressionList [] = returnPass
 evaluateExpressionList [expr] = evaluateExpression expr
 evaluateExpressionList (expr:exprs) = do
     (_, env) <- evaluateExpression expr
-    local (const env) (evaluateExpressionList exprs)
+    local (const env) $ evaluateExpressionList exprs
 
 evaluateExpression :: Expr -> StateMonad Result
 evaluateExpression (ELiteral literal) = liftPure $ evaluateLiteral literal
