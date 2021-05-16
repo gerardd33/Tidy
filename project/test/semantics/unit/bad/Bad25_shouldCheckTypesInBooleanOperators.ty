@@ -1,0 +1,40 @@
+mutable class SomeMutableClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        badAction: (arg1: Bool, arg2: String, arg3: String) -> Int = {
+            val local1: Int = 8 * 2 + (-8) / 2 + 4;
+            val local2: Int = 3 + 8;
+            val local3: Bool = local1 > local2;
+            val local4: Bool = local3 and local1 > 3 and local1 and local1 <= local2;
+            // UnexpectedTypeError: not local1: Int instead of Bool
+            local1
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}

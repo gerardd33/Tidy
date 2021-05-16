@@ -33,10 +33,10 @@ checkExpression context (EUnaryNot expr) =
     liftPureStatic $ checkUnaryOperator context expr boolType
 checkExpression context (EUnaryMinus expr) =
     liftPureStatic $ checkUnaryOperator context expr intType
--- checkExpression context (ERelationalOperator expr1 operator expr2) =
---     liftPureStatic $ context checkRelationalOperator expr1 expr2 operator
--- checkExpression context (EBooleanOperator expr1 operator expr2) =
---     liftPureStatic $ context checkBooleanOperator expr1 expr2 operator
+checkExpression context (ERelationalOperator expr1 _ expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkRelationalOperator
+checkExpression context (EBooleanOperator expr1 operator expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkBooleanOperator
 
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
 checkExpression _ _ = liftPureStatic $ return intType
@@ -53,6 +53,7 @@ checkBinaryOperator context expr1 expr2 typeChecker = do
 
 checkUnaryOperator :: String -> Expr -> ObjectType -> StaticCheckMonad ObjectType
 checkUnaryOperator context expr expectedType = do
+    assertPureExpression context expr
     (actualType, _) <- checkExpression context expr
     assertTypesMatch (showComplexContext expr context) expectedType actualType
     return expectedType

@@ -17,13 +17,24 @@ checkLiteral (LVoid void)     = return voidType
 
 checkIntegerOperator :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
 checkIntegerOperator context type1 type2 expr1 expr2 = do
-    assertTypesMatch (showComplexContext expr1 context) intType type1
-    assertTypesMatch (showComplexContext expr2 context) intType type2
-    return intType
+    checkCommutativeBinaryOperator context intType intType type1 type2 expr1 expr2
 
 -- TODO later add lists
 checkConcatenation :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
 checkConcatenation context type1 type2 expr1 expr2 = do
-    assertTypesMatch (showComplexContext expr1 context) stringType type1
-    assertTypesMatch (showComplexContext expr2 context) stringType type2
-    return stringType
+    checkCommutativeBinaryOperator context stringType stringType type1 type2 expr1 expr2
+
+checkBooleanOperator :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
+checkBooleanOperator context type1 type2 expr1 expr2 = do
+    checkCommutativeBinaryOperator context boolType boolType type1 type2 expr1 expr2
+
+checkRelationalOperator :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
+checkRelationalOperator context type1 type2 expr1 expr2 = do
+    checkCommutativeBinaryOperator context intType boolType type1 type2 expr1 expr2
+
+checkCommutativeBinaryOperator :: String -> ObjectType -> ObjectType ->
+    ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
+checkCommutativeBinaryOperator context inputType outputType type1 type2 expr1 expr2 = do
+    assertTypesMatch (showComplexContext expr1 context) inputType type1
+    assertTypesMatch (showComplexContext expr2 context) inputType type2
+    return outputType
