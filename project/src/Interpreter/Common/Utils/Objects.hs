@@ -24,6 +24,15 @@ getObjectType :: Object -> ObjectType
 getObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
 getObjectType (RegularObject objectType _) = objectType
 
+getObjectIdentifier :: ObjectDecl -> ObjectIdent
+getObjectIdentifier (ObjectDeclaration _ declProper) = objectIdentifierFromProperDeclaration declProper
+
+objectIdentifierFromProperDeclaration :: ObjectDeclProper -> ObjectIdent
+objectIdentifierFromProperDeclaration (ObjectDeclarationProper objectIdent _ _) = objectIdent
+
+objectIdentifierFromName :: String -> ObjectIdent
+objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
+
 getValues :: Object -> Map.Map ObjectIdent Location
 getValues (RegularObject _ (ObjectEnv values _)) = values
 getValues _                                      = Map.empty
@@ -31,12 +40,6 @@ getValues _                                      = Map.empty
 getVariables :: Object -> Map.Map ObjectIdent Location
 getVariables (RegularObject _ (ObjectEnv _ variables)) = variables
 getVariables _                                         = Map.empty
-
-getObjectIdentifier :: ObjectDecl -> ObjectIdent
-getObjectIdentifier (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ _)) = objectIdent
-
-objectIdentifierFromName :: String -> ObjectIdent
-objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
 
 isInitialized :: ObjectDecl -> Bool
 isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _)))  = True

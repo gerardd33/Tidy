@@ -54,18 +54,3 @@ checkClassBody classType (ClassBodyFilled values variables functions actions) = 
     checkVariablesSection NoneRequired variables
     checkFunctionsSection functions
 --     checkActionsSection actions
-
-checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad ObjectType
-checkValuesSection _ ValuesAbsent = returnVoid
-checkValuesSection initializationType (ValuesPresent declarations) = do
-    returnPureStatic $ checkObjectDeclarations initializationType declarations
-
-checkVariablesSection :: InitializationType -> VariablesSection -> StaticCheckMonad ObjectType
-checkVariablesSection _ VariablesAbsent = returnVoid
-checkVariablesSection initializationType (VariablesPresent declarations) = do
-    returnPureStatic $ checkObjectDeclarations initializationType declarations
-
-checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
-checkFunctionsSection FunctionsAbsent = returnVoid
-checkFunctionsSection (FunctionsPresent declarations) = do
-    mapM_ checkFunctionDeclaration declarations >> returnVoid

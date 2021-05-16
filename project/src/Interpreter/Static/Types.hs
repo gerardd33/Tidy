@@ -15,6 +15,11 @@ assertTypesMatch context type1 type2 = do
     when (type1 /= type2) $ throwError $ UnexpectedTypeError (showContext type1) (showContext type2) context
     returnVoid
 
+assertReturnTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
+assertReturnTypesMatch context type1 type2 = do
+    when (type1 /= type2) $ throwError $ UnexpectedReturnTypeError (showContext type1) (showContext type2) context
+    returnVoid
+
 returnPureStatic :: StaticCheckMonad StaticResult -> StaticCheckMonad ObjectType
 returnPureStatic calculation = do
     (returnType, _) <- calculation

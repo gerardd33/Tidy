@@ -3,6 +3,7 @@ module Interpreter.Common.Utils.Methods where
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Objects
 
 
@@ -43,3 +44,6 @@ argsToExpressionList (ArgumentListPresent args) = map argToExpression args
 
 argToExpression :: MethodArg -> Expr
 argToExpression (MethodArgument expr) = expr
+
+showMethodContext :: MethodIdent -> MethodType -> String
+showMethodContext methodIdent methodType = showContext methodIdent ++ ": " ++ showContext methodType

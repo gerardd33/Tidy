@@ -14,6 +14,7 @@ data RuntimeException
 data CompilationError
     = NoMainActionError
     | UnexpectedTypeError String String String
+    | UnexpectedReturnTypeError String String String
     | IllegalSectionError String String String
     | UninitializedError String
     | IllegalInitializationError String
@@ -30,6 +31,9 @@ instance Show CompilationError where
     show NoMainActionError = "NoMainActionError: No singleton class with action named main exists."
     show (UnexpectedTypeError expected actual context) = "UnexpectedTypeError: Types do not match." ++
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual ++ "\nIn expression:\n" ++ context
+    show (UnexpectedReturnTypeError expected actual context) = "UnexpectedReturnTypeError: " ++
+        "Declared method return type does not match the actual one." ++ "\nExpected: " ++ expected ++
+        "\nActual: " ++ actual ++ "\nIn method: " ++ context
     show (IllegalSectionError classType classIdent section) = "IllegalSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."
