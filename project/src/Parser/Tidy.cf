@@ -24,8 +24,8 @@ ClassIdentifier. ClassIdent ::= UpperCaseIdent ;
 separator nonempty ClassDecl "" ;
 ClassDeclaration. ClassDecl ::= AbstractModifier ClassTypeModifier "class" ClassIdent Inheritance ClassBody ;
 
-SuperclassPresent. Inheritance ::= ;
-SuperclassAbsent. Inheritance ::= "extends" ClassIdent ;
+SuperclassAbsent. Inheritance ::= ;
+SuperclassPresent. Inheritance ::= "extends" ClassIdent ;
 
 ClassBodyEmpty. ClassBody ::= ;
 ClassBodyFilled. ClassBody ::= "{" ValuesSection VariablesSection FunctionsSection ActionsSection "}" ;

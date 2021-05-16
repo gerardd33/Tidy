@@ -114,8 +114,8 @@ ClassDecl :: { Parser.Tidy.Abs.ClassDecl }
 ClassDecl : AbstractModifier ClassTypeModifier 'class' ClassIdent Inheritance ClassBody { Parser.Tidy.Abs.ClassDeclaration $1 $2 $4 $5 $6 }
 
 Inheritance :: { Parser.Tidy.Abs.Inheritance }
-Inheritance : {- empty -} { Parser.Tidy.Abs.SuperclassPresent }
-            | 'extends' ClassIdent { Parser.Tidy.Abs.SuperclassAbsent $2 }
+Inheritance : {- empty -} { Parser.Tidy.Abs.SuperclassAbsent }
+            | 'extends' ClassIdent { Parser.Tidy.Abs.SuperclassPresent $2 }
 
 ClassBody :: { Parser.Tidy.Abs.ClassBody }
 ClassBody : {- empty -} { Parser.Tidy.Abs.ClassBodyEmpty }
