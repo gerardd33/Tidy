@@ -29,10 +29,10 @@ checkExpression context (EModulo expr1 expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
 checkExpression context (EConcatenate expr1 expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkConcatenation
--- checkExpression context (EUnaryNot expr) =
---     liftPureStatic $ evaluateUnaryOperator context expr checkUnaryNot
--- checkExpression context (EUnaryMinus expr) =
---     liftPureStatic $ evaluateUnaryOperator context expr checkUnaryMinus
+checkExpression context (EUnaryNot expr) =
+    liftPureStatic $ checkUnaryOperator context expr boolType
+checkExpression context (EUnaryMinus expr) =
+    liftPureStatic $ checkUnaryOperator context expr intType
 -- checkExpression context (ERelationalOperator expr1 operator expr2) =
 --     liftPureStatic $ context checkRelationalOperator expr1 expr2 operator
 -- checkExpression context (EBooleanOperator expr1 operator expr2) =
@@ -50,6 +50,12 @@ checkBinaryOperator context expr1 expr2 typeChecker = do
     (type1, _) <- checkExpression context expr1
     (type2, _) <- checkExpression context expr2
     typeChecker context type1 type2 expr1 expr2
+
+checkUnaryOperator :: String -> Expr -> ObjectType -> StaticCheckMonad ObjectType
+checkUnaryOperator context expr expectedType = do
+    (actualType, _) <- checkExpression context expr
+    assertTypesMatch (showComplexContext expr context) expectedType actualType
+    return expectedType
 
 checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
 checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
