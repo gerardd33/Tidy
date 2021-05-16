@@ -13,19 +13,21 @@ import           Interpreter.Static.Expressions
 import           Interpreter.Static.Types
 
 
-checkObjectDeclarations :: Bool -> [ObjectDecl] -> StaticCheckMonad StaticResult
+checkObjectDeclarations :: InitializationType -> [ObjectDecl] -> StaticCheckMonad StaticResult
 checkObjectDeclarations _ [] = liftPureStatic returnVoid
-checkObjectDeclarations shouldInitialize (decl:decls) = do
-    (_, env) <- checkObjectDeclaration shouldInitialize decl
-    local (const env) $ checkObjectDeclarations shouldInitialize decls
+checkObjectDeclarations initializationType (decl:decls) = do
+    (_, env) <- checkObjectDeclaration initializationType decl
+    local (const env) $ checkObjectDeclarations initializationType decls
 
-checkObjectDeclaration :: Bool -> ObjectDecl -> StaticCheckMonad StaticResult
-checkObjectDeclaration shouldInitialize (ObjectDeclaration _ objectDeclProper) = do
+checkObjectDeclaration :: InitializationType -> ObjectDecl -> StaticCheckMonad StaticResult
+checkObjectDeclaration initializationType (ObjectDeclaration _ objectDeclProper) = do
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> case initialization of
-             Uninitialized -> when shouldInitialize (throwError $ UninitializedError $ showContext objectIdent) >>
-                liftPureStatic returnVoid
-             Initialized expr -> declareObjectStatic (showContext objectDeclProper) objectType expr
+             Uninitialized -> when (initializationType == InitializedRequired)
+                (throwError $ UninitializedError $ showContext objectIdent) >> liftPureStatic returnVoid
+             Initialized expr -> if initializationType == UninitializedRequired
+                then throwError (IllegalInitializationError $ showContext objectIdent) >> liftPureStatic returnVoid
+                else declareObjectStatic (showContext objectDeclProper) objectType expr
 
 declareObjectStatic :: String -> ObjectType -> Expr -> StaticCheckMonad StaticResult
 declareObjectStatic context expectedType expr = do

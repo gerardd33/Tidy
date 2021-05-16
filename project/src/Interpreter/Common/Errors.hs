@@ -14,8 +14,9 @@ data RuntimeException
 data CompilationError
     = NoMainActionError
     | UnexpectedTypeError String String String
-    | ForbiddenSectionError String String String
+    | IllegalSectionError String String String
     | UninitializedError String
+    | IllegalInitializationError String
     | DuplicateDeclarationError String String
     | ObjectNotInScopeError String
     | CompilationError String
@@ -29,9 +30,11 @@ instance Show CompilationError where
     show NoMainActionError = "NoMainActionError: No singleton class with action named main exists."
     show (UnexpectedTypeError expected actual context) = "UnexpectedTypeError: Types do not match." ++
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual ++ "\nIn expression:\n" ++ context
-    show (ForbiddenSectionError classType classIdent section) = "ForbiddenSectionError: " ++ classType ++
+    show (IllegalSectionError classType classIdent section) = "IllegalSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."
+    show (IllegalInitializationError name) = "IllegalInitializationError: Object " ++ show name ++
+        " must not be initialized."
     show (DuplicateDeclarationError name context) = "DuplicateDeclarationError: Object or method with name "
         ++ show name ++ " is declared more than once in " ++ show context ++ "."
     show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++

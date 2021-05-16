@@ -31,6 +31,6 @@ checkMethodParams methodIdent methodType = do
     let paramNames = map objectToMethodIdentifier $ getMethodParamNames methodType
     assertNoDeclarationRepetitions (showContext methodIdent ++ ": " ++ showContext methodType) paramNames
     let paramDeclarations = map publicDeclarationFromProper $ getMethodParamDeclarations methodType
-    checkObjectDeclarations False paramDeclarations
+    checkObjectDeclarations UninitializedRequired paramDeclarations
     -- TODO change Bool here to something three-valued: must not initialize
 

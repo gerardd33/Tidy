@@ -35,6 +35,8 @@ data BuiltinObject
     | VoidObject
     deriving (Eq, Show)
 
+data InitializationType = InitializedRequired | UninitializedRequired | NoneRequired
+    deriving (Eq, Show)
 
 type StaticCheckMonad = ReaderT StaticEnv (ExceptT CompilationError IO)
 type StaticEnv = (StaticLocalEnv, ClassEnv)

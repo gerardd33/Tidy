@@ -39,31 +39,31 @@ assertVariablesAbsent :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticC
 assertVariablesAbsent _ _ ClassBodyEmpty                          = returnVoid
 assertVariablesAbsent _ _ (ClassBodyFilled _ VariablesAbsent _ _) = returnVoid
 assertVariablesAbsent classIdent classType _                      =
-    throwError $ ForbiddenSectionError (tail $ show classType) (showContext classIdent) "variables"
+    throwError $ IllegalSectionError (tail $ show classType) (showContext classIdent) "variables"
 
 assertActionsAbsent :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 assertActionsAbsent _ _ ClassBodyEmpty                          = returnVoid
 assertActionsAbsent _ _ (ClassBodyFilled _ _ _ ActionsAbsent)   = returnVoid
 assertActionsAbsent classIdent classType _                      =
-    throwError $ ForbiddenSectionError (tail $ show classType) (showContext classIdent) "actions"
+    throwError $ IllegalSectionError (tail $ show classType) (showContext classIdent) "actions"
 
 checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 checkClassBody _ ClassBodyEmpty = returnVoid
 checkClassBody classType (ClassBodyFilled values variables functions actions) = do
-    checkValuesSection (classType == MSingleton) values
-    checkVariablesSection False variables
+    checkValuesSection (if classType == MSingleton then InitializedRequired else NoneRequired) values
+    checkVariablesSection NoneRequired variables
     checkFunctionsSection functions
 --     checkActionsSection actions
 
-checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad ObjectType
+checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad ObjectType
 checkValuesSection _ ValuesAbsent = returnVoid
-checkValuesSection shouldInitialize (ValuesPresent declarations) = do
-    returnPureStatic $ checkObjectDeclarations shouldInitialize declarations
+checkValuesSection initializationType (ValuesPresent declarations) = do
+    returnPureStatic $ checkObjectDeclarations initializationType declarations
 
-checkVariablesSection :: Bool -> VariablesSection -> StaticCheckMonad ObjectType
+checkVariablesSection :: InitializationType -> VariablesSection -> StaticCheckMonad ObjectType
 checkVariablesSection _ VariablesAbsent = returnVoid
-checkVariablesSection shouldInitialize (VariablesPresent declarations) = do
-    returnPureStatic $ checkObjectDeclarations shouldInitialize declarations
+checkVariablesSection initializationType (VariablesPresent declarations) = do
+    returnPureStatic $ checkObjectDeclarations initializationType declarations
 
 checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
 checkFunctionsSection FunctionsAbsent = returnVoid
