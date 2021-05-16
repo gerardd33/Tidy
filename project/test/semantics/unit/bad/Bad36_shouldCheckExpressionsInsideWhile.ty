@@ -1,0 +1,40 @@
+mutable class SomeMutableClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        badAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            while (False) {
+                3 + 4
+                val x: Int = 4 + if (True) { 3 } else { 4 }; // IllegalSideEffectsError
+                3333
+            }
+            3
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}

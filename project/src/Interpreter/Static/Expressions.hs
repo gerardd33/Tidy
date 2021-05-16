@@ -48,8 +48,10 @@ checkExpression context (EBooleanOperator expr1 operator expr2) =
 checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
     liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
-checkExpression context (EImperativeControlFlow (IIf predicateExpr thenBody optionalElseBranch)) =
-    checkImperativeIf context predicateExpr thenBody optionalElseBranch
+checkExpression context (EImperativeControlFlow (IIf predicateExpr body optionalElseBranch)) =
+    checkImperativeIf context predicateExpr body optionalElseBranch
+checkExpression context (EImperativeControlFlow (IWhile predicateExpr body)) =
+    checkWhile context predicateExpr body
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
 checkExpression _ _ = liftPureStatic $ return intType
 
@@ -96,6 +98,12 @@ checkImperativeIf context predicateExpr body optionalElseBranch = do
             checkImperativeIf (showContext elseBody) elsePredicateExpr elseBody elseOptionalElseBranch
     assertTypesMatch context bodyType elseType
     liftPureStatic $ return bodyType
+
+checkWhile :: String -> Expr -> [Expr] -> StaticCheckMonad StaticResult
+checkWhile context predicateExpr body = do
+    checkPurePredicate context predicateExpr
+    checkExpressionList context body
+    liftPureStatic $ return voidType
 
 checkPurePredicate :: String -> Expr -> StaticCheckMonad ObjectType
 checkPurePredicate context predicateExpr = do
