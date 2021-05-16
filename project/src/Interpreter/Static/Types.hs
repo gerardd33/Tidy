@@ -8,16 +8,17 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
+import           Interpreter.Common.Utils.Expressions
 
 
 assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
-assertTypesMatch context type1 type2 = do
-    when (type1 /= type2) $ throwError $ UnexpectedTypeError (showContext type1) (showContext type2) context
+assertTypesMatch context expected actual = do
+    when (expected /= actual) $ throwError $ UnexpectedTypeError (showContext expected) (showContext actual) context
     returnVoid
 
 assertReturnTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
-assertReturnTypesMatch context type1 type2 = do
-    when (type1 /= type2) $ throwError $ UnexpectedReturnTypeError (showContext type1) (showContext type2) context
+assertReturnTypesMatch context expected actual = do
+    when (expected /= actual) $ throwError $ UnexpectedReturnTypeError (showContext expected) (showContext actual) context
     returnVoid
 
 returnPureStatic :: StaticCheckMonad StaticResult -> StaticCheckMonad ObjectType
@@ -33,3 +34,8 @@ liftPureStatic calculation = do
 
 returnVoid :: StaticCheckMonad ObjectType
 returnVoid = return voidType
+
+assertPureExpression :: String -> Expr -> StaticCheckMonad ObjectType
+assertPureExpression context expr = do
+    unless (isExpressionPure expr) $ throwError $ IllegalSideEffectsError context (showContext expr)
+    returnVoid

@@ -25,7 +25,7 @@ data ClassDecl
     = ClassDeclaration AbstractModifier ClassTypeModifier ClassIdent Inheritance ClassBody
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Inheritance = SuperclassPresent | SuperclassAbsent ClassIdent
+data Inheritance = SuperclassAbsent | SuperclassPresent ClassIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ClassBody

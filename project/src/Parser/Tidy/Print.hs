@@ -128,8 +128,8 @@ instance Print Parser.Tidy.Abs.ClassDecl where
 
 instance Print Parser.Tidy.Abs.Inheritance where
   prt i e = case e of
-    Parser.Tidy.Abs.SuperclassPresent -> prPrec i 0 (concatD [])
-    Parser.Tidy.Abs.SuperclassAbsent classident -> prPrec i 0 (concatD [doc (showString "extends"), prt 0 classident])
+    Parser.Tidy.Abs.SuperclassAbsent -> prPrec i 0 (concatD [])
+    Parser.Tidy.Abs.SuperclassPresent classident -> prPrec i 0 (concatD [doc (showString "extends"), prt 0 classident])
 
 instance Print Parser.Tidy.Abs.ClassBody where
   prt i e = case e of

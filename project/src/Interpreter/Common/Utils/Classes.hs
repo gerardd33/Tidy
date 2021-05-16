@@ -78,17 +78,33 @@ loadClassDeclaration declaration = case declaration of
     ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
 
 loadClasses :: [ClassDecl] -> ClassEnv
-loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
+loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses ++ builtinClasses
+
+builtinClasses :: [ClassDecl]
+builtinClasses = map builtinClassDeclFromName builtinClassNames
+
+builtinClassNames :: [String]
+builtinClassNames = ["Int", "Bool", "Char", "String", "Void"]
+
+builtinClassDeclFromName :: String -> ClassDecl
+builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable (classIdentifierFromName name)
+    SuperclassAbsent ClassBodyEmpty
 
 findMainClass :: [ClassDecl] -> Maybe ClassDecl
 findMainClass = List.find hasMainAction
 
-getConstructorParamList :: ClassDecl -> [ObjectIdent]
-getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map getObjectIdentifier $ filter (not . isInitialized) $
+getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
+getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
+    where uninitializedValues = map toNameTypePair $ filter (not . isInitialized) $
             getValueDeclarations classDecl
-          uninitializedVariables = map getObjectIdentifier $ filter (not . isInitialized) $
+          uninitializedVariables = map toNameTypePair $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
+
+getConstructorParamNames :: ClassDecl -> [ObjectIdent]
+getConstructorParamNames classDecl = map fst $ getConstructorParamSignatures classDecl
+
+getConstructorParamTypes :: ClassDecl -> [ObjectType]
+getConstructorParamTypes classDecl = map snd $ getConstructorParamSignatures classDecl
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables

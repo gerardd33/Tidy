@@ -11,7 +11,6 @@ import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Expressions
-import           Interpreter.Static.Objects
 import           Interpreter.Static.Types
 
 
@@ -62,15 +61,8 @@ checkActionBody :: MethodIdent -> MethodType -> ActionBody -> StaticCheckMonad O
 checkActionBody actionIdent actionType (ActionBodyOneLine bodyExpr) =
     checkActionBody actionIdent actionType (ActionBodyMultiLine [bodyExpr])
 checkActionBody actionIdent actionType (ActionBodyMultiLine bodyExprs) = do
-    (actualReturnType, env) <- checkActionBodyExpressions (showMethodContext actionIdent actionType) bodyExprs
+    (actualReturnType, env) <- checkExpressionList (showMethodContext actionIdent actionType) bodyExprs
     local (const env) $ checkMethodReturnType actionIdent actionType actualReturnType
-
-checkActionBodyExpressions :: String -> [Expr] -> StaticCheckMonad StaticResult
-checkActionBodyExpressions context [] = throwError $ EmptyMethodBodyError context
-checkActionBodyExpressions context [expr] = checkExpression context expr
-checkActionBodyExpressions context (expr:exprs) = do
-    (_, env) <- checkExpression context expr
-    local (const env) $ checkActionBodyExpressions context exprs
 
 checkMethodParams :: MethodIdent -> MethodType -> StaticCheckMonad StaticResult
 checkMethodParams methodIdent methodType = do

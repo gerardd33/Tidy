@@ -1,0 +1,11 @@
+singleton class BinaryOperators {
+    
+    actions: {
+        main: () -> Int = {
+            val y: Int = 4 + (-6); // -2
+            val x: Int = 1 + y - 6; // -7
+            24 - (2 * x + y) % (x + 7) + 2
+            // x + 7 == 0, exception
+        }
+    }
+}

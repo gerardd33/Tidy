@@ -848,7 +848,7 @@ happyReduction_13 (happy_x_6 `HappyStk`
 
 happyReduce_14 = happySpecReduce_0  10# happyReduction_14
 happyReduction_14  =  happyIn14
-		 (Parser.Tidy.Abs.SuperclassPresent
+		 (Parser.Tidy.Abs.SuperclassAbsent
 	)
 
 happyReduce_15 = happySpecReduce_2  10# happyReduction_15
@@ -856,7 +856,7 @@ happyReduction_15 happy_x_2
 	happy_x_1
 	 =  case happyOut11 happy_x_2 of { (HappyWrap11 happy_var_2) -> 
 	happyIn14
-		 (Parser.Tidy.Abs.SuperclassAbsent happy_var_2
+		 (Parser.Tidy.Abs.SuperclassPresent happy_var_2
 	)}
 
 happyReduce_16 = happySpecReduce_0  11# happyReduction_16

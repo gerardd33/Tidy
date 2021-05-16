@@ -1,0 +1,33 @@
+mutable class TestClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+        var3: Int;
+        var4: Bool;
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: AnotherClass) -> Int = { // AnotherClass not in scope
+            val z: Int = 4;
+            z
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}

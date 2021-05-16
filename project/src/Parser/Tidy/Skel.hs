@@ -27,8 +27,8 @@ transClassDecl x = case x of
   Parser.Tidy.Abs.ClassDeclaration abstractmodifier classtypemodifier classident inheritance classbody -> failure x
 transInheritance :: Parser.Tidy.Abs.Inheritance -> Result
 transInheritance x = case x of
-  Parser.Tidy.Abs.SuperclassPresent -> failure x
-  Parser.Tidy.Abs.SuperclassAbsent classident -> failure x
+  Parser.Tidy.Abs.SuperclassAbsent -> failure x
+  Parser.Tidy.Abs.SuperclassPresent classident -> failure x
 transClassBody :: Parser.Tidy.Abs.ClassBody -> Result
 transClassBody x = case x of
   Parser.Tidy.Abs.ClassBodyEmpty -> failure x

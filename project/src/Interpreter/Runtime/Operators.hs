@@ -33,8 +33,9 @@ evaluateDivision (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject va
     else return $ BuiltinObject $ IntObject $ value1 `div` value2
 
 evaluateModulo :: Object -> Object -> Expr -> Expr -> StateMonad Object
-evaluateModulo (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ _ =
-    return $ BuiltinObject $ IntObject $ value1 `mod` value2
+evaluateModulo (BuiltinObject (IntObject value1)) (BuiltinObject (IntObject value2)) _ expr2 =
+    if value2 == 0 then throwError $ DivideByZeroException $ showContext expr2
+    else return $ BuiltinObject $ IntObject $ value1 `mod` value2
 
 evaluateConcatenation :: Object -> Object -> Expr -> Expr -> StateMonad Object
 evaluateConcatenation (BuiltinObject (StringObject value1)) (BuiltinObject (StringObject value2)) _ _ =

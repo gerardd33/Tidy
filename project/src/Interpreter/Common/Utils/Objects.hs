@@ -5,6 +5,7 @@ import qualified Data.Map                         as Map
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 
 
@@ -68,3 +69,6 @@ getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
 
 publicDeclarationFromProper :: ObjectDeclProper -> ObjectDecl
 publicDeclarationFromProper = ObjectDeclaration MPublic
+
+showComplexContext :: Expr -> String -> String
+showComplexContext expr largerContext = showContext expr ++ "\nIn: " ++ largerContext

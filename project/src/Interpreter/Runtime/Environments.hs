@@ -16,6 +16,11 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Types
 
 
+getClassDecl :: ClassIdent -> StateMonad ClassDecl
+getClassDecl classIdent = do
+    (_, classEnv) <- ask
+    return $ classEnv Map.! classIdent
+
 allocateObject :: Object -> StateMonad Location
 allocateObject object = do
     (state, nextLocation) <- get

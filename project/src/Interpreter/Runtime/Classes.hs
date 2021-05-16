@@ -14,11 +14,6 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Environments
 
 
-getClassDecl :: ClassIdent -> StateMonad ClassDecl
-getClassDecl classIdent = do
-    (_, classEnv) <- ask
-    return $ classEnv Map.! classIdent
-
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasGetter objectType getterIdent = do
     classDecl <- getClassDecl $ classFromObjectType objectType

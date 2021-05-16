@@ -1,0 +1,43 @@
+mutable class SomeMutableClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        badAction: (arg1: Bool, arg2: String, arg3: Int) -> Int = {
+            if (3 > 2) then {
+                arg3
+            } elif (4 > 2) then {
+                arg1
+            } elif (5 > 2) then {
+                arg2 // UnexpectedTypeError
+            } else {
+                arg3
+            }
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}
