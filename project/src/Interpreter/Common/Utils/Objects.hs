@@ -62,3 +62,6 @@ getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
     if attributeIdent `Map.member` values objectEnv
     then values objectEnv Map.! attributeIdent
     else variables objectEnv Map.! attributeIdent
+
+publicDeclarationFromProper :: ObjectDeclProper -> ObjectDecl
+publicDeclarationFromProper = ObjectDeclaration MPublic

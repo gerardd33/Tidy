@@ -72,7 +72,7 @@ getLocalObjectWithLocation objectIdent = do
 
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
 addArgumentsToEnv methodType evaluatedArgs = do
-    let methodParamList = getMethodParamList methodType
+    let methodParamList = getMethodParamNames methodType
     let declarations = zip methodParamList evaluatedArgs
     (_, newEnv) <- addLocalValues declarations
     return (pass, newEnv)

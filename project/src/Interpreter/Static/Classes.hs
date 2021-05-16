@@ -23,7 +23,7 @@ checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
     let getterNames = map objectToMethodIdentifier $ attributeNamesFromDeclaration classDecl
     let memberNames =  getterNames ++ methodNamesFromDeclaration classDecl
-    assertNoDeclarationRepetitions memberNames $ showContext $ getClassIdentifier classDecl
+    assertNoDeclarationRepetitions (showContext $ getClassIdentifier classDecl) memberNames
     checkProperSections classDecl
 
 checkProperSections :: ClassDecl -> StaticCheckMonad ObjectType
@@ -58,12 +58,12 @@ checkClassBody classType (ClassBodyFilled values variables functions actions) = 
 checkValuesSection :: Bool -> ValuesSection -> StaticCheckMonad ObjectType
 checkValuesSection _ ValuesAbsent = returnVoid
 checkValuesSection shouldInitialize (ValuesPresent declarations) = do
-    mapM_ (checkObjectDeclaration shouldInitialize) declarations >> returnVoid
+    returnPureStatic $ checkObjectDeclarations shouldInitialize declarations
 
 checkVariablesSection :: Bool -> VariablesSection -> StaticCheckMonad ObjectType
 checkVariablesSection _ VariablesAbsent = returnVoid
 checkVariablesSection shouldInitialize (VariablesPresent declarations) = do
-    mapM_ (checkObjectDeclaration shouldInitialize) declarations >> returnVoid
+    returnPureStatic $ checkObjectDeclarations shouldInitialize declarations
 
 checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
 checkFunctionsSection FunctionsAbsent = returnVoid

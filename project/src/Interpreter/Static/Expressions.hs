@@ -10,6 +10,6 @@ import           Interpreter.Static.Operators
 import           Interpreter.Static.Types
 
 
-checkExpression :: Expr -> StaticCheckMonad ObjectType
-checkExpression (ELiteral literal)       = checkLiteral literal
-checkExpression (ELocalValue identifier) = checkLocalObject identifier
+checkExpression :: Expr -> StaticCheckMonad StaticResult
+checkExpression (ELiteral literal)       = liftPureStatic $ checkLiteral literal
+checkExpression (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
