@@ -3,15 +3,15 @@ module Main where
 import           System.Directory              (doesFileExist,
                                                 setCurrentDirectory)
 import           System.Environment            (getArgs)
-import           System.Exit                   (exitFailure)
 import           System.IO
 
-import           Interpreter.Common.Debug
-import           Interpreter.Static.Entrypoint (interpret)
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex               (Token)
 import           Parser.Tidy.Par               (myLexer, pProgram)
 
+import           Interpreter.Common.Debug
+import           Interpreter.Common.Errors
+import           Interpreter.Static.Entrypoint (interpret)
 
 main :: IO ()
 main = do
@@ -48,8 +48,3 @@ interpretFileContents mode filePath = do
     case (parser . lexer) source of
         Left error    -> exitWithError error
         Right astTree -> interpret mode astTree
-
-exitWithError :: String -> IO ()
-exitWithError error = do
-    hPutStrLn stderr $ "Error: " ++ error
-    exitFailure

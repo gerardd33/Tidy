@@ -12,11 +12,11 @@ import           Interpreter.Common.Errors
 
 
 type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
-type RTState = (Map.Map Location Object, Location)
-type Result = (Object, Env)
-
-type Env = (Object, ClassEnv)
+type Env = (Object, ClassEnv) -- (localReference, classEnv)
 type ClassEnv = Map.Map ClassIdent ClassDecl
+type RTState = (Map.Map Location Object, Location)
+
+type Result = (Object, Env)
 type Location = Integer
 
 data Object = RegularObject ObjectType ObjectEnv | BuiltinObject BuiltinObject
@@ -34,3 +34,15 @@ data BuiltinObject
     | StringObject String
     | VoidObject
     deriving (Eq, Show)
+
+data InitializationType = InitializedRequired | UninitializedRequired | NoneRequired
+    deriving (Eq, Show)
+
+type StaticCheckMonad = ReaderT StaticEnv (ExceptT CompilationError IO)
+type StaticEnv = (StaticLocalEnv, ClassEnv)
+type StaticResult = (ObjectType, StaticEnv)
+
+data StaticLocalEnv = StaticLocalEnv { valueTypes :: StaticAttributeEnv, variableTypes :: StaticAttributeEnv }
+    deriving (Eq, Show)
+
+type StaticAttributeEnv = Map.Map ObjectIdent ObjectType

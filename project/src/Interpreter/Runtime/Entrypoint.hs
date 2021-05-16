@@ -12,9 +12,9 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Environments
-import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Environments
 import           Interpreter.Runtime.Expressions
 import           Interpreter.Runtime.Objects
@@ -32,7 +32,6 @@ runtimeBody mode mainClass = do
     (_, initialEnvWithLocal) <- buildInitialLocalReference classEnv
     let mainClassInstanceIdent = singletonInstanceIdentifier $ getClassIdentifier mainClass
     mainClassInstance <- local (const initialEnvWithLocal) $ getLocalObject mainClassInstanceIdent
-    liftIO $ print mainClassInstance
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
     -- TODO should call evaluateMemberAction, currently discards args, take logic from ctor call
     result <- local (const initialEnvWithThis) $ evaluateActionInEnv $ fromJust $ getMainAction mainClass

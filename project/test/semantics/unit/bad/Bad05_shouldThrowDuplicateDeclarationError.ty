@@ -1,0 +1,49 @@
+mutable class SomeMutableClass {
+
+    values: {
+        someOtherValue: Int;
+        someAttribute: Int = 3;
+        anotherValue: Int = 5;
+    }
+    
+    variables: {
+        someVariable: Int = 1;
+        someAttribute: Int; // DuplicateDeclarationError
+        anotherAttribute: Int = 5;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+}
+
+immutable class SomeImmutableClass {
+    
+    values: {
+        someValue: Int = 3;
+        someOtherValue: Int;
+        anotherValue: Int = 5;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+}
+
+singleton class SomeSingletonClass {
+    
+    values: {
+        someValue: Int = 3;
+        someOtherValue: Int = 2;
+        anotherValue: Int = 5;
+    }
+    
+    functions: {
+        someFunction: () -> Int = 339
+    }
+    
+     actions: {
+        someAction: () -> Int = 20
+        main: () -> Void = Pass
+    }
+}

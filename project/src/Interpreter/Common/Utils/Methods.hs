@@ -3,6 +3,7 @@ module Interpreter.Common.Utils.Methods where
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Objects
 
 
@@ -24,9 +25,24 @@ getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
 getActionType :: ActionDecl -> MethodType
 getActionType (ActionDeclaration _ _ _ actionType _) = actionType
 
-getMethodParamList :: MethodType -> [ObjectIdent]
-getMethodParamList (MethodTypeSignature (ParameterList valueDeclarations) _) =
-    map (objectNameFromDeclaration . ObjectDeclaration MPublic) valueDeclarations
+getMethodParamNames :: MethodType -> [ObjectIdent]
+getMethodParamNames methodType = map (getObjectIdentifier . publicDeclarationFromProper) declarations
+    where declarations = getMethodParamDeclarations methodType
+
+getMethodParamDeclarations :: MethodType -> [ObjectDeclProper]
+getMethodParamDeclarations (MethodTypeSignature (ParameterList paramDeclarations) _) = paramDeclarations
+
+getMethodReturnType :: MethodType -> ObjectType
+getMethodReturnType (MethodTypeSignature _ returnType) = returnType
+
+getFunctionWithValuesNames :: FunctionBody -> [ObjectIdent]
+getFunctionWithValuesNames functionBody = map (getObjectIdentifier . publicDeclarationFromProper) declarations
+    where declarations = getFunctionWithValuesDeclarations functionBody
+
+getFunctionWithValuesDeclarations :: FunctionBody -> [ObjectDeclProper]
+getFunctionWithValuesDeclarations (FunctionBodyMultiLine _ (WithValuesPresent (ValuesPresent declarations))) =
+    map getProperDeclaration declarations
+getFunctionWithValuesDeclarations _ = []
 
 isActionMain :: ActionDecl -> Bool
 isActionMain actionDecl = getActionIdentifier actionDecl == MethodIdentifier (LowerCaseIdent "main")
@@ -37,3 +53,6 @@ argsToExpressionList (ArgumentListPresent args) = map argToExpression args
 
 argToExpression :: MethodArg -> Expr
 argToExpression (MethodArgument expr) = expr
+
+showMethodContext :: MethodIdent -> MethodType -> String
+showMethodContext methodIdent methodType = showContext methodIdent ++ ": " ++ showContext methodType

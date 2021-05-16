@@ -2,12 +2,13 @@ module Interpreter.Runtime.Environments where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.Map                               as Map
+import qualified Data.Map                              as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Environments
 import           Interpreter.Common.Utils.Methods
@@ -32,8 +33,8 @@ setObject location newValue = do
     put (Map.insert location newValue state, nextLocation)
     returnPass
 
-addLocalObjectLocation :: ObjectIdent -> Location -> StateMonad Result
-addLocalObjectLocation attributeIdent newLocation = do
+addLocalObjectAtLocation :: ObjectIdent -> Location -> StateMonad Result
+addLocalObjectAtLocation attributeIdent newLocation = do
     (localRef, classEnv) <- ask
     let newValues = Map.insert attributeIdent newLocation (getValues localRef)
     let newLocalRef = newLocalReference $ ObjectEnv newValues (getVariables localRef)
@@ -42,7 +43,7 @@ addLocalObjectLocation attributeIdent newLocation = do
 addLocalValue :: ObjectIdent -> Object -> StateMonad Result
 addLocalValue objectIdent object = do
     location <- allocateObject object
-    addLocalObjectLocation objectIdent location
+    addLocalObjectAtLocation objectIdent location
 
 addLocalVariable :: ObjectIdent -> Object -> StateMonad Result
 addLocalVariable objectIdent object = do
@@ -71,7 +72,7 @@ getLocalObjectWithLocation objectIdent = do
 
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
 addArgumentsToEnv methodType evaluatedArgs = do
-    let methodParamList = getMethodParamList methodType
+    let methodParamList = getMethodParamNames methodType
     let declarations = zip methodParamList evaluatedArgs
     (_, newEnv) <- addLocalValues declarations
     return (pass, newEnv)

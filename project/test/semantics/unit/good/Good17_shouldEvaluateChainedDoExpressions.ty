@@ -43,12 +43,12 @@ singleton class DoExpressions {
     actions: {
         main: () -> Student = {
             val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
-                Summary("Passed", "Score: 312/400")), 20, "BS1");
+                Summary("Exam passed", "Score: B+")), 20, "BS1");
             val sumOfGrades: Int = student.grades.grade1 + student.grades.grade2 + student.grades.grade3 + student.grades.grade4;
             
-            student.grades.summary#description("Score: 350/400")
+            student.grades.summary#description("Score: A+")
             student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description
-            // Should return "Passed. Score: 350/400"
+            // Should return "Passed. Score: A+"
         }
     }
 }

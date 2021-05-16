@@ -1,7 +1,7 @@
 singleton class SimpleMain {
     
     values: {
-        numberOfMessages: Integer = 1;
+        someValue: Int = 1;
     }
     
     actions: {

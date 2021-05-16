@@ -24,8 +24,10 @@ library
       Interpreter.Common.Debug
       Interpreter.Common.Errors
       Interpreter.Common.Types
+      Interpreter.Common.Utils.Builtin
       Interpreter.Common.Utils.Classes
       Interpreter.Common.Utils.Environments
+      Interpreter.Common.Utils.Expressions
       Interpreter.Common.Utils.Methods
       Interpreter.Common.Utils.Objects
       Interpreter.Common.Utils.Types
@@ -37,7 +39,14 @@ library
       Interpreter.Runtime.Objects
       Interpreter.Runtime.Operators
       Interpreter.Runtime.Types
+      Interpreter.Static.Classes
       Interpreter.Static.Entrypoint
+      Interpreter.Static.Environments
+      Interpreter.Static.Expressions
+      Interpreter.Static.Methods
+      Interpreter.Static.Objects
+      Interpreter.Static.Operators
+      Interpreter.Static.Types
       Parser.Tidy.Abs
       Parser.Tidy.ErrM
       Parser.Tidy.Lex

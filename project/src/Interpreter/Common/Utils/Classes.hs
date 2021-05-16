@@ -1,7 +1,7 @@
 module Interpreter.Common.Utils.Classes where
 
-import qualified Data.List                         as List
-import qualified Data.Map                          as Map
+import qualified Data.List                        as List
+import qualified Data.Map                         as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -37,11 +37,23 @@ getActionDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsP
     actionDeclarations
 getActionDeclarations _ = []
 
+attributeNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
+attributeNamesFromDeclaration classDecl = valueNamesFromDeclaration classDecl ++ variableNamesFromDeclaration classDecl
+
+methodNamesFromDeclaration :: ClassDecl -> [MethodIdent]
+methodNamesFromDeclaration classDecl = functionNamesFromDeclaration classDecl ++ actionNamesFromDeclaration classDecl
+
 valueNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
-valueNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getValueDeclarations classDecl
+valueNamesFromDeclaration classDecl = map getObjectIdentifier $ getValueDeclarations classDecl
 
 variableNamesFromDeclaration :: ClassDecl -> [ObjectIdent]
-variableNamesFromDeclaration classDecl = map objectNameFromDeclaration $ getVariableDeclarations classDecl
+variableNamesFromDeclaration classDecl = map getObjectIdentifier $ getVariableDeclarations classDecl
+
+functionNamesFromDeclaration :: ClassDecl -> [MethodIdent]
+functionNamesFromDeclaration classDecl =  map getFunctionIdentifier $ getFunctionDeclarations classDecl
+
+actionNamesFromDeclaration :: ClassDecl -> [MethodIdent]
+actionNamesFromDeclaration classDecl = map getActionIdentifier $ getActionDeclarations classDecl
 
 classFromObjectType :: ObjectType -> ClassIdent
 classFromObjectType (ObjectTypeClass classIdent _) = classIdent
@@ -61,7 +73,6 @@ singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
 classIdentifierFromName :: String -> ClassIdent
 classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
 
--- TODO static verification of many things in evaluation functions, e.g. if class has only allowed sections
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 loadClassDeclaration declaration = case declaration of
     ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
@@ -69,18 +80,21 @@ loadClassDeclaration declaration = case declaration of
 loadClasses :: [ClassDecl] -> ClassEnv
 loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
 
--- TODO here throw NoMainActionError and terminate if filtered list empty, or return Maybe and throw later
-findMainClass :: [ClassDecl] -> ClassDecl
-findMainClass = head . filter hasMainAction
+findMainClass :: [ClassDecl] -> Maybe ClassDecl
+findMainClass = List.find hasMainAction
 
 getConstructorParamList :: ClassDecl -> [ObjectIdent]
 getConstructorParamList classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map objectNameFromDeclaration $ filter (not . isInitialized) $
+    where uninitializedValues = map getObjectIdentifier $ filter (not . isInitialized) $
             getValueDeclarations classDecl
-          uninitializedVariables = map objectNameFromDeclaration $ filter (not . isInitialized) $
+          uninitializedVariables = map getObjectIdentifier $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables
     where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
           initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl
+
+hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> Bool
+hasAttributeIn objectType methodIdent attributeNames = attributeIdentifier `elem` attributeNames
+    where attributeIdentifier = methodToObjectIdentifier methodIdent

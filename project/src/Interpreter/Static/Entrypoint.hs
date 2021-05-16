@@ -1,13 +1,18 @@
 module Interpreter.Static.Entrypoint (interpret) where
 
+import           Control.Monad.Except
+import           Control.Monad.Reader
 import           Data.Maybe
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Debug
+import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Environments
 import           Interpreter.Runtime.Entrypoint
+import           Interpreter.Static.Classes
 
 
 -- TODO static type checking before evaluation
@@ -16,11 +21,16 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     debugPrint mode "Loaded classes" classDeclarations
     let classEnv = loadClasses classDeclarations
     let mainClass = findMainClass classDeclarations
-    debugPrint mode "Main action" $ fromJust $ getMainAction mainClass
-    result <- runtime mode classEnv mainClass
-    debugPrint mode "Result" result
+    when (isNothing mainClass) $ exitWithError $ show NoMainActionError
+    debugPrint mode "Main action" $ getMainAction $ fromJust mainClass
+    staticCheckResult <- checkStatically mode classEnv classDeclarations
+    case staticCheckResult of Left error -> exitWithError $ show error
+                              Right _    -> return ()
+    result <- runtime mode classEnv $ fromJust mainClass
+    case result of Left error -> exitWithError $ show error
+                   Right returnValue -> debugPrint mode "Return value" returnValue
 
 
--- TODO further things to check statically:
--- make sure expression lists in action bodies are not empty
--- not allowing uninitialized values outside of a class and checking them inside a class
+checkStatically :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
+checkStatically mode classEnv classDeclarations = runExceptT
+    $ runReaderT (checkClasses classDeclarations) (initialStaticEnvironment classEnv)
