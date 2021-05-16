@@ -111,6 +111,16 @@ getInitializedAttributes classDecl = initializedValues ++ initializedVariables
     where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
           initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl
 
-hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> Bool
-hasAttributeIn objectType methodIdent attributeNames = attributeIdentifier `elem` attributeNames
+hasAttributeIn :: MethodIdent -> [ObjectIdent] -> Bool
+hasAttributeIn methodIdent attributeNames = attributeIdentifier `elem` attributeNames
     where attributeIdentifier = methodToObjectIdentifier methodIdent
+
+attributeTypeFromClassDeclaration :: ClassDecl -> ObjectIdent -> Maybe ObjectType
+attributeTypeFromClassDeclaration classDecl attributeIdent = fmap snd result
+    where attributes = map toNameTypePair $ getValueDeclarations classDecl ++ getValueDeclarations classDecl
+          result = List.find (\(attributeName, attributeType) -> attributeName == attributeIdent) attributes
+
+functionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
+functionTypeFromClassDeclaration classDecl functionIdent = fmap snd result
+    where functions = map functionToNameTypePair $ getFunctionDeclarations classDecl
+          result = List.find (\(functionName, functionType) -> functionName == functionIdent) functions

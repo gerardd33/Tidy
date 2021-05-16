@@ -24,6 +24,10 @@ data CompilationError
     | IllegalSideEffectsError String String
     | BodyEmptyError String
     | ConstructorArgumentListInvalidError String String String
+    | MethodArgumentListInvalidError String String String
+    | NoSuchAttributeError String String
+    | NoSuchFunctionError String String
+    | NoSuchActionError String String
     | CompilationError String
 
 instance Show RuntimeException where
@@ -56,6 +60,15 @@ instance Show CompilationError where
     show (ConstructorArgumentListInvalidError context expected actual) =
         "ConstructorArgumentListInvalidError: Constructor called with invalid argument types.\nExpected: " ++
         expected ++ "\nActual: " ++ actual ++ "\nIn constructor call: " ++ context
+    show (MethodArgumentListInvalidError context expected actual) =
+        "MethodArgumentListInvalidError: Method " ++ show context ++ " called with invalid argument types." ++
+        "\nExpected: " ++ expected ++ "\nActual: " ++ actual
+    show (NoSuchAttributeError object attribute) = "NoSuchAttributeError: Object " ++ show object ++
+        " has no attribute named " ++ attribute ++ "."
+    show (NoSuchFunctionError object method) = "NoSuchFunctionError: Object " ++ show object ++
+            " has no function named " ++ method ++ "."
+    show (NoSuchActionError object method) = "NoSuchActionError: Object " ++ show object ++
+                " has no action named " ++ method ++ "."
     show (CompilationError message) = "CompilationError: " ++ message
 
 

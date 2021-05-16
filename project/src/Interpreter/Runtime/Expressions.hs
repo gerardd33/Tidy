@@ -159,18 +159,18 @@ evaluateElseBranch (FElseIf predicate thenBranch elseBranch) =
     returnPure $ evaluateExpression $ EFunctionalControlFlow $ FIfThenElse predicate thenBranch elseBranch
 
 evaluateGetExpressionOnObject :: Object -> FunctionCall -> StateMonad Object
-evaluateGetExpressionOnObject object (CallFunction functionIdent argumentList) = do
+evaluateGetExpressionOnObject object (CallFunction functionIdent argList) = do
     originalEnv <- ask
-    evaluatedArgs <- evaluateArgumentList argumentList
+    evaluatedArgs <- evaluateArgumentList argList
     takeGetter <- hasGetter (getObjectType object) functionIdent
     if takeGetter && null evaluatedArgs
     then evaluateGetter object functionIdent
     else evaluateMemberFunction object functionIdent evaluatedArgs
 
 evaluateDoExpressionOnObject :: Object -> ActionCall -> StateMonad Result
-evaluateDoExpressionOnObject object (CallAction actionIdent argumentList) = do
+evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
     originalEnv <- ask
-    evaluatedArgs <- evaluateArgumentList argumentList
+    evaluatedArgs <- evaluateArgumentList argList
     takeSetter <- hasSetter (getObjectType object) actionIdent
     if takeSetter && length evaluatedArgs == 1
     then evaluateSetter object actionIdent $ head evaluatedArgs
