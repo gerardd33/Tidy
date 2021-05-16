@@ -17,9 +17,39 @@ import           Interpreter.Static.Types
 checkExpression :: String -> Expr -> StaticCheckMonad StaticResult
 checkExpression _ (ELiteral literal)       = liftPureStatic $ checkLiteral literal
 checkExpression _ (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
+checkExpression context (EAdd expr1 expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkAddition
+-- checkExpression context (ESubtract expr1 expr2) =
+--     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkSubtraction
+-- checkExpression context (EMultiply expr1 expr2) =
+--     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkMultiplication
+-- checkExpression context (EDivide expr1 expr2) =
+--     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkDivision
+-- checkExpression context (EModulo expr1 expr2) =
+--     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkModulo
+-- checkExpression context (EConcatenate expr1 expr2) =
+--     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkConcatenation
+-- checkExpression context (EUnaryNot expr) =
+--     liftPureStatic $ evaluateUnaryOperator context expr checkUnaryNot
+-- checkExpression context (EUnaryMinus expr) =
+--     liftPureStatic $ evaluateUnaryOperator context expr checkUnaryMinus
+-- checkExpression context (ERelationalOperator expr1 operator expr2) =
+--     liftPureStatic $ context checkRelationalOperator expr1 expr2 operator
+-- checkExpression context (EBooleanOperator expr1 operator expr2) =
+--     liftPureStatic $ context checkBooleanOperator expr1 expr2 operator
+
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
 checkExpression _ _ = liftPureStatic $ return intType
 
+
+checkBinaryOperator :: String -> Expr -> Expr ->
+    (String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType) -> StaticCheckMonad ObjectType
+checkBinaryOperator context expr1 expr2 typeChecker = do
+    assertPureExpression context expr1
+    assertPureExpression context expr2
+    (type1, _) <- checkExpression context expr1
+    (type2, _) <- checkExpression context expr2
+    typeChecker context type1 type2 expr1 expr2
 
 checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
 checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
