@@ -170,6 +170,7 @@ checkObjectDeclaration initializationType (ObjectDeclaration _ objectDeclProper)
                     (throwError $ UninitializedError $ showContext objectIdent)
                  Initialized expr -> when (initializationType == UninitializedRequired)
                     (throwError $ IllegalInitializationError $ showContext objectIdent)
+            checkObjectType objectType
             declareObjectStatic objectDeclProper objectType initialization
 
 declareObjectStatic :: ObjectDeclProper -> ObjectType -> Initialization -> StaticCheckMonad StaticResult

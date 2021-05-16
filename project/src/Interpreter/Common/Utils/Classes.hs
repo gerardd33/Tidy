@@ -78,7 +78,17 @@ loadClassDeclaration declaration = case declaration of
     ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
 
 loadClasses :: [ClassDecl] -> ClassEnv
-loadClasses declarations = Map.fromList $ map loadClassDeclaration declarations
+loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses ++ builtinClasses
+
+builtinClasses :: [ClassDecl]
+builtinClasses = map builtinClassDeclFromName builtinClassNames
+
+builtinClassNames :: [String]
+builtinClassNames = ["Int", "Bool", "Char", "String", "Void"]
+
+builtinClassDeclFromName :: String -> ClassDecl
+builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable (classIdentifierFromName name)
+    SuperclassAbsent ClassBodyEmpty
 
 findMainClass :: [ClassDecl] -> Maybe ClassDecl
 findMainClass = List.find hasMainAction
