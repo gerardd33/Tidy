@@ -20,6 +20,7 @@ data CompilationError
     | IllegalInitializationError String
     | DuplicateDeclarationError String String
     | ObjectNotInScopeError String
+    | IllegalSideEffectsError String String
     | CompilationError String
 
 instance Show RuntimeException where
@@ -43,6 +44,8 @@ instance Show CompilationError where
         ++ show name ++ " is declared more than once in " ++ show context ++ "."
     show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++
         " is not declared in this scope."
+    show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions within " ++ show context ++
+        " must be purely functional.\nExpression with side effects:\n" ++ expr
     show (CompilationError message) = "CompilationError: " ++ message
 
 

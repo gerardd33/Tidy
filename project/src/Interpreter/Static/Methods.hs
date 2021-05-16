@@ -2,7 +2,7 @@ module Interpreter.Static.Methods where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import           Data.List                        as List
+import           Data.List                            as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -41,14 +41,15 @@ checkMethodParams methodIdent methodType = do
     checkObjectDeclarations UninitializedRequired paramDeclarations
 
 checkFunctionBody :: MethodIdent -> MethodType -> FunctionBody -> StaticCheckMonad ObjectType
-checkFunctionBody functionIdent functionType (FunctionBodyOneLine expr) =
-    checkFunctionBody functionIdent functionType (FunctionBodyMultiLine expr WithValuesAbsent)
-checkFunctionBody functionIdent functionType (FunctionBodyMultiLine expr withValues) = do
+checkFunctionBody functionIdent functionType (FunctionBodyOneLine bodyExpr) =
+    checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr WithValuesAbsent)
+checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr withValues) = do
     let valuesSection = case withValues of
             WithValuesAbsent         -> ValuesAbsent
             WithValuesPresent values -> values
     (_, env) <- checkValuesSection InitializedRequired valuesSection
-    local (const env) $ checkFunctionReturnType functionIdent functionType expr
+    local (const env) $ checkFunctionReturnType functionIdent functionType bodyExpr
+    assertPureExpression (showMethodContext functionIdent functionType) bodyExpr
 
 checkFunctionReturnType :: MethodIdent -> MethodType -> Expr -> StaticCheckMonad ObjectType
 checkFunctionReturnType functionIdent functionType bodyExpr = do
