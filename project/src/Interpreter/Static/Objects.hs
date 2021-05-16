@@ -45,6 +45,7 @@ declareObjectStatic :: ObjectDeclProper -> ObjectType -> Initialization -> Stati
 declareObjectStatic properDecl objectType Uninitialized =
     registerLocalObjectType (objectIdentifierFromProperDeclaration properDecl) objectType
 declareObjectStatic properDecl expectedType (Initialized expr) = do
+    assertPureExpression (showContext properDecl) expr
     (exprType, newEnv) <- checkExpression expr
     assertTypesMatch (showContext properDecl) expectedType exprType
     local (const newEnv) $ registerLocalObjectType (objectIdentifierFromProperDeclaration properDecl) expectedType

@@ -17,6 +17,8 @@ import           Interpreter.Static.Types
 checkExpression :: Expr -> StaticCheckMonad StaticResult
 checkExpression (ELiteral literal)       = liftPureStatic $ checkLiteral literal
 checkExpression (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
+-- TODO finish implementing
+checkExpression (ELocalDeclaration _) = liftPureStatic returnVoid
 checkExpression _ = liftPureStatic $ return intType
 
 assertPureExpression :: String -> Expr -> StaticCheckMonad ObjectType

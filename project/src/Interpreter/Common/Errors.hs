@@ -44,7 +44,7 @@ instance Show CompilationError where
         ++ show name ++ " is declared more than once in " ++ show context ++ "."
     show (ObjectNotInScopeError name) = "ObjectNotInScopeError: Object " ++ show name ++
         " is not declared in this scope."
-    show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions within " ++ show context ++
+    show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions inside " ++ show context ++
         " must be purely functional.\nExpression with side effects:\n" ++ expr
     show (CompilationError message) = "CompilationError: " ++ message
 
