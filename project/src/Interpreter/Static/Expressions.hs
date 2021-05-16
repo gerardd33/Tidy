@@ -15,6 +15,13 @@ import           Interpreter.Static.Operators
 import           Interpreter.Static.Types
 
 
+checkExpressionList :: String -> [Expr] -> StaticCheckMonad StaticResult
+checkExpressionList context [] = throwError $ BodyEmptyError context
+checkExpressionList context [expr] = checkExpression context expr
+checkExpressionList context (expr:exprs) = do
+    (_, env) <- checkExpression context expr
+    local (const env) $ checkExpressionList context exprs
+
 checkExpression :: String -> Expr -> StaticCheckMonad StaticResult
 checkExpression _ (ELiteral literal)       = liftPureStatic $ checkLiteral literal
 checkExpression _ (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
@@ -41,6 +48,8 @@ checkExpression context (EBooleanOperator expr1 operator expr2) =
 checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
     liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
+checkExpression context (EImperativeControlFlow (IIf predicateExpr thenBody optionalElseBranch)) =
+    checkImperativeIf context predicateExpr thenBody optionalElseBranch
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
 checkExpression _ _ = liftPureStatic $ return intType
 
@@ -63,7 +72,7 @@ checkUnaryOperator context expr expectedType = do
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do
-    checkFunctionalIfPredicate context predicateExpr
+    checkPurePredicate context predicateExpr
     let thenExpr = getThenBranchExpression thenBranch
     let thenContext = showComplexContext thenExpr context
     assertPureExpression thenContext thenExpr
@@ -76,8 +85,20 @@ checkFunctionalIf context predicateExpr thenBranch elseBranch = do
     assertTypesMatch context thenType elseType
     return thenType
 
-checkFunctionalIfPredicate :: String -> Expr -> StaticCheckMonad ObjectType
-checkFunctionalIfPredicate context predicateExpr = do
+checkImperativeIf :: String -> Expr -> [Expr] -> OptionalElseBranch -> StaticCheckMonad StaticResult
+checkImperativeIf context predicateExpr body optionalElseBranch = do
+    checkPurePredicate context predicateExpr
+    (bodyType, _) <- checkExpressionList context body
+    (elseType, _) <- case optionalElseBranch of
+        IElseAbsent -> liftPureStatic $ return bodyType
+        IElsePresent elseBody -> checkExpressionList context elseBody
+        IElseIf elsePredicateExpr elseBody elseOptionalElseBranch ->
+            checkImperativeIf (showContext elseBody) elsePredicateExpr elseBody elseOptionalElseBranch
+    assertTypesMatch context bodyType elseType
+    liftPureStatic $ return bodyType
+
+checkPurePredicate :: String -> Expr -> StaticCheckMonad ObjectType
+checkPurePredicate context predicateExpr = do
     let predicateContext = showComplexContext predicateExpr context
     assertPureExpression predicateContext predicateExpr
     (predicateType, _) <- checkExpression predicateContext predicateExpr

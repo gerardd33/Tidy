@@ -21,7 +21,7 @@ data CompilationError
     | DuplicateDeclarationError String String
     | ObjectNotInScopeError String
     | IllegalSideEffectsError String String
-    | EmptyMethodBodyError String
+    | BodyEmptyError String
     | CompilationError String
 
 instance Show RuntimeException where
@@ -47,8 +47,8 @@ instance Show CompilationError where
         " is not declared in this scope."
     show (IllegalSideEffectsError context expr) = "IllegalSideEffectsError: Expressions inside \"" ++ context ++
         "\" must be purely functional.\nExpression with side effects:\n" ++ expr
-    show (EmptyMethodBodyError context) = "EmptyMethodBodyError: Body of method " ++ show context ++
-        "must contain at least one proper expression. If you only need a filler, return Pass."
+    show (BodyEmptyError context) = "BodyEmptyError: Body of \"" ++ context ++
+        "\" must contain at least one proper expression. If you only need a filler, return Pass."
     show (CompilationError message) = "CompilationError: " ++ message
 
 
