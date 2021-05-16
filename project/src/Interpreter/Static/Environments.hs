@@ -10,6 +10,7 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Environments
+import           Interpreter.Common.Utils.Objects
 
 
 registerLocalObjectType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
@@ -24,6 +25,5 @@ checkLocalObject objectIdent = do
     (localEnv, _) <- ask
     let localObjectTypes = valueTypes localEnv `Map.union` variableTypes localEnv
     let lookup = Map.lookup objectIdent localObjectTypes
-    case lookup of
-        Just objectType -> return objectType
-        Nothing         -> throwError $ ObjectNotInScopeError (showContext objectIdent)
+    case lookup of Just objectType -> return objectType
+                   Nothing         -> throwError $ ObjectNotInScopeError $ showContext objectIdent

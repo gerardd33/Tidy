@@ -8,6 +8,7 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
+import           Interpreter.Common.Utils.Expressions
 
 
 assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
@@ -33,3 +34,8 @@ liftPureStatic calculation = do
 
 returnVoid :: StaticCheckMonad ObjectType
 returnVoid = return voidType
+
+assertPureExpression :: String -> Expr -> StaticCheckMonad ObjectType
+assertPureExpression context expr = do
+    unless (isExpressionPure expr) $ throwError $ IllegalSideEffectsError context (showContext expr)
+    returnVoid
