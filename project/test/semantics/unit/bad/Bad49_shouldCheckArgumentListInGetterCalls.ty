@@ -14,7 +14,7 @@ mutable class TestClass {
     }
     
     functions: {
-        goodFunction: () -> Int = 50
+        goodFunction: (x: Int, y: Bool, z: String) -> Int = 50
     }
     
     actions: {
@@ -30,7 +30,8 @@ singleton class Main {
     actions: {
         main: () -> Int = {
             val testClass: TestClass = TestClass(3, 4 * 4, "OK", False);
-            testClass.absentAttribute // NoSuchFunctionError
+            testClass.var3(14) // MethodArgumentListInvalidError
+            3
         }
     }
 }

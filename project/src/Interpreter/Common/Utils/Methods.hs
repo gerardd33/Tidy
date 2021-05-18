@@ -63,3 +63,6 @@ showMethodContext methodIdent methodType = showContext methodIdent ++ ": " ++ sh
 
 functionToNameTypePair :: FunctionDecl -> (MethodIdent, MethodType)
 functionToNameTypePair (FunctionDeclaration _ _ methodName methodType _) = (methodName, methodType)
+
+actionToNameTypePair :: ActionDecl -> (MethodIdent, MethodType)
+actionToNameTypePair (ActionDeclaration _ _ methodName methodType _) = (methodName, methodType)

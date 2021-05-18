@@ -1,13 +1,13 @@
 module Interpreter.Runtime.Expressions where
 
 
+import           Control.Monad.Except
 import           Interpreter.Common.Errors
-import Control.Monad.Except
 
 import           Control.Monad.Reader
 import           Control.Monad.State
-import qualified Data.List                           as List
-import qualified Data.Map                            as Map
+import qualified Data.List                        as List
+import qualified Data.Map                         as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -17,9 +17,9 @@ import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
+import           Interpreter.Runtime.Classes
 import           Interpreter.Runtime.Environments
 import           Interpreter.Runtime.Methods
-import           Interpreter.Runtime.Classes
 import           Interpreter.Runtime.Objects
 import           Interpreter.Runtime.Operators
 import           Interpreter.Runtime.Types
@@ -163,8 +163,7 @@ evaluateGetExpressionOnObject object (CallFunction functionIdent argList) = do
     originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argList
     takeGetter <- hasGetter (getObjectType object) functionIdent
-    if takeGetter && null evaluatedArgs
-    then evaluateGetter object functionIdent
+    if takeGetter then evaluateGetter object functionIdent
     else evaluateMemberFunction object functionIdent evaluatedArgs
 
 evaluateDoExpressionOnObject :: Object -> ActionCall -> StateMonad Result
@@ -172,8 +171,7 @@ evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
     originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argList
     takeSetter <- hasSetter (getObjectType object) actionIdent
-    if takeSetter && length evaluatedArgs == 1
-    then evaluateSetter object actionIdent $ head evaluatedArgs
+    if takeSetter then evaluateSetter object actionIdent $ head evaluatedArgs
     else evaluateMemberAction object actionIdent evaluatedArgs
 
 evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object

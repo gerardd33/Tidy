@@ -16,17 +16,17 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Types
 
 
-getClassDeclStatic :: ClassIdent -> StaticCheckMonad (Maybe ClassDecl)
+getClassDeclStatic :: ClassIdent -> StaticCheckMonad ClassDecl
 getClassDeclStatic classIdent = do
     (_, classEnv) <- ask
-    return $ Map.lookup classIdent classEnv
+    let lookup = Map.lookup classIdent classEnv
+    case lookup of Nothing -> throwError $ ClassNotInScopeError $ showContext classIdent
+                   Just classDecl -> return classDecl
 
 checkObjectType :: ObjectType -> StaticCheckMonad ObjectType
 checkObjectType objectType = do
-    (_, classEnv) <- ask
     let classIdent = classFromObjectType objectType
     classDecl <- getClassDeclStatic classIdent
-    when (isNothing classDecl) $ throwError $ ClassNotInScopeError $ showContext classIdent
     returnVoid
 
 addLocalObjectType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
@@ -48,8 +48,7 @@ getAttributeTypeStatic :: String -> ObjectType -> ObjectIdent -> StaticCheckMona
 getAttributeTypeStatic context objectType attributeIdent = do
     let classIdent = classFromObjectType objectType
     classDecl <- getClassDeclStatic classIdent
-    when (isNothing classDecl) $ throwError $ ClassNotInScopeError $ showContext classIdent
-    let attributeType = attributeTypeFromClassDeclaration (fromJust classDecl) attributeIdent
+    let attributeType = attributeTypeFromClassDeclaration classDecl attributeIdent
     when (isNothing attributeType) $ throwError $ NoSuchAttributeError context (showContext attributeIdent)
     return $ fromJust attributeType
 
@@ -67,11 +66,10 @@ hasGetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasGetterStatic objectType getterIdent = do
     let classIdent = classFromObjectType objectType
     classDecl <- getClassDeclStatic classIdent
-    when (isNothing classDecl) $ throwError $ ClassNotInScopeError $ showContext classIdent
     localValueNames <- getLocalValueNamesStatic
     localVariableNames <- getLocalVariableNamesStatic
     let localObjects = localValueNames ++ localVariableNames
-    let classAttributes = attributeNamesFromDeclaration $ fromJust classDecl
+    let classAttributes = attributeNamesFromDeclaration classDecl
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
     return $ hasAttributeIn getterIdent attributeNames
 
@@ -79,8 +77,7 @@ hasSetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasSetterStatic objectType setterIdent = do
     let classIdent = classFromObjectType objectType
     classDecl <- getClassDeclStatic classIdent
-    when (isNothing classDecl) $ throwError $ ClassNotInScopeError $ showContext classIdent
     localVariables <- getLocalVariableNamesStatic
-    let classVariables = variableNamesFromDeclaration $ fromJust classDecl
+    let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
     return $ hasAttributeIn setterIdent variableNames
