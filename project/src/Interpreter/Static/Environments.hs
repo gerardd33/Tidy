@@ -21,6 +21,11 @@ getClassDeclarationStatic classIdent = do
     case lookup of Nothing -> throwError $ ClassNotInScopeError $ showContext classIdent
                    Just classDecl -> return classDecl
 
+setThisReferenceType :: ObjectType -> StaticCheckMonad StaticResult
+setThisReferenceType newThisReferenceType = do
+    (localEnv, _) <- ask
+    addLocalValueType thisReferenceIdentifier newThisReferenceType
+
 checkObjectType :: ObjectType -> StaticCheckMonad ObjectType
 checkObjectType objectType = do
     let classIdent = classIdentifierFromObjectType objectType

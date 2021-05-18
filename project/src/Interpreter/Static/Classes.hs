@@ -30,15 +30,15 @@ checkSections (ClassDeclaration _ classType classIdent _ classBody) = do
         MSingleton -> assertVariablesAbsent classIdent classType classBody
         MImmutable -> assertVariablesAbsent classIdent classType classBody >>
             assertActionsAbsent classIdent classType classBody
-    checkClassBody classType classBody
+    checkClassBody classIdent classType classBody
 
-checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
-checkClassBody _ ClassBodyEmpty = returnVoid
-checkClassBody classType (ClassBodyFilled values variables functions actions) = do
+checkClassBody :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+checkClassBody _ _ ClassBodyEmpty = returnVoid
+checkClassBody classIdent classType (ClassBodyFilled values variables functions actions) = do
     checkValuesSection (if classType == MSingleton then InitializedRequired else NoneRequired) values
     checkVariablesSection NoneRequired variables
-    checkFunctionsSection functions
-    checkActionsSection actions
+    checkFunctionsSection classIdent functions
+    checkActionsSection classIdent actions
 
 checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
 checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
@@ -50,15 +50,15 @@ checkVariablesSection _ VariablesAbsent = liftPureStatic returnVoid
 checkVariablesSection initializationType (VariablesPresent declarations) =
     checkObjectDeclarations initializationType True declarations
 
-checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
-checkFunctionsSection FunctionsAbsent = returnVoid
-checkFunctionsSection (FunctionsPresent declarations) = do
-    mapM_ checkFunctionDeclaration declarations >> returnVoid
+checkFunctionsSection :: ClassIdent -> FunctionsSection -> StaticCheckMonad ObjectType
+checkFunctionsSection _ FunctionsAbsent = returnVoid
+checkFunctionsSection classIdent (FunctionsPresent declarations) = do
+    mapM_ (checkFunctionDeclaration classIdent) declarations >> returnVoid
 
-checkActionsSection :: ActionsSection -> StaticCheckMonad ObjectType
-checkActionsSection ActionsAbsent = returnVoid
-checkActionsSection (ActionsPresent declarations) = do
-    mapM_ checkActionDeclaration declarations >> returnVoid
+checkActionsSection :: ClassIdent -> ActionsSection -> StaticCheckMonad ObjectType
+checkActionsSection _ ActionsAbsent = returnVoid
+checkActionsSection classIdent (ActionsPresent declarations) = do
+    mapM_ (checkActionDeclaration classIdent) declarations >> returnVoid
 
 assertVariablesAbsent :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 assertVariablesAbsent _ _ ClassBodyEmpty                          = returnVoid
