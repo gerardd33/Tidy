@@ -32,7 +32,6 @@ runtimeBody mode mainClass = do
     let mainClassInstanceIdent = singletonInstanceIdentifier $ getClassIdentifier mainClass
     mainClassInstance <- local (const initialEnvWithLocal) $ getLocalObject mainClassInstanceIdent
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
-    -- TODO should call evaluateMemberAction, currently discards args, take logic from ctor call
     result <- local (const initialEnvWithThis) $ evaluateActionInEnv $ fromJust $ getMainAction mainClass
     state <- get
     liftIO $ debugPrint mode "Final state" state

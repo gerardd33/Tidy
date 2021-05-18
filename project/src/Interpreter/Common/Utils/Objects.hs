@@ -46,7 +46,6 @@ objectToNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
 objectToNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Initialized expr))) =
     (objectIdent, expr)
 
--- TODO handle builtin objects
 getAttributeLocation :: Object -> ObjectIdent -> Location
 getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
     if attributeIdent `Map.member` values objectEnv

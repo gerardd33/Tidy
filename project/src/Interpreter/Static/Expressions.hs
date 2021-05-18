@@ -46,8 +46,8 @@ checkExpression context (EUnaryNot expr) =
     liftPureStatic $ checkUnaryOperator context expr boolType
 checkExpression context (EUnaryMinus expr) =
     liftPureStatic $ checkUnaryOperator context expr intType
-checkExpression context (ERelationalOperator expr1 _ expr2) =
-    liftPureStatic $ checkBinaryOperator context expr1 expr2 checkRelationalOperator
+checkExpression context (ERelationalOperator expr1 operator expr2) =
+    liftPureStatic $ checkBinaryOperator context expr1 expr2 (checkRelationalOperator operator)
 checkExpression context (EBooleanOperator expr1 operator expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkBooleanOperator
 
