@@ -108,12 +108,14 @@ checkGetExpression context (GetExpressionChain prefixGetExpression methodCall) =
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
     checkGetExpressionOnObject (showContext prefixGetExpression) prefixObjectType methodCall
 
--- checkGetExpression :: String -> GetExpr -> StaticCheckMonad ObjectType
--- checkGetExpression context (GetExpressionStatic singletonClass methodCall) = do
---     classDecl <- getClassDeclStatic classIdent
---     when (isNothing classDecl) $ throwError $ ClassNotInScopeError $ showContext classIdent
---     singletonObjectType <- checkExpression $ EGetExpression prefixGetExpression
---     checkGetExpressionOnObject context prefixObjectType methodCall
+checkGetExpression context (GetExpressionStatic classIdent methodCall) = do
+    classDecl <- getClassDeclStatic classIdent
+    let classContext = showContext classIdent
+    when (isNothing classDecl) $ throwError $ ClassNotInScopeError classContext
+    unless (isSingletonClass $ fromJust classDecl) $ throwError $ NonSingletonClassError
+        $ classContext ++ " " ++ showContext methodCall
+    let singletonObjectType = ObjectTypeClass classIdent GenericParameterAbsent
+    checkGetExpressionOnObject classContext singletonObjectType methodCall
 
 checkGetExpressionOnObject :: String -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
 checkGetExpressionOnObject context objectType (CallFunction functionIdent ArgumentListAbsent) =

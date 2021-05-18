@@ -1,0 +1,81 @@
+mutable class SomeMutableClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        goodFunction: (x: Int) -> Int = 50 + x
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            val x: Int = arg2;
+            arg2 + x
+        }
+    }
+}
+
+singleton class SomeSingletonClass {
+    
+    functions: {
+        goodFunction: (x: Int) -> Int = 50 + x
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            val x: Int = arg2;
+            arg2 + x
+        }
+    }
+}
+
+immutable class SomeImmutableClass {
+    
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+}
+
+
+singleton class AnotherSingletonClass {
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            3
+        }
+        
+        someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            2 + 2
+        }
+        
+        main: () -> Int = {
+            SomeSingletonClass.goodFunction(3)
+            SomeMutableClass.goodFunction(3)
+        }
+    }
+}
+

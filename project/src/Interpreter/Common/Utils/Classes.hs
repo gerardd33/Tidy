@@ -91,7 +91,10 @@ builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable (classIden
     SuperclassAbsent ClassBodyEmpty
 
 findMainClass :: [ClassDecl] -> Maybe ClassDecl
-findMainClass = List.find hasMainAction . List.filter ((==MSingleton) . getClassType)
+findMainClass = List.find hasMainAction . List.filter isSingletonClass
+
+isSingletonClass :: ClassDecl -> Bool
+isSingletonClass = (==MSingleton) . getClassType
 
 getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
 getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
