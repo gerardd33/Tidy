@@ -46,11 +46,15 @@ addLocalVariableType objectIdent objectType = do
     let newLocalEnv = StaticLocalEnv (valueTypes localEnv) newVariables
     return (voidType, (newLocalEnv, classEnv))
 
-checkLocalObject :: ObjectIdent -> StaticCheckMonad ObjectType
-checkLocalObject objectIdent = do
+tryGetLocalObjectType :: ObjectIdent -> StaticCheckMonad (Maybe ObjectType)
+tryGetLocalObjectType objectIdent = do
     (localEnv, _) <- ask
     let localObjectTypes = valueTypes localEnv `Map.union` variableTypes localEnv
-    let lookup = Map.lookup objectIdent localObjectTypes
+    return $ Map.lookup objectIdent localObjectTypes
+
+checkLocalObject :: ObjectIdent -> StaticCheckMonad ObjectType
+checkLocalObject objectIdent = do
+    lookup <- tryGetLocalObjectType objectIdent
     case lookup of Just objectType -> return objectType
                    Nothing         -> throwError $ ObjectNotInScopeError $ showContext objectIdent
 
@@ -92,3 +96,9 @@ hasSetterStatic objectType setterIdent = do
     let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
     return $ hasAccessorIn setterIdent variableNames
+
+assertNoPreviousDuplicateDeclaration :: String -> ObjectIdent -> StaticCheckMonad ObjectType
+assertNoPreviousDuplicateDeclaration context objectIdent = do
+    lookup <- tryGetLocalObjectType objectIdent
+    case lookup of Nothing -> returnVoid
+                   Just _ -> throwError $ DuplicateDeclarationError (showContext objectIdent) context

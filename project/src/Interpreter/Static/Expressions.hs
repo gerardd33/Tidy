@@ -222,6 +222,7 @@ declareObjectStatic properDecl expectedType (Initialized expr) isVariable = do
     (exprType, newEnv) <- checkExpression context expr
     assertTypesMatch context expectedType exprType
     let objectIdent = objectIdentifierFromProperDeclaration properDecl
+    assertNoPreviousDuplicateDeclaration context objectIdent
     if isVariable then local (const newEnv) $ addLocalVariableType objectIdent expectedType
     else local (const newEnv) $ addLocalValueType objectIdent expectedType
 
