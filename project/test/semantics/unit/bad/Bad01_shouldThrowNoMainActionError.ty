@@ -1,96 +1,85 @@
-mutable class PhoneMessageReceiver extends MessageReceiver {
-    
+mutable class SomeMutableClass {
+
     values: {
-        messageReceived: String = "You got a new message!";
-        messageInvalid: String = "Invalid message";
-        maxMessageLength: Int = 100;
-        emptyString: String = "";
-        
-        notificationChannels: List[NotificationChannel];
+        total: Int;
+        count: Int;
+        name: String = "Some name";
     }
     
     variables: {
-        messages: List[Message] = List();
+        var1: Int = 1;
+        var2: String = "S";
     }
     
     functions: {
-        private parseMessage: (message: Message) -> String = {
-            if (this.validateMessage(message)) then {
-                match message {
-                    case Email -> "One new email"
-                    case Sms -> "One new SMS"
-                    case Notification -> "One new notification"
-                }
-            } elif (message.privileged) then {
-                this.emptyString
-            } else {
-                this.messageInvalid
-            }
-        }
-        
-        private validateMessage: (message: Message) -> Bool = {
-            not message.empty and message.length <= this.maxMessageLength
-        }
+        goodFunction: () -> Int = 50
     }
     
     actions: {
-        override receive: (message: Message) -> Bool = {    
-            System#printLine(this.messageReceived)
-            
-            val response: String = this.parseMessage(message);
-            System#printLine(response)
-            
-            if (response != this.messageInvalid) {
-                super#receive(message)
-                this#messages(this.messages.add(message))
-                
-                for (channel: NotificationChannel; in this.notificationChannels) {
-                    channel#notify(response)
-                }
-                
-                True
-            } else {
-                False
-            }
+        main: () -> Void = { // Bad main, not a singleton class
+            Pass
         }
         
-        // a bit more artificial example to show how some more advanced features work
-        override transformMessages: (messageTransformer: do (complete: Bool) -> Void) -> Void = {
-            val handleMessage: do (message: Message) -> Void = do (message: Message) -> {
-                System#printLine("Transforming message " ++ message)
-                message#transform(messageTransformer#call(False))
-            };
-            
-            for (message: Message; in this.messages) {
-                handleMessage#call(message)
-            }
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            val x: Int = arg2;
+            arg2 + x
         }
     }
 }
 
-singleton class MessageReceiverExecutor extends Executor {
+singleton class SomeSingletonClass {
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+        
+        someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            val x: Int = arg2;
+            arg2 + x
+        }
+        
+        badMain: () -> Void = {
+            Pass
+        }
+    }
+}
+
+immutable class SomeImmutableClass {
     
     values: {
-        numberOfMessages: Integer = 1;
+        total: Int;
+        count: Int;
+        name: String = "Some name";
     }
     
     functions: {
-        main: () -> Void = {
-            Pass
-            // not a proper main
-        }
-    }
-    
-    actions: {
-        otherAction1: () -> Void = System#printLine("?")
-        
-        mainButNamedBadly: () -> Void = {
-            System#printLine("The main action is here!")
-            System#printLine("It does a lot of interesting things")
-            val receiver: PhoneMessageReceiver = PhoneMessageReceiver(List());
-            receiver#receive(Message("some message"))
-        }
-        
-        otherAction2: () -> Void = System#printLine("??")
+        goodFunction: () -> Int = 50
+        main: () -> Void = Pass // Bad main, not an action, not a singleton class
     }
 }
+
+
+singleton class AnotherSingletonClass {
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            3
+        }
+        
+        someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
+            2 + 2
+        }
+        
+        m: () -> Void = {
+            Pass
+        }
+    }
+}
+
