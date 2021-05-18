@@ -1,0 +1,36 @@
+mutable class TestClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+        var3: String;
+        var4: Bool;
+    }
+    
+    functions: {
+        goodFunction: () -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Int = {
+            val testClass: TestClass = TestClass(3, 4 * 4, "OK", False);
+            testClass.absentFunction // NoSuchFunctionError
+        }
+    }
+}

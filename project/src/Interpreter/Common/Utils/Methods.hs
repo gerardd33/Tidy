@@ -29,6 +29,10 @@ getMethodParamNames :: MethodType -> [ObjectIdent]
 getMethodParamNames methodType = map (getObjectIdentifier . publicDeclarationFromProper) declarations
     where declarations = getMethodParamDeclarations methodType
 
+getMethodParamTypes :: MethodType -> [ObjectType]
+getMethodParamTypes methodType = map (objectTypeFromDeclaration . publicDeclarationFromProper) declarations
+    where declarations = getMethodParamDeclarations methodType
+
 getMethodParamDeclarations :: MethodType -> [ObjectDeclProper]
 getMethodParamDeclarations (MethodTypeSignature (ParameterList paramDeclarations) _) = paramDeclarations
 
@@ -56,3 +60,9 @@ argToExpression (MethodArgument expr) = expr
 
 showMethodContext :: MethodIdent -> MethodType -> String
 showMethodContext methodIdent methodType = showContext methodIdent ++ ": " ++ showContext methodType
+
+functionToNameTypePair :: FunctionDecl -> (MethodIdent, MethodType)
+functionToNameTypePair (FunctionDeclaration _ _ methodName methodType _) = (methodName, methodType)
+
+actionToNameTypePair :: ActionDecl -> (MethodIdent, MethodType)
+actionToNameTypePair (ActionDeclaration _ _ methodName methodType _) = (methodName, methodType)

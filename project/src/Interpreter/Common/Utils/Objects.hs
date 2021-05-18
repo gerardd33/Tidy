@@ -28,6 +28,9 @@ getObjectType (RegularObject objectType _) = objectType
 getObjectIdentifier :: ObjectDecl -> ObjectIdent
 getObjectIdentifier (ObjectDeclaration _ declProper) = objectIdentifierFromProperDeclaration declProper
 
+objectTypeFromDeclaration :: ObjectDecl -> ObjectType
+objectTypeFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper _ objectType _)) = objectType
+
 objectIdentifierFromProperDeclaration :: ObjectDeclProper -> ObjectIdent
 objectIdentifierFromProperDeclaration (ObjectDeclarationProper objectIdent _ _) = objectIdent
 

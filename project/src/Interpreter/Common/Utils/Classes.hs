@@ -91,7 +91,10 @@ builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable (classIden
     SuperclassAbsent ClassBodyEmpty
 
 findMainClass :: [ClassDecl] -> Maybe ClassDecl
-findMainClass = List.find hasMainAction
+findMainClass = List.find hasMainAction . List.filter isSingletonClass
+
+isSingletonClass :: ClassDecl -> Bool
+isSingletonClass = (==MSingleton) . getClassType
 
 getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
 getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
@@ -111,6 +114,21 @@ getInitializedAttributes classDecl = initializedValues ++ initializedVariables
     where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
           initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl
 
-hasAttributeIn :: ObjectType -> MethodIdent -> [ObjectIdent] -> Bool
-hasAttributeIn objectType methodIdent attributeNames = attributeIdentifier `elem` attributeNames
+hasAttributeIn :: MethodIdent -> [ObjectIdent] -> Bool
+hasAttributeIn methodIdent attributeNames = attributeIdentifier `elem` attributeNames
     where attributeIdentifier = methodToObjectIdentifier methodIdent
+
+attributeTypeFromClassDeclaration :: ClassDecl -> ObjectIdent -> Maybe ObjectType
+attributeTypeFromClassDeclaration classDecl attributeIdent = fmap snd result
+    where attributes = map toNameTypePair $ getValueDeclarations classDecl ++ getVariableDeclarations classDecl
+          result = List.find (\(attributeName, attributeType) -> attributeName == attributeIdent) attributes
+
+functionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
+functionTypeFromClassDeclaration classDecl functionIdent = fmap snd result
+    where functions = map functionToNameTypePair $ getFunctionDeclarations classDecl
+          result = List.find (\(functionName, functionType) -> functionName == functionIdent) functions
+
+actionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
+actionTypeFromClassDeclaration classDecl actionIdent = fmap snd result
+    where actions = map actionToNameTypePair $ getActionDeclarations classDecl
+          result = List.find (\(actionName, actionType) -> actionName == actionIdent) actions

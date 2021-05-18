@@ -12,14 +12,10 @@ mutable class SomeMutableClass {
     }
     
     functions: {
-        goodFunction: () -> Int = 50
+        goodFunction: (x: Int) -> Int = 50 + x
     }
     
     actions: {
-        main: () -> Void = { // Bad main, not a singleton class
-            Pass
-        }
-        
         goodAction: (x: Int, y: String) -> Int = {
             val z: Int = 4;
             z
@@ -34,6 +30,10 @@ mutable class SomeMutableClass {
 
 singleton class SomeSingletonClass {
     
+    functions: {
+        goodFunction: (x: Int) -> Int = 50 + x
+    }
+    
     actions: {
         goodAction: (x: Int, y: String) -> Int = {
             val z: Int = 4;
@@ -43,10 +43,6 @@ singleton class SomeSingletonClass {
         someAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
             val x: Int = arg2;
             arg2 + x
-        }
-        
-        badMain: () -> Void = {
-            Pass
         }
     }
 }
@@ -61,7 +57,6 @@ immutable class SomeImmutableClass {
     
     functions: {
         goodFunction: () -> Int = 50
-        main: () -> Void = Pass // Bad main, not an action, not a singleton class
     }
 }
 
@@ -77,8 +72,9 @@ singleton class AnotherSingletonClass {
             2 + 2
         }
         
-        m: () -> Void = {
-            Pass
+        main: () -> Int = {
+            SomeSingletonClass.goodFunction(3)
+            SomeMutableClass.goodFunction(3)
         }
     }
 }

@@ -22,7 +22,7 @@ hasGetter objectType getterIdent = do
     let localObjects = localValueNames ++ localVariableNames
     let classAttributes = attributeNamesFromDeclaration classDecl
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
-    return $ hasAttributeIn objectType getterIdent attributeNames
+    return $ hasAttributeIn getterIdent attributeNames
 
 hasSetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasSetter objectType setterIdent = do
@@ -30,7 +30,7 @@ hasSetter objectType setterIdent = do
     localVariables <- getLocalVariableNames
     let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
-    return $ hasAttributeIn objectType setterIdent variableNames
+    return $ hasAttributeIn setterIdent variableNames
 
 getValueNames :: ObjectType -> StateMonad [ObjectIdent]
 getValueNames (ObjectTypeClass classIdent _) = do
