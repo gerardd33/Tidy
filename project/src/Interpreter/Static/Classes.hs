@@ -43,12 +43,12 @@ checkClassBody classType (ClassBodyFilled values variables functions actions) = 
 checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
 checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
 checkValuesSection initializationType (ValuesPresent declarations) =
-    checkObjectDeclarations initializationType declarations
+    checkObjectDeclarations initializationType False declarations
 
 checkVariablesSection :: InitializationType -> VariablesSection -> StaticCheckMonad StaticResult
 checkVariablesSection _ VariablesAbsent = liftPureStatic returnVoid
 checkVariablesSection initializationType (VariablesPresent declarations) =
-    checkObjectDeclarations initializationType declarations
+    checkObjectDeclarations initializationType True declarations
 
 checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
 checkFunctionsSection FunctionsAbsent = returnVoid

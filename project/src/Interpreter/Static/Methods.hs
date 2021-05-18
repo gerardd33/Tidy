@@ -45,7 +45,7 @@ checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr wit
     let valueDeclarations = case withValues of
             WithValuesPresent values -> valueDeclarationsFromValuesSection values
             _         -> []
-    (_, env) <- checkObjectDeclarations InitializedRequired valueDeclarations
+    (_, env) <- checkObjectDeclarations InitializedRequired False valueDeclarations
     local (const env) $ checkMethodReturnTypeFromExpression functionIdent functionType bodyExpr
     assertPureExpression (showMethodContext functionIdent functionType) bodyExpr
 
@@ -59,7 +59,7 @@ checkActionBody actionIdent actionType (ActionBodyMultiLine bodyExprs) = do
 checkMethodParams :: MethodIdent -> MethodType -> StaticCheckMonad StaticResult
 checkMethodParams methodIdent methodType = do
     let paramDeclarations = map publicDeclarationFromProper $ getMethodParamDeclarations methodType
-    checkObjectDeclarations UninitializedRequired paramDeclarations
+    checkObjectDeclarations UninitializedRequired False paramDeclarations
 
 checkMethodReturnTypeFromExpression :: MethodIdent -> MethodType -> Expr -> StaticCheckMonad ObjectType
 checkMethodReturnTypeFromExpression methodIdent methodType bodyExpr = do

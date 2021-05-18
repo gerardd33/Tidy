@@ -64,7 +64,7 @@ checkExpression context (EImperativeControlFlow (IIf predicateExpr body optional
 checkExpression context (EImperativeControlFlow (IWhile predicateExpr body)) =
     liftPureStatic $ checkWhile context predicateExpr body
 
-checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
+checkExpression _ (ELocalDeclaration localDecl) = checkLocalObjectDeclaration localDecl
 
 
 checkBinaryOperator :: String -> Expr -> Expr ->
@@ -186,21 +186,21 @@ checkDoExpressionOnObject context objectType (CallAction actionIdent (ArgumentLi
     if takeSetter then checkSetterCall context objectType actionIdent argTypes
     else checkMemberActionCall context objectType actionIdent argTypes
 
-checkLocalValueDeclaration :: LocalDecl -> StaticCheckMonad StaticResult
-checkLocalValueDeclaration (LocalValueDeclaration objectDecl) =
-    checkObjectDeclaration InitializedRequired objectDecl
-checkLocalValueDeclaration (LocalVariableDeclaration objectDecl) =
-    checkObjectDeclaration InitializedRequired objectDecl
+checkLocalObjectDeclaration :: LocalDecl -> StaticCheckMonad StaticResult
+checkLocalObjectDeclaration (LocalValueDeclaration objectDecl) =
+    checkObjectDeclaration InitializedRequired False objectDecl
+checkLocalObjectDeclaration (LocalVariableDeclaration objectDecl) =
+    checkObjectDeclaration InitializedRequired True objectDecl
 -- TODO variable/value distinction in static local env, split env into two or store this info in addition to type
 
-checkObjectDeclarations :: InitializationType -> [ObjectDecl] -> StaticCheckMonad StaticResult
-checkObjectDeclarations _ [] = liftPureStatic returnVoid
-checkObjectDeclarations initializationType (decl:decls) = do
-    (_, env) <- checkObjectDeclaration initializationType decl
-    local (const env) $ checkObjectDeclarations initializationType decls
+checkObjectDeclarations :: InitializationType -> Bool -> [ObjectDecl] -> StaticCheckMonad StaticResult
+checkObjectDeclarations _ _ [] = liftPureStatic returnVoid
+checkObjectDeclarations initializationType isVariable (decl:decls) = do
+    (_, env) <- checkObjectDeclaration initializationType isVariable decl
+    local (const env) $ checkObjectDeclarations initializationType isVariable decls
 
-checkObjectDeclaration :: InitializationType -> ObjectDecl -> StaticCheckMonad StaticResult
-checkObjectDeclaration initializationType (ObjectDeclaration _ objectDeclProper) = do
+checkObjectDeclaration :: InitializationType -> Bool -> ObjectDecl -> StaticCheckMonad StaticResult
+checkObjectDeclaration initializationType isVariable (ObjectDeclaration _ objectDeclProper) = do
     case objectDeclProper of
         ObjectDeclarationProper objectIdent objectType initialization -> do
             case initialization of
@@ -209,17 +209,21 @@ checkObjectDeclaration initializationType (ObjectDeclaration _ objectDeclProper)
                  Initialized expr -> when (initializationType == UninitializedRequired)
                     (throwError $ IllegalInitializationError $ showContext objectIdent)
             checkObjectType objectType
-            declareObjectStatic objectDeclProper objectType initialization
+            declareObjectStatic objectDeclProper objectType initialization isVariable
 
-declareObjectStatic :: ObjectDeclProper -> ObjectType -> Initialization -> StaticCheckMonad StaticResult
-declareObjectStatic properDecl objectType Uninitialized =
-    addLocalObjectType (objectIdentifierFromProperDeclaration properDecl) objectType
-declareObjectStatic properDecl expectedType (Initialized expr) = do
+declareObjectStatic :: ObjectDeclProper -> ObjectType -> Initialization -> Bool -> StaticCheckMonad StaticResult
+declareObjectStatic properDecl objectType Uninitialized isVariable =
+    if isVariable then addLocalVariableType objectIdent objectType else addLocalValueType objectIdent objectType
+    where objectIdent = objectIdentifierFromProperDeclaration properDecl
+
+declareObjectStatic properDecl expectedType (Initialized expr) isVariable = do
     let context = showContext properDecl
     assertPureExpression context expr
     (exprType, newEnv) <- checkExpression context expr
     assertTypesMatch context expectedType exprType
-    local (const newEnv) $ addLocalObjectType (objectIdentifierFromProperDeclaration properDecl) expectedType
+    let objectIdent = objectIdentifierFromProperDeclaration properDecl
+    if isVariable then local (const newEnv) $ addLocalVariableType objectIdent expectedType
+    else local (const newEnv) $ addLocalValueType objectIdent expectedType
 
 checkGetterCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkGetterCall context objectType functionIdent argTypes = do

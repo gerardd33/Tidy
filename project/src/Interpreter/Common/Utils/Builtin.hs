@@ -44,7 +44,7 @@ builtinClasses :: [ClassDecl]
 builtinClasses = map builtinClassDeclFromName builtinClassNames
 
 builtinClassNames :: [String]
-builtinClassNames = ["Int", "Bool", "Char", "String", "Void"]
+builtinClassNames = ["Int", "Bool", "Char", "String", "Void", "__local"]
 
 builtinClassDeclFromName :: String -> ClassDecl
 builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable

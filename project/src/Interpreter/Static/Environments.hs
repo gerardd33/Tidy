@@ -27,11 +27,18 @@ checkObjectType objectType = do
     classDecl <- getClassDeclarationStatic classIdent
     returnVoid
 
-addLocalObjectType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
-addLocalObjectType objectIdent objectType = do
+addLocalValueType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
+addLocalValueType objectIdent objectType = do
     (localEnv, classEnv) <- ask
     let newValues = Map.insert objectIdent objectType (valueTypes localEnv)
     let newLocalEnv = StaticLocalEnv newValues (variableTypes localEnv)
+    return (voidType, (newLocalEnv, classEnv))
+
+addLocalVariableType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
+addLocalVariableType objectIdent objectType = do
+    (localEnv, classEnv) <- ask
+    let newVariables = Map.insert objectIdent objectType (variableTypes localEnv)
+    let newLocalEnv = StaticLocalEnv (valueTypes localEnv) newVariables
     return (voidType, (newLocalEnv, classEnv))
 
 checkLocalObject :: ObjectIdent -> StaticCheckMonad ObjectType
@@ -44,11 +51,12 @@ checkLocalObject objectIdent = do
 
 getAttributeTypeStatic :: String -> ObjectType -> ObjectIdent -> StaticCheckMonad ObjectType
 getAttributeTypeStatic context objectType attributeIdent = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
-    let attributeType = attributeTypeFromClassDeclaration classDecl attributeIdent
-    when (isNothing attributeType) $ throwError $ NoSuchAttributeError context (showContext attributeIdent)
-    return $ fromJust attributeType
+    if objectType == localReferenceType then checkLocalObject attributeIdent
+    else do let classIdent = classIdentifierFromObjectType objectType
+            classDecl <- getClassDeclarationStatic classIdent
+            let lookup = attributeTypeFromClassDeclaration classDecl attributeIdent
+            case lookup of Nothing -> throwError $ NoSuchAttributeError context (showContext attributeIdent)
+                           Just attributeType -> return attributeType
 
 getLocalValueNamesStatic :: StaticCheckMonad [ObjectIdent]
 getLocalValueNamesStatic = do
