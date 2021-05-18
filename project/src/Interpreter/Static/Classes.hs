@@ -1,15 +1,13 @@
 module Interpreter.Static.Classes where
 
 import           Control.Monad.Except
-import           Control.Monad.Reader
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Classes
-import           Interpreter.Common.Utils.Objects
-import           Interpreter.Static.Environments
+import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Expressions
 import           Interpreter.Static.Methods
 import           Interpreter.Static.Types
@@ -23,16 +21,44 @@ checkClass classDecl = do
     let getterNames = map objectToMethodIdentifier $ attributeNamesFromDeclaration classDecl
     let memberNames =  getterNames ++ methodNamesFromDeclaration classDecl
     assertNoDeclarationRepetitions (showContext $ getClassIdentifier classDecl) memberNames
-    checkProperSections classDecl
+    checkSections classDecl
 
-checkProperSections :: ClassDecl -> StaticCheckMonad ObjectType
-checkProperSections (ClassDeclaration _ classType classIdent _ classBody) = do
+checkSections :: ClassDecl -> StaticCheckMonad ObjectType
+checkSections (ClassDeclaration _ classType classIdent _ classBody) = do
     case classType of
         MMutable -> returnVoid
         MSingleton -> assertVariablesAbsent classIdent classType classBody
         MImmutable -> assertVariablesAbsent classIdent classType classBody >>
             assertActionsAbsent classIdent classType classBody
     checkClassBody classType classBody
+
+checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
+checkClassBody _ ClassBodyEmpty = returnVoid
+checkClassBody classType (ClassBodyFilled values variables functions actions) = do
+    checkValuesSection (if classType == MSingleton then InitializedRequired else NoneRequired) values
+    checkVariablesSection NoneRequired variables
+    checkFunctionsSection functions
+    checkActionsSection actions
+
+checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
+checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
+checkValuesSection initializationType (ValuesPresent declarations) =
+    checkObjectDeclarations initializationType declarations
+
+checkVariablesSection :: InitializationType -> VariablesSection -> StaticCheckMonad StaticResult
+checkVariablesSection _ VariablesAbsent = liftPureStatic returnVoid
+checkVariablesSection initializationType (VariablesPresent declarations) =
+    checkObjectDeclarations initializationType declarations
+
+checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
+checkFunctionsSection FunctionsAbsent = returnVoid
+checkFunctionsSection (FunctionsPresent declarations) = do
+    mapM_ checkFunctionDeclaration declarations >> returnVoid
+
+checkActionsSection :: ActionsSection -> StaticCheckMonad ObjectType
+checkActionsSection ActionsAbsent = returnVoid
+checkActionsSection (ActionsPresent declarations) = do
+    mapM_ checkActionDeclaration declarations >> returnVoid
 
 assertVariablesAbsent :: ClassIdent -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 assertVariablesAbsent _ _ ClassBodyEmpty                          = returnVoid
@@ -45,11 +71,3 @@ assertActionsAbsent _ _ ClassBodyEmpty                          = returnVoid
 assertActionsAbsent _ _ (ClassBodyFilled _ _ _ ActionsAbsent)   = returnVoid
 assertActionsAbsent classIdent classType _                      =
     throwError $ IllegalSectionError (tail $ show classType) (showContext classIdent) "actions"
-
-checkClassBody :: ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
-checkClassBody _ ClassBodyEmpty = returnVoid
-checkClassBody classType (ClassBodyFilled values variables functions actions) = do
-    checkValuesSection (if classType == MSingleton then InitializedRequired else NoneRequired) values
-    checkVariablesSection NoneRequired variables
-    checkFunctionsSection functions
-    checkActionsSection actions

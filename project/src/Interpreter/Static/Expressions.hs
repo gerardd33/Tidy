@@ -13,6 +13,7 @@ import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Expressions
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Environments
 import           Interpreter.Static.Operators
 import           Interpreter.Static.Types
@@ -28,6 +29,7 @@ checkExpressionList context (expr:exprs) = do
 checkExpression :: String -> Expr -> StaticCheckMonad StaticResult
 checkExpression _ (ELiteral literal)       = liftPureStatic $ checkLiteral literal
 checkExpression _ (ELocalValue identifier) = liftPureStatic $ checkLocalObject identifier
+
 checkExpression context (EAdd expr1 expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkIntegerOperator
 checkExpression context (ESubtract expr1 expr2) =
@@ -48,6 +50,7 @@ checkExpression context (ERelationalOperator expr1 _ expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkRelationalOperator
 checkExpression context (EBooleanOperator expr1 operator expr2) =
     liftPureStatic $ checkBinaryOperator context expr1 expr2 checkBooleanOperator
+
 checkExpression context (EGetExpression getExpr) =
     liftPureStatic $ checkGetExpression context getExpr
 checkExpression context (EConstructorCall (CallConstructor classIdent argList)) =
@@ -55,14 +58,13 @@ checkExpression context (EConstructorCall (CallConstructor classIdent argList)) 
 checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
     liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
+checkExpression context (EDoExpression doExpr) = liftPureStatic $ checkDoExpression context doExpr
 checkExpression context (EImperativeControlFlow (IIf predicateExpr body optionalElseBranch)) =
-    checkImperativeIf context predicateExpr body optionalElseBranch
+    liftPureStatic $ checkImperativeIf context predicateExpr body optionalElseBranch
 checkExpression context (EImperativeControlFlow (IWhile predicateExpr body)) =
-    checkWhile context predicateExpr body
+    liftPureStatic $ checkWhile context predicateExpr body
+
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalValueDeclaration localDecl
-checkExpression context (EDoExpression doExpr) =
-    liftPureStatic $ checkDoExpression context doExpr
-checkExpression _ _ = liftPureStatic $ return intType
 
 
 checkBinaryOperator :: String -> Expr -> Expr ->
@@ -85,7 +87,7 @@ checkConstructorCall :: String -> ClassIdent -> ArgList -> StaticCheckMonad Obje
 checkConstructorCall context classIdent ArgumentListAbsent =
     checkConstructorCall context classIdent (ArgumentListPresent [])
 checkConstructorCall context classIdent (ArgumentListPresent args) = do
-    classDecl <- getClassDeclStatic classIdent
+    classDecl <- getClassDeclarationStatic classIdent
     argTypes <- checkArgumentList context args
     let paramTypes = getConstructorParamTypes classDecl
     when (argTypes /= paramTypes) $ throwError $
@@ -137,23 +139,23 @@ checkFunctionalIf context predicateExpr thenBranch elseBranch = do
     assertTypesMatch context thenType elseType
     return thenType
 
-checkImperativeIf :: String -> Expr -> [Expr] -> OptionalElseBranch -> StaticCheckMonad StaticResult
+checkImperativeIf :: String -> Expr -> [Expr] -> OptionalElseBranch -> StaticCheckMonad ObjectType
 checkImperativeIf context predicateExpr body optionalElseBranch = do
     checkPurePredicate context predicateExpr
     (bodyType, _) <- checkExpressionList context body
-    (elseType, _) <- case optionalElseBranch of
-        IElseAbsent -> liftPureStatic $ return bodyType
-        IElsePresent elseBody -> checkExpressionList context elseBody
+    elseType <- case optionalElseBranch of
+        IElseAbsent -> return bodyType
+        IElsePresent elseBody -> returnPureStatic $ checkExpressionList context elseBody
         IElseIf elsePredicateExpr elseBody elseOptionalElseBranch ->
             checkImperativeIf (showContext elseBody) elsePredicateExpr elseBody elseOptionalElseBranch
     assertTypesMatch context bodyType elseType
-    liftPureStatic $ return bodyType
+    return bodyType
 
-checkWhile :: String -> Expr -> [Expr] -> StaticCheckMonad StaticResult
+checkWhile :: String -> Expr -> [Expr] -> StaticCheckMonad ObjectType
 checkWhile context predicateExpr body = do
     checkPurePredicate context predicateExpr
     checkExpressionList context body
-    liftPureStatic $ return voidType
+    return voidType
 
 checkPurePredicate :: String -> Expr -> StaticCheckMonad ObjectType
 checkPurePredicate context predicateExpr = do
@@ -183,17 +185,6 @@ checkDoExpressionOnObject context objectType (CallAction actionIdent (ArgumentLi
     takeSetter <- hasSetterStatic objectType actionIdent
     if takeSetter then checkSetterCall context objectType actionIdent argTypes
     else checkMemberActionCall context objectType actionIdent argTypes
-
-
-checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
-checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
-checkValuesSection initializationType (ValuesPresent declarations) =
-    checkObjectDeclarations initializationType declarations
-
-checkVariablesSection :: InitializationType -> VariablesSection -> StaticCheckMonad StaticResult
-checkVariablesSection _ VariablesAbsent = liftPureStatic returnVoid
-checkVariablesSection initializationType (VariablesPresent declarations) =
-    checkObjectDeclarations initializationType declarations
 
 checkLocalValueDeclaration :: LocalDecl -> StaticCheckMonad StaticResult
 checkLocalValueDeclaration (LocalValueDeclaration objectDecl) =
@@ -248,29 +239,31 @@ checkSetterCall context objectType functionIdent argTypes = do
 
 checkMemberFunctionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberFunctionCall context objectType functionIdent argTypes = do
-    let classIdent = classFromObjectType objectType
-    classDecl <- getClassDeclStatic classIdent
+    let classIdent = classIdentifierFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classIdent
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
-    let paramTypes = getMethodParamTypes $ fromJust functionType
-    when (argTypes /= paramTypes) $ throwError $
-        MethodArgumentListInvalidError context (showContext paramTypes) (showContext argTypes)
+    checkMethodArguments context (getMethodParamTypes $ fromJust functionType) argTypes
     return $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberActionCall context objectType actionIdent argTypes = do
-    let classIdent = classFromObjectType objectType
-    classDecl <- getClassDeclStatic classIdent
+    let classIdent = classIdentifierFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classIdent
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
-    let paramTypes = getMethodParamTypes $ fromJust actionType
-    when (argTypes /= paramTypes) $ throwError $
-        MethodArgumentListInvalidError context (showContext paramTypes) (showContext argTypes)
+    checkMethodArguments context (getMethodParamTypes $ fromJust actionType) argTypes
     return $ getMethodReturnType $ fromJust actionType
+
+checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
+checkMethodArguments context expected actual = do
+    when (expected /= actual) $ throwError $
+            MethodArgumentListInvalidError context (showContext expected) (showContext actual)
+    returnVoid
 
 checkStaticExpression :: ClassIdent -> String -> StaticCheckMonad ObjectType
 checkStaticExpression classIdent callContext = do
-    classDecl <- getClassDeclStatic classIdent
+    classDecl <- getClassDeclarationStatic classIdent
     unless (isSingletonClass classDecl) $ throwError $ NonSingletonClassError
         $ showContext classIdent ++ " " ++ callContext
     return $ ObjectTypeClass classIdent GenericParameterAbsent

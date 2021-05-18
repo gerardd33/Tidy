@@ -3,12 +3,20 @@ module Interpreter.Common.Utils.Builtin where
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Utils.Types
+
 
 pass :: Object
 pass = BuiltinObject VoidObject
 
-objectTypeFromClassName :: String -> ObjectType
-objectTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
+localReferenceType :: ObjectType
+localReferenceType = objectTypeFromClassName "__local"
+
+localReferenceIdentifier :: ObjectIdent
+localReferenceIdentifier = objectIdentifierFromName "local"
+
+thisReferenceIdentifier :: ObjectIdent
+thisReferenceIdentifier = objectIdentifierFromName "this"
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
 objectTypeForBuiltinObject (IntObject _)    = intType
@@ -31,3 +39,13 @@ stringType = objectTypeFromClassName "String"
 
 voidType :: ObjectType
 voidType = objectTypeFromClassName "Void"
+
+builtinClasses :: [ClassDecl]
+builtinClasses = map builtinClassDeclFromName builtinClassNames
+
+builtinClassNames :: [String]
+builtinClassNames = ["Int", "Bool", "Char", "String", "Void"]
+
+builtinClassDeclFromName :: String -> ClassDecl
+builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable
+    (classIdentifierFromName name) SuperclassAbsent ClassBodyEmpty

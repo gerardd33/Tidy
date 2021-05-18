@@ -20,7 +20,6 @@ import           Interpreter.Runtime.Expressions
 import           Interpreter.Runtime.Objects
 
 
--- TODO handle debugging in a better way
 runtime :: Mode -> ClassEnv -> ClassDecl -> IO (Either RuntimeException Object)
 runtime mode classEnv mainClass = runExceptT $ evalStateT
     (runReaderT (runtimeBody mode mainClass) (initialEnvironment classEnv)) initialState

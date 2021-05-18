@@ -25,6 +25,9 @@ getFunctionType (FunctionDeclaration _ _ _ functionType _) = functionType
 getActionType :: ActionDecl -> MethodType
 getActionType (ActionDeclaration _ _ _ actionType _) = actionType
 
+getMethodParamDeclarations :: MethodType -> [ObjectDeclProper]
+getMethodParamDeclarations (MethodTypeSignature (ParameterList paramDeclarations) _) = paramDeclarations
+
 getMethodParamNames :: MethodType -> [ObjectIdent]
 getMethodParamNames methodType = map (getObjectIdentifier . publicDeclarationFromProper) declarations
     where declarations = getMethodParamDeclarations methodType
@@ -33,36 +36,33 @@ getMethodParamTypes :: MethodType -> [ObjectType]
 getMethodParamTypes methodType = map (objectTypeFromDeclaration . publicDeclarationFromProper) declarations
     where declarations = getMethodParamDeclarations methodType
 
-getMethodParamDeclarations :: MethodType -> [ObjectDeclProper]
-getMethodParamDeclarations (MethodTypeSignature (ParameterList paramDeclarations) _) = paramDeclarations
-
 getMethodReturnType :: MethodType -> ObjectType
 getMethodReturnType (MethodTypeSignature _ returnType) = returnType
-
-getFunctionWithValuesNames :: FunctionBody -> [ObjectIdent]
-getFunctionWithValuesNames functionBody = map (getObjectIdentifier . publicDeclarationFromProper) declarations
-    where declarations = getFunctionWithValuesDeclarations functionBody
 
 getFunctionWithValuesDeclarations :: FunctionBody -> [ObjectDeclProper]
 getFunctionWithValuesDeclarations (FunctionBodyMultiLine _ (WithValuesPresent (ValuesPresent declarations))) =
     map getProperDeclaration declarations
 getFunctionWithValuesDeclarations _ = []
 
+getFunctionWithValuesNames :: FunctionBody -> [ObjectIdent]
+getFunctionWithValuesNames functionBody = map (getObjectIdentifier . publicDeclarationFromProper) declarations
+    where declarations = getFunctionWithValuesDeclarations functionBody
+
 isActionMain :: ActionDecl -> Bool
 isActionMain actionDecl = getActionIdentifier actionDecl == MethodIdentifier (LowerCaseIdent "main")
 
 argsToExpressionList :: ArgList -> [Expr]
-argsToExpressionList ArgumentListAbsent         = []
 argsToExpressionList (ArgumentListPresent args) = map argToExpression args
+argsToExpressionList ArgumentListAbsent         = []
 
 argToExpression :: MethodArg -> Expr
 argToExpression (MethodArgument expr) = expr
-
-showMethodContext :: MethodIdent -> MethodType -> String
-showMethodContext methodIdent methodType = showContext methodIdent ++ ": " ++ showContext methodType
 
 functionToNameTypePair :: FunctionDecl -> (MethodIdent, MethodType)
 functionToNameTypePair (FunctionDeclaration _ _ methodName methodType _) = (methodName, methodType)
 
 actionToNameTypePair :: ActionDecl -> (MethodIdent, MethodType)
 actionToNameTypePair (ActionDeclaration _ _ methodName methodType _) = (methodName, methodType)
+
+showMethodContext :: MethodIdent -> MethodType -> String
+showMethodContext methodIdent methodType = showContext methodIdent ++ ": " ++ showContext methodType

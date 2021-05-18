@@ -8,8 +8,10 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Expressions
 import           Interpreter.Static.Types
 
@@ -20,16 +22,6 @@ assertNoDeclarationRepetitions context idents  = do
     unless (null duplicates) $ throwError $ DuplicateDeclarationError
         (showContext $ head duplicates) context
     returnVoid
-
-checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
-checkFunctionsSection FunctionsAbsent = returnVoid
-checkFunctionsSection (FunctionsPresent declarations) = do
-    mapM_ checkFunctionDeclaration declarations >> returnVoid
-
-checkActionsSection :: ActionsSection -> StaticCheckMonad ObjectType
-checkActionsSection ActionsAbsent = returnVoid
-checkActionsSection (ActionsPresent declarations) = do
-    mapM_ checkActionDeclaration declarations >> returnVoid
 
 checkFunctionDeclaration :: FunctionDecl -> StaticCheckMonad ObjectType
 checkFunctionDeclaration (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
@@ -50,10 +42,10 @@ checkFunctionBody :: MethodIdent -> MethodType -> FunctionBody -> StaticCheckMon
 checkFunctionBody functionIdent functionType (FunctionBodyOneLine bodyExpr) =
     checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr WithValuesAbsent)
 checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr withValues) = do
-    let valuesSection = case withValues of
-            WithValuesAbsent         -> ValuesAbsent
-            WithValuesPresent values -> values
-    (_, env) <- checkValuesSection InitializedRequired valuesSection
+    let valueDeclarations = case withValues of
+            WithValuesPresent values -> valueDeclarationsFromValuesSection values
+            _         -> []
+    (_, env) <- checkObjectDeclarations InitializedRequired valueDeclarations
     local (const env) $ checkMethodReturnTypeFromExpression functionIdent functionType bodyExpr
     assertPureExpression (showMethodContext functionIdent functionType) bodyExpr
 

@@ -1,6 +1,5 @@
 module Interpreter.Runtime.Expressions where
 
-
 import           Control.Monad.Except
 import           Interpreter.Common.Errors
 
@@ -177,7 +176,7 @@ evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
 evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
 evaluateConstructorCall classIdent argList = do
     let objectType = ObjectTypeClass classIdent GenericParameterAbsent
-    classDecl <- getClassDecl classIdent
+    classDecl <- getClassDeclaration classIdent
     evaluatedArgs <- evaluateArgumentList argList
     initializedAttributes <- evaluateAttributeExpressions $ getInitializedAttributes classDecl
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
@@ -199,7 +198,6 @@ evaluateInitializedAttributes classDecl = evaluateAttributeExpressions $ getInit
 
 
 -- EXPRESSIONS WITH SIDE EFFECTS --
--- TODO passing parameters and other context information
 evaluateActionInEnv :: ActionDecl -> StateMonad Result
 evaluateActionInEnv = evaluateActionBody . getActionBody
 

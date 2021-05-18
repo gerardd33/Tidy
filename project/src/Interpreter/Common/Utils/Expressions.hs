@@ -2,6 +2,8 @@ module Interpreter.Common.Utils.Expressions where
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
+
+import           Interpreter.Common.Errors
 {-# ANN module ("HLint: ignore Use record patterns"::String) #-}
 
 
@@ -29,5 +31,8 @@ isExpressionPure (ELocalDeclaration _)       = False
 isExpressionPure (EImperativeControlFlow _)  = False
 
 getThenBranchExpression :: ThenBranch -> Expr
-getThenBranchExpression (FThenOneLine expr) = expr
+getThenBranchExpression (FThenOneLine expr)   = expr
 getThenBranchExpression (FThenMultiLine expr) = expr
+
+showComplexContext :: Expr -> String -> String
+showComplexContext expr largerContext = showContext expr ++ "\nIn: " ++ largerContext

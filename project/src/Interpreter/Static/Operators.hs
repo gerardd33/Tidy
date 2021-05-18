@@ -4,7 +4,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Utils.Builtin
-import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Expressions
 import           Interpreter.Static.Types
 
 

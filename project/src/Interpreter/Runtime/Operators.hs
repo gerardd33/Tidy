@@ -1,6 +1,7 @@
 module Interpreter.Runtime.Operators where
 
 import           Control.Monad.Except
+
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 

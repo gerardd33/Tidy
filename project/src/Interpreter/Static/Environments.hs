@@ -2,7 +2,7 @@ module Interpreter.Static.Environments where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import qualified Data.Map                              as Map
+import qualified Data.Map                         as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -11,13 +11,11 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
-import           Interpreter.Common.Utils.Environments
-import           Interpreter.Common.Utils.Objects
 import           Interpreter.Static.Types
 
 
-getClassDeclStatic :: ClassIdent -> StaticCheckMonad ClassDecl
-getClassDeclStatic classIdent = do
+getClassDeclarationStatic :: ClassIdent -> StaticCheckMonad ClassDecl
+getClassDeclarationStatic classIdent = do
     (_, classEnv) <- ask
     let lookup = Map.lookup classIdent classEnv
     case lookup of Nothing -> throwError $ ClassNotInScopeError $ showContext classIdent
@@ -25,8 +23,8 @@ getClassDeclStatic classIdent = do
 
 checkObjectType :: ObjectType -> StaticCheckMonad ObjectType
 checkObjectType objectType = do
-    let classIdent = classFromObjectType objectType
-    classDecl <- getClassDeclStatic classIdent
+    let classIdent = classIdentifierFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classIdent
     returnVoid
 
 addLocalObjectType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
@@ -46,8 +44,8 @@ checkLocalObject objectIdent = do
 
 getAttributeTypeStatic :: String -> ObjectType -> ObjectIdent -> StaticCheckMonad ObjectType
 getAttributeTypeStatic context objectType attributeIdent = do
-    let classIdent = classFromObjectType objectType
-    classDecl <- getClassDeclStatic classIdent
+    let classIdent = classIdentifierFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classIdent
     let attributeType = attributeTypeFromClassDeclaration classDecl attributeIdent
     when (isNothing attributeType) $ throwError $ NoSuchAttributeError context (showContext attributeIdent)
     return $ fromJust attributeType
@@ -64,20 +62,20 @@ getLocalVariableNamesStatic = do
 
 hasGetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasGetterStatic objectType getterIdent = do
-    let classIdent = classFromObjectType objectType
-    classDecl <- getClassDeclStatic classIdent
+    let classIdent = classIdentifierFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classIdent
     localValueNames <- getLocalValueNamesStatic
     localVariableNames <- getLocalVariableNamesStatic
     let localObjects = localValueNames ++ localVariableNames
     let classAttributes = attributeNamesFromDeclaration classDecl
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
-    return $ hasAttributeIn getterIdent attributeNames
+    return $ hasAccessorIn getterIdent attributeNames
 
 hasSetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasSetterStatic objectType setterIdent = do
-    let classIdent = classFromObjectType objectType
-    classDecl <- getClassDeclStatic classIdent
+    let classIdent = classIdentifierFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classIdent
     localVariables <- getLocalVariableNamesStatic
     let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
-    return $ hasAttributeIn setterIdent variableNames
+    return $ hasAccessorIn setterIdent variableNames

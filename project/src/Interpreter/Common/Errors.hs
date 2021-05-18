@@ -6,7 +6,6 @@ import           System.IO
 import           Parser.Tidy.Print
 
 
--- TODO later some useful info as to where they happened
 data RuntimeException
     = DivideByZeroException String
     | RuntimeException String
