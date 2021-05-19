@@ -141,7 +141,6 @@ checkFunctionalIf context predicateExpr thenBranch elseBranch = do
 
 checkImperativeIf :: String -> Expr -> [Expr] -> OptionalElseBranch -> StaticCheckMonad ObjectType
 checkImperativeIf context predicateExpr body optionalElseBranch = do
-    checkPurePredicate context predicateExpr
     (bodyType, _) <- checkExpressionList context body
     elseType <- case optionalElseBranch of
         IElseAbsent -> return bodyType
@@ -153,7 +152,6 @@ checkImperativeIf context predicateExpr body optionalElseBranch = do
 
 checkWhile :: String -> Expr -> [Expr] -> StaticCheckMonad ObjectType
 checkWhile context predicateExpr body = do
-    checkPurePredicate context predicateExpr
     checkExpressionList context body
     return voidType
 
@@ -218,7 +216,6 @@ declareObjectStatic properDecl objectType Uninitialized isVariable =
 
 declareObjectStatic properDecl expectedType (Initialized expr) isVariable = do
     let context = showContext properDecl
-    assertPureExpression context expr
     (exprType, newEnv) <- checkExpression context expr
     assertTypesMatch context expectedType exprType
     let objectIdent = objectIdentifierFromProperDeclaration properDecl

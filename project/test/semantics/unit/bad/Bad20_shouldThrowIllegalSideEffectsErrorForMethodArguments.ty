@@ -12,7 +12,7 @@ mutable class SomeMutableClass {
     }
     
     functions: {
-        goodFunction: () -> Int = 50
+        goodFunction: (x: Int) -> Int = x + 50
     }
     
     actions: {
@@ -21,13 +21,10 @@ mutable class SomeMutableClass {
             z
         }
         
-        badAction: (arg1: Bool, arg2: Int, arg3: Int) -> Int = {
-            while (False) {
-                3 + 4
-                val x: Int = 4 + if (True) { 3 } else { 4 }; // IllegalSideEffectsError
-                3333
-            }
-            3
+        
+        badAction: (x: Int, y: String, z: Int) -> Int = {
+            val k: Int = 8;
+            this.goodFunction(this#goodAction(3, "OK"))
         }
     }
 }

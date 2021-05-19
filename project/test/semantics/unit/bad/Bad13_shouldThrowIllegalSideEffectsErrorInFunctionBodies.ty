@@ -20,7 +20,7 @@ mutable class SomeMutableClass {
             this.var1
         }
         
-        badFunction: (param1: Int, param2: Int, param3: Int) -> Int = {
+        badFunction: (param1: Int, param2: Int, param3: Int) -> Void = {
             this#var1(3) // IllegalSideEffectsError
         }
     }

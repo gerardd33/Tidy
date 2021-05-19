@@ -45,6 +45,8 @@ objectToNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent o
 objectToNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
 objectToNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Initialized expr))) =
     (objectIdent, expr)
+objectToNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ Uninitialized)) =
+    (objectIdent, ELiteral (LVoid VPass))
 
 getAttributeLocation :: Object -> ObjectIdent -> Location
 getAttributeLocation (RegularObject _ objectEnv) attributeIdent =

@@ -1,12 +1,15 @@
 module Interpreter.Static.Classes where
 
 import           Control.Monad.Except
+import qualified Data.List                            as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Expressions
+import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Expressions
 import           Interpreter.Static.Methods
@@ -42,12 +45,14 @@ checkClassBody classIdent classType (ClassBodyFilled values variables functions 
 
 checkValuesSection :: InitializationType -> ValuesSection -> StaticCheckMonad StaticResult
 checkValuesSection _ ValuesAbsent = liftPureStatic returnVoid
-checkValuesSection initializationType (ValuesPresent declarations) =
+checkValuesSection initializationType (ValuesPresent declarations) = do
+    checkPureClassAttributeDeclarations "values" declarations
     checkObjectDeclarations initializationType False declarations
 
 checkVariablesSection :: InitializationType -> VariablesSection -> StaticCheckMonad StaticResult
 checkVariablesSection _ VariablesAbsent = liftPureStatic returnVoid
-checkVariablesSection initializationType (VariablesPresent declarations) =
+checkVariablesSection initializationType (VariablesPresent declarations) = do
+    checkPureClassAttributeDeclarations "variables" declarations
     checkObjectDeclarations initializationType True declarations
 
 checkFunctionsSection :: ClassIdent -> FunctionsSection -> StaticCheckMonad ObjectType
@@ -71,3 +76,10 @@ assertActionsAbsent _ _ ClassBodyEmpty                          = returnVoid
 assertActionsAbsent _ _ (ClassBodyFilled _ _ _ ActionsAbsent)   = returnVoid
 assertActionsAbsent classIdent classType _                      =
     throwError $ IllegalSectionError (tail $ show classType) (showContext classIdent) "actions"
+
+checkPureClassAttributeDeclarations :: String -> [ObjectDecl] -> StaticCheckMonad ObjectType
+checkPureClassAttributeDeclarations context declarations = do
+    let declarationExpressions = map (snd . objectToNameExprPair) declarations
+    case List.find (not . isExpressionPure) declarationExpressions of
+        Just nonPureExpression -> throwError $ IllegalSideEffectsError context (showContext nonPureExpression)
+        Nothing -> returnVoid
