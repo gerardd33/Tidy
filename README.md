@@ -12,21 +12,22 @@ Its main goal is to make it easy to, at the same time:
 
 - Preserve the ability to store state, in an easy but highly controlled and visible way so as not to compromise that transparency
 
-That last point is the main difference between Tidy and other languages that stitch object-oriented and functional programming closely together, like Scala. Scala provides many wonderful features to help with this but to do it well you must know what you're doing, and you can just as easily end up with ugly imperative code with scattered state and side-effects all over. In Tidy it is much easier to structure the code, encourage good practices and see where mutability and side effects are, as one must declare them explicity.
-
+That last point is the main difference between Tidy and other languages that stitch object-oriented and functional programming closely together, like Scala. Scala provides many wonderful features to help with this but to do it well you must know what you're doing and you can just as easily end up with ugly imperative code with scattered state and side-effects all over. In Tidy it is much easier to structure the code, encourage good practices and see where mutability and side effects are, as one must declare them explicity. All of this is made easy and convenient through Tidy's multiple features visible right from the syntax to its extensive compile-time verification adjusted specificially with those goals in mind.
 
 
 ## Learn more
 
 - To read more about Tidy, see the [quick-start guide](https://github.com/gerardd33/Tidy/blob/main/docs/guide.md) (docs/guide.md).
 
-- To see the language's implementation (in Haskell), see the files in the *parser* and *interpreter* packages.
+- To see the language's implementation (in Haskell), see the files in the [project](https://github.com/gerardd33/Tidy/tree/main/project) package. The heart of the implementation is in the *project/src/Interpreter* package.
 
-- LBNF grammar of the language is available in the [parser/TidyParser.cf file](https://github.com/gerardd33/Tidy/blob/main/parser/TidyParser.cf). 
+- LBNF grammar of the language is available in the [project/src/Parser/TidyParser.cf file](https://github.com/gerardd33/Tidy/blob/main/project/src/Parser/TidyParser.cf).
 
-- You can play with the parser to get to know the syntax in [parser/parser_tests](https://github.com/gerardd33/Tidy/tree/main/parser/parser_tests). There you can see examples of good and bad syntax, run a suite of automatic tests over them with *run_all_tests.sh* or input your own example into *Test.ty* and run *build_and_run_single_test.sh*.
+- The [project/test/semantics](https://github.com/gerardd33/Tidy/tree/main/project/test/semantics) package contains examples of good and bad Tidy programs, serving as unit tests for the proper interpreter.
 
-- **TODO Further instructions to run it etc.**
+- You can also play with the parser to get to know the syntax in [project/test/syntax](https://github.com/gerardd33/Tidy/tree/main/project/test/syntax). There you can see more examples of good and bad syntax, run a suite of automatic tests over them with *run_all_tests.sh* or input your own example into *Test.ty* and run *single_test.sh*.
+
+- To run the Tidy interpreter, clone this repository, go to the root directory of the project and run ``./build_tidy.sh``. Then you can simply type ``./tidy YourSourceFile.ty`` to build and execute any source file.
 
 - If you just want a snippet of what Tidy looks like, here's one:
 
@@ -34,7 +35,7 @@ That last point is the main difference between Tidy and other languages that sti
 singleton class Main {
 
     actions: {
-        helloWorld: () -> Void = System#printLine("Hello world!")
+        main: () -> Void = System#printLine("Hello world!")
     }
 }
 
@@ -49,7 +50,6 @@ mutable class Student {
         id: Int;
         firstName: String;
         lastName: String;
-        birthDate: Date;
         gender: Gender;
     }
     
@@ -70,7 +70,7 @@ mutable class Student {
     actions: {
         changePassword: (newPassword: String) -> Void = {
             Logger#log("Changing password for user " ++ this)
-            value hashedPassword: String = PasswordUtils.hash(newPassword);
+            val hashedPassword: String = PasswordUtils.hash(newPassword);
             this#passwordHash(hashedPassword)
         }
     
@@ -78,6 +78,18 @@ mutable class Student {
             if (not this.classes.contains(newClass)) {
                 this#classes(this.classes.add(newClass))
             }
+        }
+    }
+}
+
+singleton class MainClass {
+    
+    actions: {
+        
+        main: () -> Void = {
+            val student: Student = Student(12, "John",  "Kowalski", Male, 
+                "jkowalski34", "dj3$%ex&@#jw_3d");
+            System#printLine(student.fullName)
         }
     }
 }

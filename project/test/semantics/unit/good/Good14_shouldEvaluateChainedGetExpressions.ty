@@ -41,13 +41,12 @@ immutable class Summary {
 singleton class GetExpressions {
     
     actions: {
-        main: () -> Student = {
+        main: () -> String = {
             val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
                 Summary("Exam passed", "Score: B+")), 20, "BS1");
             val sumOfGrades: Int = student.grades.grade1 + student.grades.grade2 + student.grades.grade3 + student.grades.grade4;
             student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description
             // Should return "Exam passed. Score: B+"
-            student
         }
     }
 }

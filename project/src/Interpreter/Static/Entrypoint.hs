@@ -15,7 +15,6 @@ import           Interpreter.Runtime.Entrypoint
 import           Interpreter.Static.Classes
 
 
--- TODO static type checking before evaluation
 interpret :: Mode -> Program -> IO ()
 interpret mode (ProgramEntrypoint classDeclarations) = do
     debugPrint mode "Loaded classes" classDeclarations
@@ -23,14 +22,15 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     let mainClass = findMainClass classDeclarations
     when (isNothing mainClass) $ exitWithError $ show NoMainActionError
     debugPrint mode "Main action" $ getMainAction $ fromJust mainClass
-    staticCheckResult <- checkStatically mode classEnv classDeclarations
+    staticCheckResult <- performStaticCheck mode classEnv classDeclarations
     case staticCheckResult of Left error -> exitWithError $ show error
                               Right _    -> return ()
-    result <- runtime mode classEnv $ fromJust mainClass
-    case result of Left error -> exitWithError $ show error
-                   Right returnValue -> debugPrint mode "Return value" returnValue
+    runtimeResult <- runtime mode classEnv $ fromJust mainClass
+    case runtimeResult of Left error -> exitWithError $ show error
+                          Right returnValue -> print returnValue
+    -- TODO when System#print etc. is there: debugPrint mode "Return value" returnValue, instead of this print
 
 
-checkStatically :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
-checkStatically mode classEnv classDeclarations = runExceptT
+performStaticCheck :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
+performStaticCheck mode classEnv classDeclarations = runExceptT
     $ runReaderT (checkClasses classDeclarations) (initialStaticEnvironment classEnv)

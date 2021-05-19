@@ -1,8 +1,8 @@
 module Interpreter.Runtime.Objects where
 
 import           Control.Monad.Reader
-import qualified Data.List                           as List
-import qualified Data.Map                            as Map
+import qualified Data.List                        as List
+import qualified Data.Map                         as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -34,7 +34,7 @@ buildSingletonClassInstance classIdent initializedAttributes = do
 
 getAttributeMap :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad (Map.Map ObjectIdent Object)
 getAttributeMap objectType constructorArgs initializedAttributes = do
-    classDecl <- getClassDecl $ classFromObjectType objectType
+    classDecl <- getClassDeclaration $ classIdentifierFromObjectType objectType
     let constructorParamList = getConstructorParamNames classDecl
     let attributesFromConstructor = Map.fromList $ zip constructorParamList constructorArgs
     return $ Map.union (Map.fromList initializedAttributes) attributesFromConstructor

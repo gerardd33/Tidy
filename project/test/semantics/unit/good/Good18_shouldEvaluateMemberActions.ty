@@ -50,7 +50,7 @@ singleton class SummaryDescriptionModifier {
 singleton class DoExpressions {
     
     actions: {
-        main: () -> Student = {
+        main: () -> String = {
             val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
                 Summary("Exam passed", "Score: 312/400")), 20, "BS1");
             

@@ -13,6 +13,10 @@ mutable class Counter {
 
 singleton class WhileTest {
     
+    values: {
+        base: Int = 3;
+    }
+    
     actions: {
         main: () -> Int = {
             val counter: Counter = Counter;
@@ -21,7 +25,7 @@ singleton class WhileTest {
                 counter#increment
             }
             
-            counter.count // 10
+            this.base + counter.count // 13
         }
     }
 }

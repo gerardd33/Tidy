@@ -1,4 +1,4 @@
-mutable class SomeMutableClass {
+mutable class TestClass {
 
     values: {
         total: Int;
@@ -9,10 +9,12 @@ mutable class SomeMutableClass {
     variables: {
         var1: Int = 1;
         var2: String = "S";
+        var3: String;
+        var4: Bool;
     }
     
     functions: {
-        goodFunction: () -> Int = 50
+        goodFunction: (x: Int, y: Bool, z: String) -> Int = 50
     }
     
     actions: {
@@ -20,19 +22,16 @@ mutable class SomeMutableClass {
             val z: Int = 4;
             z
         }
-        
-        
-        badAction: (x: Int, y: String, z: Int) -> Int = {
-            val k: Int = 8;
-            val w: Int = val u: Int = 9;; // IllegalSideEffectsError
-            k
-        }
     }
 }
 
 singleton class Main {
     
     actions: {
-        main: () -> Void = Pass
+        main: () -> Int = {
+            val testClass: TestClass = TestClass(3, 4 * 4, "OK", False);
+            testClass#total(5) // NoSuchActionError
+            testClass.total
+        }
     }
 }

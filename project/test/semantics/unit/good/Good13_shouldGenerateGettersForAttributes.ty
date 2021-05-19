@@ -32,7 +32,7 @@ immutable class Grades {
 singleton class GetExpressions {
     
     actions: {
-        main: () -> Student = {
+        main: () -> String = {
             val student: Student = Student("Diana", "Frost", Grades(11, 12, 14), 20, "BS1");
             student.firstName ++ " " ++ student.lastName ++ ", year: " ++ student.year
             // Should return "Diana Frost, year: BS1"

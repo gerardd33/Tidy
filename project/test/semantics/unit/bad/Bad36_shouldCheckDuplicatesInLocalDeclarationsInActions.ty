@@ -1,0 +1,16 @@
+singleton class ImperativeIfs {
+    
+    actions: {
+        main: () -> String = {
+            val string1: String = "First";
+            var result: String = "None";
+            
+            if (True) {
+                val string1: String = "Second"; // DuplicateDeclarationError
+                local#result(string1)
+            }
+            
+            result
+        }
+    }
+}

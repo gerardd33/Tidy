@@ -1,0 +1,39 @@
+mutable class TestClass {
+
+    values: {
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+        var3: String;
+        var4: Bool;
+    }
+    
+    functions: {
+        goodFunction: (x: Int, y: Bool, z: String) -> Int = 50
+    }
+    
+    actions: {
+        goodAction: (x: Int, y: String) -> Int = {
+            val z: Int = 4;
+            z
+        }
+    }
+}
+
+singleton class Main {
+    
+    actions: {
+        main: () -> Int = {
+            val1: Int = 3
+            var1: Int = 5
+            local#var1(6)
+            local#val1(6) // NoSuchActionError
+            val1
+        }
+    }
+}

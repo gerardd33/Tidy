@@ -16,8 +16,8 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Types
 
 
-getClassDecl :: ClassIdent -> StateMonad ClassDecl
-getClassDecl classIdent = do
+getClassDeclaration :: ClassIdent -> StateMonad ClassDecl
+getClassDeclaration classIdent = do
     (_, classEnv) <- ask
     return $ classEnv Map.! classIdent
 

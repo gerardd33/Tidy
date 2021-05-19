@@ -7,35 +7,24 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
+import           Interpreter.Common.Utils.Types
 
-
-localReferenceType :: ObjectType
-localReferenceType = objectTypeFromClassName "__local"
-
-localReferenceIdentifier :: ObjectIdent
-localReferenceIdentifier = objectIdentifierFromName "local"
-
-thisReferenceIdentifier :: ObjectIdent
-thisReferenceIdentifier = objectIdentifierFromName "this"
 
 getProperDeclaration :: ObjectDecl -> ObjectDeclProper
 getProperDeclaration (ObjectDeclaration _ properDeclaration) = properDeclaration
 
-getObjectType :: Object -> ObjectType
-getObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
-getObjectType (RegularObject objectType _) = objectType
-
 getObjectIdentifier :: ObjectDecl -> ObjectIdent
 getObjectIdentifier (ObjectDeclaration _ declProper) = objectIdentifierFromProperDeclaration declProper
-
-objectTypeFromDeclaration :: ObjectDecl -> ObjectType
-objectTypeFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper _ objectType _)) = objectType
 
 objectIdentifierFromProperDeclaration :: ObjectDeclProper -> ObjectIdent
 objectIdentifierFromProperDeclaration (ObjectDeclarationProper objectIdent _ _) = objectIdent
 
-objectIdentifierFromName :: String -> ObjectIdent
-objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
+objectTypeFromDeclaration :: ObjectDecl -> ObjectType
+objectTypeFromDeclaration (ObjectDeclaration _ (ObjectDeclarationProper _ objectType _)) = objectType
+
+getObjectType :: Object -> ObjectType
+getObjectType (BuiltinObject object)       = objectTypeForBuiltinObject object
+getObjectType (RegularObject objectType _) = objectType
 
 getValues :: Object -> Map.Map ObjectIdent Location
 getValues (RegularObject _ (ObjectEnv values _)) = values
@@ -49,21 +38,16 @@ isInitialized :: ObjectDecl -> Bool
 isInitialized (ObjectDeclaration _ (ObjectDeclarationProper _ _ (Initialized _)))  = True
 isInitialized _                                                                    = False
 
-toNameTypePair :: ObjectDecl -> (ObjectIdent, ObjectType)
-toNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent objectType _)) =
+objectToNameTypePair :: ObjectDecl -> (ObjectIdent, ObjectType)
+objectToNameTypePair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent objectType _)) =
     (objectIdent, objectType)
 
-toNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
-toNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Initialized expr))) =
+objectToNameExprPair :: ObjectDecl -> (ObjectIdent, Expr)
+objectToNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ (Initialized expr))) =
     (objectIdent, expr)
+objectToNameExprPair (ObjectDeclaration _ (ObjectDeclarationProper objectIdent _ Uninitialized)) =
+    (objectIdent, ELiteral (LVoid VPass))
 
-methodToObjectIdentifier :: MethodIdent -> ObjectIdent
-methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
-
-objectToMethodIdentifier :: ObjectIdent -> MethodIdent
-objectToMethodIdentifier (ObjectIdentifier ident) = MethodIdentifier ident
-
--- TODO handle builtin objects
 getAttributeLocation :: Object -> ObjectIdent -> Location
 getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
     if attributeIdent `Map.member` values objectEnv
@@ -72,6 +56,3 @@ getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
 
 publicDeclarationFromProper :: ObjectDeclProper -> ObjectDecl
 publicDeclarationFromProper = ObjectDeclaration MPublic
-
-showComplexContext :: Expr -> String -> String
-showComplexContext expr largerContext = showContext expr ++ "\nIn: " ++ largerContext

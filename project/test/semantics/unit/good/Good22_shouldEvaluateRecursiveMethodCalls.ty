@@ -20,7 +20,7 @@ singleton class WhileTest {
         main: () -> Int = {
             val counter: Counter = Counter;
             counter#advanceCounter(counter, 10)
-            counter.count
+            counter.count // 10
         }
     }
 }

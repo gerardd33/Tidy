@@ -1,10 +1,5 @@
 module Main where
 
-import           System.Directory              (doesFileExist,
-                                                setCurrentDirectory)
-import           System.Environment            (getArgs)
-import           System.IO
-
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex               (Token)
 import           Parser.Tidy.Par               (myLexer, pProgram)
@@ -12,6 +7,12 @@ import           Parser.Tidy.Par               (myLexer, pProgram)
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Static.Entrypoint (interpret)
+
+import           System.Directory              (doesFileExist,
+                                                setCurrentDirectory)
+import           System.Environment            (getArgs)
+import           System.IO
+
 
 main :: IO ()
 main = do

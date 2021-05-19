@@ -7,8 +7,10 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
 
 
 getClassIdentifier :: ClassDecl -> ClassIdent
@@ -18,9 +20,13 @@ getClassType :: ClassDecl -> ClassTypeModifier
 getClassType (ClassDeclaration _ classType _ _ _) = classType
 
 getValueDeclarations :: ClassDecl -> [ObjectDecl]
-getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled (ValuesPresent valueDeclarations) _ _ _)) =
-    valueDeclarations
+getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled valuesSection _ _ _)) =
+    valueDeclarationsFromValuesSection valuesSection
 getValueDeclarations _ = []
+
+valueDeclarationsFromValuesSection :: ValuesSection -> [ObjectDecl]
+valueDeclarationsFromValuesSection (ValuesPresent declarations) = declarations
+valueDeclarationsFromValuesSection _                            = []
 
 getVariableDeclarations :: ClassDecl -> [ObjectDecl]
 getVariableDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled _ (VariablesPresent variableDeclarations) _ _)) =
@@ -55,8 +61,8 @@ functionNamesFromDeclaration classDecl =  map getFunctionIdentifier $ getFunctio
 actionNamesFromDeclaration :: ClassDecl -> [MethodIdent]
 actionNamesFromDeclaration classDecl = map getActionIdentifier $ getActionDeclarations classDecl
 
-classFromObjectType :: ObjectType -> ClassIdent
-classFromObjectType (ObjectTypeClass classIdent _) = classIdent
+findMainClass :: [ClassDecl] -> Maybe ClassDecl
+findMainClass = List.find hasMainAction . List.filter isSingletonClass
 
 hasMainAction :: ClassDecl -> Bool
 hasMainAction = isJust . getMainAction
@@ -66,41 +72,28 @@ getMainAction (ClassDeclaration _ _ _ _ (ClassBodyFilled _ _ _ (ActionsPresent a
     List.find isActionMain actions
 getMainAction _ = Nothing
 
-singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
-singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
-    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
-
-classIdentifierFromName :: String -> ClassIdent
-classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
+loadClasses :: [ClassDecl] -> ClassEnv
+loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses ++ builtinClasses
 
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 loadClassDeclaration declaration = case declaration of
     ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
 
-loadClasses :: [ClassDecl] -> ClassEnv
-loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses ++ builtinClasses
+classIdentifierFromObjectType :: ObjectType -> ClassIdent
+classIdentifierFromObjectType (ObjectTypeClass classIdent _) = classIdent
 
-builtinClasses :: [ClassDecl]
-builtinClasses = map builtinClassDeclFromName builtinClassNames
-
-builtinClassNames :: [String]
-builtinClassNames = ["Int", "Bool", "Char", "String", "Void"]
-
-builtinClassDeclFromName :: String -> ClassDecl
-builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable (classIdentifierFromName name)
-    SuperclassAbsent ClassBodyEmpty
-
-findMainClass :: [ClassDecl] -> Maybe ClassDecl
-findMainClass = List.find hasMainAction . List.filter isSingletonClass
+singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
+singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
+    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
 
 isSingletonClass :: ClassDecl -> Bool
 isSingletonClass = (==MSingleton) . getClassType
 
 getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
 getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
-    where uninitializedValues = map toNameTypePair $ filter (not . isInitialized) $
+    where uninitializedValues = map objectToNameTypePair $ filter (not . isInitialized) $
             getValueDeclarations classDecl
-          uninitializedVariables = map toNameTypePair $ filter (not . isInitialized) $
+          uninitializedVariables = map objectToNameTypePair $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
 
 getConstructorParamNames :: ClassDecl -> [ObjectIdent]
@@ -111,16 +104,16 @@ getConstructorParamTypes classDecl = map snd $ getConstructorParamSignatures cla
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables
-    where initializedValues = map toNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
-          initializedVariables = map toNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl
+    where initializedValues = map objectToNameExprPair $ filter isInitialized $ getValueDeclarations classDecl
+          initializedVariables = map objectToNameExprPair $ filter isInitialized $ getVariableDeclarations classDecl
 
-hasAttributeIn :: MethodIdent -> [ObjectIdent] -> Bool
-hasAttributeIn methodIdent attributeNames = attributeIdentifier `elem` attributeNames
+hasAccessorIn :: MethodIdent -> [ObjectIdent] -> Bool
+hasAccessorIn methodIdent attributeNames = attributeIdentifier `elem` attributeNames
     where attributeIdentifier = methodToObjectIdentifier methodIdent
 
 attributeTypeFromClassDeclaration :: ClassDecl -> ObjectIdent -> Maybe ObjectType
 attributeTypeFromClassDeclaration classDecl attributeIdent = fmap snd result
-    where attributes = map toNameTypePair $ getValueDeclarations classDecl ++ getVariableDeclarations classDecl
+    where attributes = map objectToNameTypePair $ getValueDeclarations classDecl ++ getVariableDeclarations classDecl
           result = List.find (\(attributeName, attributeType) -> attributeName == attributeIdent) attributes
 
 functionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType

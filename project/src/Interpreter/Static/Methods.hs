@@ -8,8 +8,11 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
+import           Interpreter.Static.Environments
 import           Interpreter.Static.Expressions
 import           Interpreter.Static.Types
 
@@ -21,39 +24,31 @@ assertNoDeclarationRepetitions context idents  = do
         (showContext $ head duplicates) context
     returnVoid
 
-checkFunctionsSection :: FunctionsSection -> StaticCheckMonad ObjectType
-checkFunctionsSection FunctionsAbsent = returnVoid
-checkFunctionsSection (FunctionsPresent declarations) = do
-    mapM_ checkFunctionDeclaration declarations >> returnVoid
-
-checkActionsSection :: ActionsSection -> StaticCheckMonad ObjectType
-checkActionsSection ActionsAbsent = returnVoid
-checkActionsSection (ActionsPresent declarations) = do
-    mapM_ checkActionDeclaration declarations >> returnVoid
-
-checkFunctionDeclaration :: FunctionDecl -> StaticCheckMonad ObjectType
-checkFunctionDeclaration (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
+checkFunctionDeclaration :: ClassIdent -> FunctionDecl -> StaticCheckMonad ObjectType
+checkFunctionDeclaration classIdent (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
     let paramNames = map objectToMethodIdentifier $ getMethodParamNames functionType
     let withValuesNames = map objectToMethodIdentifier $ getFunctionWithValuesNames functionBody
     assertNoDeclarationRepetitions (showMethodContext functionIdent functionType) $ paramNames ++ withValuesNames
     (_, env) <- checkMethodParams functionIdent functionType
-    local (const env) $ checkFunctionBody functionIdent functionType functionBody
+    (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classIdent GenericParameterAbsent
+    local (const newEnv) $ checkFunctionBody functionIdent functionType functionBody
 
-checkActionDeclaration :: ActionDecl -> StaticCheckMonad ObjectType
-checkActionDeclaration (ActionDeclaration _ _ actionIdent actionType actionBody) = do
+checkActionDeclaration :: ClassIdent -> ActionDecl -> StaticCheckMonad ObjectType
+checkActionDeclaration classIdent (ActionDeclaration _ _ actionIdent actionType actionBody) = do
     let paramNames = map objectToMethodIdentifier $ getMethodParamNames actionType
     assertNoDeclarationRepetitions (showMethodContext actionIdent actionType) paramNames
     (_, env) <- checkMethodParams actionIdent actionType
-    local (const env) $ checkActionBody actionIdent actionType actionBody
+    (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classIdent GenericParameterAbsent
+    local (const newEnv) $ checkActionBody actionIdent actionType actionBody
 
 checkFunctionBody :: MethodIdent -> MethodType -> FunctionBody -> StaticCheckMonad ObjectType
 checkFunctionBody functionIdent functionType (FunctionBodyOneLine bodyExpr) =
     checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr WithValuesAbsent)
 checkFunctionBody functionIdent functionType (FunctionBodyMultiLine bodyExpr withValues) = do
-    let valuesSection = case withValues of
-            WithValuesAbsent         -> ValuesAbsent
-            WithValuesPresent values -> values
-    (_, env) <- checkValuesSection InitializedRequired valuesSection
+    let valueDeclarations = case withValues of
+            WithValuesPresent values -> valueDeclarationsFromValuesSection values
+            _         -> []
+    (_, env) <- checkObjectDeclarations InitializedRequired False valueDeclarations
     local (const env) $ checkMethodReturnTypeFromExpression functionIdent functionType bodyExpr
     assertPureExpression (showMethodContext functionIdent functionType) bodyExpr
 
@@ -67,7 +62,7 @@ checkActionBody actionIdent actionType (ActionBodyMultiLine bodyExprs) = do
 checkMethodParams :: MethodIdent -> MethodType -> StaticCheckMonad StaticResult
 checkMethodParams methodIdent methodType = do
     let paramDeclarations = map publicDeclarationFromProper $ getMethodParamDeclarations methodType
-    checkObjectDeclarations UninitializedRequired paramDeclarations
+    checkObjectDeclarations UninitializedRequired False paramDeclarations
 
 checkMethodReturnTypeFromExpression :: MethodIdent -> MethodType -> Expr -> StaticCheckMonad ObjectType
 checkMethodReturnTypeFromExpression methodIdent methodType bodyExpr = do

@@ -1,6 +1,49 @@
-singleton class Main {
-
+mutable class Student {
+    
+    values: {
+        id: Int;
+        firstName: String;
+        lastName: String;
+        gender: Gender;
+    }
+    
+    variables: {
+        login: String;
+        private passwordHash: String;
+        classes: List[UniversityClass] = List();
+    }
+    
+    functions: {
+        fullName: () -> String = this.firstName ++ " " ++ this.lastName
+        
+        authorize: (enteredPassword: String) -> Bool = {
+            PasswordUtils.hash(enteredPassword) == this.passwordHash
+        }
+    }
+    
     actions: {
-        main: () -> Void = System#printLine("Hello world!")
+        changePassword: (newPassword: String) -> Void = {
+            Logger#log("Changing password for user " ++ this)
+            val hashedPassword: String = PasswordUtils.hash(newPassword);
+            this#passwordHash(hashedPassword)
+        }
+    
+        addClass: (newClass: UniversityClass) -> Void = {
+            if (not this.classes.contains(newClass)) {
+                this#classes(this.classes.add(newClass))
+            }
+        }
+    }
+}
+
+singleton class MainClass {
+    
+    actions: {
+        
+        main: () -> Void = {
+            val student: Student = Student(12, "John",  "Kowalski", Male, 
+                "jkowalski34", "dj3$%ex&@#jw_3d");
+            System#printLine(student.fullName)
+        }
     }
 }

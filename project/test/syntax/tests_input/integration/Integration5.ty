@@ -3,7 +3,7 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
     values: {
         messageReceived: String = "You got a new message!";
         messageInvalid: String = "Invalid message";
-        maxMessageLength: Int = 100;
+        maxMessageLength: Int;
         emptyString: String = "";
         
         notificationChannels: List[NotificationChannel];
@@ -58,11 +58,29 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
         override transformMessages: (messageTransformer: do (complete: Bool) -> Void) -> Void = {
             val handleMessage: do (message: Message) -> Void = do (message: Message) -> {
                 System#printLine("Transforming message " ++ message)
-                message#transform(local#messageTransformer(False))
+                message#transform(messageTransformer#call(False))
             };
             
             for (message: Message; in this.messages) {
-                local#handleMessage(message)
+                handleMessage#call(message)
+            }
+        }
+    }
+}
+
+singleton class MainClass {
+    
+    actions: {
+        
+        main: () -> Void = {
+            val channels: List[NotificationChannel] = List(NotificationChannel("link1"), NotificationChannel("link2"));
+            val receiver: PhoneMessageReceiver = PhoneMessageReceiver(100, channels);
+            
+            val result: Bool = receiver#receive(Message("Hi! What's up?"));
+            if (result) {
+                System#printLine("Success")
+            } else {
+                System#printLine("Failure")
             }
         }
     }
