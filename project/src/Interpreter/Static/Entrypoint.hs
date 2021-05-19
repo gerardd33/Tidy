@@ -27,7 +27,8 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
                               Right _    -> return ()
     runtimeResult <- runtime mode classEnv $ fromJust mainClass
     case runtimeResult of Left error -> exitWithError $ show error
-                          Right returnValue -> debugPrint mode "Return value" returnValue
+                          Right returnValue -> print returnValue
+    -- TODO when System#print etc. is there: debugPrint mode "Return value" returnValue, instead of this print
 
 
 performStaticCheck :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
