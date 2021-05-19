@@ -17,15 +17,15 @@ That last point is the main difference between Tidy and other languages that sti
 
 ## Learn more
 
-- To read more about Tidy, see the [quick-start guide](https://github.com/gerardd33/Tidy/blob/main/docs/guide.md) (docs/guide.md).
+- To read more about Tidy, see the [quick-start guide](https://github.com/gerardd33/Tidy/blob/main/docs/Guide.md) (docs/Guide.md).
 
 - To see the language's implementation (in Haskell), see the files in the [project](https://github.com/gerardd33/Tidy/tree/main/project) package. The heart of the implementation is in the *project/src/Interpreter* package.
 
-- LBNF grammar of the language is available in the [project/src/Parser/TidyParser.cf file](https://github.com/gerardd33/Tidy/blob/main/project/src/Parser/TidyParser.cf).
+- LBNF grammar of the language is available in the [project/src/Parser/Tidy.cf file](https://github.com/gerardd33/Tidy/blob/main/project/src/Parser/Tidy.cf).
 
 - The [project/test/semantics](https://github.com/gerardd33/Tidy/tree/main/project/test/semantics) package contains examples of good and bad Tidy programs, serving as unit tests for the proper interpreter.
 
-- You can also play with the parser to get to know the syntax in [project/test/syntax](https://github.com/gerardd33/Tidy/tree/main/project/test/syntax). There you can see more examples of good and bad syntax, run a suite of automatic tests over them with *run_all_tests.sh* or input your own example into *Test.ty* and run *single_test.sh*.
+- You can also play with the parser to get to know the syntax in [project/test/syntax](https://github.com/gerardd33/Tidy/tree/main/project/test/syntax). There you can see more examples of good and bad syntax, run a suite of automatic tests over them with ``run_all_tests.sh`` or input your own example into ``Test.ty`` and run ``single_test.sh``.
 
 - To run the Tidy interpreter, clone this repository, go to the root directory of the project and run ``./build_tidy.sh``. Then you can simply type ``./tidy YourSourceFile.ty`` to build and execute any source file.
 
@@ -87,7 +87,7 @@ singleton class MainClass {
     actions: {
         
         main: () -> Void = {
-            val student: Student = Student(12, "John",  "Kowalski", Male, 
+            val student: Student = Student(12, "John", "Kowalski", Male, 
                 "jkowalski34", "dj3$%ex&@#jw_3d");
             System#printLine(student.fullName)
         }
