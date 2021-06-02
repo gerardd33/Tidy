@@ -126,7 +126,7 @@ checkGetExpressionOnObject context objectType (CallFunction functionIdent (Argum
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do
-    checkPurePredicate context predicateExpr
+    checkPredicate context predicateExpr True
     let thenExpr = getThenBranchExpression thenBranch
     let thenContext = showComplexContext thenExpr context
     assertPureExpression thenContext thenExpr
@@ -141,6 +141,7 @@ checkFunctionalIf context predicateExpr thenBranch elseBranch = do
 
 checkImperativeIf :: String -> Expr -> [Expr] -> OptionalElseBranch -> StaticCheckMonad ObjectType
 checkImperativeIf context predicateExpr body optionalElseBranch = do
+    checkPredicate context predicateExpr False
     (bodyType, _) <- checkExpressionList context body
     elseType <- case optionalElseBranch of
         IElseAbsent -> return bodyType
@@ -155,12 +156,12 @@ checkWhile context predicateExpr body = do
     checkExpressionList context body
     return voidType
 
-checkPurePredicate :: String -> Expr -> StaticCheckMonad ObjectType
-checkPurePredicate context predicateExpr = do
+checkPredicate :: String -> Expr -> Bool -> StaticCheckMonad ObjectType
+checkPredicate context predicateExpr checkPure = do
     let predicateContext = showComplexContext predicateExpr context
-    assertPureExpression predicateContext predicateExpr
-    (predicateType, _) <- checkExpression predicateContext predicateExpr
-    assertTypesMatch predicateContext boolType predicateType
+    if checkPure then assertPureExpression predicateContext predicateExpr
+    else do (predicateType, _) <- checkExpression predicateContext predicateExpr
+            assertTypesMatch predicateContext boolType predicateType
 
 checkDoExpression :: String -> DoExpr -> StaticCheckMonad ObjectType
 checkDoExpression context (DoExpressionInstance objectIdent methodCall) = do
