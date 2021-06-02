@@ -1,17 +1,19 @@
 module Main where
 
+import           Control.Exception
+import           System.Directory              (doesFileExist,
+                                                setCurrentDirectory)
+import           System.Environment            (getArgs)
+import           System.IO
+
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex               (Token)
 import           Parser.Tidy.Par               (myLexer, pProgram)
 
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Types
 import           Interpreter.Static.Entrypoint (interpret)
-
-import           System.Directory              (doesFileExist,
-                                                setCurrentDirectory)
-import           System.Environment            (getArgs)
-import           System.IO
 
 
 main :: IO ()
@@ -48,4 +50,11 @@ interpretFileContents mode filePath = do
     source <- readFile filePath
     case (parser . lexer) source of
         Left error    -> exitWithError error
-        Right astTree -> interpret mode astTree
+        Right astTree -> catchAny (interpret mode astTree) handleUnexpectedError
+
+catchAny :: IO a -> (SomeException -> IO a) -> IO a
+catchAny = Control.Exception.catch
+
+handleUnexpectedError :: SomeException -> IO ()
+handleUnexpectedError _ = do
+    exitWithError $ show $ RuntimeException "Unexpected error"
