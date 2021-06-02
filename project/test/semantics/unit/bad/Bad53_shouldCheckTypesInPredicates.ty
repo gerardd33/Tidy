@@ -1,0 +1,13 @@
+singleton class SimpleMain {
+    actions: {
+        main: () -> Int = {
+            var x: Int = 0;
+            if (2 + 2) { // UnexpectedTypeError
+               local#x(13)
+            } else {
+                local#x(25)
+            }
+            x
+        }
+    }
+}

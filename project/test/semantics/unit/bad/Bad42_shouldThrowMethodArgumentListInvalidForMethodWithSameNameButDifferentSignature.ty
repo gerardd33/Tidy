@@ -30,7 +30,7 @@ singleton class Main {
     actions: {
         main: () -> Int = {
             val testClass: TestClass = TestClass(3, 4 * 4, "OK", False);
-            testClass.goodFunction(55) // NoSuchFunctionError
+            testClass.goodFunction(55) // MethodArgumentListInvalidError
         }
     }
 }

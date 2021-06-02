@@ -126,7 +126,7 @@ checkGetExpressionOnObject context objectType (CallFunction functionIdent (Argum
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do
-    checkPurePredicate context predicateExpr
+    checkPredicate context predicateExpr True
     let thenExpr = getThenBranchExpression thenBranch
     let thenContext = showComplexContext thenExpr context
     assertPureExpression thenContext thenExpr
@@ -141,6 +141,7 @@ checkFunctionalIf context predicateExpr thenBranch elseBranch = do
 
 checkImperativeIf :: String -> Expr -> [Expr] -> OptionalElseBranch -> StaticCheckMonad ObjectType
 checkImperativeIf context predicateExpr body optionalElseBranch = do
+    checkPredicate context predicateExpr False
     (bodyType, _) <- checkExpressionList context body
     elseType <- case optionalElseBranch of
         IElseAbsent -> return bodyType
@@ -155,12 +156,12 @@ checkWhile context predicateExpr body = do
     checkExpressionList context body
     return voidType
 
-checkPurePredicate :: String -> Expr -> StaticCheckMonad ObjectType
-checkPurePredicate context predicateExpr = do
+checkPredicate :: String -> Expr -> Bool -> StaticCheckMonad ObjectType
+checkPredicate context predicateExpr checkPure = do
     let predicateContext = showComplexContext predicateExpr context
-    assertPureExpression predicateContext predicateExpr
-    (predicateType, _) <- checkExpression predicateContext predicateExpr
-    assertTypesMatch predicateContext boolType predicateType
+    if checkPure then assertPureExpression predicateContext predicateExpr
+    else do (predicateType, _) <- checkExpression predicateContext predicateExpr
+            assertTypesMatch predicateContext boolType predicateType
 
 checkDoExpression :: String -> DoExpr -> StaticCheckMonad ObjectType
 checkDoExpression context (DoExpressionInstance objectIdent methodCall) = do
@@ -245,7 +246,8 @@ checkMemberFunctionCall context objectType functionIdent argTypes = do
     classDecl <- getClassDeclarationStatic classIdent
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
-    checkMethodArguments context (getMethodParamTypes $ fromJust functionType) argTypes
+    let methodContext = context ++ "." ++ showContext functionIdent
+    checkMethodArguments methodContext (getMethodParamTypes $ fromJust functionType) argTypes
     return $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
@@ -254,7 +256,8 @@ checkMemberActionCall context objectType actionIdent argTypes = do
     classDecl <- getClassDeclarationStatic classIdent
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
-    checkMethodArguments context (getMethodParamTypes $ fromJust actionType) argTypes
+    let methodContext = context ++ "#" ++ showContext actionIdent
+    checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) argTypes
     return $ getMethodReturnType $ fromJust actionType
 
 checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType

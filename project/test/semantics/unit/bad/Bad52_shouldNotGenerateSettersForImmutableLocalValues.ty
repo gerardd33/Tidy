@@ -29,11 +29,7 @@ singleton class Main {
     
     actions: {
         main: () -> Int = {
-            val1: Int = 3
-            var1: Int = 5
-            local#var1(6)
-            local#val1(6) // NoSuchActionError
-            val1
+            3
         }
     }
 }

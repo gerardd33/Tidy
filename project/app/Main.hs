@@ -1,5 +1,10 @@
 module Main where
 
+import           System.Directory              (doesFileExist,
+                                                setCurrentDirectory)
+import           System.Environment            (getArgs)
+import           System.IO
+
 import           Parser.Tidy.Abs
 import           Parser.Tidy.Lex               (Token)
 import           Parser.Tidy.Par               (myLexer, pProgram)
@@ -7,11 +12,6 @@ import           Parser.Tidy.Par               (myLexer, pProgram)
 import           Interpreter.Common.Debug
 import           Interpreter.Common.Errors
 import           Interpreter.Static.Entrypoint (interpret)
-
-import           System.Directory              (doesFileExist,
-                                                setCurrentDirectory)
-import           System.Environment            (getArgs)
-import           System.IO
 
 
 main :: IO ()
@@ -40,7 +40,7 @@ interpretFile :: Mode -> String -> IO ()
 interpretFile mode filePath = do
     debugLog mode "Tidy interpreter running in DEBUG mode."
     fileExists <- doesFileExist filePath
-    if not fileExists then exitWithError $ "Source file " ++ filePath ++ " does not exist."
+    if not fileExists then exitWithError $ show $ NoSuchFileError filePath
     else interpretFileContents mode filePath
 
 interpretFileContents :: Mode -> String -> IO ()

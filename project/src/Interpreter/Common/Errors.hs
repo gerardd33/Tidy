@@ -12,6 +12,7 @@ data RuntimeException
 
 data CompilationError
     = NoMainActionError
+    | NoSuchFileError String
     | UnexpectedTypeError String String String
     | UnexpectedReturnTypeError String String String
     | IllegalSectionError String String String
@@ -37,6 +38,7 @@ instance Show RuntimeException where
 
 instance Show CompilationError where
     show NoMainActionError = "NoMainActionError: No singleton class with action named main exists."
+    show (NoSuchFileError path) = "NoSuchFileError: Source file " ++ show path ++ " does not exist."
     show (UnexpectedTypeError expected actual context) = "UnexpectedTypeError: Types do not match." ++
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual ++ "\nIn expression:\n" ++ context
     show (UnexpectedReturnTypeError expected actual context) = "UnexpectedReturnTypeError: " ++
