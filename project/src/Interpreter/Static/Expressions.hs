@@ -246,7 +246,8 @@ checkMemberFunctionCall context objectType functionIdent argTypes = do
     classDecl <- getClassDeclarationStatic classIdent
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
-    checkMethodArguments context (getMethodParamTypes $ fromJust functionType) argTypes
+    let methodContext = context ++ "." ++ showContext functionIdent
+    checkMethodArguments methodContext (getMethodParamTypes $ fromJust functionType) argTypes
     return $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
@@ -255,7 +256,8 @@ checkMemberActionCall context objectType actionIdent argTypes = do
     classDecl <- getClassDeclarationStatic classIdent
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
-    checkMethodArguments context (getMethodParamTypes $ fromJust actionType) argTypes
+    let methodContext = context ++ "#" ++ showContext actionIdent
+    checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) argTypes
     return $ getMethodReturnType $ fromJust actionType
 
 checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
