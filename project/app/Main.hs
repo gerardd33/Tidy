@@ -1,6 +1,5 @@
 module Main where
 
-import           Control.Exception
 import           System.Directory              (doesFileExist,
                                                 setCurrentDirectory)
 import           System.Environment            (getArgs)
@@ -49,11 +48,4 @@ interpretFileContents mode filePath = do
     source <- readFile filePath
     case (parser . lexer) source of
         Left error    -> exitWithError error
-        Right astTree -> catchAny (interpret mode astTree) handleUnexpectedError
-
-catchAny :: IO a -> (SomeException -> IO a) -> IO a
-catchAny = Control.Exception.catch
-
-handleUnexpectedError :: SomeException -> IO ()
-handleUnexpectedError _ = do
-    exitWithError $ show $ RuntimeException "Unexpected error"
+        Right astTree -> interpret mode astTree
