@@ -16,9 +16,6 @@ isTrue :: Object -> Bool
 isTrue (BuiltinObject (BoolObject BTrue))  = True
 isTrue (BuiltinObject (BoolObject BFalse)) = False
 
-isFalse :: Object -> Bool
-isFalse = not . isTrue
-
 classIdentifierFromName :: String -> ClassIdent
 classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
 

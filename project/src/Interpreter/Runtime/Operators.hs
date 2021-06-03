@@ -7,6 +7,7 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Types
+import           Interpreter.Runtime.Environments
 
 
 evaluateLiteral :: Literal -> StateMonad Object
@@ -62,7 +63,11 @@ evaluateBooleanOr (BuiltinObject (BoolObject value1)) (BuiltinObject (BoolObject
     return $ BuiltinObject $ BoolObject $ toBoolean $ fromBoolean value1 || fromBoolean value2
 
 evaluateEquality :: Object -> Object -> Expr -> Expr -> StateMonad Object
-evaluateEquality value1 value2 _ _ = return $ BuiltinObject $ BoolObject $ toBoolean $ value1 == value2
+evaluateEquality value1 value2 _ _ = do
+    result <- objectsEqual value1 value2
+    return $ BuiltinObject $ BoolObject $ toBoolean result
 
 evaluateNonEquality :: Object -> Object -> Expr -> Expr -> StateMonad Object
-evaluateNonEquality value1 value2 _ _ = return $ BuiltinObject $ BoolObject $ toBoolean $ value1 /= value2
+evaluateNonEquality value1 value2 _ _ = do
+    result <- objectsEqual value1 value2
+    return $ BuiltinObject $ BoolObject $ toBoolean $ not result

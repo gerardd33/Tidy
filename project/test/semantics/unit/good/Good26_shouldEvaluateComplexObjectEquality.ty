@@ -1,0 +1,54 @@
+mutable class Student {
+    
+    values: {
+        name: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: Int;
+    }
+}
+
+mutable class Grades {
+    
+    variables: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
+        }
+    }
+}
+
+singleton class ObjectEquality {
+    
+    actions: {
+        main: () -> Bool = {
+            val student1: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
+            
+            val grades2: Grades = Grades(1, 2, 4);
+            val student2: Student = Student("Diana" ++ " " ++ "Frost", grades2, 19, 4);
+            student2#age(20)
+            student2.grades#grade1(11)
+            student2.grades#grade4(14)
+            student2#year(2)
+            
+            val student3: Student = Student("Diana" ++ " " ++ "Frost", grades2, 19, 4);
+            student3#age(20)
+            student3.grades#grade1(11)
+            student3.grades#grade2(12)
+            student3.grades#grade4(14)
+            student3#year(2)
+            
+            student1 != student2 and student1 == student3 // True
+        }
+    }
+}

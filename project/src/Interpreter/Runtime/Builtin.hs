@@ -16,8 +16,8 @@ import           Interpreter.Runtime.Types
 
 evaluateBuiltinMethodCall :: MethodIdent -> StateMonad Result
 evaluateBuiltinMethodCall (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_exit"        -> evaluateBuiltinExitMethod
-    "__builtin_assert"      -> evaluateBuiltinAssertMethod
+    "__builtin_exit"         -> evaluateBuiltinExitMethod
+    "__builtin_assert"       -> evaluateBuiltinAssertMethod
     "__builtin_assertEquals" -> evaluateBuiltinAssertEqualsMethod
 
 evaluateBuiltinExitMethod :: StateMonad Result
@@ -41,7 +41,8 @@ evaluateBuiltinAssertEqualsMethod = do
     param1 <- getLocalObject $ objectIdentifierFromName "param1"
     param2 <- getLocalObject $ objectIdentifierFromName "param2"
     contextArg <- getLocalObject $ objectIdentifierFromName "context"
+    result <- objectsEqual param1 param2
     case contextArg of
-        BuiltinObject (StringObject context) -> if param1 /= param2
+        BuiltinObject (StringObject context) -> if not result
                                                 then throwError $ AssertionFailedException context
                                                 else returnPass

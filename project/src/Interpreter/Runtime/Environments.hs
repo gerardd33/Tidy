@@ -118,3 +118,15 @@ getLocalVariableNames :: StateMonad [ObjectIdent]
 getLocalVariableNames = do
     (localRef, _) <- ask
     return $ Map.keys $ getVariables localRef
+
+objectsEqual :: Object -> Object -> StateMonad Bool
+objectsEqual object1 object2 = do
+    case object1 of BuiltinObject _ -> return $ object1 == object2
+                    _               -> complexObjectsEqual object1 object2
+
+complexObjectsEqual :: Object -> Object -> StateMonad Bool
+complexObjectsEqual (RegularObject _ env1) (RegularObject _ env2) = do
+    attributeValues1 <- mapM retrieveObject $ Map.elems $ Map.union (values env1) (variables env1)
+    attributeValues2 <- mapM retrieveObject $ Map.elems $ Map.union (values env2) (variables env2)
+    results <- zipWithM objectsEqual attributeValues1 attributeValues2
+    return $ and results
