@@ -17,20 +17,20 @@ import           Interpreter.Runtime.Types
 
 evaluateBuiltinMethodCall :: MethodIdent -> StateMonad Result
 evaluateBuiltinMethodCall (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_exit"         -> evaluateBuiltinExitMethod
-    "__builtin_assert"       -> evaluateBuiltinAssertMethod
-    "__builtin_assertEquals" -> evaluateBuiltinAssertEqualsMethod
-    "__builtin_print"        -> evaluateBuiltinPrintMethod
-    "__builtin_printLine"    -> evaluateBuiltinPrintLineMethod
+    "__builtin_exit"         -> evaluateExitBuiltinMethod
+    "__builtin_assert"       -> evaluateAssertBuiltinMethod
+    "__builtin_assertEquals" -> evaluateAssertEqualsBuiltinMethod
+    "__builtin_print"        -> evaluatePrintBuiltinMethod
+    "__builtin_printLine"    -> evaluatePrintLineBuiltinMethod
 
-evaluateBuiltinExitMethod :: StateMonad Result
-evaluateBuiltinExitMethod = do
+evaluateExitBuiltinMethod :: StateMonad Result
+evaluateExitBuiltinMethod = do
     argument <- getLocalObject $ objectIdentifierFromName "code"
     liftIO $ case argument of BuiltinObject (IntObject code) -> if code == 0 then exitSuccess
                                                                 else exitWith $ ExitFailure $ fromIntegral code
 
-evaluateBuiltinAssertMethod :: StateMonad Result
-evaluateBuiltinAssertMethod = do
+evaluateAssertBuiltinMethod :: StateMonad Result
+evaluateAssertBuiltinMethod = do
     predicateArg <- getLocalObject $ objectIdentifierFromName "predicate"
     contextArg <- getLocalObject $ objectIdentifierFromName "context"
     case predicateArg of
@@ -39,8 +39,8 @@ evaluateBuiltinAssertMethod = do
                 $ throwError $ AssertionFailedException context
     returnPass
 
-evaluateBuiltinAssertEqualsMethod :: StateMonad Result
-evaluateBuiltinAssertEqualsMethod = do
+evaluateAssertEqualsBuiltinMethod :: StateMonad Result
+evaluateAssertEqualsBuiltinMethod = do
     param1 <- getLocalObject $ objectIdentifierFromName "param1"
     param2 <- getLocalObject $ objectIdentifierFromName "param2"
     contextArg <- getLocalObject $ objectIdentifierFromName "context"
@@ -50,15 +50,15 @@ evaluateBuiltinAssertEqualsMethod = do
                                                 then throwError $ AssertionFailedException context
                                                 else returnPass
 
-evaluateBuiltinPrintMethod :: StateMonad Result
-evaluateBuiltinPrintMethod = do
+evaluatePrintBuiltinMethod :: StateMonad Result
+evaluatePrintBuiltinMethod = do
     argument <- getLocalObject $ objectIdentifierFromName "value"
     objectString <- objectToString argument
     liftIO $ putStr objectString
     returnPass
 
-evaluateBuiltinPrintLineMethod :: StateMonad Result
-evaluateBuiltinPrintLineMethod = do
+evaluatePrintLineBuiltinMethod :: StateMonad Result
+evaluatePrintLineBuiltinMethod = do
     argument <- getLocalObject $ objectIdentifierFromName "value"
     objectString <- objectToString argument
     liftIO $ putStrLn objectString
