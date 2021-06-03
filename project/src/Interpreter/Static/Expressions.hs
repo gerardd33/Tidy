@@ -259,13 +259,14 @@ checkMemberActionCall context objectType actionIdent argTypes = do
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
     let methodContext = context ++ "#" ++ showContext actionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext $ builtinMethodIdentifier actionIdent]
+    liftIO $ print actionIdent
     checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust actionType
 
 checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context expected actual = do
     let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
-    unless argumentTypesMatch $ throwError $
+    unless (length expected == length actual && argumentTypesMatch) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 

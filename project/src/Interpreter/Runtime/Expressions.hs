@@ -117,7 +117,7 @@ evaluateMemberAction context object actionIdent evaluatedArgs = do
     (_, newEnv) <- setThisReference object
     let implicitArgs = [BuiltinObject (StringObject context) | builtinWithImplicitContext (builtinMethodIdentifier actionIdent)]
     (_, actionMethodEnv) <- local (const newEnv) $ addArgumentsToEnv (getActionType action) (evaluatedArgs ++ implicitArgs)
-    local (const actionMethodEnv) $ evaluateActionInEnv action
+    liftPure $ returnPure $ local (const actionMethodEnv) $ evaluateActionInEnv action
 
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> Expr -> Expr -> StateMonad Object) -> StateMonad Object
 evaluateBinaryOperator expr1 expr2 evaluator = do
