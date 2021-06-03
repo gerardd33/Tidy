@@ -190,7 +190,6 @@ checkLocalObjectDeclaration (LocalValueDeclaration objectDecl) =
     checkObjectDeclaration InitializedRequired False objectDecl
 checkLocalObjectDeclaration (LocalVariableDeclaration objectDecl) =
     checkObjectDeclaration InitializedRequired True objectDecl
--- TODO variable/value distinction in static local env, split env into two or store this info in addition to type
 
 checkObjectDeclarations :: InitializationType -> Bool -> [ObjectDecl] -> StaticCheckMonad StaticResult
 checkObjectDeclarations _ _ [] = liftPureStatic returnVoid
@@ -259,7 +258,6 @@ checkMemberActionCall context objectType actionIdent argTypes = do
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
     let methodContext = context ++ "#" ++ showContext actionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext $ builtinMethodIdentifier actionIdent]
-    liftIO $ print actionIdent
     checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust actionType
 

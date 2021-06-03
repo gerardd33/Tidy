@@ -145,7 +145,7 @@ objectToString (RegularObject objectType objectEnv) = do
         ObjectTypeClass classIdent _ -> do
             objectEnvString <- objectEnvToString objectEnv
             return $ show objectType ++ " " ++ objectEnvString
--- TODO add method types
+-- TODO add lambda types
 
 objectEnvToString :: ObjectEnv -> StateMonad String
 objectEnvToString env = do

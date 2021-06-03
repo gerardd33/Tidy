@@ -43,8 +43,7 @@ executeRuntime mode classEnv mainClass = do
         Production -> catchAny (runtime mode classEnv mainClass) handleUnexpectedException
     case runtimeResult of Left error        -> case error of UserExitException code -> handleUserExit code
                                                              _ -> exitWithError $ show error
-                          Right returnValue -> print returnValue
-    -- TODO when System#print etc. is there: debugPrint mode "Return value" returnValue, instead of this print
+                          Right returnValue -> debugPrint mode "Returned value" returnValue
 
 performStaticCheck :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
 performStaticCheck mode classEnv classDeclarations = runExceptT
