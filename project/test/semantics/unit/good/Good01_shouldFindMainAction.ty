@@ -77,8 +77,8 @@ singleton class AnotherSingletonClass {
             2 + 2
         }
         
-        main: () -> String = {
-            "Proper main action!"
+        main: () -> Void = {
+            System#printLine("Proper main action!")
         }
         
         anotherAction: () -> Void = {

@@ -9,7 +9,7 @@ singleton class SystemTest {
         }
         
         main: () -> Int = {
-            System#print(3)
+            System#exit(3, 3)
             this#otherAction(8)
         }
     }

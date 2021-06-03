@@ -246,7 +246,9 @@ checkMemberFunctionCall context objectType functionIdent argTypes = do
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
     let methodContext = context ++ "." ++ showContext functionIdent
-    let implicitArgTypes = [stringType | builtinWithImplicitContext $ builtinMethodIdentifier functionIdent]
+    let builtinFunctionIdent = builtinMethodIdentifier functionIdent
+    let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
+    if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
     checkMethodArguments methodContext (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust functionType
 
@@ -257,7 +259,9 @@ checkMemberActionCall context objectType actionIdent argTypes = do
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
     let methodContext = context ++ "#" ++ showContext actionIdent
-    let implicitArgTypes = [stringType | builtinWithImplicitContext $ builtinMethodIdentifier actionIdent]
+    let builtinActionIdent = builtinMethodIdentifier actionIdent
+    let implicitArgTypes = [stringType | builtinWithImplicitContext builtinActionIdent]
+    if shouldHaveUniformTypes builtinActionIdent then checkTypeUniformity methodContext argTypes else returnVoid
     checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust actionType
 

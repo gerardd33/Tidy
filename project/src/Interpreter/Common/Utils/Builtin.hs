@@ -68,6 +68,11 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsA
                          assertEqualsBuiltinActionDeclaration, printBuiltinActionDeclaration,
                          printLineBuiltinActionDeclaration]
 
+shouldHaveUniformTypes :: MethodIdent -> Bool
+shouldHaveUniformTypes (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+    "__builtin_assertEquals" -> True
+    _                        -> False
+
 getBuiltinMethodType :: MethodIdent -> MethodType
 getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
     "__builtin_exit"         -> exitBuiltinMethodType

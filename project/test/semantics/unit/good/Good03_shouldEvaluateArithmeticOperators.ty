@@ -1,10 +1,11 @@
 singleton class BinaryOperators {
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             val y: Int = 4 + 4; // 8
             val x: Int = 2 + y; // 10
-            24 - (2 * x + y) / 7 // 20
+            val result: Int = 24 - (2 * x + y) / 7; // 20
+            System#assertEquals(20, result)
         }
     }
 }

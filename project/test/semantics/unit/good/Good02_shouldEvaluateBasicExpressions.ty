@@ -5,10 +5,15 @@ singleton class SimpleMain {
     }
     
     actions: {
-        main: () -> Int = {
+        run: () -> Int = {
             4
             val x: Int = 5;
-            x // Should return 5
+            x
+        }
+        
+        main: () -> Void = {
+            val result: Int = this#run;
+            System#assertEquals(5, result)
         }
     }
 }

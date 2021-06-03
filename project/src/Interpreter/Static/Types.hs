@@ -2,6 +2,7 @@ module Interpreter.Static.Types where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
+import qualified Data.List                            as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -44,3 +45,8 @@ assertPureExpression :: String -> Expr -> StaticCheckMonad ObjectType
 assertPureExpression context expr = do
     unless (isExpressionPure expr) $ throwError $ IllegalSideEffectsError context (showContext expr)
     returnVoid
+
+checkTypeUniformity :: String -> [ObjectType] -> StaticCheckMonad ObjectType
+checkTypeUniformity context types = do
+    if length (List.nub types) /= 1 then throwError $ TypesDoNotMatchError context (showContext types)
+    else returnVoid

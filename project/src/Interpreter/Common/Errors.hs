@@ -17,6 +17,7 @@ data CompilationError
     | NoSuchFileError String
     | UnexpectedTypeError String String String
     | UnexpectedReturnTypeError String String String
+    | TypesDoNotMatchError String String
     | IllegalSectionError String String String
     | UninitializedError String
     | IllegalInitializationError String
@@ -47,6 +48,8 @@ instance Show CompilationError where
     show (UnexpectedReturnTypeError expected actual context) = "UnexpectedReturnTypeError: " ++
         "Declared method return type does not match the actual one." ++ "\nExpected: " ++ expected ++
         "\nActual: " ++ actual ++ "\nIn method: " ++ context
+    show (TypesDoNotMatchError context types) = "TypesDoNotMatchError: Types do not match: " ++ types ++
+        "\nIn: " ++ context
     show (IllegalSectionError classType classIdent section) = "IllegalSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."

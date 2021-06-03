@@ -10,7 +10,7 @@ singleton class ObjectsAsValues {
     actions: {
         main: () -> Void = {
             val x: Student = Student;
-            System#assertEquals(Student, x)
+            System#assertEquals(Student, 3) // TypesDoNotMatchError
         }
     }
 }
