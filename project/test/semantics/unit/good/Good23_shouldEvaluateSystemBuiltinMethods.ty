@@ -1,0 +1,10 @@
+singleton class SystemTest {
+    
+    actions: {
+        main: () -> Int = {
+            val code: Int = 43;
+            Int
+            // ZMIEN NA AKCJE KTORA WYCHODZI, NA RAZIE ZWRACA + 1
+        }
+    }
+}

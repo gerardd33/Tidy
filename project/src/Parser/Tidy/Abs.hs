@@ -5,9 +5,9 @@
 
 module Parser.Tidy.Abs where
 
-import Prelude (Char, Double, Integer, String)
-import qualified Prelude as C (Eq, Ord, Show, Read, show, (++))
 import qualified Data.String
+import           Prelude     (Char, Double, Integer, String)
+import qualified Prelude     as C (Eq, Ord, Read, Show, show, (++))
 
 newtype UpperCaseIdent = UpperCaseIdent String
   deriving (C.Eq, C.Ord, C.Show, C.Read, Data.String.IsString)
@@ -133,6 +133,7 @@ data Expr
     | EConcatenate Expr Expr
     | ERelationalOperator Expr RelationalOperator Expr
     | EBooleanOperator Expr BooleanOperator Expr
+    | EBuiltin MethodIdent ArgList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Literal

@@ -39,7 +39,7 @@ runtimeBody mode mainClass = do
 
 buildInitialLocalReference :: ClassEnv -> StateMonad Result
 buildInitialLocalReference classEnv = do
-    let singletonClasses = Map.toList $ Map.filter isSingletonClass classEnv
+    let singletonClasses = Map.toList $ Map.filter isSingletonClass classEnv ++ builtinSingletonClasses
     let (singletonsIdents, singletonsDeclarations) = unzip singletonClasses
     singletonsAttributes <- mapM evaluateInitializedAttributes singletonsDeclarations
     singletonObjects <- zipWithM buildSingletonClassInstance singletonsIdents singletonsAttributes
