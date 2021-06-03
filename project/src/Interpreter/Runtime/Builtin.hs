@@ -53,11 +53,13 @@ evaluateBuiltinAssertEqualsMethod = do
 evaluateBuiltinPrintMethod :: StateMonad Result
 evaluateBuiltinPrintMethod = do
     argument <- getLocalObject $ objectIdentifierFromName "value"
-    liftIO $ putStr $ objectToString argument
+    objectString <- objectToString argument
+    liftIO $ putStr objectString
     returnPass
 
 evaluateBuiltinPrintLineMethod :: StateMonad Result
 evaluateBuiltinPrintLineMethod = do
     argument <- getLocalObject $ objectIdentifierFromName "value"
-    liftIO $ putStrLn $ objectToString argument
+    objectString <- objectToString argument
+    liftIO $ putStrLn objectString
     returnPass

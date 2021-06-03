@@ -56,11 +56,3 @@ getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
 
 publicDeclarationFromProper :: ObjectDeclProper -> ObjectDecl
 publicDeclarationFromProper = ObjectDeclaration MPublic
-
-objectToString :: Object -> String
-objectToString (BuiltinObject object) = case object of
-    IntObject value    -> show value
-    BoolObject value   -> if value == BTrue then "True" else "False"
-    CharObject value   -> [value]
-    StringObject value -> value
-    VoidObject         -> "Pass"

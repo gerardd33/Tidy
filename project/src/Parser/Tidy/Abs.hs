@@ -237,10 +237,10 @@ data BooleanOperator = BAnd | BOr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 instance C.Show ObjectIdent where
-    show (ObjectIdentifier (LowerCaseIdent identifier)) = C.show identifier
+    show (ObjectIdentifier (LowerCaseIdent identifier)) = identifier
 
 instance C.Show ClassIdent where
-    show (ClassIdentifier (UpperCaseIdent identifier)) = C.show identifier
+    show (ClassIdentifier (UpperCaseIdent identifier)) = identifier
 
 instance C.Show ObjectType where
     show (ObjectTypeClass classIdent GenericParameterAbsent) = C.show classIdent
