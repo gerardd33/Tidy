@@ -13,7 +13,7 @@ localReferenceType :: ObjectType
 localReferenceType = objectTypeFromClassName "__local"
 
 builtinMethodIdentifierFromName :: String -> MethodIdent
-builtinMethodIdentifierFromName name = methodIdentifierFromName $ "__method_" ++ name
+builtinMethodIdentifierFromName name = methodIdentifierFromName $ "__builtin_" ++ name
 
 localReferenceIdentifier :: ObjectIdent
 localReferenceIdentifier = objectIdentifierFromName "local"
@@ -23,10 +23,10 @@ thisReferenceIdentifier = objectIdentifierFromName "this"
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
 objectTypeForBuiltinObject (IntObject _)    = intType
-objectTypeForBuiltinObject (BoolObject _)   = objectTypeFromClassName "Bool"
-objectTypeForBuiltinObject (CharObject _)   = objectTypeFromClassName "Char"
-objectTypeForBuiltinObject (StringObject _) = objectTypeFromClassName "String"
-objectTypeForBuiltinObject VoidObject       = objectTypeFromClassName "Void"
+objectTypeForBuiltinObject (BoolObject _)   = boolType
+objectTypeForBuiltinObject (CharObject _)   = charType
+objectTypeForBuiltinObject (StringObject _) = stringType
+objectTypeForBuiltinObject VoidObject       = voidType
 
 intType :: ObjectType
 intType = objectTypeFromClassName "Int"
@@ -44,17 +44,17 @@ voidType :: ObjectType
 voidType = objectTypeFromClassName "Void"
 
 builtinClasses :: [ClassDecl]
-builtinClasses = map builtinClassDeclFromName builtinClassNames
+builtinClasses = [simpleBuiltinClass "Int", simpleBuiltinClass "Bool", simpleBuiltinClass "Char",
+                  simpleBuiltinClass "String", simpleBuiltinClass "Void", systemBuiltinClassDeclaration,
+                  simpleBuiltinClass "__local"]
 
-builtinClassNames :: [String]
-builtinClassNames = ["Int", "Bool", "Char", "String", "Void", "__local"]
-
-builtinSingletonClasses :: [ClassDecl]
-builtinSingletonClasses = [systemBuiltinClassDeclaration]
-
-builtinClassDeclFromName :: String -> ClassDecl
-builtinClassDeclFromName name = ClassDeclaration MConcrete MImmutable
+simpleBuiltinClass :: String -> ClassDecl
+simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable
     (classIdentifierFromName name) SuperclassAbsent ClassBodyEmpty
+
+getBuiltinMethodType :: MethodIdent -> MethodType
+getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+    "__builtin_twice" -> twiceBuiltinMethodType
 
 systemBuiltinClassDeclaration :: ClassDecl
 systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent SuperclassAbsent systemBuiltinClassBody
@@ -65,8 +65,10 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent (Functions
     where functionDecls = [twiceBuiltinFunctionDeclaration]
 
 twiceBuiltinFunctionDeclaration :: FunctionDecl
-twiceBuiltinFunctionDeclaration = FunctionDeclaration MNonOverriding MPublic methodType functionBody
+twiceBuiltinFunctionDeclaration = FunctionDeclaration MNonOverriding MPublic methodIdent twiceBuiltinMethodType functionBody
     where methodIdent = methodIdentifierFromName "twice"
           builtinMethodIdent = builtinMethodIdentifierFromName "twice"
-          methodType = MethodTypeSignature (ParameterList []) intType
-          functionBody = FunctionBodyOneLine (EBuiltin methodIdent ArgumentListAbsent)
+          functionBody = FunctionBodyOneLine (EBuiltin builtinMethodIdent ArgumentListAbsent)
+
+twiceBuiltinMethodType :: MethodType
+twiceBuiltinMethodType = MethodTypeSignature (ParameterList []) intType

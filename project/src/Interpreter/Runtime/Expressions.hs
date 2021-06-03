@@ -12,10 +12,12 @@ import           Data.Maybe
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
+import           Interpreter.Runtime.Builtin
 import           Interpreter.Runtime.Classes
 import           Interpreter.Runtime.Environments
 import           Interpreter.Runtime.Methods
@@ -85,6 +87,8 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
     evaluateImperativeIf predicate body optionalElseBranch
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWhile predicate body
+
+evaluateExpression (EBuiltin methodIdent args) = evaluateBuiltinMethodCall methodIdent args
 
 
 -- PURELY FUNCTIONAL EXPRESSIONS --
@@ -159,7 +163,6 @@ evaluateElseBranch (FElseIf predicate thenBranch elseBranch) =
 
 evaluateGetExpressionOnObject :: Object -> FunctionCall -> StateMonad Object
 evaluateGetExpressionOnObject object (CallFunction functionIdent argList) = do
-    originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argList
     takeGetter <- hasGetter (getObjectType object) functionIdent
     if takeGetter then evaluateGetter object functionIdent
@@ -167,7 +170,6 @@ evaluateGetExpressionOnObject object (CallFunction functionIdent argList) = do
 
 evaluateDoExpressionOnObject :: Object -> ActionCall -> StateMonad Result
 evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
-    originalEnv <- ask
     evaluatedArgs <- evaluateArgumentList argList
     takeSetter <- hasSetter (getObjectType object) actionIdent
     if takeSetter then evaluateSetter object actionIdent $ head evaluatedArgs
@@ -236,3 +238,9 @@ evaluateWhile predicate body  = do
     if isTrue predicateValue
     then evaluateExpressionList body >> evaluateWhile predicate body
     else returnPass
+
+evaluateBuiltinMethodCall :: MethodIdent -> ArgList -> StateMonad Result
+evaluateBuiltinMethodCall methodIdent argList = do
+    evaluatedArgs <- evaluateArgumentList argList
+    (_, methodEnv) <- addArgumentsToEnv (getBuiltinMethodType methodIdent) evaluatedArgs
+    local (const methodEnv) $ evaluateBuiltinMethodInEnv methodIdent
