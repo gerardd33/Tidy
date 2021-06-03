@@ -3,8 +3,7 @@ singleton class SystemTest {
     actions: {
         main: () -> Int = {
             val code: Int = 43;
-            System.twice
-            // ZMIEN NA AKCJE KTORA WYCHODZI, NA RAZIE ZWRACA + 1
+            System.twice(code)
         }
     }
 }

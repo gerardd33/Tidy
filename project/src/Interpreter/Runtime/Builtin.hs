@@ -3,6 +3,8 @@ module Interpreter.Runtime.Builtin where
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
+import           Interpreter.Common.Utils.Types
+import           Interpreter.Runtime.Environments
 import           Interpreter.Runtime.Types
 
 
@@ -11,4 +13,6 @@ evaluateBuiltinMethodInEnv (MethodIdentifier (LowerCaseIdent methodName)) = case
     "__builtin_twice" -> evaluateBuiltinTwiceMethod
 
 evaluateBuiltinTwiceMethod :: StateMonad Result
-evaluateBuiltinTwiceMethod = liftPure $ return $ BuiltinObject $ IntObject 3
+evaluateBuiltinTwiceMethod = do
+    argument <- getLocalObject $ objectIdentifierFromName "x"
+    case argument of BuiltinObject (IntObject value) -> liftPure $ return $ BuiltinObject $ IntObject $ 2 * value

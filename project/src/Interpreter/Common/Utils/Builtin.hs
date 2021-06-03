@@ -71,4 +71,5 @@ twiceBuiltinFunctionDeclaration = FunctionDeclaration MNonOverriding MPublic met
           functionBody = FunctionBodyOneLine (EBuiltin builtinMethodIdent ArgumentListAbsent)
 
 twiceBuiltinMethodType :: MethodType
-twiceBuiltinMethodType = MethodTypeSignature (ParameterList []) intType
+twiceBuiltinMethodType = MethodTypeSignature (ParameterList [singleParam]) intType
+    where singleParam = ObjectDeclarationProper (objectIdentifierFromName "x") intType Uninitialized
