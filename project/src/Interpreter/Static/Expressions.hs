@@ -264,7 +264,8 @@ checkMemberActionCall context objectType actionIdent argTypes = do
 
 checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context expected actual = do
-    when (expected /= actual) $ throwError $
+    let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
+    unless argumentTypesMatch $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 

@@ -31,6 +31,9 @@ objectTypeForBuiltinObject (CharObject _)   = charType
 objectTypeForBuiltinObject (StringObject _) = stringType
 objectTypeForBuiltinObject VoidObject       = voidType
 
+anyType :: ObjectType
+anyType = objectTypeFromClassName "Any"
+
 intType :: ObjectType
 intType = objectTypeFromClassName "Int"
 
@@ -65,15 +68,15 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsA
 
 getBuiltinMethodType :: MethodIdent -> MethodType
 getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_exit"        -> exitBuiltinMethodType
-    "__builtin_assert"      -> assertBuiltinMethodType
+    "__builtin_exit"         -> exitBuiltinMethodType
+    "__builtin_assert"       -> assertBuiltinMethodType
     "__builtin_assertEquals" -> assertEqualsBuiltinMethodType
 
 builtinWithImplicitContext :: MethodIdent -> Bool
 builtinWithImplicitContext (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_assert"      -> True
+    "__builtin_assert"       -> True
     "__builtin_assertEquals" -> True
-    _                       -> False
+    _                        -> False
 
 exitBuiltinMethodType :: MethodType
 exitBuiltinMethodType = MethodTypeSignature (ParameterList [codeParam]) voidType
@@ -98,8 +101,8 @@ assertBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic method
 
 assertEqualsBuiltinMethodType :: MethodType
 assertEqualsBuiltinMethodType = MethodTypeSignature (ParameterList [param1, param2, contextParam]) voidType
-    where param1 = ObjectDeclarationProper (objectIdentifierFromName "param1") intType Uninitialized
-          param2 = ObjectDeclarationProper (objectIdentifierFromName "param2") intType Uninitialized
+    where param1 = ObjectDeclarationProper (objectIdentifierFromName "param1") anyType Uninitialized
+          param2 = ObjectDeclarationProper (objectIdentifierFromName "param2") anyType Uninitialized
           contextParam = ObjectDeclarationProper (objectIdentifierFromName "context") stringType Uninitialized
 
 assertEqualsBuiltinActionDeclaration :: ActionDecl
