@@ -1,9 +1,12 @@
 singleton class SystemTest {
     
     actions: {
+        end: (code: Int) -> Void = System#exit(code)
+        
         main: () -> Int = {
             val code: Int = 43;
-            System.twice(code)
+            this#end(code)
+            2 + 2
         }
     }
 }

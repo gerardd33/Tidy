@@ -52,24 +52,24 @@ simpleBuiltinClass :: String -> ClassDecl
 simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable
     (classIdentifierFromName name) SuperclassAbsent ClassBodyEmpty
 
-getBuiltinMethodType :: MethodIdent -> MethodType
-getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_twice" -> twiceBuiltinMethodType
-
 systemBuiltinClassDeclaration :: ClassDecl
 systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent SuperclassAbsent systemBuiltinClassBody
     where classIdent = classIdentifierFromName "System"
 
 systemBuiltinClassBody :: ClassBody
-systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent (FunctionsPresent functionDecls) ActionsAbsent
-    where functionDecls = [twiceBuiltinFunctionDeclaration]
+systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent actionDecls)
+    where actionDecls = [exitBuiltinActionDeclaration]
 
-twiceBuiltinFunctionDeclaration :: FunctionDecl
-twiceBuiltinFunctionDeclaration = FunctionDeclaration MNonOverriding MPublic methodIdent twiceBuiltinMethodType functionBody
-    where methodIdent = methodIdentifierFromName "twice"
-          builtinMethodIdent = builtinMethodIdentifierFromName "twice"
-          functionBody = FunctionBodyOneLine (EBuiltin builtinMethodIdent ArgumentListAbsent)
+getBuiltinMethodType :: MethodIdent -> MethodType
+getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+    "__builtin_exit" -> exitBuiltinMethodType
 
-twiceBuiltinMethodType :: MethodType
-twiceBuiltinMethodType = MethodTypeSignature (ParameterList [singleParam]) intType
-    where singleParam = ObjectDeclarationProper (objectIdentifierFromName "x") intType Uninitialized
+exitBuiltinActionDeclaration :: ActionDecl
+exitBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent exitBuiltinMethodType actionBody
+    where methodIdent = methodIdentifierFromName "exit"
+          builtinMethodIdent = builtinMethodIdentifierFromName "exit"
+          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent ArgumentListAbsent)
+
+exitBuiltinMethodType :: MethodType
+exitBuiltinMethodType = MethodTypeSignature (ParameterList [singleParam]) voidType
+    where singleParam = ObjectDeclarationProper (objectIdentifierFromName "code") intType Uninitialized
