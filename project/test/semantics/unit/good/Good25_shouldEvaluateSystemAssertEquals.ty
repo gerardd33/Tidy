@@ -1,0 +1,14 @@
+singleton class SystemTest {
+    
+    actions: {
+    
+        main: () -> Int = {
+            System#assertEquals(2 + 2, 4)
+            val actual: Int = 43;
+            System#assert(True)
+            System#assertEquals(actual, 43)
+            System#assert(2 < 5)
+            2 + 2 // 4
+        }
+    }
+}

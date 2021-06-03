@@ -61,17 +61,19 @@ systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent
 
 systemBuiltinClassBody :: ClassBody
 systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent actionDecls)
-    where actionDecls = [exitBuiltinActionDeclaration, assertBuiltinActionDeclaration]
+    where actionDecls = [exitBuiltinActionDeclaration, assertBuiltinActionDeclaration, assertEqualsBuiltinActionDeclaration]
 
 getBuiltinMethodType :: MethodIdent -> MethodType
 getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_exit"   -> exitBuiltinMethodType
-    "__builtin_assert" -> assertBuiltinMethodType
+    "__builtin_exit"        -> exitBuiltinMethodType
+    "__builtin_assert"      -> assertBuiltinMethodType
+    "__builtin_assertEquals" -> assertEqualsBuiltinMethodType
 
 builtinWithImplicitContext :: MethodIdent -> Bool
 builtinWithImplicitContext (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_assert" -> True
-    _                  -> False
+    "__builtin_assert"      -> True
+    "__builtin_assertEquals" -> True
+    _                       -> False
 
 exitBuiltinMethodType :: MethodType
 exitBuiltinMethodType = MethodTypeSignature (ParameterList [codeParam]) voidType
@@ -92,4 +94,16 @@ assertBuiltinActionDeclaration :: ActionDecl
 assertBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent assertBuiltinMethodType actionBody
     where methodIdent = methodIdentifierFromName "assert"
           builtinMethodIdent = builtinMethodIdentifierFromName "assert"
+          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)
+
+assertEqualsBuiltinMethodType :: MethodType
+assertEqualsBuiltinMethodType = MethodTypeSignature (ParameterList [param1, param2, contextParam]) voidType
+    where param1 = ObjectDeclarationProper (objectIdentifierFromName "param1") intType Uninitialized
+          param2 = ObjectDeclarationProper (objectIdentifierFromName "param2") intType Uninitialized
+          contextParam = ObjectDeclarationProper (objectIdentifierFromName "context") stringType Uninitialized
+
+assertEqualsBuiltinActionDeclaration :: ActionDecl
+assertEqualsBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent assertEqualsBuiltinMethodType actionBody
+    where methodIdent = methodIdentifierFromName "assertEquals"
+          builtinMethodIdent = builtinMethodIdentifierFromName "assertEquals"
           actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)
