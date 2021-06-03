@@ -9,6 +9,7 @@ import           Parser.Tidy.Print
 data RuntimeException
     = DivideByZeroException String
     | AssertionFailedException String
+    | UserExitException Int
     | RuntimeException String
 
 data CompilationError

@@ -2,7 +2,6 @@ module Interpreter.Runtime.Builtin where
 
 import           Control.Monad.Except
 import           Control.Monad.IO.Class
-import           System.Exit
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -26,8 +25,7 @@ evaluateBuiltinMethodCall (MethodIdentifier (LowerCaseIdent methodName)) = case 
 evaluateExitBuiltinMethod :: StateMonad Result
 evaluateExitBuiltinMethod = do
     argument <- getLocalObject $ objectIdentifierFromName "code"
-    liftIO $ case argument of BuiltinObject (IntObject code) -> if code == 0 then exitSuccess
-                                                                else exitWith $ ExitFailure $ fromIntegral code
+    case argument of BuiltinObject (IntObject code) -> throwError $ UserExitException $ fromIntegral code
 
 evaluateAssertBuiltinMethod :: StateMonad Result
 evaluateAssertBuiltinMethod = do

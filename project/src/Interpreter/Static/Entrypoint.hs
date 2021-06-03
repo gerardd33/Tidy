@@ -4,6 +4,7 @@ import           Control.Exception
 import           Control.Monad.Except
 import           Control.Monad.Reader
 import           Data.Maybe
+import           System.Exit
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -40,7 +41,8 @@ executeRuntime mode classEnv mainClass = do
     runtimeResult <- case mode of
         Debug -> runtime mode classEnv mainClass
         Production -> catchAny (runtime mode classEnv mainClass) handleUnexpectedException
-    case runtimeResult of Left error        -> exitWithError $ show error
+    case runtimeResult of Left error        -> case error of UserExitException code -> handleUserExit code
+                                                             _ -> exitWithError $ show error
                           Right returnValue -> print returnValue
     -- TODO when System#print etc. is there: debugPrint mode "Return value" returnValue, instead of this print
 
@@ -62,3 +64,8 @@ handleUnexpectedError _ = do
     let error = CompilationError "Unexpected error"
     exitWithError $ show error
     return $ Left error
+
+handleUserExit :: Int -> IO ()
+handleUserExit code = do
+    if code == 0 then exitSuccess
+    else exitWith $ ExitFailure code
