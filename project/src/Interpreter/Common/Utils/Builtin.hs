@@ -64,13 +64,17 @@ systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent
 
 systemBuiltinClassBody :: ClassBody
 systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent actionDecls)
-    where actionDecls = [exitBuiltinActionDeclaration, assertBuiltinActionDeclaration, assertEqualsBuiltinActionDeclaration]
+    where actionDecls = [exitBuiltinActionDeclaration, assertBuiltinActionDeclaration,
+                         assertEqualsBuiltinActionDeclaration, printBuiltinActionDeclaration,
+                         printLineBuiltinActionDeclaration]
 
 getBuiltinMethodType :: MethodIdent -> MethodType
 getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
     "__builtin_exit"         -> exitBuiltinMethodType
     "__builtin_assert"       -> assertBuiltinMethodType
     "__builtin_assertEquals" -> assertEqualsBuiltinMethodType
+    "__builtin_print"        -> printBuiltinMethodType
+    "__builtin_printLine"    -> printLineBuiltinMethodType
 
 builtinWithImplicitContext :: MethodIdent -> Bool
 builtinWithImplicitContext (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
@@ -109,4 +113,23 @@ assertEqualsBuiltinActionDeclaration :: ActionDecl
 assertEqualsBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent assertEqualsBuiltinMethodType actionBody
     where methodIdent = methodIdentifierFromName "assertEquals"
           builtinMethodIdent = builtinMethodIdentifierFromName "assertEquals"
+          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)
+
+printBuiltinMethodType :: MethodType
+printBuiltinMethodType = MethodTypeSignature (ParameterList [valueParam]) voidType
+    where valueParam = ObjectDeclarationProper (objectIdentifierFromName "value") anyType Uninitialized
+
+printBuiltinActionDeclaration :: ActionDecl
+printBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent printBuiltinMethodType actionBody
+    where methodIdent = methodIdentifierFromName "print"
+          builtinMethodIdent = builtinMethodIdentifierFromName "print"
+          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)
+
+printLineBuiltinMethodType :: MethodType
+printLineBuiltinMethodType = printBuiltinMethodType
+
+printLineBuiltinActionDeclaration :: ActionDecl
+printLineBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent printLineBuiltinMethodType actionBody
+    where methodIdent = methodIdentifierFromName "printLine"
+          builtinMethodIdent = builtinMethodIdentifierFromName "printLine"
           actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)

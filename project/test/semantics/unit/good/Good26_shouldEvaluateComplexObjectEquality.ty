@@ -41,7 +41,8 @@ singleton class ObjectEquality {
             student2.grades#grade4(14)
             student2#year(2)
             
-            val student3: Student = Student("Diana" ++ " " ++ "Frost", grades2, 19, 4);
+            val grades3: Grades = Grades(1, 2, 4);
+            val student3: Student = Student("Diana" ++ " " ++ "Frost", grades3, 19, 4);
             student3#age(20)
             student3.grades#grade1(11)
             student3.grades#grade2(12)

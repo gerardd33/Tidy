@@ -8,6 +8,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 import           Interpreter.Runtime.Environments
 import           Interpreter.Runtime.Operators
@@ -19,6 +20,8 @@ evaluateBuiltinMethodCall (MethodIdentifier (LowerCaseIdent methodName)) = case 
     "__builtin_exit"         -> evaluateBuiltinExitMethod
     "__builtin_assert"       -> evaluateBuiltinAssertMethod
     "__builtin_assertEquals" -> evaluateBuiltinAssertEqualsMethod
+    "__builtin_print"        -> evaluateBuiltinPrintMethod
+    "__builtin_printLine"    -> evaluateBuiltinPrintLineMethod
 
 evaluateBuiltinExitMethod :: StateMonad Result
 evaluateBuiltinExitMethod = do
@@ -46,3 +49,15 @@ evaluateBuiltinAssertEqualsMethod = do
         BuiltinObject (StringObject context) -> if not result
                                                 then throwError $ AssertionFailedException context
                                                 else returnPass
+
+evaluateBuiltinPrintMethod :: StateMonad Result
+evaluateBuiltinPrintMethod = do
+    argument <- getLocalObject $ objectIdentifierFromName "value"
+    liftIO $ putStr $ objectToString argument
+    returnPass
+
+evaluateBuiltinPrintLineMethod :: StateMonad Result
+evaluateBuiltinPrintLineMethod = do
+    argument <- getLocalObject $ objectIdentifierFromName "value"
+    liftIO $ putStrLn $ objectToString argument
+    returnPass
