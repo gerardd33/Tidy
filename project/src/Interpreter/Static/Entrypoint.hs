@@ -23,14 +23,26 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     let mainClass = findMainClass classDeclarations
     when (isNothing mainClass) $ exitWithError $ show NoMainActionError
     debugPrint mode "Main action" $ getMainAction $ fromJust mainClass
-    staticCheckResult <- catchAny (performStaticCheck mode classEnv classDeclarations) handleUnexpectedError
+    executeStaticCheck mode classEnv classDeclarations
+    executeRuntime mode classEnv (fromJust mainClass)
+
+
+executeStaticCheck :: Mode -> ClassEnv -> [ClassDecl] -> IO ()
+executeStaticCheck mode classEnv classDeclarations = do
+    staticCheckResult <- case mode of
+        Debug -> performStaticCheck mode classEnv classDeclarations
+        Production -> catchAny (performStaticCheck mode classEnv classDeclarations) handleUnexpectedError
     case staticCheckResult of Left error -> exitWithError $ show error
                               Right _    -> return ()
-    runtimeResult <- catchAny (runtime mode classEnv $ fromJust mainClass) handleUnexpectedException
+
+executeRuntime :: Mode -> ClassEnv -> ClassDecl -> IO ()
+executeRuntime mode classEnv mainClass = do
+    runtimeResult <- case mode of
+        Debug -> runtime mode classEnv mainClass
+        Production -> catchAny (runtime mode classEnv mainClass) handleUnexpectedException
     case runtimeResult of Left error        -> exitWithError $ show error
                           Right returnValue -> print returnValue
     -- TODO when System#print etc. is there: debugPrint mode "Return value" returnValue, instead of this print
-
 
 performStaticCheck :: Mode -> ClassEnv -> [ClassDecl] -> IO (Either CompilationError ObjectType)
 performStaticCheck mode classEnv classDeclarations = runExceptT
