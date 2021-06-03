@@ -133,7 +133,7 @@ data Expr
     | EConcatenate Expr Expr
     | ERelationalOperator Expr RelationalOperator Expr
     | EBooleanOperator Expr BooleanOperator Expr
-    | EBuiltin MethodIdent ArgList
+    | EBuiltin MethodIdent
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data Literal

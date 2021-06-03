@@ -8,6 +8,7 @@ import           Parser.Tidy.Print
 
 data RuntimeException
     = DivideByZeroException String
+    | AssertionFailedException String
     | RuntimeException String
 
 data CompilationError
@@ -34,6 +35,7 @@ data CompilationError
 instance Show RuntimeException where
     show (DivideByZeroException context) = "DivideByZeroException: Attempted division by zero.\n" ++
         "Divisor expression evaluating to 0:\n" ++ context
+    show (AssertionFailedException context) = "AssertionFailedException: Assertion failed:\n" ++ context
     show (RuntimeException message) = "RuntimeException: " ++ message
 
 instance Show CompilationError where

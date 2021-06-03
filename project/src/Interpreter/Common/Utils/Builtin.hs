@@ -12,6 +12,9 @@ pass = BuiltinObject VoidObject
 localReferenceType :: ObjectType
 localReferenceType = objectTypeFromClassName "__local"
 
+builtinMethodIdentifier :: MethodIdent -> MethodIdent
+builtinMethodIdentifier (MethodIdentifier (LowerCaseIdent name)) = methodIdentifierFromName $ "__builtin_" ++ name
+
 builtinMethodIdentifierFromName :: String -> MethodIdent
 builtinMethodIdentifierFromName name = methodIdentifierFromName $ "__builtin_" ++ name
 
@@ -58,18 +61,35 @@ systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent
 
 systemBuiltinClassBody :: ClassBody
 systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent actionDecls)
-    where actionDecls = [exitBuiltinActionDeclaration]
+    where actionDecls = [exitBuiltinActionDeclaration, assertBuiltinActionDeclaration]
 
 getBuiltinMethodType :: MethodIdent -> MethodType
 getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
-    "__builtin_exit" -> exitBuiltinMethodType
+    "__builtin_exit"   -> exitBuiltinMethodType
+    "__builtin_assert" -> assertBuiltinMethodType
+
+builtinWithImplicitContext :: MethodIdent -> Bool
+builtinWithImplicitContext (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+    "__builtin_assert" -> True
+    _                  -> False
+
+exitBuiltinMethodType :: MethodType
+exitBuiltinMethodType = MethodTypeSignature (ParameterList [codeParam]) voidType
+    where codeParam = ObjectDeclarationProper (objectIdentifierFromName "code") intType Uninitialized
 
 exitBuiltinActionDeclaration :: ActionDecl
 exitBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent exitBuiltinMethodType actionBody
     where methodIdent = methodIdentifierFromName "exit"
           builtinMethodIdent = builtinMethodIdentifierFromName "exit"
-          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent ArgumentListAbsent)
+          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)
 
-exitBuiltinMethodType :: MethodType
-exitBuiltinMethodType = MethodTypeSignature (ParameterList [singleParam]) voidType
-    where singleParam = ObjectDeclarationProper (objectIdentifierFromName "code") intType Uninitialized
+assertBuiltinMethodType :: MethodType
+assertBuiltinMethodType = MethodTypeSignature (ParameterList [predicateParam, contextParam]) voidType
+    where predicateParam = ObjectDeclarationProper (objectIdentifierFromName "predicate") boolType Uninitialized
+          contextParam = ObjectDeclarationProper (objectIdentifierFromName "context") stringType Uninitialized
+
+assertBuiltinActionDeclaration :: ActionDecl
+assertBuiltinActionDeclaration = ActionDeclaration MNonOverriding MPublic methodIdent assertBuiltinMethodType actionBody
+    where methodIdent = methodIdentifierFromName "assert"
+          builtinMethodIdent = builtinMethodIdentifierFromName "assert"
+          actionBody = ActionBodyOneLine (EBuiltin builtinMethodIdent)

@@ -4,7 +4,7 @@ singleton class SystemTest {
         end: (code: Int) -> Void = System#exit(code)
         
         main: () -> Int = {
-            val code: Int = 43;
+            val code: Int = 39;
             this#end(code)
             2 + 2
         }

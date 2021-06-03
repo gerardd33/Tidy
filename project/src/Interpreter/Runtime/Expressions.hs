@@ -88,7 +88,7 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWhile predicate body
 
-evaluateExpression (EBuiltin methodIdent args) = evaluateBuiltinMethodCall methodIdent args
+evaluateExpression (EBuiltin methodIdent) = evaluateBuiltinMethodCall methodIdent
 
 
 -- PURELY FUNCTIONAL EXPRESSIONS --
@@ -103,18 +103,20 @@ evaluateFunctionBody (FunctionBodyMultiLine expr withValues) = returnPure $ case
                                                    local (const methodEnv) $ evaluateExpression expr
     _ -> evaluateExpression expr
 
-evaluateMemberFunction :: Object -> MethodIdent -> [Object] -> StateMonad Object
-evaluateMemberFunction object functionIdent evaluatedArgs = do
+evaluateMemberFunction :: String -> Object -> MethodIdent -> [Object] -> StateMonad Object
+evaluateMemberFunction context object functionIdent evaluatedArgs = do
     function <- getMemberFunction (getObjectType object) functionIdent
     (_, newEnv) <- setThisReference object
-    (_, methodLocalEnv) <- local (const newEnv) $ addArgumentsToEnv (getFunctionType function) evaluatedArgs
+    let implicitArgs = [BuiltinObject (StringObject context) | builtinWithImplicitContext (builtinMethodIdentifier functionIdent)]
+    (_, methodLocalEnv) <- local (const newEnv) $ addArgumentsToEnv (getFunctionType function) (evaluatedArgs ++ implicitArgs)
     local (const methodLocalEnv) $ evaluateFunctionInEnv function
 
-evaluateMemberAction :: Object -> MethodIdent -> [Object] -> StateMonad Result
-evaluateMemberAction object actionIdent evaluatedArgs = do
+evaluateMemberAction :: String -> Object -> MethodIdent -> [Object] -> StateMonad Result
+evaluateMemberAction context object actionIdent evaluatedArgs = do
     action <- getMemberAction (getObjectType object) actionIdent
     (_, newEnv) <- setThisReference object
-    (_, actionMethodEnv) <- local (const newEnv) $ addArgumentsToEnv (getActionType action) evaluatedArgs
+    let implicitArgs = [BuiltinObject (StringObject context) | builtinWithImplicitContext (builtinMethodIdentifier actionIdent)]
+    (_, actionMethodEnv) <- local (const newEnv) $ addArgumentsToEnv (getActionType action) (evaluatedArgs ++ implicitArgs)
     local (const actionMethodEnv) $ evaluateActionInEnv action
 
 evaluateBinaryOperator :: Expr -> Expr -> (Object -> Object -> Expr -> Expr -> StateMonad Object) -> StateMonad Object
@@ -165,15 +167,17 @@ evaluateGetExpressionOnObject :: Object -> FunctionCall -> StateMonad Object
 evaluateGetExpressionOnObject object (CallFunction functionIdent argList) = do
     evaluatedArgs <- evaluateArgumentList argList
     takeGetter <- hasGetter (getObjectType object) functionIdent
+    let context = showContext functionIdent ++ showContext argList
     if takeGetter then evaluateGetter object functionIdent
-    else evaluateMemberFunction object functionIdent evaluatedArgs
+    else evaluateMemberFunction context object functionIdent evaluatedArgs
 
 evaluateDoExpressionOnObject :: Object -> ActionCall -> StateMonad Result
 evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
     evaluatedArgs <- evaluateArgumentList argList
     takeSetter <- hasSetter (getObjectType object) actionIdent
+    let context = showContext actionIdent ++ showContext argList
     if takeSetter then evaluateSetter object actionIdent $ head evaluatedArgs
-    else evaluateMemberAction object actionIdent evaluatedArgs
+    else evaluateMemberAction context object actionIdent evaluatedArgs
 
 evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
 evaluateConstructorCall classIdent argList = do
@@ -238,9 +242,3 @@ evaluateWhile predicate body  = do
     if isTrue predicateValue
     then evaluateExpressionList body >> evaluateWhile predicate body
     else returnPass
-
-evaluateBuiltinMethodCall :: MethodIdent -> ArgList -> StateMonad Result
-evaluateBuiltinMethodCall methodIdent argList = do
-    evaluatedArgs <- evaluateArgumentList argList
-    (_, methodEnv) <- addArgumentsToEnv (getBuiltinMethodType methodIdent) evaluatedArgs
-    local (const methodEnv) $ evaluateBuiltinMethodInEnv methodIdent
