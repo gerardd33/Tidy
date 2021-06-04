@@ -31,7 +31,7 @@ mutable class Grades {
 singleton class ObjectEquality {
     
     actions: {
-        main: () -> Bool = {
+        main: () -> Void = {
             val student1: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
             
             val grades2: Grades = Grades(1, 2, 4);
@@ -49,7 +49,7 @@ singleton class ObjectEquality {
             student3.grades#grade4(14)
             student3#year(2)
             
-            student1 != student2 and student1 == student3 // True
+            System#assert(student1 != student2 and student1 == student3)
         }
     }
 }

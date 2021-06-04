@@ -30,25 +30,24 @@ immutable class Grades {
     }
 }
 
-mutable class Summary {
+immutable class Summary {
 
-    variables: {
+    values: {
         finalMark: String;
         description: String;
     }
 }
 
-singleton class DoExpressions {
+singleton class GetExpressions {
     
     actions: {
-        main: () -> String = {
+        main: () -> Void = {
             val student: Student = Student("Diana", "Frost", Grades(11, 12, 14,
                 Summary("Exam passed", "Score: B+")), 20, "BS1");
             val sumOfGrades: Int = student.grades.grade1 + student.grades.grade2 + student.grades.grade3 + student.grades.grade4;
+            val result: String = student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description;
             
-            student.grades.summary#description("Score: A+")
-            student.grades.summary.finalMark ++ ". " ++ student.grades.summary.description
-            // Should return "Exam passed. Score: A+"
+            System#assertEquals("Exam passed. Score: B+", result)
         }
     }
 }

@@ -8,13 +8,13 @@ mutable class Counter {
 singleton class WhileTest {
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             val counter: Counter = Counter;
             while (counter.count < 10) {
                 counter#count(counter.count + 1)
             }
             
-            counter.count // 10
+            System#assertEquals(10, counter.count)
         }
     }
 }

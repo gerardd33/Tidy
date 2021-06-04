@@ -1,7 +1,7 @@
 singleton class LocalVariables {
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             var count: Int = 0;
             var result: Int = 1;
             
@@ -10,7 +10,7 @@ singleton class LocalVariables {
                 local#result(result * 2)
             }
             
-            result // 1024
+            System#assertEquals(1024, result)
         }
     }
 }

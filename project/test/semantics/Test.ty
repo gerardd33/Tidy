@@ -8,9 +8,10 @@ singleton class SystemTest {
             2 * x
         }
         
-        main: () -> Int = {
+        main: () -> Void = {
             System#print(3)
-            this#otherAction(8)
+            val result: Int = this#otherAction(8);
+            System#assertEquals(16, result)
         }
     }
 }

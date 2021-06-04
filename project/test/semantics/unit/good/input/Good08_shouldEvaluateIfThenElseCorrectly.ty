@@ -1,7 +1,7 @@
 singleton class IfThenElse {
     
     actions: {
-        main: () -> String = {
+        run: () -> String = {
             val val1: Int = 3 * 3;
             val val2: Int = 5 * 4;
             val string0: String = "Zero";
@@ -19,8 +19,11 @@ singleton class IfThenElse {
             } else {
                 string3
             }
-            
-            // Should return "Two"
+        }
+        
+        main: () -> Void = {
+            val result: String = this#run;
+            System#assertEquals("Two", result)
         }
     }
 }

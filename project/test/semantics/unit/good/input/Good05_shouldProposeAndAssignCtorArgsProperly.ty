@@ -1,0 +1,25 @@
+mutable class Student {
+    
+    values: {
+        name: String;
+        id: Int = 38493;
+    }
+    
+    variables: {
+        age: Int;
+        year: Int;
+    }
+}
+
+singleton class ObjectsAsValues {
+    
+    actions: {
+        main: () -> Void = {
+            val x: Student = Student("Diana Frost", 20, 2);
+            System#assertEquals("Diana Frost", x.name)
+            System#assertEquals(38493, x.id)
+            System#assertEquals(2, x.year)
+            System#assertEquals(20, x.age)
+        }
+    }
+}

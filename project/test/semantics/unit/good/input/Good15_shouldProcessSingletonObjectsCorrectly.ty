@@ -12,8 +12,8 @@ singleton class Generator {
 singleton class SingletonClasses {
     
     actions: {
-        main: () -> Int = {
-            Generator.base + Generator.generate(7) // 478499
+        main: () -> Void = {
+            System#assertEquals(478499, Generator.base + Generator.generate(7))
         }
     }
 }

@@ -18,14 +18,14 @@ singleton class WhileTest {
     }
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             val counter: Counter = Counter;
             
             while (counter.count < 10) {
                 counter#increment
             }
             
-            this.base + counter.count // 13
+            System#assertEquals(13, this.base + counter.count)
         }
     }
 }

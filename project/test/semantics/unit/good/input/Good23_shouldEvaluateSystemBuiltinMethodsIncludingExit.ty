@@ -3,10 +3,10 @@ singleton class SystemTest {
     actions: {
         end: (code: Int) -> Void = System#exit(code)
         
-        main: () -> Int = {
+        main: () -> Void = {
             val code: Int = 39;
             this#end(code)
-            2 + 2
+            System#printLine(2 + 2) // Shouldn't be printed, should exit before
         }
     }
 }

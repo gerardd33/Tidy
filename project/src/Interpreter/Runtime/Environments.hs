@@ -136,8 +136,8 @@ objectToString :: Object -> StateMonad String
 objectToString (BuiltinObject object) = return $ case object of
     IntObject value    -> show value
     BoolObject value   -> if value == BTrue then "True" else "False"
-    CharObject value   -> "'" ++ [value] ++ "'"
-    StringObject value -> "\"" ++ value ++ "\""
+    CharObject value   -> [value]
+    StringObject value -> value
     VoidObject         -> "Pass"
 
 objectToString (RegularObject objectType objectEnv) = do

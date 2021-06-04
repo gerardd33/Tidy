@@ -32,12 +32,12 @@ immutable class Grades {
 singleton class DoExpressions {
     
     actions: {
-        main: () -> String = {
+        main: () -> Void = {
             val student: Student = Student("Diana", "Frost", Grades(11, 12, 14), 20, "BS1");
             student#year("BS3")
             
-            student.firstName ++ " " ++ student.lastName ++ ", year: " ++ student.year
-            // Should return "Diana Frost, year: BS3"
+            val result: String = student.firstName ++ " " ++ student.lastName ++ ", year: " ++ student.year;
+            System#assertEquals("Diana Frost, year: BS3", result)
         }
     }
 }

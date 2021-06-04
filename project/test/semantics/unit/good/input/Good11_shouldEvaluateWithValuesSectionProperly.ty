@@ -6,10 +6,11 @@ immutable class SomeDummyInstantiableClass {
     }
     
     functions: {
-        differenceShifted: (x: Int, y: Int) -> Int = {
-            shift + (y - x)
+        someDummyFunction: () -> Int = {
+            2 * (result1 + result2)
         } with values: {
-            shift: Int = 10;
+            result1: Int = 9;
+            result2: Int = 13;
         }
     }
 }
@@ -17,9 +18,9 @@ immutable class SomeDummyInstantiableClass {
 singleton class Methods {
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             val worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
-            worker.differenceShifted(5, 9) // 14
+            System#assertEquals(44, worker.someDummyFunction())
         }
     }
 }

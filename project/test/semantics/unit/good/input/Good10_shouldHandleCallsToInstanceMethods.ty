@@ -6,21 +6,16 @@ immutable class SomeDummyInstantiableClass {
     }
     
     functions: {
-        someDummyFunction: () -> Int = {
-            2 * (result1 + result2)
-        } with values: {
-            result1: Int = 9;
-            result2: Int = 13;
-        }
+        someDummyFunction: () -> Int = 22
     }
 }
 
 singleton class Methods {
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             val worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
-            worker.someDummyFunction() // 44
+            System#assertEquals(22, worker.someDummyFunction())
         }
     }
 }
