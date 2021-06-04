@@ -160,8 +160,9 @@ checkPredicate :: String -> Expr -> Bool -> StaticCheckMonad ObjectType
 checkPredicate context predicateExpr checkPure = do
     let predicateContext = showComplexContext predicateExpr context
     if checkPure then assertPureExpression predicateContext predicateExpr
-    else do (predicateType, _) <- checkExpression predicateContext predicateExpr
-            assertTypesMatch predicateContext boolType predicateType
+    else returnVoid
+    (predicateType, _) <- checkExpression predicateContext predicateExpr
+    assertTypesMatch predicateContext boolType predicateType
 
 checkDoExpression :: String -> DoExpr -> StaticCheckMonad ObjectType
 checkDoExpression context (DoExpressionInstance objectIdent methodCall) = do
