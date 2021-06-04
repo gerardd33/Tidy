@@ -107,29 +107,23 @@ instance Print Parser.Tidy.Abs.Program where
   prt i e = case e of
     Parser.Tidy.Abs.ProgramEntrypoint classdecls -> prPrec i 0 (concatD [prt 0 classdecls])
 
-instance Print [Parser.Tidy.Abs.ClassIdent] where
-  prt = prtList
-
 instance Print Parser.Tidy.Abs.ClassIdent where
   prt i e = case e of
     Parser.Tidy.Abs.ClassIdentifier uppercaseident -> prPrec i 0 (concatD [prt 0 uppercaseident])
-  prtList _ [] = concatD []
-  prtList _ [x] = concatD [prt 0 x]
-  prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
 
 instance Print [Parser.Tidy.Abs.ClassDecl] where
   prt = prtList
 
 instance Print Parser.Tidy.Abs.ClassDecl where
   prt i e = case e of
-    Parser.Tidy.Abs.ClassDeclaration abstractmodifier classtypemodifier classident inheritance classbody -> prPrec i 0 (concatD [prt 0 abstractmodifier, prt 0 classtypemodifier, doc (showString "class"), prt 0 classident, prt 0 inheritance, prt 0 classbody])
+    Parser.Tidy.Abs.ClassDeclaration abstractmodifier classtypemodifier classtype inheritance classbody -> prPrec i 0 (concatD [prt 0 abstractmodifier, prt 0 classtypemodifier, doc (showString "class"), prt 0 classtype, prt 0 inheritance, prt 0 classbody])
   prtList _ [x] = concatD [prt 0 x]
   prtList _ (x:xs) = concatD [prt 0 x, prt 0 xs]
 
 instance Print Parser.Tidy.Abs.Inheritance where
   prt i e = case e of
     Parser.Tidy.Abs.SuperclassAbsent -> prPrec i 0 (concatD [])
-    Parser.Tidy.Abs.SuperclassPresent classident -> prPrec i 0 (concatD [doc (showString "extends"), prt 0 classident])
+    Parser.Tidy.Abs.SuperclassPresent classtype -> prPrec i 0 (concatD [doc (showString "extends"), prt 0 classtype])
 
 instance Print Parser.Tidy.Abs.ClassBody where
   prt i e = case e of
@@ -173,14 +167,23 @@ instance Print Parser.Tidy.Abs.ObjectIdent where
 
 instance Print Parser.Tidy.Abs.ObjectType where
   prt i e = case e of
-    Parser.Tidy.Abs.ObjectTypeClass classident genericparameter -> prPrec i 0 (concatD [prt 0 classident, prt 0 genericparameter])
+    Parser.Tidy.Abs.ObjectTypeClass classtype -> prPrec i 0 (concatD [prt 0 classtype])
     Parser.Tidy.Abs.ObjectTypeFunction methodtype -> prPrec i 0 (concatD [doc (showString "get"), prt 0 methodtype])
     Parser.Tidy.Abs.ObjectTypeAction methodtype -> prPrec i 0 (concatD [doc (showString "do"), prt 0 methodtype])
+
+instance Print [Parser.Tidy.Abs.ClassType] where
+  prt = prtList
+
+instance Print Parser.Tidy.Abs.ClassType where
+  prt i e = case e of
+    Parser.Tidy.Abs.GeneralClassType classident genericparameter -> prPrec i 0 (concatD [prt 0 classident, prt 0 genericparameter])
+  prtList _ [x] = concatD [prt 0 x]
+  prtList _ (x:xs) = concatD [prt 0 x, doc (showString ","), prt 0 xs]
 
 instance Print Parser.Tidy.Abs.GenericParameter where
   prt i e = case e of
     Parser.Tidy.Abs.GenericParameterAbsent -> prPrec i 0 (concatD [])
-    Parser.Tidy.Abs.GenericParameterPresent classidents -> prPrec i 0 (concatD [doc (showString "["), prt 0 classidents, doc (showString "]")])
+    Parser.Tidy.Abs.GenericParameterPresent classtypes -> prPrec i 0 (concatD [doc (showString "["), prt 0 classtypes, doc (showString "]")])
 
 instance Print [Parser.Tidy.Abs.ObjectDecl] where
   prt = prtList
@@ -346,18 +349,18 @@ instance Print Parser.Tidy.Abs.ActionCall where
 
 instance Print Parser.Tidy.Abs.CtorCall where
   prt i e = case e of
-    Parser.Tidy.Abs.CallConstructor classident arglist -> prPrec i 0 (concatD [prt 0 classident, prt 0 arglist])
+    Parser.Tidy.Abs.CallConstructor classtype arglist -> prPrec i 0 (concatD [prt 0 classtype, prt 0 arglist])
 
 instance Print Parser.Tidy.Abs.GetExpr where
   prt i e = case e of
     Parser.Tidy.Abs.GetExpressionInstance objectident functioncall -> prPrec i 0 (concatD [prt 0 objectident, prt 0 functioncall])
-    Parser.Tidy.Abs.GetExpressionStatic classident functioncall -> prPrec i 0 (concatD [prt 0 classident, prt 0 functioncall])
+    Parser.Tidy.Abs.GetExpressionStatic classtype functioncall -> prPrec i 0 (concatD [prt 0 classtype, prt 0 functioncall])
     Parser.Tidy.Abs.GetExpressionChain getexpr functioncall -> prPrec i 0 (concatD [prt 0 getexpr, prt 0 functioncall])
 
 instance Print Parser.Tidy.Abs.DoExpr where
   prt i e = case e of
     Parser.Tidy.Abs.DoExpressionInstance objectident actioncall -> prPrec i 0 (concatD [prt 0 objectident, prt 0 actioncall])
-    Parser.Tidy.Abs.DoExpressionStatic classident actioncall -> prPrec i 0 (concatD [prt 0 classident, prt 0 actioncall])
+    Parser.Tidy.Abs.DoExpressionStatic classtype actioncall -> prPrec i 0 (concatD [prt 0 classtype, prt 0 actioncall])
     Parser.Tidy.Abs.DoExpressionChain getexpr actioncall -> prPrec i 0 (concatD [prt 0 getexpr, prt 0 actioncall])
 
 instance Print Parser.Tidy.Abs.ImperativeControlFlow where
@@ -399,7 +402,7 @@ instance Print Parser.Tidy.Abs.MatchCase where
 
 instance Print Parser.Tidy.Abs.Pattern where
   prt i e = case e of
-    Parser.Tidy.Abs.FTypePattern classident -> prPrec i 0 (concatD [prt 0 classident])
+    Parser.Tidy.Abs.FTypePattern classtype -> prPrec i 0 (concatD [prt 0 classtype])
 
 instance Print Parser.Tidy.Abs.RelationalOperator where
   prt i e = case e of

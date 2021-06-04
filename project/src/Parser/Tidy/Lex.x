@@ -19,7 +19,7 @@ $i = [$l $d _ ']     -- identifier character
 $u = [. \n]          -- universal: any character
 
 @rsyms =    -- symbols and non-identifier-like reserved words
-   \, | \{ | \} | "values" \: | "variables" \: | "functions" \: | "actions" \: | \[ | \] | \; | \: | \= | \- \> | \( | \) | \- | \* | \/ | \% | \+ | \+ \+ | \. | \# | \< | \< \= | \> | \> \= | \= \= | \! \=
+   \{ | \} | "values" \: | "variables" \: | "functions" \: | "actions" \: | \, | \[ | \] | \; | \: | \= | \- \> | \( | \) | \- | \* | \/ | \% | \+ | \+ \+ | \. | \# | \< | \< \= | \> | \> \= | \= \= | \! \=
 
 :-
 

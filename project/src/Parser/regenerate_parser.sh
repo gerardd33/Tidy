@@ -1,11 +1,12 @@
 #!/bin/bash
 
-WORKING_DIR=$(dirname "${0}")
+WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 
-read -p "This may override manual changes in parser files. Are you sure you want to continue (y/n)? " RESPONSE
+read -p "WARNING: This action will override all manual changes made to the parser files. Are you sure you want to continue (y/n)? " RESPONSE
 
 if [ "${RESPONSE}" = "y" ]; then
     bnfc --haskell -d -m "${WORKING_DIR}"/Tidy.cf -o "${WORKING_DIR}" -p "Parser"
+    make -C "${WORKING_DIR}"
 
     rm -rf "${WORKING_DIR}"/Tidy/*
     rm -f "${WORKING_DIR}"/Makefile

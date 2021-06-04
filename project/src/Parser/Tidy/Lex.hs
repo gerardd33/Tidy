@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP,MagicHash #-}
-{-# LINE 3 "project/src/Parser/Tidy/Lex.x" #-}
+{-# LINE 3 "./Tidy/Lex.x" #-}
 
 {-# OPTIONS -fno-warn-incomplete-patterns #-}
 {-# OPTIONS_GHC -w #-}
@@ -158,7 +158,7 @@ alex_actions = array (0 :: Int, 28)
   , (0,alex_action_9)
   ]
 
-{-# LINE 50 "project/src/Parser/Tidy/Lex.x" #-}
+{-# LINE 50 "./Tidy/Lex.x" #-}
 
 
 tok :: (Posn -> String -> Token) -> (Posn -> String -> Token)
