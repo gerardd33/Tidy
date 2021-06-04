@@ -1,6 +1,6 @@
 #! /bin/bash
 
-WORKING_DIR=$(dirname "${0}")
+WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 
 mkdir -p "${WORKING_DIR}"/tests_output
 

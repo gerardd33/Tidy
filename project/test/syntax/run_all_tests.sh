@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKING_DIR=$(dirname ${0})
+WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 
 if [ ! -f "${WORKING_DIR}"/Makefile ]; then
     echo "Error: Make sure to run prepare_syntax_test_env before running any tests."
@@ -18,7 +18,7 @@ function run_tests_for_directory {
         echo && echo "Test: ${INPUT} :"
 
         cat "${DIRECTORY}"/"${INPUT}" > "${WORKING_DIR}"/Test.ty
-        OUTPUT_FILE_NAME=${INPUT%%.*}.out
+        OUTPUT_FILE_NAME="${INPUT%%.*}".out
 
         "${WORKING_DIR}"/single_test.sh > "${WORKING_DIR}"/tests_output/"${OUTPUT_FILE_NAME}"
 
