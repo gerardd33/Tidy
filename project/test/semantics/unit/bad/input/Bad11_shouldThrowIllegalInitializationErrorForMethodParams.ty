@@ -13,7 +13,7 @@ mutable class SomeMutableClass {
     
     functions: {
         getValue: () -> Int = 50
-        badFunction: (param1: Int, param2: Int = 3, param2: Int) -> Int = 339 // IllegalInitializationError
+        badFunction: (param1: Int, param2: Int = 3, param3: Int) -> Int = 339 // IllegalInitializationError
     }
 }
 

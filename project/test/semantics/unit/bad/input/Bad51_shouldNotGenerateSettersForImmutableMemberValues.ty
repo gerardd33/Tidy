@@ -29,7 +29,7 @@ singleton class Main {
     
     actions: {
         main: () -> Int = {
-            val testClass: TestClass = TestClass(3, 4 * 4, "OK", False);
+            var testClass: TestClass = TestClass(3, 4 * 4, "OK", False);
             testClass#total(5) // NoSuchActionError
             testClass.total
         }

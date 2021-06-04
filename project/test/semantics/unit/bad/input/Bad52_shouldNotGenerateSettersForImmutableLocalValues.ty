@@ -29,7 +29,10 @@ singleton class Main {
     
     actions: {
         main: () -> Int = {
-            3
+            var x: Int = 3;
+            val y: Int = 2;
+            local#x(5)
+            local#y(8) // NoSuchActionError
         }
     }
 }

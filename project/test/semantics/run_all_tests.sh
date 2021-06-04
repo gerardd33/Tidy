@@ -32,6 +32,6 @@ function run_tests_for_directory {
     echo && echo
 }
 
-#run_tests_for_directory "${WORKING_DIR}"/unit/bad
 run_tests_for_directory "${WORKING_DIR}"/unit/good
-#run_tests_for_directory "${WORKING_DIR}"/integration
+run_tests_for_directory "${WORKING_DIR}"/unit/bad
+run_tests_for_directory "${WORKING_DIR}"/integration
