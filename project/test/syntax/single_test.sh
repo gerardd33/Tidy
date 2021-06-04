@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKING_DIR=$(dirname "${0}")
+WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 
 if [ ! -f "${WORKING_DIR}"/Makefile ]; then
     echo "Error: Make sure to run prepare_syntax_test_env before running any tests."

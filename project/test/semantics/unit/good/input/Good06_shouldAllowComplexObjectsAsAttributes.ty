@@ -1,0 +1,47 @@
+mutable class Student {
+    
+    values: {
+        name: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: Int;
+    }
+}
+
+immutable class Grades {
+    
+    values: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
+        }
+    }
+}
+
+singleton class ObjectsAsValues {
+    
+    actions: {
+        main: () -> Void = {
+            val student: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
+            
+            System#assertEquals("Diana Frost", student.name)
+            System#assertEquals(38493, student.id)
+            System#assertEquals(2, student.year)
+            System#assertEquals(20, student.age)
+            System#assertEquals(11, student.grades.grade1)
+            System#assertEquals(12, student.grades.grade2)
+            System#assertEquals(13, student.grades.grade3)
+            System#assertEquals(14, student.grades.grade4)
+        }
+    }
+}

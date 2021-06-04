@@ -160,8 +160,9 @@ checkPredicate :: String -> Expr -> Bool -> StaticCheckMonad ObjectType
 checkPredicate context predicateExpr checkPure = do
     let predicateContext = showComplexContext predicateExpr context
     if checkPure then assertPureExpression predicateContext predicateExpr
-    else do (predicateType, _) <- checkExpression predicateContext predicateExpr
-            assertTypesMatch predicateContext boolType predicateType
+    else returnVoid
+    (predicateType, _) <- checkExpression predicateContext predicateExpr
+    assertTypesMatch predicateContext boolType predicateType
 
 checkDoExpression :: String -> DoExpr -> StaticCheckMonad ObjectType
 checkDoExpression context (DoExpressionInstance objectIdent methodCall) = do
@@ -190,7 +191,6 @@ checkLocalObjectDeclaration (LocalValueDeclaration objectDecl) =
     checkObjectDeclaration InitializedRequired False objectDecl
 checkLocalObjectDeclaration (LocalVariableDeclaration objectDecl) =
     checkObjectDeclaration InitializedRequired True objectDecl
--- TODO variable/value distinction in static local env, split env into two or store this info in addition to type
 
 checkObjectDeclarations :: InitializationType -> Bool -> [ObjectDecl] -> StaticCheckMonad StaticResult
 checkObjectDeclarations _ _ [] = liftPureStatic returnVoid
@@ -247,7 +247,10 @@ checkMemberFunctionCall context objectType functionIdent argTypes = do
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
     let methodContext = context ++ "." ++ showContext functionIdent
-    checkMethodArguments methodContext (getMethodParamTypes $ fromJust functionType) argTypes
+    let builtinFunctionIdent = builtinMethodIdentifier functionIdent
+    let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
+    if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
+    checkMethodArguments methodContext (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
@@ -257,12 +260,16 @@ checkMemberActionCall context objectType actionIdent argTypes = do
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
     let methodContext = context ++ "#" ++ showContext actionIdent
-    checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) argTypes
+    let builtinActionIdent = builtinMethodIdentifier actionIdent
+    let implicitArgTypes = [stringType | builtinWithImplicitContext builtinActionIdent]
+    if shouldHaveUniformTypes builtinActionIdent then checkTypeUniformity methodContext argTypes else returnVoid
+    checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust actionType
 
 checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context expected actual = do
-    when (expected /= actual) $ throwError $
+    let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
+    unless (length expected == length actual && argumentTypesMatch) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 

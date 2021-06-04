@@ -2,6 +2,7 @@ module Interpreter.Static.Types where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
+import qualified Data.List                            as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -11,14 +12,19 @@ import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Expressions
 
 
+typesMatch :: ObjectType -> ObjectType -> Bool
+typesMatch expected actual = expected == anyType || expected == actual
+
 assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
 assertTypesMatch context expected actual = do
-    when (expected /= actual) $ throwError $ UnexpectedTypeError (showContext expected) (showContext actual) context
+    unless (typesMatch expected actual) $
+        throwError $ UnexpectedTypeError (showContext expected) (showContext actual) context
     returnVoid
 
 assertReturnTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
 assertReturnTypesMatch context expected actual = do
-    when (expected /= actual) $ throwError $ UnexpectedReturnTypeError (showContext expected) (showContext actual) context
+    when (expected /= anyType && expected /= actual) $
+        throwError $ UnexpectedReturnTypeError (showContext expected) (showContext actual) context
     returnVoid
 
 returnPureStatic :: StaticCheckMonad StaticResult -> StaticCheckMonad ObjectType
@@ -39,3 +45,8 @@ assertPureExpression :: String -> Expr -> StaticCheckMonad ObjectType
 assertPureExpression context expr = do
     unless (isExpressionPure expr) $ throwError $ IllegalSideEffectsError context (showContext expr)
     returnVoid
+
+checkTypeUniformity :: String -> [ObjectType] -> StaticCheckMonad ObjectType
+checkTypeUniformity context types = do
+    if length (List.nub types) /= 1 then throwError $ TypesDoNotMatchError context (showContext types)
+    else returnVoid

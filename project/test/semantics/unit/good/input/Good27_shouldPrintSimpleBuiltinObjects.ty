@@ -1,0 +1,44 @@
+mutable class Student {
+    
+    values: {
+        name: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: Int;
+    }
+}
+
+mutable class Grades {
+    
+    variables: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
+        }
+    }
+}
+
+singleton class Printing {
+    
+    actions: {
+        main: () -> Void = {
+            System#printLine("Hello world!")
+            val student: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
+            System#printLine(student.grades.grade2)
+            System#print("Hell" ++ "o world again!\n\n\n")
+            System#printLine(3 == 4 or 3 != 2)
+            System#printLine(Pass)
+            System#printLine('x')
+        }
+    }
+}

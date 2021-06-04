@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKING_DIR=$(dirname ${0})
+WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 
 if [ ! -f "${WORKING_DIR}"/Makefile ]; then
     echo "Error: Make sure to run prepare_syntax_test_env before running any tests."
@@ -13,26 +13,35 @@ make -C "${WORKING_DIR}"
 
 function run_tests_for_directory {
     DIRECTORY=${1}
+    if [ "${2}" = false ]; then
+      EXPECTED="Parse              Failed..."
+    else
+      EXPECTED="Parse Successful!"
+    fi
 
     for INPUT in $(ls ${DIRECTORY}); do
-        echo && echo "Test: ${INPUT} :"
+        echo && printf "Test: %s: " "${INPUT}"
+        OUTPUT="${WORKING_DIR}"/parsing.out
 
         cat "${DIRECTORY}"/"${INPUT}" > "${WORKING_DIR}"/Test.ty
-        OUTPUT_FILE_NAME=${INPUT%%.*}.out
+        "${WORKING_DIR}"/single_test.sh > "${OUTPUT}"
 
-        "${WORKING_DIR}"/single_test.sh > "${WORKING_DIR}"/tests_output/"${OUTPUT_FILE_NAME}"
+        RESULT="$(grep -e "Parse Successful!" -e "Failed..." "${OUTPUT}")"
 
-        grep -e "Parse Successful!" -e "Failed..." "${WORKING_DIR}"/tests_output/"${OUTPUT_FILE_NAME}"
+        if [ "${RESULT}" = "${EXPECTED}" ]; then
+            tput setaf 2 && tput bold && echo OK && tput sgr0
+        else
+            tput setaf 1 && tput bold && echo ERROR! && tput sgr0
+            notify-send 'Wrong Answer'
+            exit 1
+        fi
     done
-
-    echo && echo
+    echo
 }
 
 
-echo "Bad syntax examples - Expecting failure"
-run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/bad
+run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/good true
+run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/bad false
+run_tests_for_directory "${WORKING_DIR}"/tests_input/integration true
 
-echo "Good syntax examples - Expecting success:"
-run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/good
-
-run_tests_for_directory "${WORKING_DIR}"/tests_input/integration
+echo "All tests passed successfully." && echo

@@ -22,6 +22,9 @@ classIdentifierFromName name = ClassIdentifier (UpperCaseIdent name)
 objectIdentifierFromName :: String -> ObjectIdent
 objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
 
+methodIdentifierFromName :: String -> MethodIdent
+methodIdentifierFromName name = MethodIdentifier (LowerCaseIdent name)
+
 objectTypeFromClassName :: String -> ObjectType
 objectTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
 

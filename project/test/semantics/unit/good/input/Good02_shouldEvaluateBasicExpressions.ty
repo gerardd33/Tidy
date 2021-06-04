@@ -1,0 +1,19 @@
+singleton class SimpleMain {
+    
+    values: {
+        someValue: Int = 1;
+    }
+    
+    actions: {
+        run: () -> Int = {
+            4
+            val x: Int = 5;
+            x
+        }
+        
+        main: () -> Void = {
+            val result: Int = this#run;
+            System#assertEquals(5, result)
+        }
+    }
+}

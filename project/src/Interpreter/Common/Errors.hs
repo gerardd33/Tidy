@@ -8,6 +8,8 @@ import           Parser.Tidy.Print
 
 data RuntimeException
     = DivideByZeroException String
+    | AssertionFailedException String
+    | UserExitException Int
     | RuntimeException String
 
 data CompilationError
@@ -15,6 +17,7 @@ data CompilationError
     | NoSuchFileError String
     | UnexpectedTypeError String String String
     | UnexpectedReturnTypeError String String String
+    | TypesDoNotMatchError String String
     | IllegalSectionError String String String
     | UninitializedError String
     | IllegalInitializationError String
@@ -34,6 +37,7 @@ data CompilationError
 instance Show RuntimeException where
     show (DivideByZeroException context) = "DivideByZeroException: Attempted division by zero.\n" ++
         "Divisor expression evaluating to 0:\n" ++ context
+    show (AssertionFailedException context) = "AssertionFailedException: Assertion failed:\n" ++ context
     show (RuntimeException message) = "RuntimeException: " ++ message
 
 instance Show CompilationError where
@@ -44,6 +48,8 @@ instance Show CompilationError where
     show (UnexpectedReturnTypeError expected actual context) = "UnexpectedReturnTypeError: " ++
         "Declared method return type does not match the actual one." ++ "\nExpected: " ++ expected ++
         "\nActual: " ++ actual ++ "\nIn method: " ++ context
+    show (TypesDoNotMatchError context types) = "TypesDoNotMatchError: Types do not match: " ++ types ++
+        "\nIn: " ++ context
     show (IllegalSectionError classType classIdent section) = "IllegalSectionError: " ++ classType ++
         " class " ++ show classIdent ++ " must not contain section " ++ section ++ "."
     show (UninitializedError name) = "UninitializedError: Object " ++ show name ++ " must be initialized."

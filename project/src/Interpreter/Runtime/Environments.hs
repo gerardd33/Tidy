@@ -2,6 +2,7 @@ module Interpreter.Runtime.Environments where
 
 import           Control.Monad.Reader
 import           Control.Monad.State
+import qualified Data.List                             as List
 import qualified Data.Map                              as Map
 import           Data.Maybe
 
@@ -118,3 +119,47 @@ getLocalVariableNames :: StateMonad [ObjectIdent]
 getLocalVariableNames = do
     (localRef, _) <- ask
     return $ Map.keys $ getVariables localRef
+
+objectsEqual :: Object -> Object -> StateMonad Bool
+objectsEqual object1 object2 = do
+    case object1 of BuiltinObject _ -> return $ object1 == object2
+                    _               -> complexObjectsEqual object1 object2
+
+complexObjectsEqual :: Object -> Object -> StateMonad Bool
+complexObjectsEqual (RegularObject _ env1) (RegularObject _ env2) = do
+    attributeValues1 <- mapM retrieveObject $ Map.elems $ Map.union (values env1) (variables env1)
+    attributeValues2 <- mapM retrieveObject $ Map.elems $ Map.union (values env2) (variables env2)
+    results <- zipWithM objectsEqual attributeValues1 attributeValues2
+    return $ and results
+
+objectToString :: Object -> StateMonad String
+objectToString (BuiltinObject object) = return $ case object of
+    IntObject value    -> show value
+    BoolObject value   -> if value == BTrue then "True" else "False"
+    CharObject value   -> [value]
+    StringObject value -> value
+    VoidObject         -> "Pass"
+
+objectToString (RegularObject objectType objectEnv) = do
+    case objectType of
+        ObjectTypeClass classIdent _ -> do
+            objectEnvString <- objectEnvToString objectEnv
+            return $ show objectType ++ " " ++ objectEnvString
+-- TODO add lambda types
+
+objectEnvToString :: ObjectEnv -> StateMonad String
+objectEnvToString env = do
+    let valueList = Map.toList $ Map.map retrieveObject $ values env
+    let variableList = Map.toList $ Map.map retrieveObject $ variables env
+    valueStrings <- mapM showAttributeValue valueList
+    let valuesString = List.intercalate ", " valueStrings
+    variableStrings <- mapM showAttributeValue variableList
+    let variablesString = List.intercalate "," variableStrings
+    let resultString = "{ " ++ "values: {" ++ valuesString ++ " }, variables: {" ++ variablesString ++ " } }"
+    return resultString
+
+showAttributeValue :: (ObjectIdent, StateMonad Object) -> StateMonad String
+showAttributeValue (objectIdent, objectCalculation) = do
+    object <- objectCalculation
+    objectString <- objectToString object
+    return $ " " ++ show objectIdent ++ ": " ++ objectString

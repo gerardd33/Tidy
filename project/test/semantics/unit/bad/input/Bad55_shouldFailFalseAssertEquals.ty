@@ -1,0 +1,14 @@
+singleton class SystemTest {
+    
+    actions: {
+    
+        main: () -> Int = {
+            System#assertEquals(2 <= 1, 4 == 3)
+            val actual: Int = 43;
+            System#assertEquals(25, 5 * 5)
+            System#assertEquals(actual, 41) // AssertionFailedException
+            System#assert(2 < 5)
+            2 + 2 // 4
+        }
+    }
+}

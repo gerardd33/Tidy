@@ -1,0 +1,42 @@
+mutable class Student {
+    
+    values: {
+        name: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: Int;
+    }
+}
+
+mutable class Grades {
+    
+    variables: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+        someChar: Char = 'd';
+        someVoid: Void = Pass;
+        someBool: Bool = True;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
+        }
+    }
+}
+
+singleton class ComplexObjectPrinting {
+    
+    actions: {
+        main: () -> Void = {
+            val student: Student = Student("Diana Frost", Grades(11, 12, 14), 20, 2);
+            System#printLine(student)
+        }
+    }
+}

@@ -1,0 +1,38 @@
+singleton class ImperativeIfs {
+    
+    actions: {
+        run: () -> String = {
+            val val1: Int = 3 * 3;
+            val val2: Int = 5 * 4;
+            val string0: String = "Zero";
+            val string1: String = "One";
+            val string2: String = "Two";
+            val string3: String = "More";
+            
+            val val3: Int = if (val1 > val2) then 1; else 2;;
+            if (val3 == 0) {
+                string0
+            } elif (val3 == 1) {
+                    string1
+            } elif (val3 == 2) {
+                val string22: String = "New two"; 
+                if (val1 < 4) {
+                    string22 ++ " and less"
+                } elif (val1 < 10) {
+                    string22 ++ " and a bit more"
+                } else {
+                    string22 ++ " and more"
+                }
+            } else {
+                string3
+            }
+            
+            // Should return "New two and a bit more"
+        }
+        
+        main: () -> Void = {
+            val result: String = this#run;
+            System#assertEquals("New two and a bit more", result)
+        }
+    }
+}

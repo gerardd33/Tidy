@@ -31,6 +31,7 @@ library
       Interpreter.Common.Utils.Methods
       Interpreter.Common.Utils.Objects
       Interpreter.Common.Utils.Types
+      Interpreter.Runtime.Builtin
       Interpreter.Runtime.Classes
       Interpreter.Runtime.Entrypoint
       Interpreter.Runtime.Environments

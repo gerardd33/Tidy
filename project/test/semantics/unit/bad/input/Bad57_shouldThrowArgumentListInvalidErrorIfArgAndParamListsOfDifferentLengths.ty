@@ -1,0 +1,17 @@
+singleton class SystemTest {
+    
+    actions: {
+        someAction: () -> Void = Pass
+        
+        otherAction: (x: Int) -> Int = {
+            Pass
+            2 * x
+        }
+        
+        main: () -> Void = {
+            SystemTest#otherAction(3, 3)
+            // System#print(3)
+            this#someAction()
+        }
+    }
+}

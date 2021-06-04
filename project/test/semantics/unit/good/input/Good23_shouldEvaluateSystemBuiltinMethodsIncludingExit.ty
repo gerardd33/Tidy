@@ -1,0 +1,12 @@
+singleton class SystemTest {
+    
+    actions: {
+        end: (code: Int) -> Void = System#exit(code)
+        
+        main: () -> Void = {
+            val code: Int = 39;
+            this#end(code)
+            System#printLine(2 + 2) // Shouldn't be printed, should exit before
+        }
+    }
+}

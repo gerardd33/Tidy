@@ -1,0 +1,25 @@
+immutable class SomeDummyInstantiableClass {
+    
+    values: {
+        someDummyAttribute: Int = 3;
+        anotherDummyAttribute: Int;
+    }
+    
+    functions: {
+        differenceShifted: (x: Int, y: Int) -> Int = {
+            shift + (y - x)
+        } with values: {
+            shift: Int = 10;
+        }
+    }
+}
+
+singleton class Methods {
+    
+    actions: {
+        main: () -> Void = {
+            val worker: SomeDummyInstantiableClass = SomeDummyInstantiableClass(5);
+            System#assertEquals(14, worker.differenceShifted(5, 9))
+        }
+    }
+}
