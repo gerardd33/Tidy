@@ -1,17 +1,16 @@
-singleton class SystemTest {
+mutable class Student {
+    
+    values: {
+        id: Int = 38493;
+    }
+}
+
+singleton class ObjectsAsValues {
     
     actions: {
-        someAction: () -> Void = Pass
-        
-        otherAction: (x: Int) -> Int = {
-            Pass
-            2 * x
-        }
-        
         main: () -> Void = {
-            System#print(3)
-            val result: Int = this#otherAction(8);
-            System#assertEquals(16, result)
+            val x: Student = Student;
+            System#assertEquals(Student, 3) // TypesDoNotMatchError
         }
     }
 }

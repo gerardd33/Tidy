@@ -20,18 +20,19 @@ function run_tests_for_directory {
         (cd ../../.. && ./tidy "${WORKING_DIR}"/Test.ty > "${WORKING_DIR}"/"${ACTUAL_OUTPUT_FILE_NAME}" 2>> "${WORKING_DIR}"/"${ACTUAL_OUTPUT_FILE_NAME}")
         RESULT=$(diff -q "${WORKING_DIR}"/"${ACTUAL_OUTPUT_FILE_NAME}" "${WORKING_DIR}"/"${EXPECTED_OUTPUT_FILE_NAME}")
 
-        if [ -z "$RESULT" ]; then
+        if [ -z "${RESULT}" ]; then
             tput setaf 2 && tput bold && echo OK && tput sgr0
         else
             tput setaf 1 && tput bold && echo ERROR! && tput sgr0
             notify-send 'Wrong Answer'
-            break
+            exit 1
         fi
     done
-
-    echo && echo
+    echo
 }
 
 run_tests_for_directory "${WORKING_DIR}"/unit/good
 run_tests_for_directory "${WORKING_DIR}"/unit/bad
 run_tests_for_directory "${WORKING_DIR}"/integration
+
+echo "All tests passed successfully." && echo
