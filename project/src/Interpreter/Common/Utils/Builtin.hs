@@ -10,7 +10,7 @@ pass :: Object
 pass = BuiltinObject VoidObject
 
 localReferenceType :: ObjectType
-localReferenceType = objectTypeFromClassName "__local"
+localReferenceType = simpleObjectTypeFromClassName "__local"
 
 builtinMethodIdentifier :: MethodIdent -> MethodIdent
 builtinMethodIdentifier (MethodIdentifier (LowerCaseIdent name)) = methodIdentifierFromName $ "__builtin_" ++ name
@@ -32,22 +32,22 @@ objectTypeForBuiltinObject (StringObject _) = stringType
 objectTypeForBuiltinObject VoidObject       = voidType
 
 anyType :: ObjectType
-anyType = objectTypeFromClassName "Any"
+anyType = simpleObjectTypeFromClassName "Any"
 
 intType :: ObjectType
-intType = objectTypeFromClassName "Int"
+intType = simpleObjectTypeFromClassName "Int"
 
 boolType :: ObjectType
-boolType = objectTypeFromClassName "Bool"
+boolType = simpleObjectTypeFromClassName "Bool"
 
 charType :: ObjectType
-charType = objectTypeFromClassName "Char"
+charType = simpleObjectTypeFromClassName "Char"
 
 stringType :: ObjectType
-stringType = objectTypeFromClassName "String"
+stringType = simpleObjectTypeFromClassName "String"
 
 voidType :: ObjectType
-voidType = objectTypeFromClassName "Void"
+voidType = simpleObjectTypeFromClassName "Void"
 
 builtinClasses :: [ClassDecl]
 builtinClasses = [simpleBuiltinClass "Int", simpleBuiltinClass "Bool", simpleBuiltinClass "Char",
@@ -55,12 +55,12 @@ builtinClasses = [simpleBuiltinClass "Int", simpleBuiltinClass "Bool", simpleBui
                   simpleBuiltinClass "__local"]
 
 simpleBuiltinClass :: String -> ClassDecl
-simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable
-    (classIdentifierFromName name) SuperclassAbsent ClassBodyEmpty
+simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty
+    where classType = simpleClassTypeFromName name
 
 systemBuiltinClassDeclaration :: ClassDecl
-systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent SuperclassAbsent systemBuiltinClassBody
-    where classIdent = classIdentifierFromName "System"
+systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classType SuperclassAbsent systemBuiltinClassBody
+    where classType = GeneralClassType (classIdentifierFromName "System") GenericParameterAbsent
 
 systemBuiltinClassBody :: ClassBody
 systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent actionDecls)

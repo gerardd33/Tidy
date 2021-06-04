@@ -13,11 +13,11 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 
 
-getClassIdentifier :: ClassDecl -> ClassIdent
-getClassIdentifier (ClassDeclaration _ _ classIdent _ _) = classIdent
+getClassType :: ClassDecl -> ClassType
+getClassType (ClassDeclaration _ _ classType _ _) = classType
 
-getClassType :: ClassDecl -> ClassTypeModifier
-getClassType (ClassDeclaration _ classType _ _ _) = classType
+getClassTypeModifier :: ClassDecl -> ClassTypeModifier
+getClassTypeModifier (ClassDeclaration _ typeModifier _ _ _) = typeModifier
 
 getValueDeclarations :: ClassDecl -> [ObjectDecl]
 getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled valuesSection _ _ _)) =
@@ -75,19 +75,19 @@ getMainAction _ = Nothing
 loadClasses :: [ClassDecl] -> ClassEnv
 loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses ++ builtinClasses
 
-loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
+loadClassDeclaration :: ClassDecl -> (ClassType, ClassDecl)
 loadClassDeclaration declaration = case declaration of
-    ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
+    ClassDeclaration _ _ classType _ _ -> (classType, declaration)
 
 classIdentifierFromObjectType :: ObjectType -> ClassIdent
-classIdentifierFromObjectType (ObjectTypeClass classIdent _) = classIdent
+classIdentifierFromObjectType (ObjectTypeClass (GeneralClassType classIdent _)) = classIdent
 
-singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
-singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
-    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
+singletonInstanceIdent :: ClassType -> ObjectIdent
+singletonInstanceIdent classType = ObjectIdentifier $ LowerCaseIdent $ "__singleton_"
+    ++ show classType
 
 isSingletonClass :: ClassDecl -> Bool
-isSingletonClass = (==MSingleton) . getClassType
+isSingletonClass = (==MSingleton) . getClassTypeModifier
 
 getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
 getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables

@@ -56,3 +56,6 @@ getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
 
 publicDeclarationFromProper :: ObjectDeclProper -> ObjectDecl
 publicDeclarationFromProper = ObjectDeclaration MPublic
+
+classTypeFromObjectType :: ObjectType -> ClassType
+classTypeFromObjectType (ObjectTypeClass classType) = classType

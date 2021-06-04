@@ -13,7 +13,7 @@ import           Interpreter.Common.Errors
 
 type StateMonad = ReaderT Env (StateT RTState (ExceptT RuntimeException IO))
 type Env = (Object, ClassEnv) -- (localReference, classEnv)
-type ClassEnv = Map.Map ClassIdent ClassDecl
+type ClassEnv = Map.Map ClassType ClassDecl
 type RTState = (Map.Map Location Object, Location)
 
 type Result = (Object, Env)

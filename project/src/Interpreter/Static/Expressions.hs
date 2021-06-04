@@ -53,8 +53,8 @@ checkExpression context (EBooleanOperator expr1 operator expr2) =
 
 checkExpression context (EGetExpression getExpr) =
     liftPureStatic $ checkGetExpression context getExpr
-checkExpression context (EConstructorCall (CallConstructor classIdent argList)) =
-    liftPureStatic $ checkConstructorCall context classIdent argList
+checkExpression context (EConstructorCall (CallConstructor classType argList)) =
+    liftPureStatic $ checkConstructorCall context classType argList
 checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
     liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
@@ -83,17 +83,17 @@ checkUnaryOperator context expr expectedType = do
     assertTypesMatch (showComplexContext expr context) expectedType actualType
     return expectedType
 
-checkConstructorCall :: String -> ClassIdent -> ArgList -> StaticCheckMonad ObjectType
-checkConstructorCall context classIdent ArgumentListAbsent =
-    checkConstructorCall context classIdent (ArgumentListPresent [])
-checkConstructorCall context classIdent (ArgumentListPresent args) = do
-    classDecl <- getClassDeclarationStatic classIdent
+checkConstructorCall :: String -> ClassType -> ArgList -> StaticCheckMonad ObjectType
+checkConstructorCall context classType ArgumentListAbsent =
+    checkConstructorCall context classType (ArgumentListPresent [])
+checkConstructorCall context classType (ArgumentListPresent args) = do
+    classDecl <- getClassDeclarationStatic classType
     argTypes <- checkArgumentList context args
     let paramTypes = getConstructorParamTypes classDecl
     when (argTypes /= paramTypes) $ throwError $
-        ConstructorArgumentListInvalidError (showContext classIdent ++ "(" ++ showContext args ++ ")")
+        ConstructorArgumentListInvalidError (show classType ++ "(" ++ showContext args ++ ")")
             (showContext paramTypes) (showContext argTypes)
-    return $ ObjectTypeClass classIdent GenericParameterAbsent
+    return $ ObjectTypeClass classType
 
 checkArgumentList :: String -> [MethodArg] -> StaticCheckMonad [ObjectType]
 checkArgumentList context argList = do
@@ -173,9 +173,9 @@ checkDoExpression context (DoExpressionChain prefixGetExpression methodCall) = d
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
     checkDoExpressionOnObject (showContext prefixGetExpression) prefixObjectType methodCall
 
-checkDoExpression context (DoExpressionStatic classIdent methodCall) = do
-    singletonObjectType <- checkStaticExpression classIdent (showContext methodCall)
-    checkDoExpressionOnObject (showContext classIdent) singletonObjectType methodCall
+checkDoExpression context (DoExpressionStatic classType methodCall) = do
+    singletonObjectType <- checkStaticExpression classType (showContext methodCall)
+    checkDoExpressionOnObject (show classType) singletonObjectType methodCall
 
 checkDoExpressionOnObject :: String -> ObjectType -> ActionCall -> StaticCheckMonad ObjectType
 checkDoExpressionOnObject context objectType (CallAction actionIdent ArgumentListAbsent) =
@@ -242,8 +242,8 @@ checkSetterCall context objectType functionIdent argTypes = do
 
 checkMemberFunctionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberFunctionCall context objectType functionIdent argTypes = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
     let methodContext = context ++ "." ++ showContext functionIdent
@@ -255,8 +255,8 @@ checkMemberFunctionCall context objectType functionIdent argTypes = do
 
 checkMemberActionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberActionCall context objectType actionIdent argTypes = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
     let methodContext = context ++ "#" ++ showContext actionIdent
@@ -273,9 +273,9 @@ checkMethodArguments context expected actual = do
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 
-checkStaticExpression :: ClassIdent -> String -> StaticCheckMonad ObjectType
-checkStaticExpression classIdent callContext = do
-    classDecl <- getClassDeclarationStatic classIdent
+checkStaticExpression :: ClassType -> String -> StaticCheckMonad ObjectType
+checkStaticExpression classType callContext = do
+    classDecl <- getClassDeclarationStatic classType
     unless (isSingletonClass classDecl) $ throwError $ NonSingletonClassError
-        $ showContext classIdent ++ " " ++ callContext
-    return $ ObjectTypeClass classIdent GenericParameterAbsent
+        $ show classType ++ " " ++ callContext
+    return $ ObjectTypeClass classType

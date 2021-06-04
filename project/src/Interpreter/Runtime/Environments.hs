@@ -17,10 +17,10 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Types
 
 
-getClassDeclaration :: ClassIdent -> StateMonad ClassDecl
-getClassDeclaration classIdent = do
+getClassDeclaration :: ClassType -> StateMonad ClassDecl
+getClassDeclaration classType = do
     (_, classEnv) <- ask
-    return $ classEnv Map.! classIdent
+    return $ classEnv Map.! classType
 
 allocateObject :: Object -> StateMonad Location
 allocateObject object = do
@@ -142,7 +142,7 @@ objectToString (BuiltinObject object) = return $ case object of
 
 objectToString (RegularObject objectType objectEnv) = do
     case objectType of
-        ObjectTypeClass classIdent _ -> do
+        ObjectTypeClass _ -> do
             objectEnvString <- objectEnvToString objectEnv
             return $ show objectType ++ " " ++ objectEnvString
 -- TODO add lambda types

@@ -59,7 +59,7 @@ evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression metho
     liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalObject $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdent singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
 evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
@@ -74,7 +74,7 @@ evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodC
     evaluateDoExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalObject $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdent singletonClass
     evaluateDoExpressionOnObject singletonObject methodCall
 
 evaluateExpression (ELocalDeclaration (LocalValueDeclaration declaration)) =
@@ -179,10 +179,10 @@ evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
     if takeSetter then evaluateSetter object actionIdent $ head evaluatedArgs
     else evaluateMemberAction context object actionIdent evaluatedArgs
 
-evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
-evaluateConstructorCall classIdent argList = do
-    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
-    classDecl <- getClassDeclaration classIdent
+evaluateConstructorCall :: ClassType -> ArgList -> StateMonad Object
+evaluateConstructorCall classType argList = do
+    let objectType = ObjectTypeClass classType
+    classDecl <- getClassDeclaration classType
     evaluatedArgs <- evaluateArgumentList argList
     initializedAttributes <- evaluateAttributeExpressions $ getInitializedAttributes classDecl
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
