@@ -18,14 +18,13 @@ comment "/*" "*/" ;
 
 -- CLASS DECLARATIONS -------------------------
 
-separator ClassIdent "," ;
 ClassIdentifier. ClassIdent ::= UpperCaseIdent ;
 
 separator nonempty ClassDecl "" ;
-ClassDeclaration. ClassDecl ::= AbstractModifier ClassTypeModifier "class" ClassIdent Inheritance ClassBody ;
+ClassDeclaration. ClassDecl ::= AbstractModifier ClassTypeModifier "class" ClassType Inheritance ClassBody ;
 
 SuperclassAbsent. Inheritance ::= ;
-SuperclassPresent. Inheritance ::= "extends" ClassIdent ;
+SuperclassPresent. Inheritance ::= "extends" ClassType ;
 
 ClassBodyEmpty. ClassBody ::= ;
 ClassBodyFilled. ClassBody ::= "{" ValuesSection VariablesSection FunctionsSection ActionsSection "}" ;
@@ -59,12 +58,15 @@ ActionsPresent. ActionsSection ::= "actions:" "{" [ActionDecl] "}" ;
 -- OBJECTS ------------------------------------
 
 ObjectIdentifier. ObjectIdent ::= LowerCaseIdent ;
-ObjectTypeClass. ObjectType ::=  ClassIdent GenericParameter ;
+ObjectTypeClass. ObjectType ::=  ClassType ;
 ObjectTypeFunction. ObjectType ::= "get" MethodType ;
 ObjectTypeAction. ObjectType ::= "do" MethodType ;
 
+separator nonempty ClassType "," ;
+GeneralClassType. ClassType ::= ClassIdent GenericParameter ;
+
 GenericParameterAbsent. GenericParameter ::= ;
-GenericParameterPresent. GenericParameter ::= "[" [ClassIdent] "]" ; 
+GenericParameterPresent. GenericParameter ::= "[" [ClassType] "]" ;
 
 separator ObjectDecl "" ;
 ObjectDeclaration. ObjectDecl ::= VisibilityModifier ObjectDeclProper ";" ;
@@ -179,20 +181,20 @@ MethodArgument. MethodArg ::= Expr ;
 
 CallFunction. FunctionCall ::= "." MethodIdent ArgList ;
 CallAction. ActionCall ::= "#" MethodIdent ArgList ;
-CallConstructor. CtorCall ::= ClassIdent ArgList ;
+CallConstructor. CtorCall ::= ClassType ArgList ;
 
 
 -- GET EXPRESSIONS ----------------------------
 
 GetExpressionInstance. GetExpr ::= ObjectIdent FunctionCall ;
-GetExpressionStatic. GetExpr ::= ClassIdent FunctionCall ;
+GetExpressionStatic. GetExpr ::= ClassType FunctionCall ;
 GetExpressionChain. GetExpr ::= GetExpr FunctionCall ;
 
 
 -- DO EXPRESSIONS -----------------------------
 
 DoExpressionInstance. DoExpr ::= ObjectIdent ActionCall ;
-DoExpressionStatic. DoExpr ::= ClassIdent ActionCall ;
+DoExpressionStatic. DoExpr ::= ClassType ActionCall ;
 DoExpressionChain. DoExpr ::= GetExpr ActionCall ;
 
 
@@ -222,7 +224,7 @@ FMatchCase. FunctionalControlFlow ::= "match" Expr "{" [MatchCase] "}" ;
 separator MatchCase "" ;
 FCase. MatchCase ::= "case" Pattern "->" Expr ;
 
-FTypePattern. Pattern ::= ClassIdent ; 
+FTypePattern. Pattern ::= ClassType ;
 
 
 -- RELATIONAL OPERATORS -----------------------

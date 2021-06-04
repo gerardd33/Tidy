@@ -1,0 +1,13 @@
+immutable class Container[A] {
+    
+    values: {
+        element: A;
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}
