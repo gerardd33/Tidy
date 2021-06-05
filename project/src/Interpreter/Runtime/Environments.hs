@@ -20,7 +20,8 @@ import           Interpreter.Runtime.Types
 getClassDeclaration :: ClassType -> StateMonad ClassDecl
 getClassDeclaration classType = do
     (_, classEnv) <- ask
-    return $ classEnv Map.! classType
+    let classIdent = classIdentifierFromClassType classType
+    return $ classEnv Map.! classIdent
 
 allocateObject :: Object -> StateMonad Location
 allocateObject object = do

@@ -19,8 +19,9 @@ import           Interpreter.Static.Types
 getClassDeclarationStatic :: ClassType -> StaticCheckMonad ClassDecl
 getClassDeclarationStatic classType = do
     (_, classEnv) <- ask
-    let lookup = Map.lookup classType classEnv
-    case lookup of Nothing -> throwError $ ClassNotInScopeError $ show classType
+    let classIdent = classIdentifierFromClassType classType
+    let lookup = Map.lookup classIdent classEnv
+    case lookup of Nothing -> throwError $ ClassNotInScopeError $ show classIdent
                    Just classDecl -> return classDecl
 
 setThisReferenceType :: ObjectType -> StaticCheckMonad StaticResult

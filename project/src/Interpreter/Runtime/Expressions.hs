@@ -59,11 +59,11 @@ evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression metho
     liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalObject $ singletonInstanceIdent singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdent $ classIdentifierFromClassType singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
-evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
-    liftPure $ evaluateConstructorCall classIdent argList
+evaluateExpression (EConstructorCall (CallConstructor classType argList)) =
+    liftPure $ evaluateConstructorCall classType argList
 
 evaluateExpression (EDoExpression (DoExpressionInstance objectIdent methodCall)) = do
     object <- getLocalObject objectIdent
@@ -74,7 +74,7 @@ evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodC
     evaluateDoExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalObject $ singletonInstanceIdent singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdent $ classIdentifierFromClassType singletonClass
     evaluateDoExpressionOnObject singletonObject methodCall
 
 evaluateExpression (ELocalDeclaration (LocalValueDeclaration declaration)) =

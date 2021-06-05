@@ -29,7 +29,7 @@ runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
     (_, classEnv) <- ask
     (_, initialEnvWithLocal) <- buildInitialLocalReference classEnv
-    let mainClassInstanceIdent = singletonInstanceIdent $ getClassType mainClass
+    let mainClassInstanceIdent = singletonInstanceIdent $ getClassIdentifier mainClass
     mainClassInstance <- local (const initialEnvWithLocal) $ getLocalObject mainClassInstanceIdent
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
     result <- local (const initialEnvWithThis) $ evaluateActionInEnv $ fromJust $ getMainAction mainClass

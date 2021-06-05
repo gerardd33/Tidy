@@ -26,9 +26,9 @@ buildObjectEnv objectType constructorArgs initializedAttributes = do
     variablesEnv <- buildAttributeEnv variablesMap
     return $ ObjectEnv valuesEnv variablesEnv
 
-buildSingletonClassInstance :: ClassType -> [(ObjectIdent, Object)] -> StateMonad Object
-buildSingletonClassInstance classType initializedAttributes = do
-    let objectType = ObjectTypeClass classType
+buildSingletonClassInstance :: ClassIdent -> [(ObjectIdent, Object)] -> StateMonad Object
+buildSingletonClassInstance classIdent initializedAttributes = do
+    let objectType = simpleObjectTypeFromClassIdentifier classIdent
     objectEnv <- buildObjectEnv objectType [] initializedAttributes
     return $ RegularObject objectType objectEnv
 

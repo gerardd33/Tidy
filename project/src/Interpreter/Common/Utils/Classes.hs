@@ -13,6 +13,9 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 
 
+getClassIdentifier :: ClassDecl -> ClassIdent
+getClassIdentifier (ClassDeclaration _ _ classType _ _) = classIdentifierFromClassType classType
+
 getClassType :: ClassDecl -> ClassType
 getClassType (ClassDeclaration _ _ classType _ _) = classType
 
@@ -75,16 +78,19 @@ getMainAction _ = Nothing
 loadClasses :: [ClassDecl] -> ClassEnv
 loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses ++ builtinClasses
 
-loadClassDeclaration :: ClassDecl -> (ClassType, ClassDecl)
+loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 loadClassDeclaration declaration = case declaration of
-    ClassDeclaration _ _ classType _ _ -> (classType, declaration)
+    ClassDeclaration _ _ classType _ _ -> (classIdentifierFromClassType classType, declaration)
 
 classIdentifierFromObjectType :: ObjectType -> ClassIdent
 classIdentifierFromObjectType (ObjectTypeClass (GeneralClassType classIdent _)) = classIdent
 
-singletonInstanceIdent :: ClassType -> ObjectIdent
-singletonInstanceIdent classType = ObjectIdentifier $ LowerCaseIdent $ "__singleton_"
-    ++ show classType
+classIdentifierFromClassType :: ClassType -> ClassIdent
+classIdentifierFromClassType (GeneralClassType classIdent _) = classIdent
+
+singletonInstanceIdent :: ClassIdent -> ObjectIdent
+singletonInstanceIdent (ClassIdentifier (UpperCaseIdent name)) =
+    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ name
 
 isSingletonClass :: ClassDecl -> Bool
 isSingletonClass = (==MSingleton) . getClassTypeModifier
