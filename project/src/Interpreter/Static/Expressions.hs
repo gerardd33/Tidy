@@ -259,7 +259,7 @@ checkMemberFunctionCall context genericsMap objectType functionIdent argTypes = 
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
     if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
     checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
-    return $ getMethodReturnType $ fromJust functionType
+    return $ mapTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
@@ -272,11 +272,11 @@ checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinActionIdent]
     if shouldHaveUniformTypes builtinActionIdent then checkTypeUniformity methodContext argTypes else returnVoid
     checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
-    return $ getMethodReturnType $ fromJust actionType
+    return $ mapTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust actionType
 
 checkMethodArguments :: String -> Map.Map ObjectType ObjectType -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context genericsMap unmappedExpected actual = do
-    let expected = map (\k -> Map.findWithDefault k k genericsMap) unmappedExpected
+    let expected = map (mapTypeIfGeneric genericsMap) unmappedExpected
     let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
     unless (length expected == length actual && argumentTypesMatch) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)

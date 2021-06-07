@@ -1,0 +1,16 @@
+singleton class ValueGetter[A, B] {
+    
+    functions: {
+        getValue: (x: A, y: B, z: A) -> A = z
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Int = {
+            val x: Int = ValueGetter[Int, Bool].getValue(40, 3 > 2, 50);
+            System#printLine(x)
+        }
+    }
+}

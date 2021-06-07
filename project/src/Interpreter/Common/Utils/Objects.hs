@@ -59,3 +59,6 @@ publicDeclarationFromProper = ObjectDeclaration MPublic
 
 classTypeFromObjectType :: ObjectType -> ClassType
 classTypeFromObjectType (ObjectTypeClass classType) = classType
+
+mapTypeIfGeneric :: Map.Map ObjectType ObjectType -> ObjectType -> ObjectType
+mapTypeIfGeneric genericsMap objectType = Map.findWithDefault objectType objectType genericsMap

@@ -1,25 +1,19 @@
-mutable class SomeMutableClass {
-
-    values: {
-        total: Int;
-        count: Int;
-        name: String = "Some name";
-    }
+singleton class Printer[A, B] {
     
-    variables: {
-        var1: Int = 1;
-        var2: String = "S";
-    }
-    
-    functions: {
-        getValue: () -> Int = 50
-        count: () -> Int = 339 // DuplicateDeclarationError: an attribute with this name already exists
+    actions: {
+        print: (x: A, y: B, z: A) -> Void = {
+            System#printLine(x)
+            System#printLine(y)
+            System#printLine(z)
+        }
     }
 }
 
-singleton class Main {
+singleton class GenericTypes {
     
     actions: {
-        main: () -> Void = Pass
+        main: () -> Void = {
+            Printer[Int, Bool]#print(40, 3 > 2, 50 > 40) // MethodArgumentListInvalidError
+        }
     }
 }

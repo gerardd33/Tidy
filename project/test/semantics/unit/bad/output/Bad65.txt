@@ -1,0 +1,5 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Bool
+Actual: Int
+In expression:
+x : Bool = ValueGetter [Int, Bool] . getValue (40, 3 > 2, 50)
