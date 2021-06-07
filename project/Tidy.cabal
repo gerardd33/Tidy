@@ -44,6 +44,7 @@ library
       Interpreter.Static.Entrypoint
       Interpreter.Static.Environments
       Interpreter.Static.Expressions
+      Interpreter.Static.Generics
       Interpreter.Static.Methods
       Interpreter.Static.Operators
       Interpreter.Static.Types

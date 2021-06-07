@@ -28,6 +28,7 @@ data CompilationError
     | BodyEmptyError String
     | ConstructorArgumentListInvalidError String String String
     | MethodArgumentListInvalidError String String String
+    | GenericArgumentListInvalidError String String String
     | NoSuchAttributeError String String
     | NoSuchFunctionError String String
     | NoSuchActionError String String
@@ -71,6 +72,9 @@ instance Show CompilationError where
     show (MethodArgumentListInvalidError context expected actual) =
         "MethodArgumentListInvalidError: Method " ++ show context ++ " called with invalid argument types." ++
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual
+    show (GenericArgumentListInvalidError context expected actual) =
+        "GenericArgumentListInvalidError: Generic class constructor or static expression " ++ show context ++
+        " called with invalid generic arguments." ++ "\nExpected: " ++ expected ++ "\nActual: " ++ actual
     show (NoSuchAttributeError object attribute) = "NoSuchAttributeError: Object " ++ show object ++
         " has no attribute named " ++ attribute ++ "."
     show (NoSuchFunctionError object method) = "NoSuchFunctionError: Object " ++ show object ++

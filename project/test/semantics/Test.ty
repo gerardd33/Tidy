@@ -1,16 +1,25 @@
-mutable class Student {
-    
+mutable class SomeMutableClass {
+
     values: {
-        id: Int = 38493;
+        total: Int;
+        count: Int;
+        name: String = "Some name";
+    }
+    
+    variables: {
+        var1: Int = 1;
+        var2: String = "S";
+    }
+    
+    functions: {
+        getValue: () -> Int = 50
+        count: () -> Int = 339 // DuplicateDeclarationError: an attribute with this name already exists
     }
 }
 
-singleton class ObjectsAsValues {
+singleton class Main {
     
     actions: {
-        main: () -> Void = {
-            val x: Student = Student;
-            System#assertEquals(Student, 3) // TypesDoNotMatchError
-        }
+        main: () -> Void = Pass
     }
 }

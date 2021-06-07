@@ -23,9 +23,11 @@ getClassTypeModifier :: ClassDecl -> ClassTypeModifier
 getClassTypeModifier (ClassDeclaration _ typeModifier _ _ _) = typeModifier
 
 getGenericParameterList :: ClassDecl -> [ClassType]
-getGenericParameterList classDecl = case getClassType classDecl of
-    GeneralClassType _ GenericParameterAbsent           -> []
-    GeneralClassType _ (GenericParameterPresent params) -> params
+getGenericParameterList = genericParameterListFromClassType . getClassType
+
+genericParameterListFromClassType :: ClassType -> [ClassType]
+genericParameterListFromClassType (GeneralClassType _ GenericParameterAbsent) = []
+genericParameterListFromClassType (GeneralClassType _ (GenericParameterPresent params)) = params
 
 getValueDeclarations :: ClassDecl -> [ObjectDecl]
 getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled valuesSection _ _ _)) =
