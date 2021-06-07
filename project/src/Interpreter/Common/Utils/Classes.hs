@@ -22,6 +22,11 @@ getClassType (ClassDeclaration _ _ classType _ _) = classType
 getClassTypeModifier :: ClassDecl -> ClassTypeModifier
 getClassTypeModifier (ClassDeclaration _ typeModifier _ _ _) = typeModifier
 
+getGenericParameterList :: ClassDecl -> [ClassType]
+getGenericParameterList classDecl = case getClassType classDecl of
+    GeneralClassType _ GenericParameterAbsent           -> []
+    GeneralClassType _ (GenericParameterPresent params) -> params
+
 getValueDeclarations :: ClassDecl -> [ObjectDecl]
 getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled valuesSection _ _ _)) =
     valueDeclarationsFromValuesSection valuesSection
@@ -131,3 +136,6 @@ actionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
 actionTypeFromClassDeclaration classDecl actionIdent = fmap snd result
     where actions = map actionToNameTypePair $ getActionDeclarations classDecl
           result = List.find (\(actionName, actionType) -> actionName == actionIdent) actions
+
+emptyClassDeclaration :: ClassType -> ClassDecl
+emptyClassDeclaration classType = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty

@@ -1,6 +1,7 @@
 module Interpreter.Static.Classes where
 
 import           Control.Monad.Except
+import           Control.Monad.Reader
 import qualified Data.List                            as List
 
 import           Interpreter.Common.Types
@@ -11,6 +12,7 @@ import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Expressions
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
+import           Interpreter.Static.Environments
 import           Interpreter.Static.Expressions
 import           Interpreter.Static.Methods
 import           Interpreter.Static.Types
@@ -21,10 +23,11 @@ checkClasses declarations = mapM_ checkClass declarations >> returnVoid
 
 checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
+    (_, env) <- registerEmptyClassesInEnv $ getGenericParameterList classDecl
     let getterNames = map objectToMethodIdentifier $ attributeNamesFromDeclaration classDecl
     let memberNames =  getterNames ++ methodNamesFromDeclaration classDecl
     assertNoDeclarationRepetitions (showContext $ getClassType classDecl) memberNames
-    checkSections classDecl
+    local (const env) $ checkSections classDecl
 
 checkSections :: ClassDecl -> StaticCheckMonad ObjectType
 checkSections (ClassDeclaration _ classTypeModifier classType _ classBody) = do

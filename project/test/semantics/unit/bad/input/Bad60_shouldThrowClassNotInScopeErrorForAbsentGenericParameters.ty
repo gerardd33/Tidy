@@ -1,0 +1,21 @@
+immutable class Container[B, A] {
+    
+    values: {
+        element1: A;
+        element2: B;
+        element3: C; // ClassNotInScopeError
+        element4: A;
+    }
+    
+    functions: {
+        oneAndThreeEqual: () -> Bool = this.element1 == this.element3
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}
+               

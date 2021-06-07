@@ -49,6 +49,18 @@ addLocalVariableType objectIdent objectType = do
     let newLocalEnv = StaticLocalEnv (valueTypes localEnv) newVariables
     return (voidType, (newLocalEnv, classEnv))
 
+registerEmptyClassesInEnv :: [ClassType] -> StaticCheckMonad StaticResult
+registerEmptyClassesInEnv [] = liftPureStatic returnVoid
+registerEmptyClassesInEnv (addition:additions) = do
+    (_, env) <- registerEmptyClassInEnv addition
+    local (const env) $ registerEmptyClassesInEnv additions
+
+registerEmptyClassInEnv :: ClassType -> StaticCheckMonad StaticResult
+registerEmptyClassInEnv classType = do
+    (localEnv, classEnv) <- ask
+    let newClassEnv = Map.insert (classIdentifierFromClassType classType) (emptyClassDeclaration classType) classEnv
+    return (voidType, (localEnv, newClassEnv))
+
 tryGetLocalObjectType :: ObjectIdent -> StaticCheckMonad (Maybe ObjectType)
 tryGetLocalObjectType objectIdent = do
     (localEnv, _) <- ask
