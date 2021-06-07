@@ -132,7 +132,7 @@ checkGetExpressionOnObject context genericsMap objectType (CallFunction function
 checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
     argTypes <- checkArgumentList context args
     takeGetter <- hasGetterStatic objectType functionIdent
-    if takeGetter then checkGetterCall context objectType functionIdent argTypes
+    if takeGetter then checkGetterCall context genericsMap objectType functionIdent argTypes
     else checkMemberFunctionCall context genericsMap objectType functionIdent argTypes
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
@@ -199,7 +199,7 @@ checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent
 checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent args)) = do
     argTypes <- checkArgumentList context args
     takeSetter <- hasSetterStatic objectType actionIdent
-    if takeSetter then checkSetterCall context objectType actionIdent argTypes
+    if takeSetter then checkSetterCall context genericsMap objectType actionIdent argTypes
     else checkMemberActionCall context genericsMap objectType actionIdent argTypes
 
 checkLocalObjectDeclaration :: LocalDecl -> StaticCheckMonad StaticResult
@@ -240,21 +240,23 @@ declareObjectStatic properDecl expectedType (Initialized expr) isVariable = do
     if isVariable then local (const newEnv) $ addLocalVariableType objectIdent expectedType
     else local (const newEnv) $ addLocalValueType objectIdent expectedType
 
-checkGetterCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkGetterCall context objectType functionIdent argTypes = do
+checkGetterCall :: String -> GenericsMap -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkGetterCall context genericsMap objectType functionIdent argTypes = do
     unless (null argTypes) $ throwError $ MethodArgumentListInvalidError
         (showContext functionIdent) "" (showContext argTypes)
     let attributeIdent = methodToObjectIdentifier functionIdent
-    getAttributeTypeStatic context objectType attributeIdent
+    unmappedAttributeType <- getAttributeTypeStatic context objectType attributeIdent
+    return $ mapTypeIfGeneric genericsMap unmappedAttributeType
 
-checkSetterCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkSetterCall context objectType functionIdent argTypes = do
-    let attributeIdent = methodToObjectIdentifier functionIdent
-    expectedType <- getAttributeTypeStatic context objectType attributeIdent
+checkSetterCall :: String -> GenericsMap -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkSetterCall context genericsMap objectType actionIdent argTypes = do
+    let attributeIdent = methodToObjectIdentifier actionIdent
+    unmappedExpectedType <- getAttributeTypeStatic context objectType attributeIdent
+    let expectedType = mapTypeIfGeneric genericsMap unmappedExpectedType
     unless (length argTypes == 1) $ throwError $ MethodArgumentListInvalidError
-            (showContext functionIdent) (showContext expectedType) (showContext argTypes)
+            (showContext actionIdent) (showContext expectedType) (showContext argTypes)
     let actualType = head argTypes
-    assertTypesMatch context expectedType actualType
+    assertTypesMatch (context ++ "#" ++ showContext actionIdent) expectedType actualType
 
 checkMemberFunctionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberFunctionCall context genericsMap objectType functionIdent argTypes = do

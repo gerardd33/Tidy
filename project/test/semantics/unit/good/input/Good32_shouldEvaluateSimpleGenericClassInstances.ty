@@ -8,6 +8,7 @@ immutable class Container[B, A] {
     
     functions: {
         oneAndThreeSame: () -> Bool = this.element1 == this.element3
+        idA: (x: A) -> A = x
     }
 }
 
@@ -19,10 +20,12 @@ singleton class GenericTypes {
             
             val el1: Int = container.element1;
             val el2: Bool = container.element2;
+            val copy: Int = container.idA(el1);
             
             System#assert(el2)
             System#assertEquals(3, el1)
             System#assert(container.oneAndThreeSame)
+            System#assertEquals(3, copy)
         }
     }
 }
