@@ -111,11 +111,13 @@ checkArgumentList context argList = do
 checkGetExpression :: String -> GetExpr -> StaticCheckMonad ObjectType
 checkGetExpression context (GetExpressionInstance objectIdent methodCall) = do
     objectType <- checkLocalObject objectIdent
-    checkGetExpressionOnObject (showContext objectIdent) Map.empty objectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType objectType
+    checkGetExpressionOnObject (showContext objectIdent) genericsMap objectType methodCall
 
 checkGetExpression context (GetExpressionChain prefixGetExpression methodCall) = do
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
-    checkGetExpressionOnObject (showContext prefixGetExpression) Map.empty prefixObjectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType prefixObjectType
+    checkGetExpressionOnObject (showContext prefixGetExpression) genericsMap prefixObjectType methodCall
 
 checkGetExpression context (GetExpressionStatic classType methodCall) = do
     (singletonObjectType, genericParams) <- checkStaticExpression classType (showContext methodCall)
@@ -176,11 +178,13 @@ checkPredicate context predicateExpr checkPure = do
 checkDoExpression :: String -> DoExpr -> StaticCheckMonad ObjectType
 checkDoExpression context (DoExpressionInstance objectIdent methodCall) = do
     objectType <- checkLocalObject objectIdent
-    checkDoExpressionOnObject (showContext objectIdent) Map.empty objectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType objectType
+    checkDoExpressionOnObject (showContext objectIdent) genericsMap objectType methodCall
 
 checkDoExpression context (DoExpressionChain prefixGetExpression methodCall) = do
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
-    checkDoExpressionOnObject (showContext prefixGetExpression) Map.empty prefixObjectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType prefixObjectType
+    checkDoExpressionOnObject (showContext prefixGetExpression) genericsMap prefixObjectType methodCall
 
 checkDoExpression context (DoExpressionStatic classType methodCall) = do
     (singletonObjectType, genericParams) <- checkStaticExpression classType (showContext methodCall)
