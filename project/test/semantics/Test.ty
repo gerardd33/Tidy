@@ -1,42 +1,28 @@
-mutable class Student {
-    
-    values: {
-        firstName: String;
-        lastName: String;
-        id: Int = 38493;
-        grades: Grades;
-    }
+mutable class Container[B, A] {
     
     variables: {
-        age: Int;
-        year: String;
-    }
-}
-
-immutable class Grades {
-    
-    values: {
-        grade1: Int;
-        grade2: Int;
-        grade3: Int = 13;
-        grade4: Int;
+        element1: A;
+        element2: B;
+        element3: A;
     }
     
     functions: {
-        someFunction: () -> Int = {
-            3 + 3
-        }
+        oneAndThreeSame: () -> Bool = this.element1 == this.element3
+        idA: (x: A) -> A = x
     }
 }
 
-singleton class GetExpressions {
+singleton class GenericTypes {
     
     actions: {
         main: () -> Void = {
-            val student: Student = Student("Diana", "Frost", Grades(11, 12, 14), 20, "BS1");
-            val result: String = student.firstName ++ " " ++ student.lastName ++ ", year: " ++ student.year;
+            val container: Container[Bool, String] = Container[Bool, String]("AAA", 4 > 2, "DDDD");
             
-            System#assertEquals("Diana Frost, year: BS1", result)
+            var el1: String = container.element1;
+            var el3: String = container.element3;
+            
+            local#el1("YYYY")
+            container#element2("RRRRR") // UnexpectedTypeError
         }
     }
 }

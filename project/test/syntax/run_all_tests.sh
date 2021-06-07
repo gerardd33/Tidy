@@ -40,8 +40,7 @@ function run_tests_for_directory {
 }
 
 
-run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/good true
-run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/bad false
-run_tests_for_directory "${WORKING_DIR}"/tests_input/integration true
+run_tests_for_directory "${WORKING_DIR}"/good true
+run_tests_for_directory "${WORKING_DIR}"/bad false
 
 echo "All tests passed successfully." && echo
