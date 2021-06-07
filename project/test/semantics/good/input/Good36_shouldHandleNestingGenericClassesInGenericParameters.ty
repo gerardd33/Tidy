@@ -1,0 +1,22 @@
+immutable class Container[A, B] {
+    
+    values: {
+        element1: A;
+        element2: B;
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val innerContainer: Container[Bool, String] = Container[Bool, String](3 > 4, "AAA");
+            val middleContainer: Container[Container[Bool, String], Int] = 
+                Container[Container[Bool, String], Int](innerContainer, 5);
+            val outerContainer: Container[Container[Container[Bool, String], Int], Int] = 
+                Container[Container[Container[Bool, String], Int], Int](middleContainer, 5);
+            
+            System#assertEquals("AAA", outerContainer.element1.element1.element2)
+        }
+    }
+}
