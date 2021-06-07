@@ -124,7 +124,7 @@ checkGetExpression context (GetExpressionStatic classType methodCall) = do
     genericsMap <- bindGenericParameters methodContext genericParams genericArgs
     checkGetExpressionOnObject (show classType) genericsMap singletonObjectType methodCall
 
-checkGetExpressionOnObject :: String -> Map.Map ObjectType ObjectType -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
+checkGetExpressionOnObject :: String -> GenericsMap -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
 checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent ArgumentListAbsent) =
     checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent []))
 checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
@@ -189,7 +189,7 @@ checkDoExpression context (DoExpressionStatic classType methodCall) = do
     genericsMap <- bindGenericParameters methodContext genericParams genericArgs
     checkDoExpressionOnObject (show classType) genericsMap singletonObjectType methodCall
 
-checkDoExpressionOnObject :: String -> Map.Map ObjectType ObjectType -> ObjectType -> ActionCall -> StaticCheckMonad ObjectType
+checkDoExpressionOnObject :: String -> GenericsMap -> ObjectType -> ActionCall -> StaticCheckMonad ObjectType
 checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent ArgumentListAbsent) =
     checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent []))
 checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent args)) = do

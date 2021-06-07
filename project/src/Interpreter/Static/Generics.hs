@@ -10,7 +10,7 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 
 
-bindGenericParameters :: String -> [ClassType] -> [ClassType] -> StaticCheckMonad (Map.Map ObjectType ObjectType)
+bindGenericParameters :: String -> [ClassType] -> [ClassType] -> StaticCheckMonad GenericsMap
 bindGenericParameters context genericParams genericArgs = do
     when (length genericParams /= length genericArgs) $ throwError $
         GenericArgumentListInvalidError context (show genericParams) (show genericArgs)

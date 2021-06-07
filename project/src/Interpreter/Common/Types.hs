@@ -46,3 +46,5 @@ data StaticLocalEnv = StaticLocalEnv { valueTypes :: StaticAttributeEnv, variabl
     deriving (Eq, Show)
 
 type StaticAttributeEnv = Map.Map ObjectIdent ObjectType
+
+type GenericsMap = Map.Map ObjectType ObjectType
