@@ -107,24 +107,27 @@ checkArgumentList context argList = do
 checkGetExpression :: String -> GetExpr -> StaticCheckMonad ObjectType
 checkGetExpression context (GetExpressionInstance objectIdent methodCall) = do
     objectType <- checkLocalObject objectIdent
-    checkGetExpressionOnObject (showContext objectIdent) objectType methodCall
+    checkGetExpressionOnObject (showContext objectIdent) Map.empty objectType methodCall
 
 checkGetExpression context (GetExpressionChain prefixGetExpression methodCall) = do
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
-    checkGetExpressionOnObject (showContext prefixGetExpression) prefixObjectType methodCall
+    checkGetExpressionOnObject (showContext prefixGetExpression) Map.empty prefixObjectType methodCall
 
 checkGetExpression context (GetExpressionStatic classType methodCall) = do
     (singletonObjectType, genericParams) <- checkStaticExpression classType (showContext methodCall)
-    checkGetExpressionOnObject (show classType) singletonObjectType methodCall
+    let genericArgs = genericParameterListFromClassType classType
+    let methodContext = show classType ++ " " ++ showContext methodCall
+    genericsMap <- bindGenericParameters methodContext genericParams genericArgs
+    checkGetExpressionOnObject (show classType) genericsMap singletonObjectType methodCall
 
-checkGetExpressionOnObject :: String -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
-checkGetExpressionOnObject context objectType (CallFunction functionIdent ArgumentListAbsent) =
-    checkGetExpressionOnObject context objectType (CallFunction functionIdent (ArgumentListPresent []))
-checkGetExpressionOnObject context objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
+checkGetExpressionOnObject :: String -> Map.Map ObjectType ObjectType -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
+checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent ArgumentListAbsent) =
+    checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent []))
+checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
     argTypes <- checkArgumentList context args
     takeGetter <- hasGetterStatic objectType functionIdent
     if takeGetter then checkGetterCall context objectType functionIdent argTypes
-    else checkMemberFunctionCall context objectType functionIdent argTypes
+    else checkMemberFunctionCall context genericsMap objectType functionIdent argTypes
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do
@@ -245,8 +248,8 @@ checkSetterCall context objectType functionIdent argTypes = do
     let actualType = head argTypes
     assertTypesMatch context expectedType actualType
 
-checkMemberFunctionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkMemberFunctionCall context objectType functionIdent argTypes = do
+checkMemberFunctionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkMemberFunctionCall context genericsMap objectType functionIdent argTypes = do
     let classType = classTypeFromObjectType objectType
     classDecl <- getClassDeclarationStatic classType
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
@@ -255,7 +258,7 @@ checkMemberFunctionCall context objectType functionIdent argTypes = do
     let builtinFunctionIdent = builtinMethodIdentifier functionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
     if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
-    checkMethodArguments methodContext Map.empty (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
+    checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
     return $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType

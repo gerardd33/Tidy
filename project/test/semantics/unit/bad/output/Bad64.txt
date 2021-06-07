@@ -1,0 +1,3 @@
+Error: MethodArgumentListInvalidError: Method "ValueGetter[Int,Bool].getValue" called with invalid argument types.
+Expected: Int Bool Int
+Actual: Int Bool Bool
