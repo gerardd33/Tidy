@@ -57,7 +57,7 @@ singleton class GenericTypes {
             val double: DoubleContainer[Int, Bool] = DoubleContainer[Int, Bool](y, check);
             System#assert(double.compareFirst(x))
             System#assert(double.compareSecond(check2))
-            
+           
             val triple: TripleContainer[Int, Void, Int] = TripleContainer[Int, Void, Int](DoubleContainer[Int, Void](x, Pass), 15, y);
             triple#printAll
             triple#oneMoreElement(92929)

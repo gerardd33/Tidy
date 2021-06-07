@@ -1,19 +1,42 @@
-singleton class Printer[A, B] {
+mutable class Student {
     
-    actions: {
-        print: (x: A, y: B, z: A) -> Void = {
-            System#printLine(x)
-            System#printLine(y)
-            System#printLine(z)
+    values: {
+        firstName: String;
+        lastName: String;
+        id: Int = 38493;
+        grades: Grades;
+    }
+    
+    variables: {
+        age: Int;
+        year: String;
+    }
+}
+
+immutable class Grades {
+    
+    values: {
+        grade1: Int;
+        grade2: Int;
+        grade3: Int = 13;
+        grade4: Int;
+    }
+    
+    functions: {
+        someFunction: () -> Int = {
+            3 + 3
         }
     }
 }
 
-singleton class GenericTypes {
+singleton class GetExpressions {
     
     actions: {
         main: () -> Void = {
-            Printer[Int, Bool]#print(40, 3 > 2, 50 > 40) // MethodArgumentListInvalidError
+            val student: Student = Student("Diana", "Frost", Grades(11, 12, 14), 20, "BS1");
+            val result: String = student.firstName ++ " " ++ student.lastName ++ ", year: " ++ student.year;
+            
+            System#assertEquals("Diana Frost, year: BS1", result)
         }
     }
 }

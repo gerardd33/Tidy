@@ -28,6 +28,7 @@ library
       Interpreter.Common.Utils.Classes
       Interpreter.Common.Utils.Environments
       Interpreter.Common.Utils.Expressions
+      Interpreter.Common.Utils.Generics
       Interpreter.Common.Utils.Methods
       Interpreter.Common.Utils.Objects
       Interpreter.Common.Utils.Types

@@ -2,4 +2,4 @@ Error: UnexpectedTypeError: Types do not match.
 Expected: String
 Actual: Int
 In expression:
-testClass
+testClass#var3

@@ -8,7 +8,7 @@ singleton class ValueGetter[A, B] {
 singleton class GenericTypes {
     
     actions: {
-        main: () -> Int = {
+        main: () -> Void = {
             val x: Int = ValueGetter[Int, Bool].getValue(40, 3 > 2, 50);
             System#printLine(x)
         }

@@ -12,6 +12,7 @@ import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
 import           Interpreter.Runtime.Environments
 
 

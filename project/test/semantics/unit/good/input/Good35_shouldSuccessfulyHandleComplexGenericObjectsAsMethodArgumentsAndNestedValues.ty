@@ -19,7 +19,7 @@ immutable class DoubleContainer[A, B] {
 }
 
 
-mutable class TripleContainer[A, B, C] {
+mutable class TripleContainer[A, B, C] extends ContainerWith[B] {
     
     values: {
         mainElements: DoubleContainer[A, B];
@@ -35,7 +35,12 @@ mutable class TripleContainer[A, B, C] {
     }
     
     actions: {
-        printAll: () -> Void = {
+        printALot: () -> Void = {
+            val aElement: A = this.mainElements.element1;
+            val bElement: B = this.mainElements.element2;
+            System#printLine(aElement)
+            System#printLine(bElement)
+            
             System#printLine(this.mainElements)
             System#printLine(this.additionalElement)
             System#printLine(this.oneMoreElement)
@@ -59,9 +64,12 @@ singleton class GenericTypes {
             System#assert(double.compareSecond(check2))
             
             val triple: TripleContainer[Int, Void, Int] = TripleContainer[Int, Void, Int](DoubleContainer[Int, Void](x, Pass), 15, y);
-            triple#printAll
+            triple#printALot
             triple#oneMoreElement(92929)
-            triple#printAll
+            triple#printALot
+            
+            val anotherDouble: DoubleContainer[Int, Void] = DoubleContainer[Int, Void](2 + 1, Pass);
+            System#assert(triple.compareFirstInMain(anotherDouble))
         }
     }
 }

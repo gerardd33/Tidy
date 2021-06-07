@@ -56,9 +56,3 @@ getAttributeLocation (RegularObject _ objectEnv) attributeIdent =
 
 publicDeclarationFromProper :: ObjectDeclProper -> ObjectDecl
 publicDeclarationFromProper = ObjectDeclaration MPublic
-
-classTypeFromObjectType :: ObjectType -> ClassType
-classTypeFromObjectType (ObjectTypeClass classType) = classType
-
-mapTypeIfGeneric :: GenericsMap -> ObjectType -> ObjectType
-mapTypeIfGeneric genericsMap objectType = Map.findWithDefault objectType objectType genericsMap

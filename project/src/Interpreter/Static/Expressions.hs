@@ -12,6 +12,7 @@ import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Expressions
+import           Interpreter.Common.Utils.Generics
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
@@ -96,7 +97,7 @@ checkConstructorCall context classType (ArgumentListPresent args) = do
     let genericParams = getGenericParameterList classDecl
     let genericArgs = genericParameterListFromClassType classType
     genericsMap <- bindGenericParameters callContext genericParams genericArgs
-    let paramTypes = map (mapTypeIfGeneric genericsMap) unmappedParamTypes
+    let paramTypes = map (mapObjectTypeIfGeneric genericsMap) unmappedParamTypes
     when (argTypes /= paramTypes) $ throwError $
         ConstructorArgumentListInvalidError callContext (showContext paramTypes) (showContext argTypes)
     return $ ObjectTypeClass classType
@@ -246,13 +247,13 @@ checkGetterCall context genericsMap objectType functionIdent argTypes = do
         (showContext functionIdent) "" (showContext argTypes)
     let attributeIdent = methodToObjectIdentifier functionIdent
     unmappedAttributeType <- getAttributeTypeStatic context objectType attributeIdent
-    return $ mapTypeIfGeneric genericsMap unmappedAttributeType
+    return $ mapObjectTypeIfGeneric genericsMap unmappedAttributeType
 
 checkSetterCall :: String -> GenericsMap -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkSetterCall context genericsMap objectType actionIdent argTypes = do
     let attributeIdent = methodToObjectIdentifier actionIdent
     unmappedExpectedType <- getAttributeTypeStatic context objectType attributeIdent
-    let expectedType = mapTypeIfGeneric genericsMap unmappedExpectedType
+    let expectedType = mapObjectTypeIfGeneric genericsMap unmappedExpectedType
     unless (length argTypes == 1) $ throwError $ MethodArgumentListInvalidError
             (showContext actionIdent) (showContext expectedType) (showContext argTypes)
     let actualType = head argTypes
@@ -269,7 +270,7 @@ checkMemberFunctionCall context genericsMap objectType functionIdent argTypes = 
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
     if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
     checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
-    return $ mapTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust functionType
+    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust functionType
 
 checkMemberActionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
@@ -282,11 +283,11 @@ checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinActionIdent]
     if shouldHaveUniformTypes builtinActionIdent then checkTypeUniformity methodContext argTypes else returnVoid
     checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
-    return $ mapTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust actionType
+    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust actionType
 
 checkMethodArguments :: String -> Map.Map ObjectType ObjectType -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context genericsMap unmappedExpected actual = do
-    let expected = map (mapTypeIfGeneric genericsMap) unmappedExpected
+    let expected = map (mapObjectTypeIfGeneric genericsMap) unmappedExpected
     let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
     unless (length expected == length actual && argumentTypesMatch) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)

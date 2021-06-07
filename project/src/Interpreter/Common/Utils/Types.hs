@@ -43,3 +43,5 @@ objectToMethodIdentifier (ObjectIdentifier ident) = MethodIdentifier ident
 methodToObjectIdentifier :: MethodIdent -> ObjectIdent
 methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
 
+classTypeFromObjectType :: ObjectType -> ClassType
+classTypeFromObjectType (ObjectTypeClass classType) = classType

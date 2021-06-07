@@ -12,7 +12,7 @@ function run_tests_for_directory {
 
     for INPUT in $(ls "${DIRECTORY}"/input); do
         echo && printf "Test: %s: " "${INPUT}"
-        OUTPUT="${INPUT%_*}".out
+        OUTPUT="${INPUT%_*}".txt
 
         cat "${DIRECTORY}"/input/"${INPUT}" > "${WORKING_DIR}"/Test.ty
         cat "${DIRECTORY}"/output/"${OUTPUT}" > "${WORKING_DIR}"/"${EXPECTED_OUTPUT_FILE_NAME}"
