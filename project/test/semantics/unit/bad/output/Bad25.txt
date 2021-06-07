@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Bool
+Actual: Int
+In expression:
+local1
+In: local4 : Bool = local3 and local1 > 3 and local1 and local1 <= local2

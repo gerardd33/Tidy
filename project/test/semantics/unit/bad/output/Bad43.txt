@@ -1,0 +1,2 @@
+Error: NonSingletonClassError: Non-singleton classes cannot be referenced from a static context.
+In expression: SomeMutableClass . goodFunction (3)

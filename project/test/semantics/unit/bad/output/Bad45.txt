@@ -1,0 +1,1 @@
+Error: NoSuchFunctionError: Object "testClass" has no function named "goodAction".

@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Bool
+Actual: Int
+In expression:
+3
+In: arg2

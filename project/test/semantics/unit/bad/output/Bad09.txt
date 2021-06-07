@@ -1,0 +1,1 @@
+Error: DuplicateDeclarationError: Object or method with name "count" is declared more than once in "SomeMutableClass".

@@ -1,0 +1,1 @@
+Error: NoSuchActionError: Object "testClass" has no action named "total".

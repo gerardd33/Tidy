@@ -1,0 +1,1 @@
+Error: IllegalSectionError: Immutable class "SomeImmutableClass" must not contain section actions.

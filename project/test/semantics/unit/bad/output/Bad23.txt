@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: String
+Actual: Bool
+In expression:
+arg1
+In: word : String = arg2 ++ "..." ++ arg3 ++ arg3 ++ arg1 ++ arg2 ++ arg3

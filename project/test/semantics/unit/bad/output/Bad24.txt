@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Int
+Actual: Bool
+In expression:
+local2
+In: local3 : Int = 8 * local1 + 9 * - local2 - 7

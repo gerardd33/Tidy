@@ -1,0 +1,4 @@
+Error: UnexpectedReturnTypeError: Declared method return type does not match the actual one.
+Expected: Bool
+Actual: Int
+In method: badAction: (arg1 : Bool, arg2 : Int, arg3 : Int) -> Bool

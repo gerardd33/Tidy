@@ -1,0 +1,3 @@
+Error: IllegalSideEffectsError: Expressions inside "variables" must be purely functional.
+Expression with side effects:
+val x : Int = 3;

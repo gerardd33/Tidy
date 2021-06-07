@@ -1,0 +1,4 @@
+Error: UnexpectedReturnTypeError: Declared method return type does not match the actual one.
+Expected: Int
+Actual: String
+In method: badAction: (x : Int, y : String) -> Int

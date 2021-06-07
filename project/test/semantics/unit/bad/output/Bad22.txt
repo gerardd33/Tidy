@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Int
+Actual: String
+In expression:
+arg2
+In: sum3 : Int = sum1 * arg3 + (arg3 - arg2) * sum1 * arg2 % arg2

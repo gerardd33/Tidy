@@ -1,0 +1,1 @@
+Student { values: { grades: Grades { values: { }, variables: { grade1: 11, grade2: 12, grade3: 13, grade4: 14, someBool: True, someChar: d, someVoid: Pass } },  id: 38493,  name: Diana Frost }, variables: { age: 20, year: 2 } }
