@@ -19,6 +19,10 @@ getClassIdentifier (ClassDeclaration _ _ classType _ _) = classIdentifierFromCla
 getClassType :: ClassDecl -> ClassType
 getClassType (ClassDeclaration _ _ classType _ _) = classType
 
+getSuperclassType :: ClassDecl -> ClassType
+getSuperclassType (ClassDeclaration _ _ _ SuperclassAbsent _) = anyClassType
+getSuperclassType (ClassDeclaration _ _ _ (SuperclassPresent classType) _) = classType
+
 getClassTypeModifier :: ClassDecl -> ClassTypeModifier
 getClassTypeModifier (ClassDeclaration _ typeModifier _ _ _) = typeModifier
 

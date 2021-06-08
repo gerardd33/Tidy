@@ -192,7 +192,9 @@ evaluateConstructorCall classType argList = do
 instantiateRegularObject :: ClassType -> [Object] -> StateMonad Object
 instantiateRegularObject classType evaluatedArgs = do
     classDecl <- getClassDeclaration classType
-    initializedAttributes <- evaluateAttributeExpressions $ getInitializedAttributes classDecl
+    superclassDecls <- getAllSuperclasses classType
+    let collectedAttributes = map getInitializedAttributes (classDecl:superclassDecls)
+    initializedAttributes <- evaluateAttributeExpressions $ concat collectedAttributes
     let objectType = ObjectTypeClass classType
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
     return $ RegularObject objectType objectEnv

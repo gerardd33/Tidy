@@ -1,0 +1,27 @@
+immutable class Device {
+    
+    values: {
+        model: String;
+        serialNumber: Int;
+    }
+}
+
+immutable class Laptop extends Device {
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String;
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
+    
+    actions: {
+        main: () -> Void = {
+            val laptop: Laptop = Laptop(17, "IPS", "i7", 8);
+            System#printLine(laptop)
+        }
+    }
+}

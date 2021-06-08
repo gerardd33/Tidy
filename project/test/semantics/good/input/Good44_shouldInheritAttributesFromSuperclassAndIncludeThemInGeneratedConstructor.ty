@@ -1,0 +1,35 @@
+immutable class Product {
+    
+    values: {
+        id: Int = "10";
+    }
+}
+
+
+immutable class Device extends Product {
+    
+    values: {
+        model: String = "XD";
+        serialNumber: Int = 333;
+    }
+}
+
+immutable class Laptop extends Device {
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String;
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
+    
+    actions: {
+        main: () -> Void = {
+            val laptop: Laptop = Laptop(17, "IPS", "i7", 8);
+            System#printLine(laptop)
+        }
+    }
+}
