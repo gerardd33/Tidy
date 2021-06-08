@@ -1,0 +1,9 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val list1: List[String] = 
+                List[String]("xa", "yy", 3, "dd"); // UnexpectedTypeError
+        }
+    }
+}

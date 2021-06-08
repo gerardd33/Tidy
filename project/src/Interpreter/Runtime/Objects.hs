@@ -35,6 +35,6 @@ buildSingletonClassInstance classIdent initializedAttributes = do
 getAttributeMap :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad (Map.Map ObjectIdent Object)
 getAttributeMap objectType constructorArgs initializedAttributes = do
     classDecl <- getClassDeclaration $ classTypeFromObjectType objectType
-    let constructorParamList = getConstructorParamNames classDecl
+    let constructorParamList = getConstructorParameterNames classDecl
     let attributesFromConstructor = Map.fromList $ zip constructorParamList constructorArgs
     return $ Map.union (Map.fromList initializedAttributes) attributesFromConstructor

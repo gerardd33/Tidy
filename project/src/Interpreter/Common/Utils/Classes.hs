@@ -109,18 +109,20 @@ isBuiltinClass :: ClassType -> Bool
 isBuiltinClass classType = classIdent `elem` map classIdentifierFromName builtinClassNames
     where classIdent = classIdentifierFromClassType classType
 
-getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
-getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
+getConstructorParameterSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
+getConstructorParameterSignatures classDecl = uninitializedValues ++ uninitializedVariables
     where uninitializedValues = map objectToNameTypePair $ filter (not . isInitialized) $
             getValueDeclarations classDecl
           uninitializedVariables = map objectToNameTypePair $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
 
-getConstructorParamNames :: ClassDecl -> [ObjectIdent]
-getConstructorParamNames classDecl = map fst $ getConstructorParamSignatures classDecl
+getConstructorParameterNames :: ClassDecl -> [ObjectIdent]
+getConstructorParameterNames classDecl = map fst $ getConstructorParameterSignatures classDecl
 
-getConstructorParamTypes :: ClassDecl -> [ObjectType]
-getConstructorParamTypes classDecl = map snd $ getConstructorParamSignatures classDecl
+getConstructorParameterTypes :: ClassDecl -> [ObjectType]
+getConstructorParameterTypes classDecl = if isBuiltinClass (getClassType classDecl)
+    then getConstructorParameterTypesForBuiltinClass $ getClassIdentifier classDecl
+    else map snd $ getConstructorParameterSignatures classDecl
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables

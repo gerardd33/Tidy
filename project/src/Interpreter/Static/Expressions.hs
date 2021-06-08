@@ -92,15 +92,21 @@ checkConstructorCall context classType ArgumentListAbsent =
 checkConstructorCall context classType (ArgumentListPresent args) = do
     classDecl <- getClassDeclarationStatic classType
     argTypes <- checkArgumentList context args
-    let unmappedParamTypes = getConstructorParamTypes classDecl
     let callContext = show classType ++ "(" ++ showContext args ++ ")"
     let genericParams = getGenericParameterList classDecl
     let genericArgs = genericParameterListFromClassType classType
     genericsMap <- bindGenericParameters callContext genericParams genericArgs
+    let unmappedParamTypes = getConstructorParameterTypes classDecl
     let paramTypes = map (mapObjectTypeIfGeneric genericsMap) unmappedParamTypes
-    when (argTypes /= paramTypes) $ throwError $
-        ConstructorArgumentListInvalidError callContext (showContext paramTypes) (showContext argTypes)
+    if classNameFromClassType classType == "List" then checkListConstructorArguments callContext genericArgs argTypes
+    else when (argTypes /= paramTypes) $ throwError $ ConstructorArgumentListInvalidError
+        callContext (showContext paramTypes) (showContext argTypes)
     return $ ObjectTypeClass classType
+
+checkListConstructorArguments :: String -> [ClassType] -> [ObjectType] -> StaticCheckMonad ()
+checkListConstructorArguments context genericArgs argTypes = do
+    let elementType = head $ map ObjectTypeClass genericArgs
+    mapM_ (assertTypesMatch context elementType) argTypes
 
 checkArgumentList :: String -> [MethodArg] -> StaticCheckMonad [ObjectType]
 checkArgumentList context argList = do

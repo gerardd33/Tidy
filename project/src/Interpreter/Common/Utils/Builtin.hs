@@ -84,6 +84,15 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsA
                          assertEqualsBuiltinActionDeclaration, printBuiltinActionDeclaration,
                          printLineBuiltinActionDeclaration]
 
+getConstructorParameterTypesForBuiltinClass :: ClassIdent -> [ObjectType]
+getConstructorParameterTypesForBuiltinClass classIdent = case classNameFromIdentifier classIdent of
+    "Int"    -> [intType]
+    "Bool"   -> [boolType]
+    "Char"   -> [charType]
+    "String" -> [stringType]
+    "Void"   -> []
+    _        -> []
+
 shouldHaveUniformTypes :: MethodIdent -> Bool
 shouldHaveUniformTypes methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_assertEquals" -> True
