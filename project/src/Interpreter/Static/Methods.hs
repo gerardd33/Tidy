@@ -2,7 +2,6 @@ module Interpreter.Static.Methods where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import           Data.List                        as List
 
 import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
@@ -17,17 +16,10 @@ import           Interpreter.Static.Expressions
 import           Interpreter.Static.Types
 
 
-assertNoDeclarationRepetitions :: String -> [MethodIdent] -> StaticCheckMonad ObjectType
-assertNoDeclarationRepetitions context idents  = do
-    let duplicates = idents List.\\ nub idents
-    unless (null duplicates) $ throwError $ DuplicateDeclarationError
-        (showContext $ head duplicates) context
-    returnVoid
-
 checkFunctionDeclaration :: ClassType -> FunctionDecl -> StaticCheckMonad ObjectType
 checkFunctionDeclaration classType (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
-    let paramNames = map objectToMethodIdentifier $ getMethodParamNames functionType
-    let withValuesNames = map objectToMethodIdentifier $ getFunctionWithValuesNames functionBody
+    let paramNames = getMethodParamNames functionType
+    let withValuesNames = getFunctionWithValuesNames functionBody
     assertNoDeclarationRepetitions (showMethodContext functionIdent functionType) $ paramNames ++ withValuesNames
     (_, env) <- checkMethodParams functionIdent functionType
     (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classType
@@ -35,7 +27,7 @@ checkFunctionDeclaration classType (FunctionDeclaration _ _ functionIdent functi
 
 checkActionDeclaration :: ClassType -> ActionDecl -> StaticCheckMonad ObjectType
 checkActionDeclaration classType (ActionDeclaration _ _ actionIdent actionType actionBody) = do
-    let paramNames = map objectToMethodIdentifier $ getMethodParamNames actionType
+    let paramNames = getMethodParamNames actionType
     assertNoDeclarationRepetitions (showMethodContext actionIdent actionType) paramNames
     (_, env) <- checkMethodParams actionIdent actionType
     (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classType

@@ -50,3 +50,10 @@ checkTypeUniformity :: String -> [ObjectType] -> StaticCheckMonad ObjectType
 checkTypeUniformity context types = do
     if length (List.nub types) /= 1 then throwError $ TypesDoNotMatchError context (showContext types)
     else returnVoid
+
+assertNoDeclarationRepetitions :: String -> [ObjectIdent] -> StaticCheckMonad ObjectType
+assertNoDeclarationRepetitions context idents  = do
+    let duplicates = idents List.\\ List.nub idents
+    unless (null duplicates) $ throwError $ DuplicateDeclarationError
+        (showContext $ head duplicates) context
+    returnVoid

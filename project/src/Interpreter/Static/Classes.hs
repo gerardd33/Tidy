@@ -24,8 +24,8 @@ checkClasses declarations = mapM_ checkClass declarations >> returnVoid
 checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
     (_, env) <- registerEmptyClassesInEnv $ getGenericParameterList classDecl
-    let getterNames = map objectToMethodIdentifier $ attributeNamesFromDeclaration classDecl
-    let memberNames =  getterNames ++ methodNamesFromDeclaration classDecl
+    let methodNames = map methodToObjectIdentifier $ methodNamesFromDeclaration classDecl
+    let memberNames = methodNames ++ attributeNamesFromDeclaration classDecl
     assertNoDeclarationRepetitions (showContext $ getClassType classDecl) memberNames
     local (const env) $ checkSections classDecl
 
@@ -41,6 +41,7 @@ checkSections (ClassDeclaration _ classTypeModifier classType _ classBody) = do
 checkClassBody :: ClassType -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 checkClassBody _ _ ClassBodyEmpty = returnVoid
 checkClassBody classType classTypeModifier (ClassBodyFilled values variables functions actions) = do
+    checkAttributeRepetitions (showContext $ classIdentifierFromClassType classType) classType
     checkValuesSection (if classTypeModifier == MSingleton then InitializedRequired else NoneRequired) values
     checkVariablesSection NoneRequired variables
     checkFunctionsSection classType functions

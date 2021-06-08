@@ -24,7 +24,7 @@ interpret mode (ProgramEntrypoint classDeclarations) = do
     let mainClass = findMainClass classDeclarations
     when (isNothing mainClass) $ exitWithError $ show NoMainActionError
     debugPrint mode "Main action" $ getMainAction $ fromJust mainClass
---     executeStaticCheck mode classEnv classDeclarations
+    executeStaticCheck mode classEnv classDeclarations
     executeRuntime mode classEnv (fromJust mainClass)
 
 
