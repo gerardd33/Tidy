@@ -16,6 +16,24 @@ import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Types
 
 
+typesMatch :: ObjectType -> ObjectType -> StaticCheckMonad Bool
+typesMatch expected actual = do
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType actual
+    let superclassInclusiveNames = map (ObjectTypeClass . getClassType) superclassesInclusive
+    return $ expected `elem` superclassInclusiveNames
+
+assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
+assertTypesMatch context expected actual = do
+    matched <- typesMatch expected actual
+    unless matched $ throwError $ UnexpectedTypeError (showContext expected) (showContext actual) context
+    returnVoid
+
+assertReturnTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
+assertReturnTypesMatch context expected actual = do
+    matched <- typesMatch expected actual
+    unless matched $ throwError $ UnexpectedReturnTypeError (showContext expected) (showContext actual) context
+    returnVoid
+
 getClassDeclarationStatic :: ClassType -> StaticCheckMonad ClassDecl
 getClassDeclarationStatic classType = do
     (_, classEnv) <- ask

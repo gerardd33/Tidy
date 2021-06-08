@@ -309,8 +309,8 @@ checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
 checkMethodArguments :: String -> Map.Map ObjectType ObjectType -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context genericsMap unmappedExpected actual = do
     let expected = map (mapObjectTypeIfGeneric genericsMap) unmappedExpected
-    let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
-    unless (length expected == length actual && argumentTypesMatch) $ throwError $
+    argumentTypeMatches <- zipWithM typesMatch expected actual
+    unless (length expected == length actual && and argumentTypeMatches) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 

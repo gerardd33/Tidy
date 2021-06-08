@@ -1,0 +1,63 @@
+mutable class Item {
+    
+    values: {
+        code: Int = 5555;
+    }
+}
+
+mutable class Product extends Item {
+    
+    values: {
+        id: Int;
+    }
+    
+    variables: {
+        price: Int = 2000;
+    }
+}
+
+
+mutable class Device extends Product {
+    
+    values: {
+        serialNumber: String = "3838DJ323";
+    }
+    
+    variables: {
+        manufacturer: String;
+        model: String = "233X";
+    }
+}
+
+mutable class Laptop extends Device {
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String = "i7";
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
+    
+    actions: {
+        changedProduct: (product: Product) -> Product = {
+            Device(332, "Lenovo")
+        }
+        
+        main: () -> Void = {
+            val device1: Device = Laptop(1342, "Dell", 17, "IPS", 8);
+            val laptop1: Laptop = Laptop(3392, "Huawei", 15, "TN", 9);
+            
+            val r1: Item = this#changedProduct(device1);
+            val r2: Item = this#changedProduct(laptop1);
+            
+            val item1: Item = Device(332, "Lenovo");
+            val item2: Item = Device(154, "Lenovo");
+            System#assert(item1 == r1)
+            System#assert(item2 != r1)
+            System#assertEquals(item1, r1)
+        }
+    }
+}

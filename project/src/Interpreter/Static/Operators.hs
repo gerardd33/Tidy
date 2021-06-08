@@ -5,6 +5,7 @@ import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Expressions
+import           Interpreter.Static.Environments
 import           Interpreter.Static.Types
 
 
@@ -43,5 +44,6 @@ checkCommutativeBinaryOperator context inputType outputType type1 type2 expr1 ex
 
 checkEquality :: String -> ObjectType -> ObjectType -> Expr -> Expr -> StaticCheckMonad ObjectType
 checkEquality context type1 type2 expr1 expr2 = do
+    checkTypeUniformity context [type1, type2]
     assertTypesMatch (showComplexContext expr2 context) type1 type2
     return boolType
