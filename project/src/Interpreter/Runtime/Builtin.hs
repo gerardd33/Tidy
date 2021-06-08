@@ -16,11 +16,10 @@ import           Interpreter.Runtime.Types
 
 
 instantiateBuiltinObject :: ClassType -> [Object] -> StateMonad Object
-instantiateBuiltinObject classType evaluatedArgs = do
-    let objectType = ObjectTypeClass classType
-    return $ BuiltinObject $ case classNameFromClassType classType of
-        "List" -> ListObject evaluatedArgs classType
-    -- TODO other builtins
+instantiateBuiltinObject classType evaluatedArgs = return $ case classNameFromClassType classType of
+        "List" -> BuiltinObject $ ListObject evaluatedArgs classType
+        "Void" -> BuiltinObject VoidObject
+        _      -> head evaluatedArgs
 
 evaluateBuiltinMethodCall :: MethodIdent -> StateMonad Result
 evaluateBuiltinMethodCall methodIdent = case methodNameFromIdentifier methodIdent of
