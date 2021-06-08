@@ -137,18 +137,18 @@ hasAccessorIn :: MethodIdent -> [ObjectIdent] -> Bool
 hasAccessorIn methodIdent attributeNames = attributeIdentifier `elem` attributeNames
     where attributeIdentifier = methodToObjectIdentifier methodIdent
 
-attributeTypeFromClassDeclaration :: ClassDecl -> ObjectIdent -> Maybe ObjectType
-attributeTypeFromClassDeclaration classDecl attributeIdent = fmap snd result
+attributeTypeFromClassDeclaration :: ObjectIdent -> ClassDecl -> Maybe ObjectType
+attributeTypeFromClassDeclaration attributeIdent classDecl = fmap snd result
     where attributes = map objectToNameTypePair $ getValueDeclarations classDecl ++ getVariableDeclarations classDecl
           result = List.find (\(attributeName, attributeType) -> attributeName == attributeIdent) attributes
 
-functionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
-functionTypeFromClassDeclaration classDecl functionIdent = fmap snd result
+functionTypeFromClassDeclaration :: MethodIdent -> ClassDecl -> Maybe MethodType
+functionTypeFromClassDeclaration functionIdent classDecl = fmap snd result
     where functions = map functionToNameTypePair $ getFunctionDeclarations classDecl
           result = List.find (\(functionName, functionType) -> functionName == functionIdent) functions
 
-actionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
-actionTypeFromClassDeclaration classDecl actionIdent = fmap snd result
+actionTypeFromClassDeclaration :: MethodIdent -> ClassDecl -> Maybe MethodType
+actionTypeFromClassDeclaration actionIdent classDecl = fmap snd result
     where actions = map actionToNameTypePair $ getActionDeclarations classDecl
           result = List.find (\(actionName, actionType) -> actionName == actionIdent) actions
 

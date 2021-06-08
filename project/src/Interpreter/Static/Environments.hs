@@ -88,10 +88,9 @@ getAttributeTypeStatic context objectType attributeIdent = do
     if objectType == localReferenceType then checkLocalObject attributeIdent
     else do let classType = classTypeFromObjectType objectType
             superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType objectType
-            let lookups = map (`attributeTypeFromClassDeclaration` attributeIdent) superclassesInclusive
-            let found = filter isJust lookups
+            let found = filter isJust $ map (attributeTypeFromClassDeclaration attributeIdent) superclassesInclusive
             case found of [] -> throwError $ NoSuchAttributeError context (showContext attributeIdent)
-                          (Just attributeType):rest -> return attributeType
+                          (Just attributeType):_ -> return attributeType
 
 getLocalValueNamesStatic :: StaticCheckMonad [ObjectIdent]
 getLocalValueNamesStatic = do

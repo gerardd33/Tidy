@@ -1,0 +1,47 @@
+mutable class Product {
+    
+    values: {
+        id: Int = 1342;
+    }
+    
+    variables: {
+        price: Int = 2000;
+    }
+}
+
+
+mutable class Device extends Product {
+    
+    values: {
+        serialNumber: String = "3838DJ323";
+    }
+    
+    variables: {
+        manufacturer: String = "Dell";
+        model: String = "233X";
+    }
+}
+
+mutable class Laptop extends Device {
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String;
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
+    
+    actions: {
+        main: () -> Void = {
+            val laptop: Laptop = Laptop(17, 333, "IPS", "i7", 8);
+            System#assertEquals(2000, laptop.price)
+            System#assertEquals("Dell", laptop.manufacturer)
+            System#assertEquals("i7", laptop.processor)
+            System#assertEquals("3838DJ323", laptop.serialNumber)
+            System#assertEquals(17, laptop.displaySize)
+        }
+    }
+}
