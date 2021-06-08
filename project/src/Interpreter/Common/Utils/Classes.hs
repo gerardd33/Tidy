@@ -102,6 +102,10 @@ singletonInstanceIdent (ClassIdentifier (UpperCaseIdent name)) =
 isSingletonClass :: ClassDecl -> Bool
 isSingletonClass = (==MSingleton) . getClassTypeModifier
 
+isBuiltinClass :: ClassType -> Bool
+isBuiltinClass classType = classIdent `elem` map classIdentifierFromName builtinClassNames
+    where classIdent = classIdentifierFromClassType classType
+
 getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
 getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
     where uninitializedValues = map objectToNameTypePair $ filter (not . isInitialized) $

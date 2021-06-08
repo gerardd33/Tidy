@@ -181,10 +181,16 @@ evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
 
 evaluateConstructorCall :: ClassType -> ArgList -> StateMonad Object
 evaluateConstructorCall classType argList = do
-    let objectType = ObjectTypeClass classType
-    classDecl <- getClassDeclaration classType
     evaluatedArgs <- evaluateArgumentList argList
+    if isBuiltinClass classType
+    then instantiateRegularObject classType evaluatedArgs
+    else instantiateRegularObject classType evaluatedArgs
+
+instantiateRegularObject :: ClassType -> [Object] -> StateMonad Object
+instantiateRegularObject classType evaluatedArgs = do
+    classDecl <- getClassDeclaration classType
     initializedAttributes <- evaluateAttributeExpressions $ getInitializedAttributes classDecl
+    let objectType = ObjectTypeClass classType
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
     return $ RegularObject objectType objectEnv
 

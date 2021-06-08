@@ -25,11 +25,12 @@ thisReferenceIdentifier :: ObjectIdent
 thisReferenceIdentifier = objectIdentifierFromName "this"
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
-objectTypeForBuiltinObject (IntObject _)    = intType
-objectTypeForBuiltinObject (BoolObject _)   = boolType
-objectTypeForBuiltinObject (CharObject _)   = charType
-objectTypeForBuiltinObject (StringObject _) = stringType
-objectTypeForBuiltinObject VoidObject       = voidType
+objectTypeForBuiltinObject (IntObject _)            = intType
+objectTypeForBuiltinObject (BoolObject _)           = boolType
+objectTypeForBuiltinObject (CharObject _)           = charType
+objectTypeForBuiltinObject (StringObject _)         = stringType
+objectTypeForBuiltinObject VoidObject               = voidType
+objectTypeForBuiltinObject (ListObject _ classType) = listType classType
 
 anyType :: ObjectType
 anyType = simpleObjectTypeFromClassName "Any"
@@ -49,14 +50,29 @@ stringType = simpleObjectTypeFromClassName "String"
 voidType :: ObjectType
 voidType = simpleObjectTypeFromClassName "Void"
 
+listType :: ClassType -> ObjectType
+listType genericParam = ObjectTypeClass classType
+    where classType = GeneralClassType (classIdentifierFromName "List") (GenericParameterPresent [genericParam])
+
 builtinClasses :: [ClassDecl]
 builtinClasses = [simpleBuiltinClass "Int", simpleBuiltinClass "Bool", simpleBuiltinClass "Char",
-                  simpleBuiltinClass "String", simpleBuiltinClass "Void", systemBuiltinClassDeclaration,
-                  simpleBuiltinClass "__local"]
+                  simpleBuiltinClass "String", simpleBuiltinClass "Void", builtinGenericClass "List",
+                  systemBuiltinClassDeclaration, simpleBuiltinClass "__local"]
+
+builtinClassNames :: [String]
+builtinClassNames = ["Int", "Bool", "Char", "String", "Void", "List", "System", "__local"]
 
 simpleBuiltinClass :: String -> ClassDecl
 simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty
     where classType = simpleClassTypeFromName name
+
+builtinGenericClass :: String -> ClassDecl
+builtinGenericClass name = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty
+    where classIdent = classIdentifierFromName name
+          classType = GeneralClassType classIdent singleGenericParameter
+
+singleGenericParameter :: GenericParameter
+singleGenericParameter = GenericParameterPresent [simpleClassTypeFromName "A"]
 
 systemBuiltinClassDeclaration :: ClassDecl
 systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classType SuperclassAbsent systemBuiltinClassBody

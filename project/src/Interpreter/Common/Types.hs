@@ -33,6 +33,7 @@ data BuiltinObject
     | CharObject Char
     | StringObject String
     | VoidObject
+    | ListObject [Object] ClassType
     deriving (Eq, Show)
 
 data InitializationType = InitializedRequired | UninitializedRequired | NoneRequired
