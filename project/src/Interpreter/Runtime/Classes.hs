@@ -18,11 +18,11 @@ import           Interpreter.Runtime.Environments
 
 hasGetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasGetter objectType getterIdent = do
-    classDecl <- getClassDeclaration $ classTypeFromObjectType objectType
     localValueNames <- getLocalValueNames
     localVariableNames <- getLocalVariableNames
     let localObjects = localValueNames ++ localVariableNames
-    let classAttributes = attributeNamesFromDeclaration classDecl
+    superclassDeclsInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let classAttributes = concatMap attributeNamesFromDeclaration superclassDeclsInclusive
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
     return $ hasAccessorIn getterIdent attributeNames
 
@@ -30,7 +30,8 @@ hasSetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasSetter objectType setterIdent = do
     classDecl <- getClassDeclaration $ classTypeFromObjectType objectType
     localVariables <- getLocalVariableNames
-    let classVariables = variableNamesFromDeclaration classDecl
+    superclassDeclsInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let classVariables = concatMap variableNamesFromDeclaration superclassDeclsInclusive
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
     return $ hasAccessorIn setterIdent variableNames
 

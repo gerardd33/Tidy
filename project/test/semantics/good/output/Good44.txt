@@ -1,0 +1,1 @@
+Laptop { values: { displaySize: 17,  displayType: IPS,  id: 1342,  processor: i7,  ramGb: 8,  serialNumber: 3838DJ323 }, variables: { manufacturer: Dell, model: 233X, price: 2000 } }
