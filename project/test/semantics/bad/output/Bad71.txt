@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: List [Int]
+Actual: List [String]
+In expression:
+list2
+In: System

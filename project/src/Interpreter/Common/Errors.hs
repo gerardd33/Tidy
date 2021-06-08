@@ -73,7 +73,7 @@ instance Show CompilationError where
         "MethodArgumentListInvalidError: Method " ++ show context ++ " called with invalid argument types." ++
         "\nExpected: " ++ expected ++ "\nActual: " ++ actual
     show (GenericArgumentListInvalidError context expected actual) =
-        "GenericArgumentListInvalidError: Generic class constructor or static expression " ++ show context ++
+        "GenericArgumentListInvalidError: Generic class constructor or static expression " ++ context ++
         " called with invalid generic arguments." ++ "\nExpected: " ++ expected ++ "\nActual: " ++ actual
     show (NoSuchAttributeError object attribute) = "NoSuchAttributeError: Object " ++ show object ++
         " has no attribute named " ++ attribute ++ "."
