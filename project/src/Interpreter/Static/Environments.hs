@@ -2,7 +2,7 @@ module Interpreter.Static.Environments where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import qualified Data.Map                         as Map
+import qualified Data.Map                          as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -11,6 +11,7 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Generics
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Types
@@ -18,9 +19,10 @@ import           Interpreter.Static.Types
 
 typesMatch :: ObjectType -> ObjectType -> StaticCheckMonad Bool
 typesMatch expected actual = do
-    superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType actual
-    let superclassInclusiveNames = map (ObjectTypeClass . getClassType) superclassesInclusive
-    return $ expected `elem` superclassInclusiveNames
+    if isTypeGeneric expected then return $ expected == actual
+    else do superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType actual
+            let superclassInclusiveNames = map (ObjectTypeClass . getClassType) superclassesInclusive
+            return $ expected `elem` superclassInclusiveNames
 
 assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
 assertTypesMatch context expected actual = do

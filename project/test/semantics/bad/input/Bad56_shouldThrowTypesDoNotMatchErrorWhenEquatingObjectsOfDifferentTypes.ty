@@ -39,7 +39,7 @@ singleton class ObjectEquality {
             
             val student3: Student = Student("Mark" ++ "Frost", grades2, 19, 4);
             
-            student1 != student2 and student1 != grades2 and student1 == student3 // UnexpectedTypeError
+            student1 != student2 and student1 != grades2 and student1 == student3 // TypesDoNotMatchError
         }
     }
 }

@@ -1,14 +1,46 @@
-singleton class GenericTypes {
+mutable class Product {
+    
+    values: {
+        id: Int;
+    }
+    
+    variables: {
+        price: Int = 2000;
+    }
+}
+
+
+mutable class Device extends Product {
+    
+    values: {
+        serialNumber: String = "3838DJ323";
+    }
+    
+    variables: {
+        manufacturer: String;
+        model: String = "233X";
+    }
+}
+
+mutable class Laptop extends Device {
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String = "i7";
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
     
     actions: {
         main: () -> Void = {
-            val list: List[Int] = List[Int](3, 4, 222, 5);
-            val notAList: Int = 5;
+            val product1: Product = Laptop(1342, "Dell", 17, "IPS", 8);
+            val device1: Device = Laptop(3392, "Huawei", 15, "TN", 9);
+            val product2: Product = Device(222, "Apple");
             
-            for (x: Int; in notAList) { // UnexpectedTypeError
-                System#print(x)
-                System#print(" ")
-            }
+            System#printLine(product2.manufacturer) // NoSuchFunctionError
         }
     }
 }

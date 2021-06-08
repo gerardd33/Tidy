@@ -9,6 +9,9 @@ import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Types
 
 
+isTypeGeneric :: ObjectType -> Bool
+isTypeGeneric (ObjectTypeClass classType) = not $ null $ genericParameterListFromClassType classType
+
 mapObjectTypeIfGeneric :: GenericsMap -> ObjectType -> ObjectType
 mapObjectTypeIfGeneric genericsMap (ObjectTypeClass classType) =
     ObjectTypeClass $ mapClassTypeIfGeneric genericsMap classType
