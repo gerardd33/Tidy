@@ -5,6 +5,8 @@ WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 # Build Tidy
 (cd ../../.. && ./build_tidy.sh)
 
+ERRORS=0
+
 function run_tests_for_directory {
     DIRECTORY=${1}
     EXPECTED_OUTPUT_FILE_NAME="expected.out"
@@ -24,8 +26,7 @@ function run_tests_for_directory {
             tput setaf 2 && tput bold && echo OK && tput sgr0
         else
             tput setaf 1 && tput bold && echo ERROR! && tput sgr0
-            notify-send 'Wrong Answer'
-            exit 1
+            ((ERRORS++))
         fi
     done
     echo
@@ -34,4 +35,11 @@ function run_tests_for_directory {
 run_tests_for_directory "${WORKING_DIR}"/good
 run_tests_for_directory "${WORKING_DIR}"/bad
 
-echo "All tests passed successfully." && echo
+if [ ${ERRORS} -eq 0 ]; then
+    echo "All tests passed successfully."
+elif [ ${ERRORS} -eq 1 ]; then
+    echo "1 test failed."
+else
+    echo "${ERRORS} tests failed."
+fi
+echo
