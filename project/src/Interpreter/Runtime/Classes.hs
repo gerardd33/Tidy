@@ -34,11 +34,6 @@ hasSetter objectType setterIdent = do
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
     return $ hasAccessorIn setterIdent variableNames
 
-getValueNames :: ObjectType -> StateMonad [ObjectIdent]
-getValueNames (ObjectTypeClass classType) = do
-    classDecl <- getClassDeclaration classType
-    return $ valueNamesFromDeclaration classDecl
-
 getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
 getMemberFunction (ObjectTypeClass classType) functionIdent = do
     classDecl <- getClassDeclaration classType

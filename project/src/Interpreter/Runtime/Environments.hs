@@ -23,16 +23,15 @@ getClassDeclaration classType = do
     let classIdent = classIdentifierFromClassType classType
     return $ classEnv Map.! classIdent
 
-getAllSuperclasses :: ClassType -> StateMonad [ClassDecl]
-getAllSuperclasses = collectAllSuperclasses []
+getAllSuperclassesInclusive :: ClassType -> StateMonad [ClassDecl]
+getAllSuperclassesInclusive = collectAllSuperclassesInclusive []
 
-collectAllSuperclasses :: [ClassDecl] -> ClassType -> StateMonad [ClassDecl]
-collectAllSuperclasses collected classType = do
-    if classType == anyClassType then return collected
-    else do classDecl <- getClassDeclaration classType
-            let superclassType = getSuperclassType classDecl
-            superclassDecl <- getClassDeclaration superclassType
-            collectAllSuperclasses (superclassDecl:collected) superclassType
+collectAllSuperclassesInclusive :: [ClassDecl] -> ClassType -> StateMonad [ClassDecl]
+collectAllSuperclassesInclusive collected classType = do
+    classDecl <- getClassDeclaration classType
+    if classType == anyClassType then return (classDecl:collected)
+    else do let superclassType = getSuperclassType classDecl
+            collectAllSuperclassesInclusive (classDecl:collected) superclassType
 
 allocateObject :: Object -> StateMonad Location
 allocateObject object = do

@@ -1,16 +1,24 @@
 immutable class Product {
     
     values: {
-        id: Int = "10";
+        id: Int = 1342;
+    }
+    
+    variables: {
+        price: Int = 2000;
     }
 }
 
 
-immutable class Device extends Product {
+mutable class Device extends Product {
     
     values: {
-        model: String = "XD";
-        serialNumber: Int = 333;
+        serialNumber: String = "3838DJ323";
+    }
+    
+    variables: {
+        manufacturer: String = "Dell";
+        model: String = "233X";
     }
 }
 
