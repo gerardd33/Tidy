@@ -92,13 +92,13 @@ checkConstructorCall :: String -> ClassType -> ArgList -> StaticCheckMonad Objec
 checkConstructorCall context classType ArgumentListAbsent =
     checkConstructorCall context classType (ArgumentListPresent [])
 checkConstructorCall context classType (ArgumentListPresent args) = do
-    classDecl <- getClassDeclarationStatic classType
     argTypes <- checkArgumentList context args
     let callContext = show classType ++ "(" ++ showContext args ++ ")"
-    let genericParams = getGenericParameterList classDecl
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic classType
+    let genericParams = concatMap getGenericParameterList superclassesInclusive
     let genericArgs = genericParameterListFromClassType classType
     genericsMap <- bindGenericParameters callContext genericParams genericArgs
-    let unmappedParamTypes = getConstructorParameterTypes classDecl
+    let unmappedParamTypes = concatMap getConstructorParameterTypes superclassesInclusive
     let paramTypes = map (mapObjectTypeIfGeneric genericsMap) unmappedParamTypes
     if classNameFromClassType classType == "List" then checkListConstructorArguments callContext genericArgs argTypes
     else when (argTypes /= paramTypes) $ throwError $ ConstructorArgumentListInvalidError
