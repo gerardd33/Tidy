@@ -183,7 +183,7 @@ evaluateConstructorCall :: ClassType -> ArgList -> StateMonad Object
 evaluateConstructorCall classType argList = do
     evaluatedArgs <- evaluateArgumentList argList
     if isBuiltinClass classType
-    then instantiateRegularObject classType evaluatedArgs
+    then instantiateBuiltinObject classType evaluatedArgs
     else instantiateRegularObject classType evaluatedArgs
 
 instantiateRegularObject :: ClassType -> [Object] -> StateMonad Object

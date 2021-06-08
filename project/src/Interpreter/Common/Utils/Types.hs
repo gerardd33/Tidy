@@ -45,3 +45,9 @@ methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
 
 classTypeFromObjectType :: ObjectType -> ClassType
 classTypeFromObjectType (ObjectTypeClass classType) = classType
+
+classNameFromIdentifier :: ClassIdent -> String
+classNameFromIdentifier (ClassIdentifier (UpperCaseIdent name)) = name
+
+methodNameFromIdentifier :: MethodIdent -> String
+methodNameFromIdentifier (MethodIdentifier (LowerCaseIdent name)) = name

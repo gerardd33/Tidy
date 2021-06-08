@@ -13,7 +13,7 @@ localReferenceType :: ObjectType
 localReferenceType = simpleObjectTypeFromClassName "__local"
 
 builtinMethodIdentifier :: MethodIdent -> MethodIdent
-builtinMethodIdentifier (MethodIdentifier (LowerCaseIdent name)) = methodIdentifierFromName $ "__builtin_" ++ name
+builtinMethodIdentifier methodIdent = methodIdentifierFromName $ "__builtin_" ++ methodNameFromIdentifier methodIdent
 
 builtinMethodIdentifierFromName :: String -> MethodIdent
 builtinMethodIdentifierFromName name = methodIdentifierFromName $ "__builtin_" ++ name
@@ -85,12 +85,12 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsA
                          printLineBuiltinActionDeclaration]
 
 shouldHaveUniformTypes :: MethodIdent -> Bool
-shouldHaveUniformTypes (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+shouldHaveUniformTypes methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_assertEquals" -> True
     _                        -> False
 
 getBuiltinMethodType :: MethodIdent -> MethodType
-getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+getBuiltinMethodType methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_exit"         -> exitBuiltinMethodType
     "__builtin_assert"       -> assertBuiltinMethodType
     "__builtin_assertEquals" -> assertEqualsBuiltinMethodType
@@ -98,7 +98,7 @@ getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case metho
     "__builtin_printLine"    -> printLineBuiltinMethodType
 
 builtinWithImplicitContext :: MethodIdent -> Bool
-builtinWithImplicitContext (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+builtinWithImplicitContext methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_assert"       -> True
     "__builtin_assertEquals" -> True
     _                        -> False

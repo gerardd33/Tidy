@@ -7,6 +7,7 @@ import           Interpreter.Common.Types
 import           Parser.Tidy.Abs
 
 import           Interpreter.Common.Errors
+import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 import           Interpreter.Runtime.Environments
@@ -14,8 +15,15 @@ import           Interpreter.Runtime.Operators
 import           Interpreter.Runtime.Types
 
 
+instantiateBuiltinObject :: ClassType -> [Object] -> StateMonad Object
+instantiateBuiltinObject classType evaluatedArgs = do
+    let objectType = ObjectTypeClass classType
+    return $ BuiltinObject $ case classNameFromClassType classType of
+        "List" -> ListObject evaluatedArgs classType
+    -- TODO other builtins
+
 evaluateBuiltinMethodCall :: MethodIdent -> StateMonad Result
-evaluateBuiltinMethodCall (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+evaluateBuiltinMethodCall methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_exit"         -> evaluateExitBuiltinMethod
     "__builtin_assert"       -> evaluateAssertBuiltinMethod
     "__builtin_assertEquals" -> evaluateAssertEqualsBuiltinMethod

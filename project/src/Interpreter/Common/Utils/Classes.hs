@@ -95,9 +95,12 @@ classIdentifierFromObjectType (ObjectTypeClass (GeneralClassType classIdent _)) 
 classIdentifierFromClassType :: ClassType -> ClassIdent
 classIdentifierFromClassType (GeneralClassType classIdent _) = classIdent
 
+classNameFromClassType :: ClassType -> String
+classNameFromClassType = classNameFromIdentifier . classIdentifierFromClassType
+
 singletonInstanceIdent :: ClassIdent -> ObjectIdent
-singletonInstanceIdent (ClassIdentifier (UpperCaseIdent name)) =
-    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ name
+singletonInstanceIdent classIdent = ObjectIdentifier $ LowerCaseIdent $
+    "__singleton_" ++ classNameFromIdentifier classIdent
 
 isSingletonClass :: ClassDecl -> Bool
 isSingletonClass = (==MSingleton) . getClassTypeModifier

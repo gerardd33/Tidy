@@ -134,12 +134,13 @@ complexObjectsEqual (RegularObject _ env1) (RegularObject _ env2) = do
     return $ and results
 
 objectToString :: Object -> StateMonad String
-objectToString (BuiltinObject object) = return $ case object of
-    IntObject value    -> show value
-    BoolObject value   -> if value == BTrue then "True" else "False"
-    CharObject value   -> [value]
-    StringObject value -> value
-    VoidObject         -> "Pass"
+objectToString (BuiltinObject object) = case object of
+    IntObject value       -> return $ show value
+    BoolObject value      -> return $ if value == BTrue then "True" else "False"
+    CharObject value      -> return [value]
+    StringObject value    -> return value
+    VoidObject            -> return "Pass"
+    ListObject elements _ -> mapListToString elements
 
 objectToString (RegularObject objectType objectEnv) = do
     case objectType of
@@ -164,3 +165,8 @@ showAttributeValue (objectIdent, objectCalculation) = do
     object <- objectCalculation
     objectString <- objectToString object
     return $ " " ++ show objectIdent ++ ": " ++ objectString
+
+mapListToString :: [Object] -> StateMonad String
+mapListToString elements = do
+    mappedElements <- mapM objectToString elements
+    return $ "[" ++ List.intercalate ", " mappedElements ++ "]"

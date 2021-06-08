@@ -1,0 +1,11 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val list1: List[Int] = List[Int](3, 4, 222, 5);
+            val list2: List[String] = List[String]("One", "TWO", "Threee", "4", "Five", "Six");
+            System#printLine(list1)
+            System#printLine(list2)
+        }
+    }
+}
