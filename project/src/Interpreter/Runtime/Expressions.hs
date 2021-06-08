@@ -193,7 +193,7 @@ instantiateRegularObject :: ClassType -> [Object] -> StateMonad Object
 instantiateRegularObject classType evaluatedArgs = do
     classDecl <- getClassDeclaration classType
     superclassesInclusive <- getAllSuperclassesInclusive classType
-    let attributeExpressions = concatMap getInitializedAttributes (classDecl:superclassesInclusive)
+    let attributeExpressions = concatMap getInitializedAttributes superclassesInclusive
     initializedAttributes <- evaluateAttributeExpressions attributeExpressions
     let objectType = ObjectTypeClass classType
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
