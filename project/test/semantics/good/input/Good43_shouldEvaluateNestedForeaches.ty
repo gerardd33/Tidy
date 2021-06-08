@@ -1,0 +1,24 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            var sum: Int = 0;
+            
+            val list: List[Int] = List[Int](3, 4, 222, 5);
+            for (x: Int; in list) {
+                for (y: Int; in list) {
+                    System#print("(")
+                    System#print(x)
+                    System#print(",")
+                    System#print(y)
+                    System#print(")")
+                    System#print("\n")
+                    
+                    // x.toString and System#printFormat to make it more convenient
+                    // unfortunately not yet implemented but coming soon
+                }
+            }
+            
+        }
+    }
+}

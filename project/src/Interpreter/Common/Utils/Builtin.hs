@@ -84,6 +84,9 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsA
                          assertEqualsBuiltinActionDeclaration, printBuiltinActionDeclaration,
                          printLineBuiltinActionDeclaration]
 
+getListElements :: Object -> [Object]
+getListElements (BuiltinObject (ListObject elements _)) = elements
+
 getConstructorParameterTypesForBuiltinClass :: ClassIdent -> [ObjectType]
 getConstructorParameterTypesForBuiltinClass classIdent = case classNameFromIdentifier classIdent of
     "Int"    -> [intType]

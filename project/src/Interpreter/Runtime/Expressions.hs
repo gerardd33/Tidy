@@ -221,6 +221,8 @@ evaluateActionBody (ActionBodyOneLine expr)    = evaluateExpressionList [expr]
 evaluateActionBody (ActionBodyMultiLine exprs) = evaluateExpressionList exprs
 
 evaluateLocalValueDeclaration :: ObjectDeclProper -> StateMonad Result
+evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType Uninitialized) = do
+    addLocalValue objectIdent pass -- placeholder, there will always be a separate initialization before usage if it occurs
 evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
     (initializationValue, _) <- evaluateExpression expr
     addLocalValue objectIdent initializationValue
@@ -254,5 +256,14 @@ evaluateWhile predicate body  = do
 
 evaluateForeach :: ObjectDecl -> Expr -> [Expr] -> StateMonad Result
 evaluateForeach iteratorDecl list body  = do
---     (_, env) <- evaluateLocalValueDeclaration $ getProperDeclaration iteratorDecl
-    returnPass
+    (evaluatedList, _) <- evaluateExpression list
+    (_, env) <- evaluateLocalValueDeclaration $ getProperDeclaration iteratorDecl
+    let iteratorIdent = getObjectIdentifier iteratorDecl
+    local (const env) $ executeForeachIterations iteratorIdent body $ getListElements evaluatedList
+
+executeForeachIterations :: ObjectIdent -> [Expr] -> [Object] -> StateMonad Result
+executeForeachIterations _ _ [] = returnPass
+executeForeachIterations iteratorIdent body (element:elements) = do
+    (_, env) <- setLocalObject iteratorIdent element
+    (_, newEnv) <- local (const env) $ evaluateExpressionList body
+    local (const newEnv) $ executeForeachIterations iteratorIdent body elements

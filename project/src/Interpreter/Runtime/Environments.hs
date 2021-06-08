@@ -77,6 +77,11 @@ getLocalObjectWithLocation objectIdent = do
     if objectIdent == localReferenceIdentifier then return (localRef, -1)
     else getAttributeWithLocation localRef objectIdent
 
+setLocalObject :: ObjectIdent -> Object -> StateMonad Result
+setLocalObject objectIdent newValue = do
+    (localRef, _) <- ask
+    setAttribute localRef objectIdent newValue
+
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
 addArgumentsToEnv methodType evaluatedArgs = do
     let methodParamList = getMethodParamNames methodType
