@@ -20,8 +20,8 @@ import           Interpreter.Runtime.Types
 buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
 buildObjectEnv objectType constructorArgs initializedAttributes = do
     attributes <- getAttributeMap objectType constructorArgs initializedAttributes
-    superclassDeclsInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
-    let valueNames = concatMap valueNamesFromDeclaration superclassDeclsInclusive
+    superclassesInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let valueNames = concatMap valueNamesFromDeclaration superclassesInclusive
     let (valuesMap, variablesMap) = Map.partitionWithKey (\name _ -> name `elem` valueNames) attributes
     valuesEnv <- buildAttributeEnv valuesMap
     variablesEnv <- buildAttributeEnv variablesMap

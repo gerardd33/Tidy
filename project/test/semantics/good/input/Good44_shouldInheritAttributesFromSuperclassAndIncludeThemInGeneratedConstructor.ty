@@ -1,4 +1,4 @@
-immutable class Product {
+mutable class Product {
     
     values: {
         id: Int = 1342;
@@ -22,7 +22,7 @@ mutable class Device extends Product {
     }
 }
 
-immutable class Laptop extends Device {
+mutable class Laptop extends Device {
     
     values: {
         displaySize: Int;

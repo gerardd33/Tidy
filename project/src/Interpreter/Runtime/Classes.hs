@@ -21,8 +21,8 @@ hasGetter objectType getterIdent = do
     localValueNames <- getLocalValueNames
     localVariableNames <- getLocalVariableNames
     let localObjects = localValueNames ++ localVariableNames
-    superclassDeclsInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
-    let classAttributes = concatMap attributeNamesFromDeclaration superclassDeclsInclusive
+    superclassesInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let classAttributes = concatMap attributeNamesFromDeclaration superclassesInclusive
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
     return $ hasAccessorIn getterIdent attributeNames
 
@@ -30,19 +30,19 @@ hasSetter :: ObjectType -> MethodIdent -> StateMonad Bool
 hasSetter objectType setterIdent = do
     classDecl <- getClassDeclaration $ classTypeFromObjectType objectType
     localVariables <- getLocalVariableNames
-    superclassDeclsInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
-    let classVariables = concatMap variableNamesFromDeclaration superclassDeclsInclusive
+    superclassesInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let classVariables = concatMap variableNamesFromDeclaration superclassesInclusive
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
     return $ hasAccessorIn setterIdent variableNames
 
 getMemberFunction :: ObjectType -> MethodIdent -> StateMonad FunctionDecl
 getMemberFunction (ObjectTypeClass classType) functionIdent = do
-    classDecl <- getClassDeclaration classType
-    let functions = getFunctionDeclarations classDecl
+    superclassesInclusive <- getAllSuperclassesInclusive classType
+    let functions = concatMap getFunctionDeclarations superclassesInclusive
     return $ fromJust $ List.find (\f -> getFunctionIdentifier f == functionIdent) functions
 
 getMemberAction :: ObjectType -> MethodIdent -> StateMonad ActionDecl
 getMemberAction (ObjectTypeClass classType) actionIdent = do
-    classDecl <- getClassDeclaration classType
-    let actions = getActionDeclarations classDecl
+    superclassesInclusive <- getAllSuperclassesInclusive classType
+    let actions = concatMap getActionDeclarations superclassesInclusive
     return $ fromJust $ List.find (\f -> getActionIdentifier f == actionIdent) actions

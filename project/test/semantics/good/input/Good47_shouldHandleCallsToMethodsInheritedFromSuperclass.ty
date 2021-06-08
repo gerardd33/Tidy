@@ -1,12 +1,19 @@
-immutable class Device {
+mutable class Device {
     
-    values: {
-        model: String;
-        serialNumber: Int;
+    variables: {
+        model: String = "233X";
+    }
+    
+    functions: {
+        compareModel: (x: String) -> Bool = x == this.model
+    }
+    
+    actions: {
+        upgradeModel: (suffix: String) -> Void = this#model(this.model ++ suffix)
     }
 }
 
-immutable class Laptop extends Device {
+mutable class Laptop extends Device {
     
     values: {
         displaySize: Int;
@@ -21,7 +28,10 @@ singleton class Inheritance {
     actions: {
         main: () -> Void = {
             val laptop: Laptop = Laptop(17, "IPS", "i7", 8);
-            System#printLine(laptop)
+            System#assert(laptop.compareModel("233X"))
+            
+            laptop#upgradeModel("v2")
+            System#assert(laptop.compareModel("233Xv2"))
         }
     }
 }
