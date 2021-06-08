@@ -11,14 +11,17 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Objects
+import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Types
 
 
-getClassDeclarationStatic :: ClassIdent -> StaticCheckMonad ClassDecl
-getClassDeclarationStatic classIdent = do
+getClassDeclarationStatic :: ClassType -> StaticCheckMonad ClassDecl
+getClassDeclarationStatic classType = do
     (_, classEnv) <- ask
+    let classIdent = classIdentifierFromClassType classType
     let lookup = Map.lookup classIdent classEnv
-    case lookup of Nothing -> throwError $ ClassNotInScopeError $ showContext classIdent
+    case lookup of Nothing -> throwError $ ClassNotInScopeError $ show classIdent
                    Just classDecl -> return classDecl
 
 setThisReferenceType :: ObjectType -> StaticCheckMonad StaticResult
@@ -28,8 +31,8 @@ setThisReferenceType newThisReferenceType = do
 
 checkObjectType :: ObjectType -> StaticCheckMonad ObjectType
 checkObjectType objectType = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     returnVoid
 
 addLocalValueType :: ObjectIdent -> ObjectType -> StaticCheckMonad StaticResult
@@ -46,6 +49,18 @@ addLocalVariableType objectIdent objectType = do
     let newLocalEnv = StaticLocalEnv (valueTypes localEnv) newVariables
     return (voidType, (newLocalEnv, classEnv))
 
+registerEmptyClassesInEnv :: [ClassType] -> StaticCheckMonad StaticResult
+registerEmptyClassesInEnv [] = liftPureStatic returnVoid
+registerEmptyClassesInEnv (addition:additions) = do
+    (_, env) <- registerEmptyClassInEnv addition
+    local (const env) $ registerEmptyClassesInEnv additions
+
+registerEmptyClassInEnv :: ClassType -> StaticCheckMonad StaticResult
+registerEmptyClassInEnv classType = do
+    (localEnv, classEnv) <- ask
+    let newClassEnv = Map.insert (classIdentifierFromClassType classType) (emptyClassDeclaration classType) classEnv
+    return (voidType, (localEnv, newClassEnv))
+
 tryGetLocalObjectType :: ObjectIdent -> StaticCheckMonad (Maybe ObjectType)
 tryGetLocalObjectType objectIdent = do
     (localEnv, _) <- ask
@@ -61,8 +76,8 @@ checkLocalObject objectIdent = do
 getAttributeTypeStatic :: String -> ObjectType -> ObjectIdent -> StaticCheckMonad ObjectType
 getAttributeTypeStatic context objectType attributeIdent = do
     if objectType == localReferenceType then checkLocalObject attributeIdent
-    else do let classIdent = classIdentifierFromObjectType objectType
-            classDecl <- getClassDeclarationStatic classIdent
+    else do let classType = classTypeFromObjectType objectType
+            classDecl <- getClassDeclarationStatic classType
             let lookup = attributeTypeFromClassDeclaration classDecl attributeIdent
             case lookup of Nothing -> throwError $ NoSuchAttributeError context (showContext attributeIdent)
                            Just attributeType -> return attributeType
@@ -79,8 +94,8 @@ getLocalVariableNamesStatic = do
 
 hasGetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasGetterStatic objectType getterIdent = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     localValueNames <- getLocalValueNamesStatic
     localVariableNames <- getLocalVariableNamesStatic
     let localObjects = localValueNames ++ localVariableNames
@@ -90,8 +105,8 @@ hasGetterStatic objectType getterIdent = do
 
 hasSetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasSetterStatic objectType setterIdent = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     localVariables <- getLocalVariableNamesStatic
     let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables

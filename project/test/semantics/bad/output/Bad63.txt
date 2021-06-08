@@ -1,0 +1,3 @@
+Error: MethodArgumentListInvalidError: Method "Printer[Int,Bool]#print" called with invalid argument types.
+Expected: Int Bool Int
+Actual: Int Bool Bool

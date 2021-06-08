@@ -1,0 +1,28 @@
+mutable class Container[B, A] {
+    
+    variables: {
+        element1: A;
+        element2: B;
+        element3: A;
+    }
+    
+    functions: {
+        oneAndThreeSame: () -> Bool = this.element1 == this.element3
+        idA: (x: A) -> A = x
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val container: Container[Bool, String] = Container[Bool, String]("AAA", 4 > 2, "DDDD");
+            
+            var el1: String = container.element1;
+            var el3: String = container.element3;
+            
+            local#el1("YYYY")
+            container#element2("RRRRR") // UnexpectedTypeError
+        }
+    }
+}

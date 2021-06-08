@@ -1,0 +1,11 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val list: List[Int] = List[Int](3, 4, 222, 5);
+            for (x: Int; in list) {
+                System#printLine(x * 2)
+            }
+        }
+    }
+}

@@ -1,0 +1,3 @@
+Error: GenericArgumentListInvalidError: Generic class constructor or static expression List("One", "TWO", "Threee", "4", "Five", "Six") called with invalid generic arguments.
+Expected: [A]
+Actual: []

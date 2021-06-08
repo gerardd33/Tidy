@@ -14,10 +14,20 @@ import           Interpreter.Common.Utils.Types
 
 
 getClassIdentifier :: ClassDecl -> ClassIdent
-getClassIdentifier (ClassDeclaration _ _ classIdent _ _) = classIdent
+getClassIdentifier (ClassDeclaration _ _ classType _ _) = classIdentifierFromClassType classType
 
-getClassType :: ClassDecl -> ClassTypeModifier
-getClassType (ClassDeclaration _ classType _ _ _) = classType
+getClassType :: ClassDecl -> ClassType
+getClassType (ClassDeclaration _ _ classType _ _) = classType
+
+getClassTypeModifier :: ClassDecl -> ClassTypeModifier
+getClassTypeModifier (ClassDeclaration _ typeModifier _ _ _) = typeModifier
+
+getGenericParameterList :: ClassDecl -> [ClassType]
+getGenericParameterList = genericParameterListFromClassType . getClassType
+
+genericParameterListFromClassType :: ClassType -> [ClassType]
+genericParameterListFromClassType (GeneralClassType _ GenericParameterAbsent) = []
+genericParameterListFromClassType (GeneralClassType _ (GenericParameterPresent params)) = params
 
 getValueDeclarations :: ClassDecl -> [ObjectDecl]
 getValueDeclarations (ClassDeclaration _ _ _ _ (ClassBodyFilled valuesSection _ _ _)) =
@@ -77,30 +87,42 @@ loadClasses userClasses = Map.fromList $ map loadClassDeclaration $ userClasses 
 
 loadClassDeclaration :: ClassDecl -> (ClassIdent, ClassDecl)
 loadClassDeclaration declaration = case declaration of
-    ClassDeclaration _ _ classIdent _ _ -> (classIdent, declaration)
+    ClassDeclaration _ _ classType _ _ -> (classIdentifierFromClassType classType, declaration)
 
 classIdentifierFromObjectType :: ObjectType -> ClassIdent
-classIdentifierFromObjectType (ObjectTypeClass classIdent _) = classIdent
+classIdentifierFromObjectType (ObjectTypeClass (GeneralClassType classIdent _)) = classIdent
 
-singletonInstanceIdentifier :: ClassIdent -> ObjectIdent
-singletonInstanceIdentifier (ClassIdentifier (UpperCaseIdent classIdent)) =
-    ObjectIdentifier $ LowerCaseIdent $ "__singleton_" ++ classIdent
+classIdentifierFromClassType :: ClassType -> ClassIdent
+classIdentifierFromClassType (GeneralClassType classIdent _) = classIdent
+
+classNameFromClassType :: ClassType -> String
+classNameFromClassType = classNameFromIdentifier . classIdentifierFromClassType
+
+singletonInstanceIdent :: ClassIdent -> ObjectIdent
+singletonInstanceIdent classIdent = ObjectIdentifier $ LowerCaseIdent $
+    "__singleton_" ++ classNameFromIdentifier classIdent
 
 isSingletonClass :: ClassDecl -> Bool
-isSingletonClass = (==MSingleton) . getClassType
+isSingletonClass = (==MSingleton) . getClassTypeModifier
 
-getConstructorParamSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
-getConstructorParamSignatures classDecl = uninitializedValues ++ uninitializedVariables
+isBuiltinClass :: ClassType -> Bool
+isBuiltinClass classType = classIdent `elem` map classIdentifierFromName builtinClassNames
+    where classIdent = classIdentifierFromClassType classType
+
+getConstructorParameterSignatures :: ClassDecl -> [(ObjectIdent, ObjectType)]
+getConstructorParameterSignatures classDecl = uninitializedValues ++ uninitializedVariables
     where uninitializedValues = map objectToNameTypePair $ filter (not . isInitialized) $
             getValueDeclarations classDecl
           uninitializedVariables = map objectToNameTypePair $ filter (not . isInitialized) $
             getVariableDeclarations classDecl
 
-getConstructorParamNames :: ClassDecl -> [ObjectIdent]
-getConstructorParamNames classDecl = map fst $ getConstructorParamSignatures classDecl
+getConstructorParameterNames :: ClassDecl -> [ObjectIdent]
+getConstructorParameterNames classDecl = map fst $ getConstructorParameterSignatures classDecl
 
-getConstructorParamTypes :: ClassDecl -> [ObjectType]
-getConstructorParamTypes classDecl = map snd $ getConstructorParamSignatures classDecl
+getConstructorParameterTypes :: ClassDecl -> [ObjectType]
+getConstructorParameterTypes classDecl = if isBuiltinClass (getClassType classDecl)
+    then getConstructorParameterTypesForBuiltinClass $ getClassIdentifier classDecl
+    else map snd $ getConstructorParameterSignatures classDecl
 
 getInitializedAttributes :: ClassDecl -> [(ObjectIdent, Expr)]
 getInitializedAttributes classDecl = initializedValues ++ initializedVariables
@@ -125,3 +147,6 @@ actionTypeFromClassDeclaration :: ClassDecl -> MethodIdent -> Maybe MethodType
 actionTypeFromClassDeclaration classDecl actionIdent = fmap snd result
     where actions = map actionToNameTypePair $ getActionDeclarations classDecl
           result = List.find (\(actionName, actionType) -> actionName == actionIdent) actions
+
+emptyClassDeclaration :: ClassType -> ClassDecl
+emptyClassDeclaration classType = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty

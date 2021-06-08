@@ -1,0 +1,15 @@
+singleton class ValueGetter[A, B] {
+    
+    functions: {
+        getValue: (x: A, y: B, z: A) -> A = x
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Int = {
+            val x: Bool = ValueGetter[Int, Bool].getValue(40, 3 > 2, 50); // UnexpectedTypeError
+        }
+    }
+}

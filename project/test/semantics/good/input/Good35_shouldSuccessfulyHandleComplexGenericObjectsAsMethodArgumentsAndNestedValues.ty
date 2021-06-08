@@ -1,0 +1,75 @@
+immutable class Container[A] {
+    
+    values: {
+        element: A;
+    }
+}
+
+immutable class DoubleContainer[A, B] {
+    
+    values: {
+        element1: A;
+        element2: B;
+    }
+    
+    functions: {
+        compareFirst: (x: A) -> Bool = this.element1 == x
+        compareSecond: (x: B) -> Bool = this.element2 == x
+    }
+}
+
+
+mutable class TripleContainer[A, B, C] extends ContainerWith[B] {
+    
+    values: {
+        mainElements: DoubleContainer[A, B];
+        additionalElement: C;
+    }
+    
+    variables: {
+        oneMoreElement: C;
+    }
+    
+    functions: {
+        compareFirstInMain: (another: DoubleContainer[A, B]) -> Bool = this.mainElements.element1 == another.element1
+    }
+    
+    actions: {
+        printALot: () -> Void = {
+            val aElement: A = this.mainElements.element1;
+            val bElement: B = this.mainElements.element2;
+            System#printLine(aElement)
+            System#printLine(bElement)
+            
+            System#printLine(this.mainElements)
+            System#printLine(this.additionalElement)
+            System#printLine(this.oneMoreElement)
+        }
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            var x: Int = 3;
+            val y: Int = 3;
+            
+            val container: Container[Int] = Container[Int](x);
+            val check: Bool = y == container.element;
+            val check2: Bool = 3 > 2;
+            
+            val double: DoubleContainer[Int, Bool] = DoubleContainer[Int, Bool](y, check);
+            System#assert(double.compareFirst(x))
+            System#assert(double.compareSecond(check2))
+            
+            val triple: TripleContainer[Int, Void, Int] = TripleContainer[Int, Void, Int](DoubleContainer[Int, Void](x, Pass), 15, y);
+            triple#printALot
+            triple#oneMoreElement(92929)
+            triple#printALot
+            
+            val anotherDouble: DoubleContainer[Int, Void] = DoubleContainer[Int, Void](2 + 1, Pass);
+            System#assert(triple.compareFirstInMain(anotherDouble))
+        }
+    }
+}

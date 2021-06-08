@@ -1,0 +1,3 @@
+Error: IllegalSideEffectsError: Expressions inside "this" must be purely functional.
+Expression with side effects:
+this # goodAction (3, "OK")

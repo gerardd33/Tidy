@@ -98,11 +98,6 @@ LowerCaseIdent  : L_LowerCaseIdent { Parser.Tidy.Abs.LowerCaseIdent $1 }
 Program :: { Parser.Tidy.Abs.Program }
 Program : ListClassDecl { Parser.Tidy.Abs.ProgramEntrypoint $1 }
 
-ListClassIdent :: { [Parser.Tidy.Abs.ClassIdent] }
-ListClassIdent : {- empty -} { [] }
-               | ClassIdent { (:[]) $1 }
-               | ClassIdent ',' ListClassIdent { (:) $1 $3 }
-
 ClassIdent :: { Parser.Tidy.Abs.ClassIdent }
 ClassIdent : UpperCaseIdent { Parser.Tidy.Abs.ClassIdentifier $1 }
 
@@ -111,11 +106,11 @@ ListClassDecl : ClassDecl { (:[]) $1 }
               | ClassDecl ListClassDecl { (:) $1 $2 }
 
 ClassDecl :: { Parser.Tidy.Abs.ClassDecl }
-ClassDecl : AbstractModifier ClassTypeModifier 'class' ClassIdent Inheritance ClassBody { Parser.Tidy.Abs.ClassDeclaration $1 $2 $4 $5 $6 }
+ClassDecl : AbstractModifier ClassTypeModifier 'class' ClassType Inheritance ClassBody { Parser.Tidy.Abs.ClassDeclaration $1 $2 $4 $5 $6 }
 
 Inheritance :: { Parser.Tidy.Abs.Inheritance }
 Inheritance : {- empty -} { Parser.Tidy.Abs.SuperclassAbsent }
-            | 'extends' ClassIdent { Parser.Tidy.Abs.SuperclassPresent $2 }
+            | 'extends' ClassType { Parser.Tidy.Abs.SuperclassPresent $2 }
 
 ClassBody :: { Parser.Tidy.Abs.ClassBody }
 ClassBody : {- empty -} { Parser.Tidy.Abs.ClassBodyEmpty }
@@ -150,13 +145,20 @@ ObjectIdent :: { Parser.Tidy.Abs.ObjectIdent }
 ObjectIdent : LowerCaseIdent { Parser.Tidy.Abs.ObjectIdentifier $1 }
 
 ObjectType :: { Parser.Tidy.Abs.ObjectType }
-ObjectType : ClassIdent GenericParameter { Parser.Tidy.Abs.ObjectTypeClass $1 $2 }
+ObjectType : ClassType { Parser.Tidy.Abs.ObjectTypeClass $1 }
            | 'get' MethodType { Parser.Tidy.Abs.ObjectTypeFunction $2 }
            | 'do' MethodType { Parser.Tidy.Abs.ObjectTypeAction $2 }
 
+ListClassType :: { [Parser.Tidy.Abs.ClassType] }
+ListClassType : ClassType { (:[]) $1 }
+              | ClassType ',' ListClassType { (:) $1 $3 }
+
+ClassType :: { Parser.Tidy.Abs.ClassType }
+ClassType : ClassIdent GenericParameter { Parser.Tidy.Abs.GeneralClassType $1 $2 }
+
 GenericParameter :: { Parser.Tidy.Abs.GenericParameter }
 GenericParameter : {- empty -} { Parser.Tidy.Abs.GenericParameterAbsent }
-                 | '[' ListClassIdent ']' { Parser.Tidy.Abs.GenericParameterPresent $2 }
+                 | '[' ListClassType ']' { Parser.Tidy.Abs.GenericParameterPresent $2 }
 
 ListObjectDecl :: { [Parser.Tidy.Abs.ObjectDecl] }
 ListObjectDecl : {- empty -} { [] }
@@ -321,16 +323,16 @@ ActionCall :: { Parser.Tidy.Abs.ActionCall }
 ActionCall : '#' MethodIdent ArgList { Parser.Tidy.Abs.CallAction $2 $3 }
 
 CtorCall :: { Parser.Tidy.Abs.CtorCall }
-CtorCall : ClassIdent ArgList { Parser.Tidy.Abs.CallConstructor $1 $2 }
+CtorCall : ClassType ArgList { Parser.Tidy.Abs.CallConstructor $1 $2 }
 
 GetExpr :: { Parser.Tidy.Abs.GetExpr }
 GetExpr : ObjectIdent FunctionCall { Parser.Tidy.Abs.GetExpressionInstance $1 $2 }
-        | ClassIdent FunctionCall { Parser.Tidy.Abs.GetExpressionStatic $1 $2 }
+        | ClassType FunctionCall { Parser.Tidy.Abs.GetExpressionStatic $1 $2 }
         | GetExpr FunctionCall { Parser.Tidy.Abs.GetExpressionChain $1 $2 }
 
 DoExpr :: { Parser.Tidy.Abs.DoExpr }
 DoExpr : ObjectIdent ActionCall { Parser.Tidy.Abs.DoExpressionInstance $1 $2 }
-       | ClassIdent ActionCall { Parser.Tidy.Abs.DoExpressionStatic $1 $2 }
+       | ClassType ActionCall { Parser.Tidy.Abs.DoExpressionStatic $1 $2 }
        | GetExpr ActionCall { Parser.Tidy.Abs.DoExpressionChain $1 $2 }
 
 ImperativeControlFlow :: { Parser.Tidy.Abs.ImperativeControlFlow }
@@ -364,7 +366,7 @@ MatchCase :: { Parser.Tidy.Abs.MatchCase }
 MatchCase : 'case' Pattern '->' Expr { Parser.Tidy.Abs.FCase $2 $4 }
 
 Pattern :: { Parser.Tidy.Abs.Pattern }
-Pattern : ClassIdent { Parser.Tidy.Abs.FTypePattern $1 }
+Pattern : ClassType { Parser.Tidy.Abs.FTypePattern $1 }
 
 RelationalOperator :: { Parser.Tidy.Abs.RelationalOperator }
 RelationalOperator : '<' { Parser.Tidy.Abs.RLess }

@@ -1,0 +1,1 @@
+Error: DuplicateDeclarationError: Object or method with name "param1" is declared more than once in "badFunction: (param1 : Int, param2 : Int, param1 : Int) -> Int".

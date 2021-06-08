@@ -7,9 +7,10 @@ if [ ! -f "${WORKING_DIR}"/Makefile ]; then
     exit 1
 fi
 
-
 # Build parser
 make -C "${WORKING_DIR}"
+
+ERRORS=0
 
 function run_tests_for_directory {
     DIRECTORY=${1}
@@ -32,16 +33,21 @@ function run_tests_for_directory {
             tput setaf 2 && tput bold && echo OK && tput sgr0
         else
             tput setaf 1 && tput bold && echo ERROR! && tput sgr0
-            notify-send 'Wrong Answer'
-            exit 1
+            ((ERRORS++))
         fi
     done
     echo
 }
 
 
-run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/good true
-run_tests_for_directory "${WORKING_DIR}"/tests_input/unit/bad false
-run_tests_for_directory "${WORKING_DIR}"/tests_input/integration true
+run_tests_for_directory "${WORKING_DIR}"/good true
+run_tests_for_directory "${WORKING_DIR}"/bad false
 
-echo "All tests passed successfully." && echo
+if [ ${ERRORS} -eq 0 ]; then
+    echo "All tests passed successfully."
+elif [ ${ERRORS} -eq 1 ]; then
+    echo "1 test failed."
+else
+    echo "${ERRORS} tests failed."
+fi
+echo

@@ -1,0 +1,1 @@
+Error: UninitializedError: Object "w" must be initialized.

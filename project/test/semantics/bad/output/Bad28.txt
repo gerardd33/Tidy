@@ -1,0 +1,10 @@
+Error: IllegalSideEffectsError: Expressions inside "val x : Int = 3;
+In: elif (5 > 2) then {
+  val x : Int = 3;
+  }
+else {
+  Pass
+}
+" must be purely functional.
+Expression with side effects:
+val x : Int = 3;

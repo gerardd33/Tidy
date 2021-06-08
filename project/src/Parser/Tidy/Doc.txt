@@ -47,8 +47,8 @@ The reserved words used in Tidy are the following:
   | ``val`` | ``var`` | ``while`` | ``with``
 
 The symbols used in Tidy are the following:
-  | , | { | } | values:
-  | variables: | functions: | actions: | [
+  | { | } | values: | variables:
+  | functions: | actions: | , | [
   | ] | ; | : | =
   | -> | ( | ) | -
   | * | / | % | +
@@ -66,15 +66,12 @@ and **eps** (empty rule) belong to the BNF notation.
 All other symbols are terminals.
 
   | //Program// | -> | //[ClassDecl]//
-  | //[ClassIdent]// | -> | **eps**
-  |  |  **|**  | //ClassIdent//
-  |  |  **|**  | //ClassIdent// ``,`` //[ClassIdent]//
   | //ClassIdent// | -> | //UpperCaseIdent//
   | //[ClassDecl]// | -> | //ClassDecl//
   |  |  **|**  | //ClassDecl// //[ClassDecl]//
-  | //ClassDecl// | -> | //AbstractModifier// //ClassTypeModifier// ``class`` //ClassIdent// //Inheritance// //ClassBody//
+  | //ClassDecl// | -> | //AbstractModifier// //ClassTypeModifier// ``class`` //ClassType// //Inheritance// //ClassBody//
   | //Inheritance// | -> | **eps**
-  |  |  **|**  | ``extends`` //ClassIdent//
+  |  |  **|**  | ``extends`` //ClassType//
   | //ClassBody// | -> | **eps**
   |  |  **|**  | ``{`` //ValuesSection// //VariablesSection// //FunctionsSection// //ActionsSection// ``}``
   | //ClassTypeModifier// | -> | ``mutable``
@@ -91,11 +88,14 @@ All other symbols are terminals.
   | //ActionsSection// | -> | **eps**
   |  |  **|**  | ``actions:`` ``{`` //[ActionDecl]// ``}``
   | //ObjectIdent// | -> | //LowerCaseIdent//
-  | //ObjectType// | -> | //ClassIdent// //GenericParameter//
+  | //ObjectType// | -> | //ClassType//
   |  |  **|**  | ``get`` //MethodType//
   |  |  **|**  | ``do`` //MethodType//
+  | //[ClassType]// | -> | //ClassType//
+  |  |  **|**  | //ClassType// ``,`` //[ClassType]//
+  | //ClassType// | -> | //ClassIdent// //GenericParameter//
   | //GenericParameter// | -> | **eps**
-  |  |  **|**  | ``[`` //[ClassIdent]// ``]``
+  |  |  **|**  | ``[`` //[ClassType]// ``]``
   | //[ObjectDecl]// | -> | **eps**
   |  |  **|**  | //ObjectDecl// //[ObjectDecl]//
   | //ObjectDecl// | -> | //VisibilityModifier// //ObjectDeclProper// ``;``
@@ -179,12 +179,12 @@ All other symbols are terminals.
   | //MethodArg// | -> | //Expr//
   | //FunctionCall// | -> | ``.`` //MethodIdent// //ArgList//
   | //ActionCall// | -> | ``#`` //MethodIdent// //ArgList//
-  | //CtorCall// | -> | //ClassIdent// //ArgList//
+  | //CtorCall// | -> | //ClassType// //ArgList//
   | //GetExpr// | -> | //ObjectIdent// //FunctionCall//
-  |  |  **|**  | //ClassIdent// //FunctionCall//
+  |  |  **|**  | //ClassType// //FunctionCall//
   |  |  **|**  | //GetExpr// //FunctionCall//
   | //DoExpr// | -> | //ObjectIdent// //ActionCall//
-  |  |  **|**  | //ClassIdent// //ActionCall//
+  |  |  **|**  | //ClassType// //ActionCall//
   |  |  **|**  | //GetExpr// //ActionCall//
   | //ImperativeControlFlow// | -> | ``while`` ``(`` //Expr// ``)`` ``{`` //[Expr]// ``}``
   |  |  **|**  | ``for`` ``(`` //ObjectDecl// ``in`` //Expr// ``)`` ``{`` //[Expr]// ``}``
@@ -202,7 +202,7 @@ All other symbols are terminals.
   | //[MatchCase]// | -> | **eps**
   |  |  **|**  | //MatchCase// //[MatchCase]//
   | //MatchCase// | -> | ``case`` //Pattern// ``->`` //Expr//
-  | //Pattern// | -> | //ClassIdent//
+  | //Pattern// | -> | //ClassType//
   | //RelationalOperator// | -> | ``<``
   |  |  **|**  | ``<=``
   |  |  **|**  | ``>``

@@ -25,11 +25,29 @@ objectIdentifierFromName name = ObjectIdentifier (LowerCaseIdent name)
 methodIdentifierFromName :: String -> MethodIdent
 methodIdentifierFromName name = MethodIdentifier (LowerCaseIdent name)
 
-objectTypeFromClassName :: String -> ObjectType
-objectTypeFromClassName name = ObjectTypeClass (ClassIdentifier (UpperCaseIdent name)) GenericParameterAbsent
+simpleObjectTypeFromClassName :: String -> ObjectType
+simpleObjectTypeFromClassName = ObjectTypeClass . simpleClassTypeFromName
+
+simpleObjectTypeFromClassIdentifier :: ClassIdent -> ObjectType
+simpleObjectTypeFromClassIdentifier = ObjectTypeClass . simpleClassTypeFromIdentifier
+
+simpleClassTypeFromName :: String -> ClassType
+simpleClassTypeFromName = simpleClassTypeFromIdentifier . classIdentifierFromName
+
+simpleClassTypeFromIdentifier :: ClassIdent -> ClassType
+simpleClassTypeFromIdentifier ident = GeneralClassType ident GenericParameterAbsent
 
 objectToMethodIdentifier :: ObjectIdent -> MethodIdent
 objectToMethodIdentifier (ObjectIdentifier ident) = MethodIdentifier ident
 
 methodToObjectIdentifier :: MethodIdent -> ObjectIdent
 methodToObjectIdentifier (MethodIdentifier ident) = ObjectIdentifier ident
+
+classTypeFromObjectType :: ObjectType -> ClassType
+classTypeFromObjectType (ObjectTypeClass classType) = classType
+
+classNameFromIdentifier :: ClassIdent -> String
+classNameFromIdentifier (ClassIdentifier (UpperCaseIdent name)) = name
+
+methodNameFromIdentifier :: MethodIdent -> String
+methodNameFromIdentifier (MethodIdentifier (LowerCaseIdent name)) = name

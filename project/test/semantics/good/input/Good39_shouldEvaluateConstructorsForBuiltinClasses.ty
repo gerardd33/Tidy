@@ -1,0 +1,15 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val x: Int = Int(13);
+            val y: Void = Void();
+            val z: String = String("xxx");
+            
+            System#assert(x != 8)
+            System#assertEquals(13, x)
+            System#assertEquals(Pass, y)
+            System#assertEquals("xxx", z)
+        }
+    }
+}

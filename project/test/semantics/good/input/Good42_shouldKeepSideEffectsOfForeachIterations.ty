@@ -1,0 +1,15 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            var sum: Int = 0;
+            
+            val list: List[Int] = List[Int](3, 4, 222, 5);
+            for (x: Int; in list) {
+                local#sum(sum + x)
+            }
+            
+            System#assertEquals(234, sum)
+        }
+    }
+}

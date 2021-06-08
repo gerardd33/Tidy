@@ -1,0 +1,15 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Bool
+Actual: Int
+In expression:
+3
+In: elif (3) then {
+  arg2
+}
+elif (5 > 2) then {
+  arg3
+}
+else {
+  arg3
+}
+

@@ -1,0 +1,1 @@
+Error: DuplicateDeclarationError: Object or method with name "string1" is declared more than once in "string1 : String = "Second"".

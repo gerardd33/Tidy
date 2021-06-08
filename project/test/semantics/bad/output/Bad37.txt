@@ -1,0 +1,15 @@
+Error: IllegalSideEffectsError: Expressions inside "testClass : TestClass = TestClass (3, 4 + if (True) {
+  4
+}
+else {
+  5
+}
+, "OK", False)" must be purely functional.
+Expression with side effects:
+if (True) {
+  4
+}
+else {
+  5
+}
+

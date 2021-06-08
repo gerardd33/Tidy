@@ -33,6 +33,7 @@ data BuiltinObject
     | CharObject Char
     | StringObject String
     | VoidObject
+    | ListObject [Object] ClassType
     deriving (Eq, Show)
 
 data InitializationType = InitializedRequired | UninitializedRequired | NoneRequired
@@ -46,3 +47,5 @@ data StaticLocalEnv = StaticLocalEnv { valueTypes :: StaticAttributeEnv, variabl
     deriving (Eq, Show)
 
 type StaticAttributeEnv = Map.Map ObjectIdent ObjectType
+
+type GenericsMap = Map.Map ObjectType ObjectType

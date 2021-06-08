@@ -1,0 +1,19 @@
+singleton class Printer[A, B] {
+    
+    actions: {
+        print: (x: A, y: B, z: A) -> Void = {
+            System#printLine(x)
+            System#printLine(y)
+            System#printLine(z)
+        }
+    }
+}
+
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            Printer[Int, Bool]#print(40, 3 > 2, 50)
+        }
+    }
+}

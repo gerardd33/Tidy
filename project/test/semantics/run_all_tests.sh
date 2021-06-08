@@ -5,6 +5,8 @@ WORKING_DIR=$(dirname "$(realpath -s "${0}")")
 # Build Tidy
 (cd ../../.. && ./build_tidy.sh)
 
+ERRORS=0
+
 function run_tests_for_directory {
     DIRECTORY=${1}
     EXPECTED_OUTPUT_FILE_NAME="expected.out"
@@ -12,7 +14,7 @@ function run_tests_for_directory {
 
     for INPUT in $(ls "${DIRECTORY}"/input); do
         echo && printf "Test: %s: " "${INPUT}"
-        OUTPUT="${INPUT%_*}".out
+        OUTPUT="${INPUT%_*}".txt
 
         cat "${DIRECTORY}"/input/"${INPUT}" > "${WORKING_DIR}"/Test.ty
         cat "${DIRECTORY}"/output/"${OUTPUT}" > "${WORKING_DIR}"/"${EXPECTED_OUTPUT_FILE_NAME}"
@@ -24,15 +26,20 @@ function run_tests_for_directory {
             tput setaf 2 && tput bold && echo OK && tput sgr0
         else
             tput setaf 1 && tput bold && echo ERROR! && tput sgr0
-            notify-send 'Wrong Answer'
-            exit 1
+            ((ERRORS++))
         fi
     done
     echo
 }
 
-run_tests_for_directory "${WORKING_DIR}"/unit/good
-run_tests_for_directory "${WORKING_DIR}"/unit/bad
-run_tests_for_directory "${WORKING_DIR}"/integration
+run_tests_for_directory "${WORKING_DIR}"/good
+run_tests_for_directory "${WORKING_DIR}"/bad
 
-echo "All tests passed successfully." && echo
+if [ ${ERRORS} -eq 0 ]; then
+    echo "All tests passed successfully."
+elif [ ${ERRORS} -eq 1 ]; then
+    echo "1 test failed."
+else
+    echo "${ERRORS} tests failed."
+fi
+echo

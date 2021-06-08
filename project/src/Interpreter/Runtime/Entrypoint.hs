@@ -29,7 +29,7 @@ runtimeBody mode mainClass = do
     liftIO $ debugLog mode "Runtime..."
     (_, classEnv) <- ask
     (_, initialEnvWithLocal) <- buildInitialLocalReference classEnv
-    let mainClassInstanceIdent = singletonInstanceIdentifier $ getClassIdentifier mainClass
+    let mainClassInstanceIdent = singletonInstanceIdent $ getClassIdentifier mainClass
     mainClassInstance <- local (const initialEnvWithLocal) $ getLocalObject mainClassInstanceIdent
     (_, initialEnvWithThis) <- local (const initialEnvWithLocal) $ setThisReference mainClassInstance
     result <- local (const initialEnvWithThis) $ evaluateActionInEnv $ fromJust $ getMainAction mainClass
@@ -43,6 +43,6 @@ buildInitialLocalReference classEnv = do
     let (singletonsIdents, singletonsDeclarations) = unzip singletonClasses
     singletonsAttributes <- mapM evaluateInitializedAttributes singletonsDeclarations
     singletonObjects <- zipWithM buildSingletonClassInstance singletonsIdents singletonsAttributes
-    let singletonInstanceIdents = map singletonInstanceIdentifier singletonsIdents
+    let singletonInstanceIdents = map singletonInstanceIdent singletonsIdents
     (_, newEnv) <- addLocalValues $ zip singletonInstanceIdents singletonObjects
     return (pass, newEnv)

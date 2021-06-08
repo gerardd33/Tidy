@@ -17,9 +17,10 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Runtime.Types
 
 
-getClassDeclaration :: ClassIdent -> StateMonad ClassDecl
-getClassDeclaration classIdent = do
+getClassDeclaration :: ClassType -> StateMonad ClassDecl
+getClassDeclaration classType = do
     (_, classEnv) <- ask
+    let classIdent = classIdentifierFromClassType classType
     return $ classEnv Map.! classIdent
 
 allocateObject :: Object -> StateMonad Location
@@ -75,6 +76,11 @@ getLocalObjectWithLocation objectIdent = do
     (localRef, _) <- ask
     if objectIdent == localReferenceIdentifier then return (localRef, -1)
     else getAttributeWithLocation localRef objectIdent
+
+setLocalObject :: ObjectIdent -> Object -> StateMonad Result
+setLocalObject objectIdent newValue = do
+    (localRef, _) <- ask
+    setAttribute localRef objectIdent newValue
 
 addArgumentsToEnv :: MethodType -> [Object] -> StateMonad Result
 addArgumentsToEnv methodType evaluatedArgs = do
@@ -133,16 +139,17 @@ complexObjectsEqual (RegularObject _ env1) (RegularObject _ env2) = do
     return $ and results
 
 objectToString :: Object -> StateMonad String
-objectToString (BuiltinObject object) = return $ case object of
-    IntObject value    -> show value
-    BoolObject value   -> if value == BTrue then "True" else "False"
-    CharObject value   -> [value]
-    StringObject value -> value
-    VoidObject         -> "Pass"
+objectToString (BuiltinObject object) = case object of
+    IntObject value       -> return $ show value
+    BoolObject value      -> return $ if value == BTrue then "True" else "False"
+    CharObject value      -> return [value]
+    StringObject value    -> return value
+    VoidObject            -> return "Pass"
+    ListObject elements _ -> mapListToString elements
 
 objectToString (RegularObject objectType objectEnv) = do
     case objectType of
-        ObjectTypeClass classIdent _ -> do
+        ObjectTypeClass _ -> do
             objectEnvString <- objectEnvToString objectEnv
             return $ show objectType ++ " " ++ objectEnvString
 -- TODO add lambda types
@@ -163,3 +170,8 @@ showAttributeValue (objectIdent, objectCalculation) = do
     object <- objectCalculation
     objectString <- objectToString object
     return $ " " ++ show objectIdent ++ ": " ++ objectString
+
+mapListToString :: [Object] -> StateMonad String
+mapListToString elements = do
+    mappedElements <- mapM objectToString elements
+    return $ "[" ++ List.intercalate ", " mappedElements ++ "]"

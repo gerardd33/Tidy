@@ -28,13 +28,13 @@ buildObjectEnv objectType constructorArgs initializedAttributes = do
 
 buildSingletonClassInstance :: ClassIdent -> [(ObjectIdent, Object)] -> StateMonad Object
 buildSingletonClassInstance classIdent initializedAttributes = do
-    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
+    let objectType = simpleObjectTypeFromClassIdentifier classIdent
     objectEnv <- buildObjectEnv objectType [] initializedAttributes
     return $ RegularObject objectType objectEnv
 
 getAttributeMap :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad (Map.Map ObjectIdent Object)
 getAttributeMap objectType constructorArgs initializedAttributes = do
-    classDecl <- getClassDeclaration $ classIdentifierFromObjectType objectType
-    let constructorParamList = getConstructorParamNames classDecl
+    classDecl <- getClassDeclaration $ classTypeFromObjectType objectType
+    let constructorParamList = getConstructorParameterNames classDecl
     let attributesFromConstructor = Map.fromList $ zip constructorParamList constructorArgs
     return $ Map.union (Map.fromList initializedAttributes) attributesFromConstructor

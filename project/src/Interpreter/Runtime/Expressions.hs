@@ -59,11 +59,11 @@ evaluateExpression (EGetExpression (GetExpressionChain prefixGetExpression metho
     liftPure $ evaluateGetExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EGetExpression (GetExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalObject $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdent $ classIdentifierFromClassType singletonClass
     liftPure $ evaluateGetExpressionOnObject singletonObject methodCall
 
-evaluateExpression (EConstructorCall (CallConstructor classIdent argList)) =
-    liftPure $ evaluateConstructorCall classIdent argList
+evaluateExpression (EConstructorCall (CallConstructor classType argList)) =
+    liftPure $ evaluateConstructorCall classType argList
 
 evaluateExpression (EDoExpression (DoExpressionInstance objectIdent methodCall)) = do
     object <- getLocalObject objectIdent
@@ -74,7 +74,7 @@ evaluateExpression (EDoExpression (DoExpressionChain prefixGetExpression methodC
     evaluateDoExpressionOnObject prefixObject methodCall
 
 evaluateExpression (EDoExpression (DoExpressionStatic singletonClass methodCall)) = do
-    singletonObject <- getLocalObject $ singletonInstanceIdentifier singletonClass
+    singletonObject <- getLocalObject $ singletonInstanceIdent $ classIdentifierFromClassType singletonClass
     evaluateDoExpressionOnObject singletonObject methodCall
 
 evaluateExpression (ELocalDeclaration (LocalValueDeclaration declaration)) =
@@ -87,6 +87,9 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
     evaluateImperativeIf predicate body optionalElseBranch
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWhile predicate body
+
+evaluateExpression (EImperativeControlFlow (IForeach iteratorDecl list body)) =
+    evaluateForeach iteratorDecl list body
 
 evaluateExpression (EBuiltin methodIdent) = evaluateBuiltinMethodCall methodIdent
 
@@ -179,12 +182,18 @@ evaluateDoExpressionOnObject object (CallAction actionIdent argList) = do
     if takeSetter then evaluateSetter object actionIdent $ head evaluatedArgs
     else evaluateMemberAction context object actionIdent evaluatedArgs
 
-evaluateConstructorCall :: ClassIdent -> ArgList -> StateMonad Object
-evaluateConstructorCall classIdent argList = do
-    let objectType = ObjectTypeClass classIdent GenericParameterAbsent
-    classDecl <- getClassDeclaration classIdent
+evaluateConstructorCall :: ClassType -> ArgList -> StateMonad Object
+evaluateConstructorCall classType argList = do
     evaluatedArgs <- evaluateArgumentList argList
+    if isBuiltinClass classType
+    then instantiateBuiltinObject classType evaluatedArgs
+    else instantiateRegularObject classType evaluatedArgs
+
+instantiateRegularObject :: ClassType -> [Object] -> StateMonad Object
+instantiateRegularObject classType evaluatedArgs = do
+    classDecl <- getClassDeclaration classType
     initializedAttributes <- evaluateAttributeExpressions $ getInitializedAttributes classDecl
+    let objectType = ObjectTypeClass classType
     objectEnv <- buildObjectEnv objectType evaluatedArgs initializedAttributes
     return $ RegularObject objectType objectEnv
 
@@ -212,6 +221,8 @@ evaluateActionBody (ActionBodyOneLine expr)    = evaluateExpressionList [expr]
 evaluateActionBody (ActionBodyMultiLine exprs) = evaluateExpressionList exprs
 
 evaluateLocalValueDeclaration :: ObjectDeclProper -> StateMonad Result
+evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType Uninitialized) = do
+    addLocalValue objectIdent pass -- placeholder, there will always be a separate initialization before usage if it occurs
 evaluateLocalValueDeclaration (ObjectDeclarationProper objectIdent objectType (Initialized expr)) = do
     (initializationValue, _) <- evaluateExpression expr
     addLocalValue objectIdent initializationValue
@@ -242,3 +253,17 @@ evaluateWhile predicate body  = do
     if isTrue predicateValue
     then evaluateExpressionList body >> evaluateWhile predicate body
     else returnPass
+
+evaluateForeach :: ObjectDecl -> Expr -> [Expr] -> StateMonad Result
+evaluateForeach iteratorDecl list body  = do
+    (evaluatedList, _) <- evaluateExpression list
+    (_, env) <- evaluateLocalValueDeclaration $ getProperDeclaration iteratorDecl
+    let iteratorIdent = getObjectIdentifier iteratorDecl
+    local (const env) $ executeForeachIterations iteratorIdent body $ getListElements evaluatedList
+
+executeForeachIterations :: ObjectIdent -> [Expr] -> [Object] -> StateMonad Result
+executeForeachIterations _ _ [] = returnPass
+executeForeachIterations iteratorIdent body (element:elements) = do
+    (_, env) <- setLocalObject iteratorIdent element
+    (_, newEnv) <- local (const env) $ evaluateExpressionList body
+    local (const newEnv) $ executeForeachIterations iteratorIdent body elements

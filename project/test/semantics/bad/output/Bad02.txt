@@ -1,0 +1,3 @@
+Error: DivideByZeroException: Attempted division by zero.
+Divisor expression evaluating to 0:
+x + 1

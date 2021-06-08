@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Int
+Actual: String
+In expression:
+arg2
+In: sum2 : Int = sum1 + arg2

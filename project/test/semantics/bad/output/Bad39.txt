@@ -1,0 +1,1 @@
+Error: ClassNotInScopeError: Class "AnotherClass" is not declared in this scope.

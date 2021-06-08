@@ -1,0 +1,10 @@
+singleton class Loops {
+    
+    actions: {
+        main: () -> Void = {
+            while (2) { // UnexpectedTypeError
+                Pass
+            }
+        }
+    }
+}

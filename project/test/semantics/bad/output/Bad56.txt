@@ -1,0 +1,6 @@
+Error: UnexpectedTypeError: Types do not match.
+Expected: Student
+Actual: Grades
+In expression:
+grades2
+In: main: () -> Bool

@@ -2,6 +2,7 @@ module Interpreter.Static.Expressions where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
+import qualified Data.Map                             as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -11,10 +12,12 @@ import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
 import           Interpreter.Common.Utils.Expressions
+import           Interpreter.Common.Utils.Generics
 import           Interpreter.Common.Utils.Methods
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Environments
+import           Interpreter.Static.Generics
 import           Interpreter.Static.Operators
 import           Interpreter.Static.Types
 
@@ -53,8 +56,8 @@ checkExpression context (EBooleanOperator expr1 operator expr2) =
 
 checkExpression context (EGetExpression getExpr) =
     liftPureStatic $ checkGetExpression context getExpr
-checkExpression context (EConstructorCall (CallConstructor classIdent argList)) =
-    liftPureStatic $ checkConstructorCall context classIdent argList
+checkExpression context (EConstructorCall (CallConstructor classType argList)) =
+    liftPureStatic $ checkConstructorCall context classType argList
 checkExpression context (EFunctionalControlFlow (FIfThenElse predicateExpr thenBranch elseBranch)) =
     liftPureStatic $ checkFunctionalIf context predicateExpr thenBranch elseBranch
 
@@ -63,6 +66,8 @@ checkExpression context (EImperativeControlFlow (IIf predicateExpr body optional
     liftPureStatic $ checkImperativeIf context predicateExpr body optionalElseBranch
 checkExpression context (EImperativeControlFlow (IWhile predicateExpr body)) =
     liftPureStatic $ checkWhile context predicateExpr body
+checkExpression context (EImperativeControlFlow (IForeach iteratorDecl predicateExpr body)) =
+    liftPureStatic $ checkForeach context iteratorDecl predicateExpr body
 
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalObjectDeclaration localDecl
 
@@ -83,17 +88,27 @@ checkUnaryOperator context expr expectedType = do
     assertTypesMatch (showComplexContext expr context) expectedType actualType
     return expectedType
 
-checkConstructorCall :: String -> ClassIdent -> ArgList -> StaticCheckMonad ObjectType
-checkConstructorCall context classIdent ArgumentListAbsent =
-    checkConstructorCall context classIdent (ArgumentListPresent [])
-checkConstructorCall context classIdent (ArgumentListPresent args) = do
-    classDecl <- getClassDeclarationStatic classIdent
+checkConstructorCall :: String -> ClassType -> ArgList -> StaticCheckMonad ObjectType
+checkConstructorCall context classType ArgumentListAbsent =
+    checkConstructorCall context classType (ArgumentListPresent [])
+checkConstructorCall context classType (ArgumentListPresent args) = do
+    classDecl <- getClassDeclarationStatic classType
     argTypes <- checkArgumentList context args
-    let paramTypes = getConstructorParamTypes classDecl
-    when (argTypes /= paramTypes) $ throwError $
-        ConstructorArgumentListInvalidError (showContext classIdent ++ "(" ++ showContext args ++ ")")
-            (showContext paramTypes) (showContext argTypes)
-    return $ ObjectTypeClass classIdent GenericParameterAbsent
+    let callContext = show classType ++ "(" ++ showContext args ++ ")"
+    let genericParams = getGenericParameterList classDecl
+    let genericArgs = genericParameterListFromClassType classType
+    genericsMap <- bindGenericParameters callContext genericParams genericArgs
+    let unmappedParamTypes = getConstructorParameterTypes classDecl
+    let paramTypes = map (mapObjectTypeIfGeneric genericsMap) unmappedParamTypes
+    if classNameFromClassType classType == "List" then checkListConstructorArguments callContext genericArgs argTypes
+    else when (argTypes /= paramTypes) $ throwError $ ConstructorArgumentListInvalidError
+        callContext (showContext paramTypes) (showContext argTypes)
+    return $ ObjectTypeClass classType
+
+checkListConstructorArguments :: String -> [ClassType] -> [ObjectType] -> StaticCheckMonad ()
+checkListConstructorArguments context genericArgs argTypes = do
+    let elementType = head $ map ObjectTypeClass genericArgs
+    mapM_ (assertTypesMatch context elementType) argTypes
 
 checkArgumentList :: String -> [MethodArg] -> StaticCheckMonad [ObjectType]
 checkArgumentList context argList = do
@@ -105,24 +120,29 @@ checkArgumentList context argList = do
 checkGetExpression :: String -> GetExpr -> StaticCheckMonad ObjectType
 checkGetExpression context (GetExpressionInstance objectIdent methodCall) = do
     objectType <- checkLocalObject objectIdent
-    checkGetExpressionOnObject (showContext objectIdent) objectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType objectType
+    checkGetExpressionOnObject (showContext objectIdent) genericsMap objectType methodCall
 
 checkGetExpression context (GetExpressionChain prefixGetExpression methodCall) = do
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
-    checkGetExpressionOnObject (showContext prefixGetExpression) prefixObjectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType prefixObjectType
+    checkGetExpressionOnObject (showContext prefixGetExpression) genericsMap prefixObjectType methodCall
 
-checkGetExpression context (GetExpressionStatic classIdent methodCall) = do
-    singletonObjectType <- checkStaticExpression classIdent (showContext methodCall)
-    checkGetExpressionOnObject (showContext classIdent) singletonObjectType methodCall
+checkGetExpression context (GetExpressionStatic classType methodCall) = do
+    (singletonObjectType, genericParams) <- checkStaticExpression classType (showContext methodCall)
+    let genericArgs = genericParameterListFromClassType classType
+    let methodContext = show classType ++ " " ++ showContext methodCall
+    genericsMap <- bindGenericParameters methodContext genericParams genericArgs
+    checkGetExpressionOnObject (show classType) genericsMap singletonObjectType methodCall
 
-checkGetExpressionOnObject :: String -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
-checkGetExpressionOnObject context objectType (CallFunction functionIdent ArgumentListAbsent) =
-    checkGetExpressionOnObject context objectType (CallFunction functionIdent (ArgumentListPresent []))
-checkGetExpressionOnObject context objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
+checkGetExpressionOnObject :: String -> GenericsMap -> ObjectType -> FunctionCall -> StaticCheckMonad ObjectType
+checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent ArgumentListAbsent) =
+    checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent []))
+checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
     argTypes <- checkArgumentList context args
     takeGetter <- hasGetterStatic objectType functionIdent
-    if takeGetter then checkGetterCall context objectType functionIdent argTypes
-    else checkMemberFunctionCall context objectType functionIdent argTypes
+    if takeGetter then checkGetterCall context genericsMap objectType functionIdent argTypes
+    else checkMemberFunctionCall context genericsMap objectType functionIdent argTypes
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do
@@ -153,8 +173,21 @@ checkImperativeIf context predicateExpr body optionalElseBranch = do
 
 checkWhile :: String -> Expr -> [Expr] -> StaticCheckMonad ObjectType
 checkWhile context predicateExpr body = do
-    checkExpressionList context body
-    return voidType
+    let loopContext = "while (" ++ showContext predicateExpr ++ ")"
+    checkPredicate loopContext predicateExpr False
+    checkExpressionList loopContext body
+    returnVoid
+
+checkForeach :: String -> ObjectDecl -> Expr -> [Expr] -> StaticCheckMonad ObjectType
+checkForeach context iteratorDecl listExpr body = do
+    let loopContext = "for (" ++ showContext iteratorDecl ++ " in " ++ showContext listExpr ++ ")"
+    assertPureExpression context listExpr
+    (_, env) <- checkObjectDeclaration UninitializedRequired False iteratorDecl
+    let iteratorType = objectTypeFromDeclaration iteratorDecl
+    (listExprType, _) <- checkExpression context listExpr
+    assertTypesMatch loopContext (listType $ classTypeFromObjectType iteratorType) listExprType
+    local (const env) $ checkExpressionList loopContext body
+    returnVoid
 
 checkPredicate :: String -> Expr -> Bool -> StaticCheckMonad ObjectType
 checkPredicate context predicateExpr checkPure = do
@@ -167,24 +200,29 @@ checkPredicate context predicateExpr checkPure = do
 checkDoExpression :: String -> DoExpr -> StaticCheckMonad ObjectType
 checkDoExpression context (DoExpressionInstance objectIdent methodCall) = do
     objectType <- checkLocalObject objectIdent
-    checkDoExpressionOnObject (showContext objectIdent) objectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType objectType
+    checkDoExpressionOnObject (showContext objectIdent) genericsMap objectType methodCall
 
 checkDoExpression context (DoExpressionChain prefixGetExpression methodCall) = do
     (prefixObjectType, _) <- checkExpression context $ EGetExpression prefixGetExpression
-    checkDoExpressionOnObject (showContext prefixGetExpression) prefixObjectType methodCall
+    genericsMap <- genericsMapFromClassType $ classTypeFromObjectType prefixObjectType
+    checkDoExpressionOnObject (showContext prefixGetExpression) genericsMap prefixObjectType methodCall
 
-checkDoExpression context (DoExpressionStatic classIdent methodCall) = do
-    singletonObjectType <- checkStaticExpression classIdent (showContext methodCall)
-    checkDoExpressionOnObject (showContext classIdent) singletonObjectType methodCall
+checkDoExpression context (DoExpressionStatic classType methodCall) = do
+    (singletonObjectType, genericParams) <- checkStaticExpression classType (showContext methodCall)
+    let genericArgs = genericParameterListFromClassType classType
+    let methodContext = show classType ++ " " ++ showContext methodCall
+    genericsMap <- bindGenericParameters methodContext genericParams genericArgs
+    checkDoExpressionOnObject (show classType) genericsMap singletonObjectType methodCall
 
-checkDoExpressionOnObject :: String -> ObjectType -> ActionCall -> StaticCheckMonad ObjectType
-checkDoExpressionOnObject context objectType (CallAction actionIdent ArgumentListAbsent) =
-    checkDoExpressionOnObject context objectType (CallAction actionIdent (ArgumentListPresent []))
-checkDoExpressionOnObject context objectType (CallAction actionIdent (ArgumentListPresent args)) = do
+checkDoExpressionOnObject :: String -> GenericsMap -> ObjectType -> ActionCall -> StaticCheckMonad ObjectType
+checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent ArgumentListAbsent) =
+    checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent []))
+checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent args)) = do
     argTypes <- checkArgumentList context args
     takeSetter <- hasSetterStatic objectType actionIdent
-    if takeSetter then checkSetterCall context objectType actionIdent argTypes
-    else checkMemberActionCall context objectType actionIdent argTypes
+    if takeSetter then checkSetterCall context genericsMap objectType actionIdent argTypes
+    else checkMemberActionCall context genericsMap objectType actionIdent argTypes
 
 checkLocalObjectDeclaration :: LocalDecl -> StaticCheckMonad StaticResult
 checkLocalObjectDeclaration (LocalValueDeclaration objectDecl) =
@@ -224,58 +262,61 @@ declareObjectStatic properDecl expectedType (Initialized expr) isVariable = do
     if isVariable then local (const newEnv) $ addLocalVariableType objectIdent expectedType
     else local (const newEnv) $ addLocalValueType objectIdent expectedType
 
-checkGetterCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkGetterCall context objectType functionIdent argTypes = do
+checkGetterCall :: String -> GenericsMap -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkGetterCall context genericsMap objectType functionIdent argTypes = do
     unless (null argTypes) $ throwError $ MethodArgumentListInvalidError
         (showContext functionIdent) "" (showContext argTypes)
     let attributeIdent = methodToObjectIdentifier functionIdent
-    getAttributeTypeStatic context objectType attributeIdent
+    unmappedAttributeType <- getAttributeTypeStatic context objectType attributeIdent
+    return $ mapObjectTypeIfGeneric genericsMap unmappedAttributeType
 
-checkSetterCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkSetterCall context objectType functionIdent argTypes = do
-    let attributeIdent = methodToObjectIdentifier functionIdent
-    expectedType <- getAttributeTypeStatic context objectType attributeIdent
+checkSetterCall :: String -> GenericsMap -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkSetterCall context genericsMap objectType actionIdent argTypes = do
+    let attributeIdent = methodToObjectIdentifier actionIdent
+    unmappedExpectedType <- getAttributeTypeStatic context objectType attributeIdent
+    let expectedType = mapObjectTypeIfGeneric genericsMap unmappedExpectedType
     unless (length argTypes == 1) $ throwError $ MethodArgumentListInvalidError
-            (showContext functionIdent) (showContext expectedType) (showContext argTypes)
+            (showContext actionIdent) (showContext expectedType) (showContext argTypes)
     let actualType = head argTypes
-    assertTypesMatch context expectedType actualType
+    assertTypesMatch (context ++ "#" ++ showContext actionIdent) expectedType actualType
 
-checkMemberFunctionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkMemberFunctionCall context objectType functionIdent argTypes = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+checkMemberFunctionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkMemberFunctionCall context genericsMap objectType functionIdent argTypes = do
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     let functionType = functionTypeFromClassDeclaration classDecl functionIdent
     when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
     let methodContext = context ++ "." ++ showContext functionIdent
     let builtinFunctionIdent = builtinMethodIdentifier functionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
     if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
-    checkMethodArguments methodContext (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
-    return $ getMethodReturnType $ fromJust functionType
+    checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
+    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust functionType
 
-checkMemberActionCall :: String -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
-checkMemberActionCall context objectType actionIdent argTypes = do
-    let classIdent = classIdentifierFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classIdent
+checkMemberActionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
+checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
+    let classType = classTypeFromObjectType objectType
+    classDecl <- getClassDeclarationStatic classType
     let actionType = actionTypeFromClassDeclaration classDecl actionIdent
     when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
     let methodContext = context ++ "#" ++ showContext actionIdent
     let builtinActionIdent = builtinMethodIdentifier actionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinActionIdent]
     if shouldHaveUniformTypes builtinActionIdent then checkTypeUniformity methodContext argTypes else returnVoid
-    checkMethodArguments methodContext (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
-    return $ getMethodReturnType $ fromJust actionType
+    checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
+    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust actionType
 
-checkMethodArguments :: String -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
-checkMethodArguments context expected actual = do
+checkMethodArguments :: String -> Map.Map ObjectType ObjectType -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
+checkMethodArguments context genericsMap unmappedExpected actual = do
+    let expected = map (mapObjectTypeIfGeneric genericsMap) unmappedExpected
     let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
     unless (length expected == length actual && argumentTypesMatch) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 
-checkStaticExpression :: ClassIdent -> String -> StaticCheckMonad ObjectType
-checkStaticExpression classIdent callContext = do
-    classDecl <- getClassDeclarationStatic classIdent
+checkStaticExpression :: ClassType -> String -> StaticCheckMonad (ObjectType, [ClassType])
+checkStaticExpression classType callContext = do
+    classDecl <- getClassDeclarationStatic classType
     unless (isSingletonClass classDecl) $ throwError $ NonSingletonClassError
-        $ showContext classIdent ++ " " ++ callContext
-    return $ ObjectTypeClass classIdent GenericParameterAbsent
+        $ show classType ++ " " ++ callContext
+    return (ObjectTypeClass classType, getGenericParameterList classDecl)

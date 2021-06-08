@@ -10,10 +10,10 @@ pass :: Object
 pass = BuiltinObject VoidObject
 
 localReferenceType :: ObjectType
-localReferenceType = objectTypeFromClassName "__local"
+localReferenceType = simpleObjectTypeFromClassName "__local"
 
 builtinMethodIdentifier :: MethodIdent -> MethodIdent
-builtinMethodIdentifier (MethodIdentifier (LowerCaseIdent name)) = methodIdentifierFromName $ "__builtin_" ++ name
+builtinMethodIdentifier methodIdent = methodIdentifierFromName $ "__builtin_" ++ methodNameFromIdentifier methodIdent
 
 builtinMethodIdentifierFromName :: String -> MethodIdent
 builtinMethodIdentifierFromName name = methodIdentifierFromName $ "__builtin_" ++ name
@@ -25,42 +25,58 @@ thisReferenceIdentifier :: ObjectIdent
 thisReferenceIdentifier = objectIdentifierFromName "this"
 
 objectTypeForBuiltinObject :: BuiltinObject -> ObjectType
-objectTypeForBuiltinObject (IntObject _)    = intType
-objectTypeForBuiltinObject (BoolObject _)   = boolType
-objectTypeForBuiltinObject (CharObject _)   = charType
-objectTypeForBuiltinObject (StringObject _) = stringType
-objectTypeForBuiltinObject VoidObject       = voidType
+objectTypeForBuiltinObject (IntObject _)            = intType
+objectTypeForBuiltinObject (BoolObject _)           = boolType
+objectTypeForBuiltinObject (CharObject _)           = charType
+objectTypeForBuiltinObject (StringObject _)         = stringType
+objectTypeForBuiltinObject VoidObject               = voidType
+objectTypeForBuiltinObject (ListObject _ classType) = listType classType
 
 anyType :: ObjectType
-anyType = objectTypeFromClassName "Any"
+anyType = simpleObjectTypeFromClassName "Any"
 
 intType :: ObjectType
-intType = objectTypeFromClassName "Int"
+intType = simpleObjectTypeFromClassName "Int"
 
 boolType :: ObjectType
-boolType = objectTypeFromClassName "Bool"
+boolType = simpleObjectTypeFromClassName "Bool"
 
 charType :: ObjectType
-charType = objectTypeFromClassName "Char"
+charType = simpleObjectTypeFromClassName "Char"
 
 stringType :: ObjectType
-stringType = objectTypeFromClassName "String"
+stringType = simpleObjectTypeFromClassName "String"
 
 voidType :: ObjectType
-voidType = objectTypeFromClassName "Void"
+voidType = simpleObjectTypeFromClassName "Void"
+
+listType :: ClassType -> ObjectType
+listType genericParam = ObjectTypeClass classType
+    where classType = GeneralClassType (classIdentifierFromName "List") (GenericParameterPresent [genericParam])
 
 builtinClasses :: [ClassDecl]
 builtinClasses = [simpleBuiltinClass "Int", simpleBuiltinClass "Bool", simpleBuiltinClass "Char",
-                  simpleBuiltinClass "String", simpleBuiltinClass "Void", systemBuiltinClassDeclaration,
-                  simpleBuiltinClass "__local"]
+                  simpleBuiltinClass "String", simpleBuiltinClass "Void", builtinGenericClass "List",
+                  systemBuiltinClassDeclaration, simpleBuiltinClass "__local"]
+
+builtinClassNames :: [String]
+builtinClassNames = ["Int", "Bool", "Char", "String", "Void", "List", "System", "__local"]
 
 simpleBuiltinClass :: String -> ClassDecl
-simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable
-    (classIdentifierFromName name) SuperclassAbsent ClassBodyEmpty
+simpleBuiltinClass name = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty
+    where classType = simpleClassTypeFromName name
+
+builtinGenericClass :: String -> ClassDecl
+builtinGenericClass name = ClassDeclaration MConcrete MImmutable classType SuperclassAbsent ClassBodyEmpty
+    where classIdent = classIdentifierFromName name
+          classType = GeneralClassType classIdent singleGenericParameter
+
+singleGenericParameter :: GenericParameter
+singleGenericParameter = GenericParameterPresent [simpleClassTypeFromName "A"]
 
 systemBuiltinClassDeclaration :: ClassDecl
-systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classIdent SuperclassAbsent systemBuiltinClassBody
-    where classIdent = classIdentifierFromName "System"
+systemBuiltinClassDeclaration = ClassDeclaration MConcrete MSingleton classType SuperclassAbsent systemBuiltinClassBody
+    where classType = GeneralClassType (classIdentifierFromName "System") GenericParameterAbsent
 
 systemBuiltinClassBody :: ClassBody
 systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsAbsent (ActionsPresent actionDecls)
@@ -68,13 +84,25 @@ systemBuiltinClassBody = ClassBodyFilled ValuesAbsent VariablesAbsent FunctionsA
                          assertEqualsBuiltinActionDeclaration, printBuiltinActionDeclaration,
                          printLineBuiltinActionDeclaration]
 
+getListElements :: Object -> [Object]
+getListElements (BuiltinObject (ListObject elements _)) = elements
+
+getConstructorParameterTypesForBuiltinClass :: ClassIdent -> [ObjectType]
+getConstructorParameterTypesForBuiltinClass classIdent = case classNameFromIdentifier classIdent of
+    "Int"    -> [intType]
+    "Bool"   -> [boolType]
+    "Char"   -> [charType]
+    "String" -> [stringType]
+    "Void"   -> []
+    _        -> []
+
 shouldHaveUniformTypes :: MethodIdent -> Bool
-shouldHaveUniformTypes (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+shouldHaveUniformTypes methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_assertEquals" -> True
     _                        -> False
 
 getBuiltinMethodType :: MethodIdent -> MethodType
-getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+getBuiltinMethodType methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_exit"         -> exitBuiltinMethodType
     "__builtin_assert"       -> assertBuiltinMethodType
     "__builtin_assertEquals" -> assertEqualsBuiltinMethodType
@@ -82,7 +110,7 @@ getBuiltinMethodType (MethodIdentifier (LowerCaseIdent methodName)) = case metho
     "__builtin_printLine"    -> printLineBuiltinMethodType
 
 builtinWithImplicitContext :: MethodIdent -> Bool
-builtinWithImplicitContext (MethodIdentifier (LowerCaseIdent methodName)) = case methodName of
+builtinWithImplicitContext methodIdent = case methodNameFromIdentifier methodIdent of
     "__builtin_assert"       -> True
     "__builtin_assertEquals" -> True
     _                        -> False

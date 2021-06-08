@@ -1,0 +1,10 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val list1: List[Int] = List[Int](3, 4, 222, 5);
+            val list2: List[Int, Int] = 
+                List[Int, Int](3, 4, 222, 5); // GenericArgumentListInvalidError
+        }
+    }
+}

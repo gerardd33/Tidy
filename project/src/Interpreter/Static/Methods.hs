@@ -24,21 +24,21 @@ assertNoDeclarationRepetitions context idents  = do
         (showContext $ head duplicates) context
     returnVoid
 
-checkFunctionDeclaration :: ClassIdent -> FunctionDecl -> StaticCheckMonad ObjectType
-checkFunctionDeclaration classIdent (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
+checkFunctionDeclaration :: ClassType -> FunctionDecl -> StaticCheckMonad ObjectType
+checkFunctionDeclaration classType (FunctionDeclaration _ _ functionIdent functionType functionBody) = do
     let paramNames = map objectToMethodIdentifier $ getMethodParamNames functionType
     let withValuesNames = map objectToMethodIdentifier $ getFunctionWithValuesNames functionBody
     assertNoDeclarationRepetitions (showMethodContext functionIdent functionType) $ paramNames ++ withValuesNames
     (_, env) <- checkMethodParams functionIdent functionType
-    (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classIdent GenericParameterAbsent
+    (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classType
     local (const newEnv) $ checkFunctionBody functionIdent functionType functionBody
 
-checkActionDeclaration :: ClassIdent -> ActionDecl -> StaticCheckMonad ObjectType
-checkActionDeclaration classIdent (ActionDeclaration _ _ actionIdent actionType actionBody) = do
+checkActionDeclaration :: ClassType -> ActionDecl -> StaticCheckMonad ObjectType
+checkActionDeclaration classType (ActionDeclaration _ _ actionIdent actionType actionBody) = do
     let paramNames = map objectToMethodIdentifier $ getMethodParamNames actionType
     assertNoDeclarationRepetitions (showMethodContext actionIdent actionType) paramNames
     (_, env) <- checkMethodParams actionIdent actionType
-    (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classIdent GenericParameterAbsent
+    (_, newEnv) <- local (const env) $ setThisReferenceType $ ObjectTypeClass classType
     local (const newEnv) $ checkActionBody actionIdent actionType actionBody
 
 checkFunctionBody :: MethodIdent -> MethodType -> FunctionBody -> StaticCheckMonad ObjectType

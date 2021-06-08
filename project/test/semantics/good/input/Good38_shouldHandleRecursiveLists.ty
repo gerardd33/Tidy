@@ -1,0 +1,10 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val list: List[List[Int]] = List[List[Int]](List[Int](3, -4), 
+                List[Int](4, 4, 11), List[Int](), List[Int](533, 44833333221, 39, -2, 3));
+            System#printLine(list)
+        }
+    }
+}

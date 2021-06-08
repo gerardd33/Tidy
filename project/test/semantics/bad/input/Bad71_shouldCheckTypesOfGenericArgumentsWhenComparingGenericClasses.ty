@@ -1,0 +1,17 @@
+singleton class GenericTypes {
+    
+    actions: {
+        main: () -> Void = {
+            val list1: List[Int] = List[Int](3, 4, 222, 5);
+            val list2: List[String] = List[String]("One", "TWO", "Threee", "4", "Five", "Six");
+            val list3: List[Int] = List[Int](3, 4, 222);
+            val list4: List[Int] = List[Int](3, 4, 888, 929);
+            val list5: List[Int] = List[Int](3, 2 + 2, 222, 5);
+            
+            System#assert(list1 != list2) // UnexpectedTypeError
+            System#assert(list1 != list3)
+            System#assert(list1 != list4)
+            System#assertEquals(list1, list5)
+        }
+    }
+}

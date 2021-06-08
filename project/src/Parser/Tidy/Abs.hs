@@ -5,9 +5,9 @@
 
 module Parser.Tidy.Abs where
 
+import Prelude (Char, Double, Integer, String)
+import qualified Prelude as C (Eq, Ord, Show, Read, show, (++))
 import qualified Data.String
-import           Prelude     (Char, Double, Integer, String)
-import qualified Prelude     as C (Eq, Ord, Read, Show, show, (++))
 
 newtype UpperCaseIdent = UpperCaseIdent String
   deriving (C.Eq, C.Ord, C.Show, C.Read, Data.String.IsString)
@@ -22,10 +22,10 @@ data ClassIdent = ClassIdentifier UpperCaseIdent
   deriving (C.Eq, C.Ord, C.Read)
 
 data ClassDecl
-    = ClassDeclaration AbstractModifier ClassTypeModifier ClassIdent Inheritance ClassBody
+    = ClassDeclaration AbstractModifier ClassTypeModifier ClassType Inheritance ClassBody
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Inheritance = SuperclassAbsent | SuperclassPresent ClassIdent
+data Inheritance = SuperclassAbsent | SuperclassPresent ClassType
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ClassBody
@@ -57,13 +57,16 @@ data ObjectIdent = ObjectIdentifier LowerCaseIdent
   deriving (C.Eq, C.Ord, C.Read)
 
 data ObjectType
-    = ObjectTypeClass ClassIdent GenericParameter
+    = ObjectTypeClass ClassType
     | ObjectTypeFunction MethodType
     | ObjectTypeAction MethodType
   deriving (C.Eq, C.Ord, C.Read)
 
+data ClassType = GeneralClassType ClassIdent GenericParameter
+  deriving (C.Eq, C.Ord, C.Read)
+
 data GenericParameter
-    = GenericParameterAbsent | GenericParameterPresent [ClassIdent]
+    = GenericParameterAbsent | GenericParameterPresent [ClassType]
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data ObjectDecl
@@ -177,18 +180,18 @@ data FunctionCall = CallFunction MethodIdent ArgList
 data ActionCall = CallAction MethodIdent ArgList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data CtorCall = CallConstructor ClassIdent ArgList
+data CtorCall = CallConstructor ClassType ArgList
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data GetExpr
     = GetExpressionInstance ObjectIdent FunctionCall
-    | GetExpressionStatic ClassIdent FunctionCall
+    | GetExpressionStatic ClassType FunctionCall
     | GetExpressionChain GetExpr FunctionCall
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data DoExpr
     = DoExpressionInstance ObjectIdent ActionCall
-    | DoExpressionStatic ClassIdent ActionCall
+    | DoExpressionStatic ClassType ActionCall
     | DoExpressionChain GetExpr ActionCall
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
@@ -221,7 +224,7 @@ data ElseBranch
 data MatchCase = FCase Pattern Expr
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
-data Pattern = FTypePattern ClassIdent
+data Pattern = FTypePattern ClassType
   deriving (C.Eq, C.Ord, C.Show, C.Read)
 
 data RelationalOperator
@@ -242,10 +245,12 @@ instance C.Show ObjectIdent where
 instance C.Show ClassIdent where
     show (ClassIdentifier (UpperCaseIdent identifier)) = identifier
 
+instance C.Show ClassType where
+    show (GeneralClassType classIdent GenericParameterAbsent) = C.show classIdent
+    show (GeneralClassType classIdent (GenericParameterPresent genericParams)) = C.show classIdent C.++ C.show genericParams
+
 instance C.Show ObjectType where
-    show (ObjectTypeClass classIdent GenericParameterAbsent) = C.show classIdent
-    show (ObjectTypeClass classIdent (GenericParameterPresent genericParams))
-        = C.show classIdent C.++ C.show genericParams
+    show (ObjectTypeClass classType) = C.show classType
     show (ObjectTypeFunction methodType) = C.show methodType
     show (ObjectTypeAction methodType) = C.show methodType
 
