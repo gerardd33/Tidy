@@ -66,6 +66,8 @@ checkExpression context (EImperativeControlFlow (IIf predicateExpr body optional
     liftPureStatic $ checkImperativeIf context predicateExpr body optionalElseBranch
 checkExpression context (EImperativeControlFlow (IWhile predicateExpr body)) =
     liftPureStatic $ checkWhile context predicateExpr body
+checkExpression context (EImperativeControlFlow (IForeach iteratorDecl predicateExpr body)) =
+    liftPureStatic $ checkForeach context iteratorDecl predicateExpr body
 
 checkExpression _ (ELocalDeclaration localDecl) = checkLocalObjectDeclaration localDecl
 
@@ -137,10 +139,11 @@ checkGetExpressionOnObject :: String -> GenericsMap -> ObjectType -> FunctionCal
 checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent ArgumentListAbsent) =
     checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent []))
 checkGetExpressionOnObject context genericsMap objectType (CallFunction functionIdent (ArgumentListPresent args)) = do
-    argTypes <- checkArgumentList context args
+    let callContext = context ++ "." ++ showContext functionIdent
+    argTypes <- checkArgumentList callContext args
     takeGetter <- hasGetterStatic objectType functionIdent
-    if takeGetter then checkGetterCall context genericsMap objectType functionIdent argTypes
-    else checkMemberFunctionCall context genericsMap objectType functionIdent argTypes
+    if takeGetter then checkGetterCall callContext genericsMap objectType functionIdent argTypes
+    else checkMemberFunctionCall callContext genericsMap objectType functionIdent argTypes
 
 checkFunctionalIf :: String -> Expr -> ThenBranch -> ElseBranch -> StaticCheckMonad ObjectType
 checkFunctionalIf context predicateExpr thenBranch elseBranch = do
@@ -171,8 +174,21 @@ checkImperativeIf context predicateExpr body optionalElseBranch = do
 
 checkWhile :: String -> Expr -> [Expr] -> StaticCheckMonad ObjectType
 checkWhile context predicateExpr body = do
-    checkExpressionList context body
-    return voidType
+    let loopContext = "while (" ++ showContext predicateExpr ++ ")"
+    checkPredicate loopContext predicateExpr False
+    checkExpressionList loopContext body
+    returnVoid
+
+checkForeach :: String -> ObjectDecl -> Expr -> [Expr] -> StaticCheckMonad ObjectType
+checkForeach context iteratorDecl listExpr body = do
+    let loopContext = "for (" ++ showContext iteratorDecl ++ " in " ++ showContext listExpr ++ ")"
+    assertPureExpression context listExpr
+    (_, env) <- checkObjectDeclaration UninitializedRequired False iteratorDecl
+    let iteratorType = objectTypeFromDeclaration iteratorDecl
+    (listExprType, _) <- checkExpression context listExpr
+    assertTypesMatch loopContext (listType $ classTypeFromObjectType iteratorType) listExprType
+    local (const env) $ checkExpressionList loopContext body
+    returnVoid
 
 checkPredicate :: String -> Expr -> Bool -> StaticCheckMonad ObjectType
 checkPredicate context predicateExpr checkPure = do
@@ -204,10 +220,11 @@ checkDoExpressionOnObject :: String -> GenericsMap -> ObjectType -> ActionCall -
 checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent ArgumentListAbsent) =
     checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent []))
 checkDoExpressionOnObject context genericsMap objectType (CallAction actionIdent (ArgumentListPresent args)) = do
-    argTypes <- checkArgumentList context args
+    let callContext = context ++ "#" ++ showContext actionIdent
+    argTypes <- checkArgumentList callContext args
     takeSetter <- hasSetterStatic objectType actionIdent
-    if takeSetter then checkSetterCall context genericsMap objectType actionIdent argTypes
-    else checkMemberActionCall context genericsMap objectType actionIdent argTypes
+    if takeSetter then checkSetterCall callContext genericsMap objectType actionIdent argTypes
+    else checkMemberActionCall callContext genericsMap objectType actionIdent argTypes
 
 checkLocalObjectDeclaration :: LocalDecl -> StaticCheckMonad StaticResult
 checkLocalObjectDeclaration (LocalValueDeclaration objectDecl) =

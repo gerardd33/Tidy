@@ -88,6 +88,9 @@ evaluateExpression (EImperativeControlFlow (IIf predicate body optionalElseBranc
 
 evaluateExpression (EImperativeControlFlow (IWhile predicate body)) = evaluateWhile predicate body
 
+evaluateExpression (EImperativeControlFlow (IForeach iteratorDecl list body)) =
+    evaluateForeach iteratorDecl list body
+
 evaluateExpression (EBuiltin methodIdent) = evaluateBuiltinMethodCall methodIdent
 
 
@@ -248,3 +251,8 @@ evaluateWhile predicate body  = do
     if isTrue predicateValue
     then evaluateExpressionList body >> evaluateWhile predicate body
     else returnPass
+
+evaluateForeach :: ObjectDecl -> Expr -> [Expr] -> StateMonad Result
+evaluateForeach iteratorDecl list body  = do
+--     (_, env) <- evaluateLocalValueDeclaration $ getProperDeclaration iteratorDecl
+    returnPass
