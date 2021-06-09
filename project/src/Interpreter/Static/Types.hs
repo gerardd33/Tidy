@@ -12,21 +12,6 @@ import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Expressions
 
 
-typesMatch :: ObjectType -> ObjectType -> Bool
-typesMatch expected actual = expected == anyType || expected == actual
-
-assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
-assertTypesMatch context expected actual = do
-    unless (typesMatch expected actual) $
-        throwError $ UnexpectedTypeError (showContext expected) (showContext actual) context
-    returnVoid
-
-assertReturnTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
-assertReturnTypesMatch context expected actual = do
-    when (expected /= anyType && expected /= actual) $
-        throwError $ UnexpectedReturnTypeError (showContext expected) (showContext actual) context
-    returnVoid
-
 returnPureStatic :: StaticCheckMonad StaticResult -> StaticCheckMonad ObjectType
 returnPureStatic calculation = do
     (returnType, _) <- calculation
@@ -50,3 +35,10 @@ checkTypeUniformity :: String -> [ObjectType] -> StaticCheckMonad ObjectType
 checkTypeUniformity context types = do
     if length (List.nub types) /= 1 then throwError $ TypesDoNotMatchError context (showContext types)
     else returnVoid
+
+assertNoDeclarationRepetitions :: String -> [ObjectIdent] -> StaticCheckMonad ObjectType
+assertNoDeclarationRepetitions context idents  = do
+    let duplicates = idents List.\\ List.nub idents
+    unless (null duplicates) $ throwError $ DuplicateDeclarationError
+        (showContext $ head duplicates) context
+    returnVoid

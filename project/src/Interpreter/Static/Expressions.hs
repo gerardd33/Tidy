@@ -92,13 +92,13 @@ checkConstructorCall :: String -> ClassType -> ArgList -> StaticCheckMonad Objec
 checkConstructorCall context classType ArgumentListAbsent =
     checkConstructorCall context classType (ArgumentListPresent [])
 checkConstructorCall context classType (ArgumentListPresent args) = do
-    classDecl <- getClassDeclarationStatic classType
     argTypes <- checkArgumentList context args
     let callContext = show classType ++ "(" ++ showContext args ++ ")"
-    let genericParams = getGenericParameterList classDecl
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic classType
+    let genericParams = concatMap getGenericParameterList superclassesInclusive
     let genericArgs = genericParameterListFromClassType classType
     genericsMap <- bindGenericParameters callContext genericParams genericArgs
-    let unmappedParamTypes = getConstructorParameterTypes classDecl
+    let unmappedParamTypes = concatMap getConstructorParameterTypes superclassesInclusive
     let paramTypes = map (mapObjectTypeIfGeneric genericsMap) unmappedParamTypes
     if classNameFromClassType classType == "List" then checkListConstructorArguments callContext genericArgs argTypes
     else when (argTypes /= paramTypes) $ throwError $ ConstructorArgumentListInvalidError
@@ -282,35 +282,35 @@ checkSetterCall context genericsMap objectType actionIdent argTypes = do
 
 checkMemberFunctionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberFunctionCall context genericsMap objectType functionIdent argTypes = do
-    let classType = classTypeFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classType
-    let functionType = functionTypeFromClassDeclaration classDecl functionIdent
-    when (isNothing functionType) $ throwError $ NoSuchFunctionError context (showContext functionIdent)
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType objectType
+    let found = filter isJust $ map (functionTypeFromClassDeclaration functionIdent) superclassesInclusive
+    functionType <- case found of [] -> throwError $ NoSuchFunctionError context (showContext functionIdent)
+                                  (Just foundFunctionType):_ -> return foundFunctionType
     let methodContext = context ++ "." ++ showContext functionIdent
     let builtinFunctionIdent = builtinMethodIdentifier functionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinFunctionIdent]
     if shouldHaveUniformTypes builtinFunctionIdent then checkTypeUniformity methodContext argTypes else returnVoid
-    checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust functionType) (argTypes ++ implicitArgTypes)
-    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust functionType
+    checkMethodArguments methodContext genericsMap (getMethodParamTypes functionType) (argTypes ++ implicitArgTypes)
+    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType functionType
 
 checkMemberActionCall :: String -> Map.Map ObjectType ObjectType -> ObjectType -> MethodIdent -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMemberActionCall context genericsMap objectType actionIdent argTypes = do
-    let classType = classTypeFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classType
-    let actionType = actionTypeFromClassDeclaration classDecl actionIdent
-    when (isNothing actionType) $ throwError $ NoSuchActionError context (showContext actionIdent)
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType objectType
+    let found = filter isJust $ map (actionTypeFromClassDeclaration actionIdent) superclassesInclusive
+    actionType <- case found of [] -> throwError $ NoSuchActionError context (showContext actionIdent)
+                                (Just foundActionType):_ -> return foundActionType
     let methodContext = context ++ "#" ++ showContext actionIdent
     let builtinActionIdent = builtinMethodIdentifier actionIdent
     let implicitArgTypes = [stringType | builtinWithImplicitContext builtinActionIdent]
     if shouldHaveUniformTypes builtinActionIdent then checkTypeUniformity methodContext argTypes else returnVoid
-    checkMethodArguments methodContext genericsMap (getMethodParamTypes $ fromJust actionType) (argTypes ++ implicitArgTypes)
-    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType $ fromJust actionType
+    checkMethodArguments methodContext genericsMap (getMethodParamTypes actionType) (argTypes ++ implicitArgTypes)
+    return $ mapObjectTypeIfGeneric genericsMap $ getMethodReturnType actionType
 
 checkMethodArguments :: String -> Map.Map ObjectType ObjectType -> [ObjectType] -> [ObjectType] -> StaticCheckMonad ObjectType
 checkMethodArguments context genericsMap unmappedExpected actual = do
     let expected = map (mapObjectTypeIfGeneric genericsMap) unmappedExpected
-    let argumentTypesMatch = all (uncurry typesMatch) $ zip expected actual
-    unless (length expected == length actual && argumentTypesMatch) $ throwError $
+    argumentTypeMatches <- zipWithM typesMatch expected actual
+    unless (length expected == length actual && and argumentTypeMatches) $ throwError $
             MethodArgumentListInvalidError context (showContext expected) (showContext actual)
     returnVoid
 

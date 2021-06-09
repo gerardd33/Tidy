@@ -19,7 +19,7 @@ immutable class DoubleContainer[A, B] {
 }
 
 
-mutable class TripleContainer[A, B, C] extends ContainerWith[B] {
+mutable class TripleContainer[A, B, C] {
     
     values: {
         mainElements: DoubleContainer[A, B];

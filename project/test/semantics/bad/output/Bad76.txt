@@ -1,0 +1,4 @@
+Error: ConstructorArgumentListInvalidError: Constructor called with invalid argument types.
+Expected: Int String String Int
+Actual: Int Int String String Int
+In constructor call: Laptop(17, 333, "IPS", "i7", 8)

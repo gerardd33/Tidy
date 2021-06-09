@@ -1,0 +1,1 @@
+Error: NoSuchFunctionError: Object "product2" has no function named "manufacturer".

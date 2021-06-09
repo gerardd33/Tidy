@@ -1,0 +1,37 @@
+mutable class Device {
+    
+    variables: {
+        model: String = "233X";
+    }
+    
+    functions: {
+        compareModel: (x: String) -> Bool = x == this.model
+    }
+    
+    actions: {
+        upgradeModel: (suffix: String) -> Void = this#model(this.model ++ suffix)
+    }
+}
+
+mutable class Laptop extends Device {
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String;
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
+    
+    actions: {
+        main: () -> Void = {
+            val laptop: Laptop = Laptop(17, "IPS", "i7", 8);
+            System#assert(laptop.compareModel("233X"))
+            
+            laptop#upgradeModel("v2")
+            System#assert(laptop.compareModel("233Xv2"))
+        }
+    }
+}

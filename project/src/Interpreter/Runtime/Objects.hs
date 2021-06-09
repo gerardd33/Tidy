@@ -20,8 +20,9 @@ import           Interpreter.Runtime.Types
 buildObjectEnv :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad ObjectEnv
 buildObjectEnv objectType constructorArgs initializedAttributes = do
     attributes <- getAttributeMap objectType constructorArgs initializedAttributes
-    objectValueList <- getValueNames objectType
-    let (valuesMap, variablesMap) = Map.partitionWithKey (\name _ -> name `elem` objectValueList) attributes
+    superclassesInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let valueNames = concatMap valueNamesFromDeclaration superclassesInclusive
+    let (valuesMap, variablesMap) = Map.partitionWithKey (\name _ -> name `elem` valueNames) attributes
     valuesEnv <- buildAttributeEnv valuesMap
     variablesEnv <- buildAttributeEnv variablesMap
     return $ ObjectEnv valuesEnv variablesEnv
@@ -34,7 +35,7 @@ buildSingletonClassInstance classIdent initializedAttributes = do
 
 getAttributeMap :: ObjectType -> [Object] -> [(ObjectIdent, Object)] -> StateMonad (Map.Map ObjectIdent Object)
 getAttributeMap objectType constructorArgs initializedAttributes = do
-    classDecl <- getClassDeclaration $ classTypeFromObjectType objectType
-    let constructorParamList = getConstructorParameterNames classDecl
+    superclassesInclusive <- getAllSuperclassesInclusive $ classTypeFromObjectType objectType
+    let constructorParamList = concatMap getConstructorParameterNames superclassesInclusive
     let attributesFromConstructor = Map.fromList $ zip constructorParamList constructorArgs
     return $ Map.union (Map.fromList initializedAttributes) attributesFromConstructor

@@ -1,7 +1,7 @@
 mutable class Product {
     
     values: {
-        id: Int;
+        id: Int = 1342;
     }
     
     variables: {
@@ -17,7 +17,7 @@ mutable class Device extends Product {
     }
     
     variables: {
-        manufacturer: String;
+        manufacturer: String = "Dell";
         model: String = "233X";
     }
 }
@@ -27,7 +27,7 @@ mutable class Laptop extends Device {
     values: {
         displaySize: Int;
         displayType: String;
-        processor: String = "i7";
+        processor: String;
         ramGb: Int;
     }
 }
@@ -36,11 +36,12 @@ singleton class Inheritance {
     
     actions: {
         main: () -> Void = {
-            val product1: Product = Laptop(1342, "Dell", 17, "IPS", 8);
-            val device1: Device = Laptop(3392, "Huawei", 15, "TN", 9);
-            val product2: Product = Device(222, "Apple");
-            
-            System#printLine(product2.manufacturer) // NoSuchFunctionError
+            val laptop: Laptop = Laptop(17, 333, "IPS", "i7", 8);
+            System#assertEquals(2000, laptop.price)
+            System#assertEquals("Dell", laptop.manufacturer)
+            System#assertEquals("i7", laptop.processor)
+            System#assertEquals("3838DJ323", laptop.serialNumber)
+            System#assertEquals(17, laptop.displaySize)
         }
     }
 }

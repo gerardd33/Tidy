@@ -2,7 +2,7 @@ module Interpreter.Static.Environments where
 
 import           Control.Monad.Except
 import           Control.Monad.Reader
-import qualified Data.Map                         as Map
+import qualified Data.Map                          as Map
 import           Data.Maybe
 
 import           Interpreter.Common.Types
@@ -11,10 +11,30 @@ import           Parser.Tidy.Abs
 import           Interpreter.Common.Errors
 import           Interpreter.Common.Utils.Builtin
 import           Interpreter.Common.Utils.Classes
+import           Interpreter.Common.Utils.Generics
 import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 import           Interpreter.Static.Types
 
+
+typesMatch :: ObjectType -> ObjectType -> StaticCheckMonad Bool
+typesMatch expected actual = do
+    if isTypeGeneric expected then return $ expected == actual
+    else do superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType actual
+            let superclassInclusiveNames = map (ObjectTypeClass . getClassType) superclassesInclusive
+            return $ expected `elem` superclassInclusiveNames
+
+assertTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
+assertTypesMatch context expected actual = do
+    matched <- typesMatch expected actual
+    unless matched $ throwError $ UnexpectedTypeError (showContext expected) (showContext actual) context
+    returnVoid
+
+assertReturnTypesMatch :: String -> ObjectType -> ObjectType -> StaticCheckMonad ObjectType
+assertReturnTypesMatch context expected actual = do
+    matched <- typesMatch expected actual
+    unless matched $ throwError $ UnexpectedReturnTypeError (showContext expected) (showContext actual) context
+    returnVoid
 
 getClassDeclarationStatic :: ClassType -> StaticCheckMonad ClassDecl
 getClassDeclarationStatic classType = do
@@ -23,6 +43,16 @@ getClassDeclarationStatic classType = do
     let lookup = Map.lookup classIdent classEnv
     case lookup of Nothing -> throwError $ ClassNotInScopeError $ show classIdent
                    Just classDecl -> return classDecl
+
+getAllSuperclassesInclusiveStatic :: ClassType -> StaticCheckMonad [ClassDecl]
+getAllSuperclassesInclusiveStatic = collectAllSuperclassesInclusiveStatic []
+
+collectAllSuperclassesInclusiveStatic :: [ClassDecl] -> ClassType -> StaticCheckMonad [ClassDecl]
+collectAllSuperclassesInclusiveStatic collected classType = do
+    classDecl <- getClassDeclarationStatic classType
+    if classType == anyClassType then return (classDecl:collected)
+    else do let superclassType = getSuperclassType classDecl
+            collectAllSuperclassesInclusiveStatic (classDecl:collected) superclassType
 
 setThisReferenceType :: ObjectType -> StaticCheckMonad StaticResult
 setThisReferenceType newThisReferenceType = do
@@ -77,10 +107,10 @@ getAttributeTypeStatic :: String -> ObjectType -> ObjectIdent -> StaticCheckMona
 getAttributeTypeStatic context objectType attributeIdent = do
     if objectType == localReferenceType then checkLocalObject attributeIdent
     else do let classType = classTypeFromObjectType objectType
-            classDecl <- getClassDeclarationStatic classType
-            let lookup = attributeTypeFromClassDeclaration classDecl attributeIdent
-            case lookup of Nothing -> throwError $ NoSuchAttributeError context (showContext attributeIdent)
-                           Just attributeType -> return attributeType
+            superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType objectType
+            let found = filter isJust $ map (attributeTypeFromClassDeclaration attributeIdent) superclassesInclusive
+            case found of [] -> throwError $ NoSuchAttributeError context (showContext attributeIdent)
+                          (Just attributeType):_ -> return attributeType
 
 getLocalValueNamesStatic :: StaticCheckMonad [ObjectIdent]
 getLocalValueNamesStatic = do
@@ -94,21 +124,19 @@ getLocalVariableNamesStatic = do
 
 hasGetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasGetterStatic objectType getterIdent = do
-    let classType = classTypeFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classType
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType objectType
+    let classAttributes = concatMap attributeNamesFromDeclaration superclassesInclusive
     localValueNames <- getLocalValueNamesStatic
     localVariableNames <- getLocalVariableNamesStatic
     let localObjects = localValueNames ++ localVariableNames
-    let classAttributes = attributeNamesFromDeclaration classDecl
     let attributeNames = if objectType == localReferenceType then localObjects else classAttributes
     return $ hasAccessorIn getterIdent attributeNames
 
 hasSetterStatic :: ObjectType -> MethodIdent -> StaticCheckMonad Bool
 hasSetterStatic objectType setterIdent = do
-    let classType = classTypeFromObjectType objectType
-    classDecl <- getClassDeclarationStatic classType
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic $ classTypeFromObjectType objectType
+    let classVariables = concatMap variableNamesFromDeclaration superclassesInclusive
     localVariables <- getLocalVariableNamesStatic
-    let classVariables = variableNamesFromDeclaration classDecl
     let variableNames = if objectType == localReferenceType then localVariables else classVariables
     return $ hasAccessorIn setterIdent variableNames
 
@@ -117,3 +145,9 @@ assertNoPreviousDuplicateDeclaration context objectIdent = do
     lookup <- tryGetLocalObjectType objectIdent
     case lookup of Nothing -> returnVoid
                    Just _ -> throwError $ DuplicateDeclarationError (showContext objectIdent) context
+
+checkAttributeRepetitions :: String -> ClassType -> StaticCheckMonad ObjectType
+checkAttributeRepetitions context classType = do
+    superclassesInclusive <- getAllSuperclassesInclusiveStatic classType
+    let attributeNames = concatMap attributeNamesFromDeclaration superclassesInclusive
+    assertNoDeclarationRepetitions context attributeNames

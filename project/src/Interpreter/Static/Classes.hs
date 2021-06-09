@@ -23,11 +23,23 @@ checkClasses declarations = mapM_ checkClass declarations >> returnVoid
 
 checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
+    checkInheritance classDecl
     (_, env) <- registerEmptyClassesInEnv $ getGenericParameterList classDecl
-    let getterNames = map objectToMethodIdentifier $ attributeNamesFromDeclaration classDecl
-    let memberNames =  getterNames ++ methodNamesFromDeclaration classDecl
+    let methodNames = map methodToObjectIdentifier $ methodNamesFromDeclaration classDecl
+    let memberNames = methodNames ++ attributeNamesFromDeclaration classDecl
     assertNoDeclarationRepetitions (showContext $ getClassType classDecl) memberNames
     local (const env) $ checkSections classDecl
+
+checkInheritance :: ClassDecl -> StaticCheckMonad ObjectType
+checkInheritance classDecl = do
+    let classTypeModifier = getClassTypeModifier classDecl
+    let superclassType = getSuperclassType classDecl
+    superclassDecl <- getClassDeclarationStatic superclassType
+    let superclassTypeModifier = getClassTypeModifier superclassDecl
+    unless (isInheritanceLegal classTypeModifier superclassTypeModifier superclassType) $
+        throwError $ IllegalInheritanceError (show $ getClassType classDecl)
+            (tail $ show classTypeModifier) (tail $ show superclassTypeModifier)
+    returnVoid
 
 checkSections :: ClassDecl -> StaticCheckMonad ObjectType
 checkSections (ClassDeclaration _ classTypeModifier classType _ classBody) = do
@@ -41,6 +53,7 @@ checkSections (ClassDeclaration _ classTypeModifier classType _ classBody) = do
 checkClassBody :: ClassType -> ClassTypeModifier -> ClassBody -> StaticCheckMonad ObjectType
 checkClassBody _ _ ClassBodyEmpty = returnVoid
 checkClassBody classType classTypeModifier (ClassBodyFilled values variables functions actions) = do
+    checkAttributeRepetitions (showContext $ classIdentifierFromClassType classType) classType
     checkValuesSection (if classTypeModifier == MSingleton then InitializedRequired else NoneRequired) values
     checkVariablesSection NoneRequired variables
     checkFunctionsSection classType functions

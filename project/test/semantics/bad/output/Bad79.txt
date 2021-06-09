@@ -1,0 +1,2 @@
+Error: IllegalInheritanceError: Immutable classes cannot inherit from Singleton classes.
+In class: Laptop

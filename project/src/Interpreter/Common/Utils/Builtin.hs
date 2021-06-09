@@ -35,6 +35,9 @@ objectTypeForBuiltinObject (ListObject _ classType) = listType classType
 anyType :: ObjectType
 anyType = simpleObjectTypeFromClassName "Any"
 
+anyClassType :: ClassType
+anyClassType = simpleClassTypeFromName "Any"
+
 intType :: ObjectType
 intType = simpleObjectTypeFromClassName "Int"
 
@@ -55,9 +58,9 @@ listType genericParam = ObjectTypeClass classType
     where classType = GeneralClassType (classIdentifierFromName "List") (GenericParameterPresent [genericParam])
 
 builtinClasses :: [ClassDecl]
-builtinClasses = [simpleBuiltinClass "Int", simpleBuiltinClass "Bool", simpleBuiltinClass "Char",
-                  simpleBuiltinClass "String", simpleBuiltinClass "Void", builtinGenericClass "List",
-                  systemBuiltinClassDeclaration, simpleBuiltinClass "__local"]
+builtinClasses = [simpleBuiltinClass "Any", simpleBuiltinClass "Int", simpleBuiltinClass "Bool",
+                  simpleBuiltinClass "Char", simpleBuiltinClass "String", simpleBuiltinClass "Void",
+                  builtinGenericClass "List", systemBuiltinClassDeclaration, simpleBuiltinClass "__local"]
 
 builtinClassNames :: [String]
 builtinClassNames = ["Int", "Bool", "Char", "String", "Void", "List", "System", "__local"]

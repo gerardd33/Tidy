@@ -1,0 +1,14 @@
+singleton class Inheritance {
+    
+    actions: {
+        main: () -> Void = {
+            val x: Any = 3;
+            val y: Any = "some string";
+            val z: Any = List[Int](3, 4, 10);
+            
+            System#printLine(x)
+            System#printLine(y)
+            System#printLine(z)
+        }
+    }
+}

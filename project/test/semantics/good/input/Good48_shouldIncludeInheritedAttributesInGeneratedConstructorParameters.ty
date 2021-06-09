@@ -36,11 +36,14 @@ singleton class Inheritance {
     
     actions: {
         main: () -> Void = {
-            val product1: Product = Laptop(1342, "Dell", 17, "IPS", 8);
-            val device1: Device = Laptop(3392, "Huawei", 15, "TN", 9);
-            val product2: Product = Device(222, "Apple");
+            val laptop: Laptop = Laptop(1342, "Dell", 17, "IPS", 8);
             
-            System#printLine(product2.manufacturer) // NoSuchFunctionError
+            System#assertEquals(1342, laptop.id)
+            System#assertEquals(2000, laptop.price)
+            System#assertEquals("Dell", laptop.manufacturer)
+            
+            laptop#price(3000)
+            System#assertEquals(3000, laptop.price)
         }
     }
 }

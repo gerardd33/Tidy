@@ -33,6 +33,7 @@ data CompilationError
     | NoSuchFunctionError String String
     | NoSuchActionError String String
     | NonSingletonClassError String
+    | IllegalInheritanceError String String String
     | CompilationError String
 
 instance Show RuntimeException where
@@ -76,13 +77,15 @@ instance Show CompilationError where
         "GenericArgumentListInvalidError: Generic class constructor or static expression " ++ context ++
         " called with invalid generic arguments." ++ "\nExpected: " ++ expected ++ "\nActual: " ++ actual
     show (NoSuchAttributeError object attribute) = "NoSuchAttributeError: Object " ++ show object ++
-        " has no attribute named " ++ attribute ++ "."
+        " has no attribute named " ++ show attribute ++ "."
     show (NoSuchFunctionError object method) = "NoSuchFunctionError: Object " ++ show object ++
         " has no function named " ++ show method ++ "."
     show (NoSuchActionError object method) = "NoSuchActionError: Object " ++ show object ++
         " has no action named " ++ show method ++ "."
     show (NonSingletonClassError context) = "NonSingletonClassError: Non-singleton classes cannot be referenced" ++
         " from a static context.\nIn expression: " ++ context
+    show (IllegalInheritanceError context classType superclassType) = "IllegalInheritanceError: " ++ classType ++
+        " classes cannot inherit from " ++ superclassType ++ " classes.\nIn class: " ++ context
     show (CompilationError message) = "CompilationError: " ++ message
 
 

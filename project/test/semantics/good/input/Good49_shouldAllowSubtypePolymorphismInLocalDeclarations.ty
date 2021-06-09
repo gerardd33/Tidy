@@ -40,7 +40,12 @@ singleton class Inheritance {
             val device1: Device = Laptop(3392, "Huawei", 15, "TN", 9);
             val product2: Product = Device(222, "Apple");
             
-            System#printLine(product2.manufacturer) // NoSuchFunctionError
+            System#assertEquals(1342, product1.id)
+            System#assertEquals(2000, product1.price)
+            
+            product2#price(1500)
+            System#assertEquals(1500, product2.price)
+            System#assertEquals("Huawei", device1.manufacturer)
         }
     }
 }
