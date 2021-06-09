@@ -13,6 +13,15 @@ import           Interpreter.Common.Utils.Objects
 import           Interpreter.Common.Utils.Types
 
 
+allowedInheritanceConfigurations :: [(ClassTypeModifier, ClassTypeModifier)]
+allowedInheritanceConfigurations = [(MSingleton, MSingleton), (MImmutable, MImmutable),
+                                    (MMutable, MMutable), (MMutable, MImmutable)]
+
+isInheritanceLegal :: ClassTypeModifier -> ClassTypeModifier -> ClassType -> Bool
+isInheritanceLegal classTypeModifier superclassTypeModifier superclassType =
+    (classTypeModifier, superclassTypeModifier) `elem` allowedInheritanceConfigurations ||
+    (classTypeModifier == MSingleton && superclassType == anyClassType)
+
 getClassIdentifier :: ClassDecl -> ClassIdent
 getClassIdentifier (ClassDeclaration _ _ classType _ _) = classIdentifierFromClassType classType
 

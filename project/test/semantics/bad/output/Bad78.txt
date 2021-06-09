@@ -1,0 +1,2 @@
+Error: IllegalInheritanceError: Immutable classes cannot inherit from Mutable classes.
+In class: Laptop

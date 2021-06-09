@@ -33,6 +33,7 @@ data CompilationError
     | NoSuchFunctionError String String
     | NoSuchActionError String String
     | NonSingletonClassError String
+    | IllegalInheritanceError String String String
     | CompilationError String
 
 instance Show RuntimeException where
@@ -83,6 +84,8 @@ instance Show CompilationError where
         " has no action named " ++ show method ++ "."
     show (NonSingletonClassError context) = "NonSingletonClassError: Non-singleton classes cannot be referenced" ++
         " from a static context.\nIn expression: " ++ context
+    show (IllegalInheritanceError context classType superclassType) = "IllegalInheritanceError: " ++ classType ++
+        " classes cannot inherit from " ++ superclassType ++ " classes.\nIn class: " ++ context
     show (CompilationError message) = "CompilationError: " ++ message
 
 

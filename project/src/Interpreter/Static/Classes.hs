@@ -23,11 +23,23 @@ checkClasses declarations = mapM_ checkClass declarations >> returnVoid
 
 checkClass :: ClassDecl -> StaticCheckMonad ObjectType
 checkClass classDecl = do
+    checkInheritance classDecl
     (_, env) <- registerEmptyClassesInEnv $ getGenericParameterList classDecl
     let methodNames = map methodToObjectIdentifier $ methodNamesFromDeclaration classDecl
     let memberNames = methodNames ++ attributeNamesFromDeclaration classDecl
     assertNoDeclarationRepetitions (showContext $ getClassType classDecl) memberNames
     local (const env) $ checkSections classDecl
+
+checkInheritance :: ClassDecl -> StaticCheckMonad ObjectType
+checkInheritance classDecl = do
+    let classTypeModifier = getClassTypeModifier classDecl
+    let superclassType = getSuperclassType classDecl
+    superclassDecl <- getClassDeclarationStatic superclassType
+    let superclassTypeModifier = getClassTypeModifier superclassDecl
+    unless (isInheritanceLegal classTypeModifier superclassTypeModifier superclassType) $
+        throwError $ IllegalInheritanceError (show $ getClassType classDecl)
+            (tail $ show classTypeModifier) (tail $ show superclassTypeModifier)
+    returnVoid
 
 checkSections :: ClassDecl -> StaticCheckMonad ObjectType
 checkSections (ClassDeclaration _ classTypeModifier classType _ classBody) = do

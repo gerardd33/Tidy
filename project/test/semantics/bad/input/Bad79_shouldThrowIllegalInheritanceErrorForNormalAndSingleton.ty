@@ -1,0 +1,34 @@
+singleton class Product {
+    
+    values: {
+        id: Int = 3;
+        price: Int = 2000;
+    }
+}
+
+
+singleton class Device extends Product {
+    
+    values: {
+        serialNumber: String = "3838DJ323";
+        manufacturer: String = "X";
+        model: String = "233X";
+    }
+}
+
+immutable class Laptop extends Device { // IllegalInheritanceError
+    
+    values: {
+        displaySize: Int;
+        displayType: String;
+        processor: String = "i7";
+        ramGb: Int;
+    }
+}
+
+singleton class Inheritance {
+    
+    actions: {
+        main: () -> Void = Pass
+    }
+}
