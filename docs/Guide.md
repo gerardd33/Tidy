@@ -36,7 +36,7 @@ As you can see, there are four possible types of class members:
 
 The order of the sections is important but you can skip the sections you don't need.
 
-Mutable classes are a tool to store state and work with side effects without a need for things like monads, but you should use them carefully. The idea is to build the core of your program, and in general all the components that don't need state and side effets, using clear, transparent flows with immutable classes and functions, using mutable classes either on the edges of your flows (e.g. as places for storage, interactions or entry points) or in other well-selected isolated places, reasonably decoupled from other components. When in doubt, make your class immutable, you can easily change it to mutable later if you decide this is the place where you need mutable state or side effects.
+Mutable classes are a tool to store state and work with side effects without a need for things like monads, but you should use them carefully. A good pattern is to build the core of your program, and in general all the components that don't need state and side effets, using clear, transparent flows with immutable classes and functions, using mutable classes on the edges of your flows (e.g. as places for storage, external interactions or entry points) or in other well-selected isolated places, reasonably decoupled from other components. When in doubt, make your class immutable, you can easily change it to mutable later if you decide this is a place where you need mutable state or side effects.
 
 
 ## Immutable classes
@@ -75,14 +75,14 @@ singleton class ClassName {
 }
 ```
 
-It's the same as for an immutable class but it can also have actions. This means they don't have their own internal state but can produce side effects in other places. Singleton classes cannot be instantiated and to access their members you use the name of the class, not the name of the instance. They're similar to static classes in other languages or to *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all of your static methods. 
+It's the same as for an immutable class but it can also have actions. This means they don't have their own internal state but can produce side effects in other places. Singleton classes cannot be instantiated by the user and they have a singleton instance that can be accessed using the name of the class directly. They're similar to static classes in other languages or to *singleton objects* in Scala. They can be used as utility classes or in a way similar to Scala *companion objects*, so it's generally a good place to put all the methods you would mark as *static* in other languages. 
 
-The entrypoint of a program must also be a singleton class. When you execute a *.ty* file, the first declared action called *main* in some singleton class will be executed. You can, however, have multiple classes of different types in one file. This is also a good place to mention that Tidy has a strong static type and error checking system, meaning you will get the information about the vast majority of the possible errors during the compilation rather than during runtime (for example referenced class/object not in scope, method/constructor arguments not matching the signature, duplicate declarations, illegal side effects in purely functional expressions or functions, bad return type, non-existing method and much more).
+The entrypoint of a program must also be a singleton class. When you execute a *.ty* file, the first declared action called *main* in some singleton class will be executed. You can, however, have multiple classes of different types in one file. This is also a good place to mention that Tidy has a strong static type and error checking system, meaning you will get information about the vast majority of the possible errors during compilation rather than during runtime (for example referenced class/object not in scope, method/constructor arguments not matching the signature, duplicate declarations, illegal side effects in purely functional expressions or functions, bad return type, non-existing method and much more).
 
 
 ## Abstract classes
 
-Each of the above class types can be marked as *abstract*. This is the equivalent of Java *interfaces* or Scala *traits* (not of Java *abstract classes*). Abstract classes cannot be instantiated. The rationale for having abstract singleton classes is to use them as templates, as their implementations cannot be instantiated anyway.
+Each of the above class types can be marked as *abstract*. This is the equivalent of Java *interfaces* or Scala *traits* (not of Java *abstract classes*). Abstract classes cannot be instantiated. The rationale for having abstract singleton classes is to use them as templates for other more specific singleton classes.
 
 
 ## Attributes
@@ -103,7 +103,7 @@ mutable class Student {
     variables: {
         login: String;
         private passwordHash: String;
-        classes: List[UniversityClass] = List();
+        classes: List[UniversityClass] = List[UniversityClass]();
     }
 }
 ```
@@ -114,10 +114,10 @@ There are several new things here:
 
 - Private members. The ones without a modifier are public.
 
-- Attributes initialized with a value (``List()``).
+- Attributes initialized with a value (``List[UniversityClass]()``).
 
 
-Note that in Tidy you don't have to write a lot of semicolons, like e.g. in Java. However, there is one important place where this is necessary, namely after each value/variable declaration. They're also used (to avoid syntax conflicts) in very few situations when you want to write one-liners without curly brackets: in expressions like *if-then-else* or *lambdas*, for example:
+Note that in Tidy you don't have to write a lot of semicolons, unlike for example in Java. However, there is one important place where this is necessary, namely after each value/variable declaration. They're also used (to avoid syntax conflicts) in very few situations when you want to write one-liners without curly brackets: in expressions like *if-then-else* or *lambdas*, for example:
 
 ```
 if (predicate) then {
@@ -134,7 +134,7 @@ if (predicate) then value1; else value2;
 
 ```
 
-This might be a corner case but remember that this doesn't mean you can skip the values definition semicolon. In this case you must use two (one for skipping lambda curly brackets and one for finishing the value declaration):
+This might be a bit of a corner case but remember that this doesn't mean you can skip the values definition semicolon. If you declare a value storing a lambda, you must use two (one for skipping lambda curly brackets and one for finishing the value declaration):
 
 ```
 
@@ -158,7 +158,7 @@ values: {
 
 It's important to mention that in Tidy you don't need to write most of the classic OOP boiler-plate code. The language will automatically generate for you:
 
-- A constructor, that takes as parameters all of the fields that you don't initialize explicitly, in the order of their declaration. There is no *null* reference in Tidy, so the object must be complete with all the fields initialized from the moment it's born.
+- A constructor, that takes as parameters all of the fields that you don't initialize explicitly, in the order of their declaration (starting from the top superclass if any is present). There is no *null* reference in Tidy, so the object must be complete with all the fields initialized from the moment it's born.
 
 - Public getters for all public (not marked as *private*) attributes (values and variables).
 
@@ -170,7 +170,7 @@ It's important to mention that in Tidy you don't need to write most of the class
 
 - A ``toString`` method that can be used for printing the object.
 
-- A comparator for the equality operator that compares recursively the values of attributes (and returns false for all objects of a different type).
+- An equality operator that performs deep recursive comparison of the values of attributes (and returns false for all pairs of objects of different type).
 
 
 ## Functions
@@ -214,14 +214,14 @@ someValueForADummyStudent: () -> Student = {
 }
 ```
 
-Also, keep in mind that the *this* keyword is required, not optional as in e.g. Java. Code constistency, clarity, avoiding shadowing etc. are big enough reasons for this, but there are even better ones – we'll talk about them later.
+Also, keep in mind that the *this* keyword is required, not optional as in e.g. Java. Code constistency, clarity, avoiding shadowing etc. are big enough reasons for this, but there are even bigger ones – we'll talk about them later.
 
 
 ## Actions
 
-Let's first talk for a moment about expressions. All of the Tidy's constructs that appear inside methods are expressions, e.g.: arithmetic expressions, *ifs*, *foreach*, an action call, a local value definition etc. That means they all return some value (similarly to Scala) and there are no purely imperative statements. There exists, however, a division into purely functional and non-pure expressions. The latter cannot be used inside functions, inside the purely functional ones and in a few other places that expect pure expressions (to avoid confusing and unpredictible code).
+Let's first talk for a moment about expressions. All of the Tidy's constructs that appear inside methods are expressions, e.g.: arithmetic expressions, *ifs*, *foreach*, an action call, a local value definition etc. That means they all return some value (similarly to Scala) and there are no purely imperative statements. There exists, however, a division into purely functional and non-pure expressions. The latter cannot be used inside functions, inside purely functional expressions and in a few other places that expect pure expressions (to avoid confusing and unpredictible code).
 
-Actions can be composed of several expressions. They behave very much like normal Scala methods, that is, each expression is evaluated separately and the evaluation result of the last expression is the value returned by the method. Let's add some actions to our example:
+Actions can be composed of a list of multiple expressions. They behave very much like normal Scala methods, that is, each expression is evaluated separately and the evaluation result of the last expression is the value returned by the method. Let's add some actions to our example:
 
 ```
 mutable class Student {
@@ -237,7 +237,7 @@ mutable class Student {
     variables: {
         login: String;
         private passwordHash: String;
-        classes: List[UniversityClass] = List();
+        classes: List[UniversityClass] = List[UniversityClass]();
     }
     
     functions: {
@@ -264,7 +264,7 @@ mutable class Student {
 }
 ```
 
-Both of these actions return *Void* but you could of course do something like this:
+Both of these actions return *Void* but you could of course return something more meaningful like this:
 
 ```
 
@@ -277,9 +277,12 @@ addClassAndCountTotal: (newClass: UniversityClass) -> Int = {
 }
 ```
 
+By the way, *Void* is a perfectly normal type, unlike in Java or C++ (it is equivalent to Scala's *Unit*). You can for example create values of type *Void*, just like of type *Int*. It has, however, only one possible value: *Pass*.
+
+
 ## Method invocation: *get* and *do* expressions
 
-One thing to elaborate on here are those *.* and *#* expressions. They're very important. The dot is read as *get* and the hash is read as *do*. This is a feature very characteristic to Tidy. As mentioned before, one of the most important ideas behind Tidy is making clear when and where there is mutable state or side effects. The clear division into values/variables and functions/actions is one step in this direction. Another one is making it visible whether you call a *function* or an *action*. Some examples:
+One thing to elaborate on here are those *.* and *#* expressions. They're extremely important. The dot is read as *get* and the hash is read as *do*. This is a feature very characteristic of Tidy. As mentioned before, one of the most important ideas behind Tidy is making it clear when and where mutable state or side effects exist. The clear division into values/variables and functions/actions is one step in this direction. Another one is making it explicit whether you're calling a *function* or an *action*. Some examples:
 
 Functions:
 
@@ -309,26 +312,26 @@ mail#send(message) // read "mail do send message"
 
 ```
 
-There are several very neat things about this system. First, notice also that when you invoke a method with no arguments, you can skip the parentheses. All of this is especially significant when we notice that we can use this mechanism to define getters and setters. Automatically generated ones work like this (assume we have an object *student* of type *Student* with a variable field *age*):
+There are several very neat things about this system. First, notice that when you invoke a method with no arguments, you can skip the parentheses. All of this is especially significant when we notice that we can use this mechanism to define getters and setters. Automatically generated ones work like this (assume we have an object *student* of type *Student* with a variable field *age*):
 
 - Getter: ``student.age; // returns the value of field age, read "student get age"``
 - Setter: ``student#age(23) // assigns 23 to student.age, read "student do age 23"``
 
-So you can achieve the same effect by writing ``student.grades.summary.finalMark`` instead of ``student.getGrades().getSummary().getFinalMark()``. You can skip such boiler-plate code and have your code much more readable because it's clear that *.* calls a pure *function*, just returning some value (without changing anything) and *#* calls *an action* that does/changes something.
+So you can achieve the same effect by writing ``student.grades.summary#finalMark(5)`` instead of ``student.getGrades().getSummary().setFinalMark(5)``. You can skip such boiler-plate code and have your code much more readable because it's clear that *.* calls a pure *function*, just returning some value (without changing anything) and *#* calls *an action* that does/changes something.
 
-One of the greatest benefits of this system is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment (outside of the initial attribute declaration) can happen as a call to a setter method of some field on some object. Even the locally declared objects are attributes of a special objects called *local*, so we can do things like:
+One of the greatest benefits of this system is that it allows us to have beautifully consistent syntax without any assignment operator in our language whatsoever! That's because every assignment (outside of the initial attribute declaration) can happen as a call to a setter method of some field on some object. Even the locally declared objects are attributes of a special built-in object called *local*, so we can do things like:
 
 ```
 val x: Int = 5;
 var y: Int = 6;
-x // returns 5, alias for local.x, both work
+x // returns 5, alias for local.x, both are correct
 
 local#y(8)
 y // returns 8
 
 ```
 
-It gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing exactly the same thing and being used interchangeably and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax that calls exactly the same methods.
+It gives us very good encapsulation and uniformity in syntax. We avoid having multiple things like ``student.age``,``student.getAge()`` or ``age = 3``, ``this.age = 3`` and ``student.setAge(3)`` doing essentially the same thing and being used interchangeably and inconsistently. Getting a value is always ``student.age``, changing a value is always ``student#age(23)``, no matter where you are in the code. If the attribute/getter/setter is private, you may just not have access to it from outside the class, but everywhere you use the same clean and convenient syntax that calls exactly the same methods.
 
 
 ## Other features
@@ -348,7 +351,7 @@ mutable class PhoneMessageReceiver extends MessageReceiver {
     }
     
     variables: {
-        messages: List[Message] = List();
+        messages: List[Message] = List[Message]();
     }
     
     functions: {
@@ -411,7 +414,8 @@ singleton class MainClass {
     actions: {
         
         main: () -> Void = {
-            val channels: List[NotificationChannel] = List(NotificationChannel("link1"), NotificationChannel("link2"));
+            val channels: List[NotificationChannel] = List[NotificationChannel](NotificationChannel("link1"), 
+                NotificationChannel("link2"));
             val receiver: PhoneMessageReceiver = PhoneMessageReceiver(100, channels);
             
             if (receiver#receive(Message("Hi! What's up?"))) {
@@ -435,20 +439,20 @@ We can see a lot of more new features here:
 
 - *Foreach* loop. There is also a *while* loop with standard syntax: ``while (condition) { }``. Note that these loops are imperative non-pure constructs and can only be used inside actions, not inside functions (but they are still expressions, returning *Void*). Also don't forget the semicolon. It is necessary because of the value declaration.
 
-- *If* expressions. Note the important distinction between the imperative *if* (it can have an optional *else* branch and its branches may be composed of several expressions) and the functional *if-then-else* expression. The former is like an *if* in C, the latter is like Java ternary operator.
+- *If* expressions. Note the important distinction between the imperative *if* and the functional *if-then-else* expression. Both return the value of the last expression in the evaluated branch (like in Scala), however, a branch in the latter can only consist of a single purely functional expression (just like a function body).
 
-- Higher-order functions and lambdas. The syntax for function types and lambda expressions is the same. Note that because of Tidy's strict dichotomy between *functions* and *actions*, you always need to explicitly declare whether or not your method can have side effects. As in the paragraph on *get* and *do* expressions, *get* is for *functions* and *do* is for *actions*. If you declare your method parameter or local-value lambda with the *get* keyword, it will be run like this: ``fun.call(x)``, if with *do* – like this: ``fun#call(x)``. This is also true for lambdas stored as fields because they are objects like any other and ``object.attributeLambda`` and ``object#atttributeLambda(...)`` are just getters and setters, hence the need for the special *call* method that each function object has.
+- Higher-order functions and lambdas. The syntax for function types and lambda expressions is the same. Note that because of Tidy's strict dichotomy between *functions* and *actions*, you always need to explicitly declare whether or not your method can have side effects. As in the paragraph on *get* and *do* expressions, *get* is for *functions* and *do* is for *actions*. If you declare your method parameter or local-value lambda with the *get* keyword, it will be run like this: ``fun.call(x)``, if with *do* – like this: ``fun#call(x)``. This is also true for lambdas stored as fields because they are objects like any other and ``object.attributeLambda`` and ``object#atttributeLambda(...)`` are just getters and setters, hence the need for the special *call* method that an object of each functional type has.
 
-- *Pass*: literal of type *Void* (*NOP*). Can be used when you need to explicitly return something in an action or expression that expects to return *Void* or as a placeholder as with *pass* in Python (expression lists in actions or *ifs* have to contain at least one expression).
+- *Pass*: literal of type *Void* (*NOP*). Can be used when you need to explicitly return something in an action or expression that expects to return *Void* or as a placeholder as with *pass* in Python (expression lists in actions or *ifs* must contain at least one expression).
 
 
 ## Style
 
-- Tidy is quite serious about coding style. The style used in the snippets above is encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. You can of course adapt some details to your own taste but stay reasonable, treat whitespaces with respect, use curly brackets in multi-line expressions, don't put multiple separate expressions (e.g. in action bodies) on one line etc.
+- Tidy is quite serious about coding style. The style used in the snippets above is encouraged. It closely resembles Java/Scala style conventions, so when in doubt, use those. You can of course adapt some details to your own taste but stay reasonable and consistent, treat whitespaces with respect, use curly brackets in multi-line expressions, don't put multiple separate expressions (e.g. in action bodies) on one line etc.
 
 - In imperative expressions (*while*, *foreach*, imperative *if*) curly brackets are obligatory. In general, curly braces should be placed at the end of the same line as the preceding expression (Java-style).
 
-- Case conventions are very important. Most of them are syntactically enforced. Vast majority of them is the same as in Java. All class names must be in *UpperCamelCase*. Method, parameter and local value/variable names must be in *lowerCamelCase*. Because automatically generated getters by default have the same name as the field (and they must start with a lowercase letter). All fields with constants also need to be in *lowerCamelCase*, unlike in Java or Scala.
+- Case conventions are very important. Most of them are syntactically enforced. Most of them are the same as in Java. All class names must be in *UpperCamelCase*. Method, parameter and local value/variable names must be in *lowerCamelCase*. Every name can also start with an underscore *_*. Because automatically generated getters by default have the same name as the field (and getters as methods must start with a lowercase letter), all fields with constants also need to be in *lowerCamelCase*, unlike in Java or Scala.
 
 - Naming conventions are similar to those in Scala, that is, try to use reasonably descriptive Java-style names in most places, but in places where the code is largely functional, it's okay to use less verbose, even one-letter identifiers, for example: ``add: (x: Int, y: Int) -> Int = x + y``.
 
